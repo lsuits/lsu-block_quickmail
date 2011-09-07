@@ -52,6 +52,7 @@ $PAGE->navbar->add($header);
 $PAGE->set_title($blockname . ': '. $header);
 $PAGE->set_heading($blockname . ': '.$header);
 $PAGE->set_url('/course/view.php', array('courseid' => $courseid));
+$PAGE->set_pagetype($blockname);
 
 $PAGE->requires->js('/lib/jquery.js');
 $PAGE->requires->js('/blocks/quickmail/js/selection.js');

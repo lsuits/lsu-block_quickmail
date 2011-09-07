@@ -2,3 +2,16 @@
    margin-left: 20px;
    margin-right: 20px;
 }
+
+#page-Quickmail select[multiple] {
+   min-width: 250px;
+}
+
+#page-Quickmail .mform {
+}
+
+#page-Quickmail .mform fieldset.hidden>div {
+   width: 800px;
+   text-align: left;
+   margin: auto;
+}
