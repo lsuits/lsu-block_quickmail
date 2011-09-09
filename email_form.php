@@ -93,10 +93,10 @@ class email_form extends moodleform {
                     </td>
                     <td width="100" align="center">
                         <p>
-                            <input type="button" id="add_button" value="'.quickmail::_s('add_button').'"/>
+                            <input type="button" id="add_button" value="'.$OUTPUT->larrow().' '.quickmail::_s('add_button').'"/>
                         </p>
                         <p>
-                            <input type="button" id="remove_button" value="'.quickmail::_s('remove_button').'"/>
+                            <input type="button" id="remove_button" value="'.quickmail::_s('remove_button').' '.$OUTPUT->rarrow().'"/>
                         </p>
                         <p>
                             <input type="button" id="add_all" value="'.quickmail::_s('add_all').'"/>
