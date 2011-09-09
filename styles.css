@@ -15,3 +15,7 @@
    text-align: left;
    margin: auto;
 }
+
+#page-Quickmail .mform #add_button, #remove_button, #add_all, #remove_all {
+   width: 100px;
+}
