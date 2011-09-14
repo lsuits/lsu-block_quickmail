@@ -25,6 +25,10 @@ Contributions of any form are welcome. Github pull requests are preferred.
 
 File any bugs, improvements, or feature requiests in our [issue tracker][issues].
 
+## License
+
+Quickmail adopts the same license that Moodle does.
+
 ## Screenshots
 
 ![Block][block]
