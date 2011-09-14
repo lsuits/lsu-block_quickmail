@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @author Philip Cali
- * Louisiana State University
- */
+// Written at Louisiana State University
 
 require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 

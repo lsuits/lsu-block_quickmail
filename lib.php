@@ -1,5 +1,7 @@
 <?php
 
+// Written at Louisiana State University
+
 abstract class lsu_dev {
     abstract static function pluginname();
 

@@ -1,5 +1,7 @@
 <?php
 
+// Written at Louisiana State University
+
 require_once $CFG->libdir . '/formslib.php';
 
 class config_form extends moodleform {
