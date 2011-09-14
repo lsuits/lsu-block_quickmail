@@ -54,7 +54,7 @@ $PAGE->set_heading($blockname . ': '.$header);
 $PAGE->set_url('/course/view.php', array('courseid' => $courseid));
 $PAGE->set_pagetype($blockname);
 
-$PAGE->requires->js('/lib/jquery.js');
+$PAGE->requires->js('/blocks/quickmail/js/jquery.js');
 $PAGE->requires->js('/blocks/quickmail/js/selection.js');
 
 $course_roles = get_roles_used_in_context($context);
