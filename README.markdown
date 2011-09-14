@@ -6,9 +6,15 @@ Quickmail is a Moodle plugin that allows bulk emailing within Moodle.
 
 ![Block][block]
 
+---
+
 ![Email][email]
 
+---
+
 ![Signatures][signature]
+
+---
 
 ![Configuration][config]
 
