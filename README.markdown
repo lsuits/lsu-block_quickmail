@@ -9,7 +9,7 @@ Quickmail is a Moodle plugin that allows bulk emailing within Moodle.
 * Signatures
 * Filter by Role
 * Filter by Groups
-* Optionally allow Students to email
+* Optionally allow Students to email people within their group.
 
 ## Installation
 
@@ -25,4 +25,6 @@ Run _Notifications_ inside Moodle, and Moodle will take care of the rest.
 
 Feel free to fork and submit pull requests. Patches are welcome.
 
-File any bugs or improvements under the issues.
+File any bugs or improvements under the [issues][issues].
+
+[issues]: https://github.com/lsuits/quickmail/issues/new
