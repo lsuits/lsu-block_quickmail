@@ -1,5 +1,7 @@
 <?php
 
+// Written at Louisiana State University
+
 defined('MOODLE_INTERNAL') || die;
 
 if($ADMIN->fulltree) {

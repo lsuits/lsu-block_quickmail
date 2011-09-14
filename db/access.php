@@ -1,5 +1,7 @@
 <?php
 
+// Written at Louisiana State University
+
 $capabilities = array(
     'block/quickmail:cansend' => array(
         'captype' => 'write',

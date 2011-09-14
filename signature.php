@@ -1,5 +1,7 @@
 <?php
 
+// Written at Louisiana State University
+
 require_once('../../config.php');
 require_once('lib.php');
 require_once('signature_form.php');
