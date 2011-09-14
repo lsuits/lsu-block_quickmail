@@ -2,6 +2,16 @@
 
 Quickmail is a Moodle plugin that allows bulk emailing within Moodle.
 
+## Screenshots
+
+![Block][block]
+
+![Email][email]
+
+![Signatures][signature]
+
+![Configuration][config]
+
 ## Features
 
 * Multiple attachments
@@ -27,4 +37,8 @@ Feel free to fork and submit pull requests. Patches are welcome.
 
 File any bugs or improvements under the [issues][issues].
 
+[block]: https://tigerbytes2.lsu.edu/users/pcali1/work/block.png
+[config]: https://tigerbytes2.lsu.edu/users/pcali1/work/config.png
+[signature]: https://tigerbytes2.lsu.edu/users/pcali1/work/signature.png
+[email]: https://tigerbytes2.lsu.edu/users/pcali1/work/email.png
 [issues]: https://github.com/lsuits/quickmail/issues/new
