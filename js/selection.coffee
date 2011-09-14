@@ -1,3 +1,6 @@
+# Written at Louisiana State University
+
+
 $(document).ready () ->
     potentials = "#from_users"
     mailed = "#mail_users"
