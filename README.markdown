@@ -1,6 +1,29 @@
 # Quickmail
 
-Quickmail is a Moodle plugin that allows bulk emailing within Moodle.
+Quickmail is a Moodle block that provides selective, bulk emailing within courses.
+
+## Features
+
+* Multiple attachments
+* Drafts
+* Signatures
+* Filter by Role
+* Filter by Groups
+* Optionally allow Students to email people within their group.
+
+## Download
+
+Visit [Quickmail's Github page][quickmail_github] to either download a package or clone the git repository.
+
+## Installation
+
+Quickmail should be installed like any other block. See [the Moodle Docs page on block installation][block_doc].
+
+## Contributions
+
+Contributions of any form are welcome. Github pull requests are preferred.
+
+File any bugs, improvements, or feature requiests in our [issue tracker][issues].
 
 ## Screenshots
 
@@ -18,33 +41,10 @@ Quickmail is a Moodle plugin that allows bulk emailing within Moodle.
 
 ![Configuration][config]
 
-## Features
-
-* Multiple attachments
-* Drafts
-* Signatures
-* Filter by Role
-* Filter by Groups
-* Optionally allow Students to email people within their group.
-
-## Installation
-
-Install the Quickmail code:
-
-```
-$ cd ~
-$ git clone git@github.com:lsuits/quickmail.git
-$ mv quickmail {MOODLE_ROOT}/blocks
-```
-
-Run _Notifications_ inside Moodle, and Moodle will take care of the rest.
-
-Feel free to fork and submit pull requests. Patches are welcome.
-
-File any bugs or improvements under the [issues][issues].
-
+[quickmail_github]: https://github.com/lsuits/quickmail
+[block_doc]: http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins#Block_installation
 [block]: https://tigerbytes2.lsu.edu/users/pcali1/work/block.png
 [config]: https://tigerbytes2.lsu.edu/users/pcali1/work/config.png
 [signature]: https://tigerbytes2.lsu.edu/users/pcali1/work/signature.png
 [email]: https://tigerbytes2.lsu.edu/users/pcali1/work/email.png
-[issues]: https://github.com/lsuits/quickmail/issues/new
+[issues]: https://github.com/lsuits/quickmail/issues
