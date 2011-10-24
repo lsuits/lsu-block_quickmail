@@ -242,14 +242,15 @@ if (empty($warnings)) {
         redirect(new moodle_url('/blocks/quickmail/emaillog.php',
             array('courseid' => $course->id)));
     else if (isset($email->draft))
-        $warnings[] = get_string("changessaved");
+        $warnings['success'] = get_string("changessaved");
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($blockname);
 
-foreach ($warnings as $warning) {
-    echo $OUTPUT->notification($warning);
+foreach ($warnings as $type => $warning) {
+    $class = ($type == 'success') ? 'notifysuccess' : 'notifyproblem';
+    echo $OUTPUT->notification($warning, $class);
 }
 
 $form->display();
