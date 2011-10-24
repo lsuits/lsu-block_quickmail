@@ -67,13 +67,13 @@ abstract class quickmail extends lsu_dev {
         $base_path = "temp/block_quickmail/{$USER->id}";
         $moodle_base = "$CFG->dataroot/$base_path";
 
-        if(!file_exists($moodle_base)) {
+        if (!file_exists($moodle_base)) {
             mkdir($moodle_base, 0777, true);
         }
 
         $zipname = $zip = $actual_zip = '';
 
-        if(!empty($email->attachment)) {
+        if (!empty($email->attachment)) {
             $zipname = "attachment.zip";
             $zip = "$base_path/$zipname";
             $actual_zip = "$moodle_base/$zipname";
@@ -91,7 +91,7 @@ abstract class quickmail extends lsu_dev {
 
             $stored_files = array();
 
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 if($file->is_directory() and $file->get_filename() == '.')
                     continue;
 
@@ -138,7 +138,7 @@ abstract class quickmail extends lsu_dev {
 
         $config = $DB->get_records_menu($table, $params, '', $fields);
 
-        if(empty($config)) {
+        if (empty($config)) {
             $m = 'moodle';
             $allowstudents = get_config($m, 'block_quickmail_allowstudents');
             $roleselection = get_config($m, 'block_quickmail_roleselection');
@@ -217,7 +217,9 @@ abstract class quickmail extends lsu_dev {
         $table->head= array(get_string('date'), quickmail::_s('subject'),
             quickmail::_s('attachment'), get_string('action'));
 
-        $table->data = array_map(function($log) use ($OUTPUT, $type) {
+        $table->data = array();
+
+        foreach ($logs as $log) {
             $date = quickmail::format_time($log->time);
             $subject = $log->subject;
             $attachments = $log->attachment;
@@ -242,10 +244,11 @@ abstract class quickmail extends lsu_dev {
 
             $actions = implode(' ', array($open_link, $delete_link));
 
-            return array($date, $subject, $attachments, $actions);
-        }, $logs);
+            $table->data[] = array($date, $subject, $attachments, $actions);
+        }
 
-        $paging = $OUTPUT->paging_bar($count, $page, $perpage, '/blocks/quickmail/emaillog.php?courseid='.$courseid);
+        $paging = $OUTPUT->paging_bar($count, $page, $perpage,
+            '/blocks/quickmail/emaillog.php?courseid='.$courseid);
 
         $html = $paging;
         $html .= html_writer::table($table);
