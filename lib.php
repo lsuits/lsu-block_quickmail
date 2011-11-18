@@ -40,7 +40,7 @@ abstract class quickmail extends lsu_dev {
     static function cleanup($table, $itemid) {
         global $DB;
 
-        // Clean up the files associated with this email 
+        // Clean up the files associated with this email
         // Fortunately, they are only db references, but
         // they shouldn't be there, nonetheless.
         $params = array('component' => $table, 'itemid' => $itemid);
@@ -68,7 +68,7 @@ abstract class quickmail extends lsu_dev {
         $moodle_base = "$CFG->dataroot/$base_path";
 
         if (!file_exists($moodle_base)) {
-            mkdir($moodle_base, 0777, true);
+            mkdir($moodle_base, $CFG->directorypermissions, true);
         }
 
         $zipname = $zip = $actual_zip = '';
