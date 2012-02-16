@@ -4,6 +4,7 @@ $string['pluginname'] = 'Quickmail';
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
+$string['quickmail:allowalternate'] = "Allows users to add an alternate email for courses.";
 $string['composenew'] = 'Compose New Email'; 
 $string['email'] = 'Email';
 $string['drafts'] = 'View Drafts';
