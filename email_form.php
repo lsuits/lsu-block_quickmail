@@ -65,16 +65,28 @@ class email_form extends moodleform {
         $draft_link = html_writer::link ($gen_url('drafts'), quickmail::_s('drafts'));
         $links[] =& $mform->createElement('static', 'draft_link', '', $draft_link);
 
-        $context= get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
-        if(has_capability('block/quickmail:cansend', $context)) {
+        if (has_capability('block/quickmail:cansend', $context)) {
             $history_link = html_writer::link($gen_url('log'), quickmail::_s('history'));
-            $links[] =& $mform->createElement('static', 'history_link', '', $history_link); 
+            $links[] =& $mform->createElement('static', 'history_link', '', $history_link);
         }
 
         $mform->addGroup($links, 'links', '&nbsp;', array(' | '), false);
 
-        $mform->addElement('static', 'from', quickmail::_s('from'), $USER->email);
+        if (has_capability('block/quickmail:allowalternate', $context)) {
+            $alternates = $this->_customdata['alternates'];
+        } else {
+            $alternates = array();
+        }
+
+        if (empty($alternates)) {
+            $mform->addElement('static', 'from', quickmail::_s('from'), $USER->email);
+        } else {
+            $options = array(0 => $USER->email) + $alternates;
+            $mform->addElement('select', 'alternateid', quickmail::_s('from'), $options);
+        }
+
         $mform->addElement('static', 'selectors', '', '
             <table>
                 <tr>

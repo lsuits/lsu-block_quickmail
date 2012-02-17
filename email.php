@@ -44,6 +44,10 @@ if (!$has_permission) {
 $sigs = $DB->get_records('block_quickmail_signatures',
     array('userid' => $USER->id), 'default_flag DESC');
 
+$alt_params = array('courseid' => $course->id, 'valid' => 1);
+$alternates = $DB->get_records_menu('block_quickmail_alternate',
+    $alt_params, '', 'id, address');
+
 $blockname = quickmail::_s('pluginname');
 $header = quickmail::_s('email');
 
@@ -169,11 +173,11 @@ if (empty($warnings) and $submitted) {
     // Store email; id is needed for file storage
     if (isset($email->send)) {
         $id = $DB->insert_record('block_quickmail_log', $email);
-        $table = 'log'; 
+        $table = 'log';
     } else if (isset($email->draft)) {
         $table = 'drafts';
 
-        if (!empty($typeid)) { 
+        if (!empty($typeid)) {
             $id = $email->id = $typeid;
             $DB->update_record('block_quickmail_drafts', $email);
         } else {
@@ -182,7 +186,7 @@ if (empty($warnings) and $submitted) {
     }
 
     // An instance id is needed before storing the file repository
-    file_save_draft_area_files($email->attachments, $context->id, 
+    file_save_draft_area_files($email->attachments, $context->id,
                                'block_quickmail_'.$table, 'attachment', $id);
 
     // Send emails
@@ -197,8 +201,16 @@ if (empty($warnings) and $submitted) {
             $email->message .= $sigs[$email->sigid]->signature;
         }
 
+        // Same user, alternate email
+        if (!empty($email->alternateid)) {
+            $user = clone($USER);
+            $user->mail = $alternates[$email->alternateid];
+        } else {
+            $user = $USER;
+        }
+
         foreach (explode(',', $email->mailto) as $userid) {
-            $success = email_to_user($selected[$userid], $USER, $email->subject,
+            $success = email_to_user($selected[$userid], $user, $email->subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
 
             if(!$success) {
@@ -207,7 +219,7 @@ if (empty($warnings) and $submitted) {
         }
 
         if ($email->receipt) {
-            email_to_user($USER, $USER, $email->subject, 
+            email_to_user($USER, $user, $email->subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
         }
 
@@ -224,7 +236,8 @@ $form = new email_form(null, array(
     'groups' => $groups,
     'users_to_roles' => $users_to_roles,
     'users_to_groups' => $users_to_groups,
-    'sigs' => array_map(function($sig) { return $sig->title; }, $sigs)
+    'sigs' => array_map(function($sig) { return $sig->title; }, $sigs),
+    'alternates' => $alternates
 ));
 
 if (empty($email->attachments)) {

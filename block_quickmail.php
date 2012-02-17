@@ -70,6 +70,17 @@ class block_quickmail extends block_list {
             $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $history_str);
         }
 
+        if (has_capability('block/quickmail:allowalternate', $context)) {
+            $alt_str = quickmail::_s('alternate');
+            $alt = html_writer::link(
+                new moodle_url('/blocks/quickmail/alternate.php', $cparam),
+                $alt_str
+            );
+
+            $this->content->items[] = $alt;
+            $this->content->icons[] = $OUTPUT->pix_icon('i/edit', $alt_str);
+        }
+
         if (has_capability('block/quickmail:canconfig', $context)) {
             $config_str = quickmail::_s('config');
             $config = html_writer::link(
