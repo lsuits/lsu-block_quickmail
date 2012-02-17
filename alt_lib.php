@@ -197,6 +197,7 @@ abstract class quickmail_alternate implements quickmail_alternate_actions {
             $form->set_data(self::get_one($id));
         }
 
+        // MDL-31677
         $reflect = new ReflectionClass('quickmail_alternate_form');
         $form_field = $reflect->getProperty('_form');
         $form_field->setAccessible(true);
