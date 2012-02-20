@@ -30,6 +30,10 @@ $PAGE->set_heading($blockname. ': '. $header);
 $PAGE->navbar->add($header);
 $PAGE->set_pagetype($blockname);
 
+if (get_config('moodle', 'block_quickmail_courselayout')) {
+    $PAGE->set_pagelayout('course');
+}
+
 $changed = false;
 
 if ($reset) {

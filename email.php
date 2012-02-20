@@ -56,6 +56,10 @@ $PAGE->set_heading($blockname . ': '.$header);
 $PAGE->set_url('/course/view.php', array('courseid' => $courseid));
 $PAGE->set_pagetype($blockname);
 
+if (get_config('moodle', 'block_quickmail_courselayout')) {
+    $PAGE->set_pagelayout('course');
+}
+
 $PAGE->requires->js('/blocks/quickmail/js/jquery.js');
 $PAGE->requires->js('/blocks/quickmail/js/selection.js');
 
@@ -207,7 +211,7 @@ if (empty($warnings) and $submitted) {
         }
 
         if ($email->receipt) {
-            email_to_user($USER, $USER, $email->subject, 
+            email_to_user($USER, $USER, $email->subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
         }
 

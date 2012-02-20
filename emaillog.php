@@ -62,6 +62,10 @@ $PAGE->set_heading($blockname . ': ' . $header);
 $PAGE->set_url('/course/view.php', array('id' => $courseid));
 $PAGE->set_pagetype($blockname);
 
+if (get_config('moodle', 'block_quickmail_courselayout')) {
+    $PAGE->set_pagelayout('course');
+}
+
 $dbtable = 'block_quickmail_' . $type;
 
 $params = array('userid' => $userid, 'courseid' => $courseid);
