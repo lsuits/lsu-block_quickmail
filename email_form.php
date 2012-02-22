@@ -152,7 +152,7 @@ class email_form extends moodleform {
         $table->data[] = new html_table_row(array($select_filter, $center_buttons, $filters));
 
         $mform->addElement('static', 'from', quickmail::_s('from'), $USER->email);
-        $mform->addElement('html', html_writer::table($table));
+        $mform->addElement('static', 'selectors', '', html_writer::table($table));
 
         $mform->addElement('filemanager', 'attachments', quickmail::_s('attachment'));
 
