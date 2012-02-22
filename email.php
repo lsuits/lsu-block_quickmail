@@ -207,7 +207,7 @@ if (empty($warnings) and $submitted) {
         }
 
         if ($email->receipt) {
-            email_to_user($USER, $USER, $email->subject, 
+            email_to_user($USER, $USER, $email->subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
         }
 
@@ -253,6 +253,8 @@ foreach ($warnings as $type => $warning) {
     echo $OUTPUT->notification($warning, $class);
 }
 
+echo html_writer::start_tag('div', array('class' => 'no-overflow'));
 $form->display();
+echo html_writer::end_tag('div');
 
 echo $OUTPUT->footer();
