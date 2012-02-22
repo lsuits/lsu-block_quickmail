@@ -56,10 +56,6 @@ $PAGE->set_heading($blockname . ': '.$header);
 $PAGE->set_url('/course/view.php', array('courseid' => $courseid));
 $PAGE->set_pagetype($blockname);
 
-if (get_config('moodle', 'block_quickmail_courselayout')) {
-    $PAGE->set_pagelayout('course');
-}
-
 $PAGE->requires->js('/blocks/quickmail/js/jquery.js');
 $PAGE->requires->js('/blocks/quickmail/js/selection.js');
 

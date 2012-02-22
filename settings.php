@@ -33,11 +33,4 @@ if($ADMIN->fulltree) {
             array_map($only_names, $roles)
         )
     );
-
-    $settings->add(
-        new admin_setting_configcheckbox('block_quickmail_courselayout',
-            quickmail::_s('courselayout'),
-            quickmail::_s('courselayout_desc'), 0
-        )
-    );
 }

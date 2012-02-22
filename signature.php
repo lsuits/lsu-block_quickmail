@@ -78,9 +78,6 @@ $PAGE->set_context($context);
 if ($course) {
     $PAGE->set_course($course);
     $PAGE->set_url('/course/view.php', array('id' => $courseid));
-    if (get_config('moodle', 'block_quickmail_courselayout')) {
-        $PAGE->set_pagelayout('course');
-    }
 }
 
 $PAGE->navbar->add($blockname);
