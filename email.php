@@ -169,11 +169,11 @@ if (empty($warnings) and $submitted) {
     // Store email; id is needed for file storage
     if (isset($email->send)) {
         $id = $DB->insert_record('block_quickmail_log', $email);
-        $table = 'log'; 
+        $table = 'log';
     } else if (isset($email->draft)) {
         $table = 'drafts';
 
-        if (!empty($typeid)) { 
+        if (!empty($typeid)) {
             $id = $email->id = $typeid;
             $DB->update_record('block_quickmail_drafts', $email);
         } else {
@@ -202,12 +202,12 @@ if (empty($warnings) and $submitted) {
                 strip_tags($email->message), $email->message, $zip, $zipname);
 
             if(!$success) {
-                $warnings[] = get_string("no_email", 'block_quickmail', $selected[$userid]);
+                $warnings['fail'] = get_string("no_email", 'block_quickmail', $selected[$userid]);
             }
         }
 
         if ($email->receipt) {
-            email_to_user($USER, $USER, $email->subject, 
+            email_to_user($USER, $USER, $email->subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
         }
 

@@ -203,7 +203,7 @@ abstract class quickmail extends lsu_dev {
         return $html;
     }
 
-    function list_entries($courseid, $type, $page, $perpage, $userid, $count) {
+    function list_entries($courseid, $type, $page, $perpage, $userid, $count, $can_delete) {
         global $CFG, $DB, $OUTPUT;
 
         $dbtable = 'block_quickmail_'.$type;
@@ -230,21 +230,28 @@ abstract class quickmail extends lsu_dev {
                 'typeid' => $log->id
             );
 
+            $actions = array();
+
             $open_link = html_writer::link(
                 new moodle_url('/blocks/quickmail/email.php', $params),
                 $OUTPUT->pix_icon('i/search', 'Open Email')
             );
+            $actions[] = $open_link;
 
-            $delete_link = html_writer::link (
-                new moodle_url('/blocks/quickmail/emaillog.php',
-                    $params + array('action' => 'delete')
-                ),
-                $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
-            );
+            if ($can_delete) {
+                $delete_link = html_writer::link (
+                    new moodle_url('/blocks/quickmail/emaillog.php',
+                        $params + array('action' => 'delete')
+                    ),
+                    $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
+                );
 
-            $actions = implode(' ', array($open_link, $delete_link));
+                $actions[] = $delete_link;
+            }
 
-            $table->data[] = array($date, $subject, $attachments, $actions);
+            $action_links = implode(' ', $actions);
+
+            $table->data[] = array($date, $subject, $attachments, $action_links);
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
