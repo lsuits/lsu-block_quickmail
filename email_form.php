@@ -144,7 +144,8 @@ class email_form extends moodleform {
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', null, 'required');
 
-        $mform->addElement('editor', 'message', quickmail::_s('message'));
+        $mform->addElement('editor', 'message_editor', quickmail::_s('message'),
+            null, $this->_customdata['editor_options']);
 
         $options = $this->_customdata['sigs'] + array(-1 => 'No '. quickmail::_s('sig'));
         $mform->addElement('select', 'sigid', quickmail::_s('signature'), $options);
@@ -159,7 +160,7 @@ class email_form extends moodleform {
         $buttons = array();
         $buttons[] =& $mform->createElement('submit', 'send', quickmail::_s('send_email'));
         $buttons[] =& $mform->createElement('submit', 'draft', quickmail::_s('save_draft'));
-        $buttons[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
+        $buttons[] =& $mform->createElement('cancel');
 
         $mform->addGroup($buttons, 'buttons', quickmail::_s('actions'), array(' '), false);
     }

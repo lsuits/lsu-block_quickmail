@@ -15,7 +15,6 @@ if ($courseid and !$course = $DB->get_record('course', array('id' => $courseid))
     print_error('no_course', 'block_quickmail', '', $courseid);
 }
 
-try {
 $config = quickmail::load_config($courseid);
 
 $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -62,7 +61,7 @@ if (empty($sigid) or !isset($dbsigs[$sigid])) {
 }
 
 $sig->courseid = $courseid;
-$sig->signatureformat = 1;
+$sig->signatureformat = $USER->mailformat;
 
 $options = array(
     'trusttext' => true,
@@ -135,6 +134,3 @@ $form->set_data($sig);
 $form->display();
 
 echo $OUTPUT->footer();
-} catch (Exception $e) {
-    echo $e->getTraceAsString();
-}
