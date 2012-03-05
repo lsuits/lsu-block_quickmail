@@ -33,4 +33,11 @@ if($ADMIN->fulltree) {
             array_map($only_names, $roles)
         )
     );
+
+    $settings->add(
+        new admin_setting_configselect('block_quickmail_prepend_class',
+            quickmail::_s('prepend_class'), quickmail::_s('prepend_class_desc'),
+            0, $select
+        )
+    );
 }
