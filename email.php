@@ -197,8 +197,10 @@ if (empty($warnings) and $submitted) {
             $email->message .= $sigs[$email->sigid]->signature;
         }
 
-        $subject = !empty($config['prepend_class']) ?
-            "[{$course->shortname}] $email->subject" : $email->subject;
+        $prepender = $config['prepend_class'];
+        if (!empty($prepender) and !empty($course->$prepender)) {
+            $subject = "[{$course->$prepender}] $email->subject";
+        }
 
         foreach (explode(',', $email->mailto) as $userid) {
             $success = email_to_user($selected[$userid], $USER, $subject,

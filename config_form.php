@@ -26,8 +26,14 @@ class config_form extends moodleform {
 
         $roles->setMultiple(true);
 
+        $options = array(
+            0 => get_string('none'),
+            'idnumber' => get_string('idnumber'),
+            'shortname' => get_string('shortname')
+        );
+
         $mform->addElement('select', 'prepend_class',
-            quickmail::_s('prepend_class'), $student_select);
+            quickmail::_s('prepend_class'), $options);
 
         $mform->addElement('submit', 'save', get_string('savechanges'));
         $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);

@@ -34,10 +34,16 @@ if($ADMIN->fulltree) {
         )
     );
 
+    $options = array(
+        0 => get_string('none'),
+        'idnumber' => get_string('idnumber'),
+        'shortname' => get_string('shortname')
+    );
+
     $settings->add(
         new admin_setting_configselect('block_quickmail_prepend_class',
             quickmail::_s('prepend_class'), quickmail::_s('prepend_class_desc'),
-            0, $select
+            0, $options
         )
     );
 }
