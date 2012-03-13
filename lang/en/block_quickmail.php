@@ -58,7 +58,8 @@ $string['not_valid_action'] = 'You must provide a valid action: {$a}';
 $string['not_valid_typeid'] = 'You must provide a valid email for {$a}';
 $string['delete_failed'] = 'Failed to delete email';
 $string['required'] = 'Please fill in the required fields.';
-
 $string['prepend_class'] = 'Prepend Course name';
 $string['prepend_class_desc'] = 'Prepend the course shortname to the subject of
 the email.';
+$string['courselayout'] = 'Course Layout';
+$string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';

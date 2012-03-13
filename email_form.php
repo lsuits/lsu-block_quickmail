@@ -56,6 +56,24 @@ class email_form extends moodleform {
         $mform->addElement('hidden', 'type', '');
         $mform->addElement('hidden', 'typeid', 0);
 
+        $role_options = array('none' => quickmail::_s('no_filter'));
+        foreach ($this->_customdata['roles'] as $role) {
+            $role_options[$role->shortname] = $role->name;
+        }
+
+        $group_options = empty($this->_customdata['groups']) ? array() : array(
+            'all' => quickmail::_s('all_sections')
+        );
+        foreach ($this->_customdata['groups'] as $group) {
+            $group_options[$group->id] = $group->name;
+        }
+        $group_options[0] = quickmail::_s('no_section');
+
+        $user_options = array();
+        foreach ($this->_customdata['users'] as $user) {
+            $user_options[$this->option_value($user)] = $this->option_display($user);
+        }
+
         $links = array();
         $gen_url = function($type) use ($COURSE) {
             $email_param = array('courseid' => $COURSE->id, 'type' => $type);
@@ -81,69 +99,67 @@ class email_form extends moodleform {
 
         $mform->addGroup($links, 'links', '&nbsp;', array(' | '), false);
 
+        $req_img = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('req'), 'class' => 'req'));
+
+        $table = new html_table();
+        $table->attributes['class'] = 'emailtable';
+
+        $selected_required_label = new html_table_cell();
+        $selected_required_label->text = html_writer::tag('strong',
+            quickmail::_s('selected') . $req_img, array('class' => 'required'));
+
+        $role_filter_label = new html_table_cell();
+        $role_filter_label->colspan = "2";
+        $role_filter_label->text = html_writer::tag('div',
+            quickmail::_s('role_filter'), array('class' => 'object_labels'));
+
+        $select_filter = new html_table_cell();
+        $select_filter->text = html_writer::tag('select',
+            array_reduce($this->_customdata['selected'], array($this, 'reduce_users'), ''),
+            array('id' => 'mail_users', 'multiple' => 'multiple', 'size' => 30));
+
+        $embed = function ($text, $id) {
+            return html_writer::tag('p',
+                html_writer::empty_tag('input', array(
+                    'value' => $text, 'type' => 'button', 'id' => $id
+                ))
+            );
+        };
+
+        $embed_quick = function ($text) use ($embed) {
+            return $embed(quickmail::_s($text), $text);
+        };
+
+        $center_buttons = new html_table_cell();
+        $center_buttons->text = (
+            $embed($OUTPUT->larrow() . ' ' . quickmail::_s('add_button'), 'add_button') .
+            $embed(quickmail::_s('remove_button') . ' ' . $OUTPUT->rarrow(), 'remove_button') .
+            $embed_quick('add_all') .
+            $embed_quick('remove_all')
+        );
+
+        $filters = new html_table_cell();
+        $filters->text = html_writer::tag('div',
+            html_writer::select($role_options, '', 'none', null, array('id' => 'roles'))
+        ) . html_writer::tag('div',
+            quickmail::_s('potential_sections'),
+            array('class' => 'object_labels')
+        ) . html_writer::tag('div',
+            html_writer::select($group_options, '', 'all', null,
+            array('id' => 'groups', 'multiple' => 'multiple', 'size' => 5))
+        ) . html_writer::tag('div',
+            quickmail::_s('potential_users'),
+            array('class' => 'object_labels')
+        ) . html_writer::tag('div',
+            html_writer::select($user_options, '', '', null,
+            array('id' => 'from_users', 'multiple' => 'multiple', 'size' => 20))
+        );
+
+        $table->data[] = new html_table_row(array($selected_required_label, $role_filter_label));
+        $table->data[] = new html_table_row(array($select_filter, $center_buttons, $filters));
+
         $mform->addElement('static', 'from', quickmail::_s('from'), $USER->email);
-        $mform->addElement('static', 'selectors', '', '
-            <table>
-                <tr>
-                    <td>
-                        <strong class="required">'.quickmail::_s('selected').'
-                            <img class="req" title="Required field" alt="Required field" src="'.$OUTPUT->pix_url('req').'"/>
-                        </strong>
-                    </td>
-                    <td align="right" colspan="2">
-                        <strong>'.quickmail::_s('role_filter').'</strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="300">
-                        <select id="mail_users" multiple size="30">
-                            '.array_reduce($this->_customdata['selected'], array($this, 'reduce_users'), '').'
-                        </select>
-                    </td>
-                    <td width="100" align="center">
-                        <p>
-                            <input type="button" id="add_button" value="'.$OUTPUT->larrow().' '.quickmail::_s('add_button').'"/>
-                        </p>
-                        <p>
-                            <input type="button" id="remove_button" value="'.quickmail::_s('remove_button').' '.$OUTPUT->rarrow().'"/>
-                        </p>
-                        <p>
-                            <input type="button" id="add_all" value="'.quickmail::_s('add_all').'"/>
-                        </p>
-                        <p>
-                            <input type="button" id="remove_all" value="'.quickmail::_s('remove_all').'"/>
-                        </p>
-                    </td>
-                    <td width="300" align="right">
-                        <div>
-                            <select id="roles">
-                                <option value="none" selected>'.quickmail::_s('no_filter').'</option>
-                                '.array_reduce($this->_customdata['roles'], function($in, $role) {
-                                    return $in . '<option value="'.$role->shortname.'">'.$role->name.'</option>';
-                                 }, '').'
-                            </select>
-                        </div>
-                        <div class="object_labels"><strong>'.quickmail::_s('potential_sections').'</strong></div>
-                        <div>
-                            <select id="groups" multiple size="5">
-                                 '.(empty($this->_customdata['groups']) ? '' :
-                                 '<option SELECTED value="all">'.quickmail::_s('all_sections')).'</option>
-                                '.array_reduce($this->_customdata['groups'], function($in, $group) {
-                                    return $in . '<option value="'.$group->id.'">'.$group->name.'</option>';
-                                 }, '').'
-                                 <option value="0">'.quickmail::_s('no_section').'</option>
-                            </select>
-                        </div>
-                        <div class="object_labels"><strong>'.quickmail::_s('potential_users').'</strong></div>
-                        <div>
-                            <select id="from_users" multiple size="20">
-                                '.array_reduce($this->_customdata['users'], array($this, 'reduce_users'), '').'
-                            </select>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        ');
+        $mform->addElement('static', 'selectors', '', html_writer::table($table));
 
         $mform->addElement('filemanager', 'attachments', quickmail::_s('attachment'));
 
