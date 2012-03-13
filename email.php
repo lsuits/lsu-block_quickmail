@@ -197,8 +197,13 @@ if (empty($warnings) and $submitted) {
             $email->message .= $sigs[$email->sigid]->signature;
         }
 
+        $prepender = $config['prepend_class'];
+        if (!empty($prepender) and !empty($course->$prepender)) {
+            $subject = "[{$course->$prepender}] $email->subject";
+        }
+
         foreach (explode(',', $email->mailto) as $userid) {
-            $success = email_to_user($selected[$userid], $USER, $email->subject,
+            $success = email_to_user($selected[$userid], $USER, $subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
 
             if(!$success) {
@@ -207,7 +212,7 @@ if (empty($warnings) and $submitted) {
         }
 
         if ($email->receipt) {
-            email_to_user($USER, $USER, $email->subject, 
+            email_to_user($USER, $USER, $subject,
                 strip_tags($email->message), $email->message, $zip, $zipname);
         }
 
