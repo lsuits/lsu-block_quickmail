@@ -1,3 +1,17 @@
+## v1.2.0
+
+- Fixed student permissions [#19][19]
+- Horizontal scrollbars for email table [#17][17]
+- Ability to configure alternate email address [#16][16]
+- Embed images and other content in email and signature [#21][21]
+- Option to prepend shortname or idnumber in email subject [#22][22]
+
+[22]: https://github.com/lsuits/quickmail/pull/22
+[21]: https://github.com/lsuits/quickmail/pull/21
+[16]: https://github.com/lsuits/quickmail/pull/16
+[19]: https://github.com/lsuits/quickmail/pull/19
+[17]: https://github.com/lsuits/quickmail/pull/17
+
 ## v1.1.2
 
 - Fixed problematic anonymous function between PHP versions [#7][7], [#8][8] ([eSrem][eSrem] and [Icheb][Icheb])
