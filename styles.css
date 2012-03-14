@@ -10,6 +10,40 @@
 #page-Quickmail .mform {
 }
 
+#page-Quickmail .emailtable {
+    background-color: inherit;
+}
+
+#page-Quickmail .emailtable .r1 .c0, .emailtable .r1 .c2 {
+    width: 275px;
+}
+
+#page-Quickmail .object_labels {
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+#page-Quickmail .emailtable .cell {
+    border: none;
+}
+
+#page-Quickmail .emailtable .r0 .cell {
+    padding: .5em .5em .3em .5em;
+}
+
+#page-Quickmail .emailtable .r1 .c1 {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#page-Quickmail .emailtable .r1 .c2 div {
+    padding: 2px 0;
+}
+
+#page-Quickmail .emailtable .r1 .c2, .emailtable .r0 .c1 {
+    text-align: right;
+}
+
 #page-Quickmail .mform fieldset.hidden>div {
    width: 800px;
    text-align: left;

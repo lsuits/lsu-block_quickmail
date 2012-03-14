@@ -30,7 +30,9 @@ class block_quickmail extends block_list {
         $config = quickmail::load_config($COURSE->id);
         $permission = has_capability('block/quickmail:cansend', $context);
 
-        if ($permission or !empty($config['allowstudents'])) {
+        $can_send = ($permission or !empty($config['allowstudents']));
+
+        if ($can_send) {
             $cparam = array('courseid' => $COURSE->id);
 
             $send_email_str = quickmail::_s('composenew');
@@ -57,10 +59,7 @@ class block_quickmail extends block_list {
             );
             $this->content->items[] = $drafts;
             $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $drafts_email_str);
-        }
 
-        // History can't be view by students
-        if ($permission) {
             $history_str = quickmail::_s('history');
             $history = html_writer::link(
                 new moodle_url('/blocks/quickmail/emaillog.php', $cparam),
@@ -68,6 +67,17 @@ class block_quickmail extends block_list {
             );
             $this->content->items[] = $history;
             $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $history_str);
+        }
+
+        if (has_capability('block/quickmail:allowalternate', $context)) {
+            $alt_str = quickmail::_s('alternate');
+            $alt = html_writer::link(
+                new moodle_url('/blocks/quickmail/alternate.php', $cparam),
+                $alt_str
+            );
+
+            $this->content->items[] = $alt;
+            $this->content->icons[] = $OUTPUT->pix_icon('i/edit', $alt_str);
         }
 
         if (has_capability('block/quickmail:canconfig', $context)) {
