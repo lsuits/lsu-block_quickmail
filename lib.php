@@ -83,9 +83,9 @@ abstract class quickmail extends lsu_dev {
 
             $files = $fs->get_area_files(
                 $context->id,
-                'block_quickmail_'.$table, 
-                'attachment', 
-                $id, 
+                'block_quickmail_'.$table,
+                'attachment',
+                $id,
                 'id'
             );
 
@@ -142,10 +142,12 @@ abstract class quickmail extends lsu_dev {
             $m = 'moodle';
             $allowstudents = get_config($m, 'block_quickmail_allowstudents');
             $roleselection = get_config($m, 'block_quickmail_roleselection');
+            $prepender = get_config($m, 'block_quickmail_prepend_class');
 
             $config = array(
                 'allowstudents' => $allowstudents,
-                'roleselection' => $roleselection
+                'roleselection' => $roleselection,
+                'prepend_class' => $prepender
             );
         }
 
@@ -203,7 +205,7 @@ abstract class quickmail extends lsu_dev {
         return $html;
     }
 
-    function list_entries($courseid, $type, $page, $perpage, $userid, $count) {
+    function list_entries($courseid, $type, $page, $perpage, $userid, $count, $can_delete) {
         global $CFG, $DB, $OUTPUT;
 
         $dbtable = 'block_quickmail_'.$type;
@@ -230,21 +232,28 @@ abstract class quickmail extends lsu_dev {
                 'typeid' => $log->id
             );
 
+            $actions = array();
+
             $open_link = html_writer::link(
                 new moodle_url('/blocks/quickmail/email.php', $params),
                 $OUTPUT->pix_icon('i/search', 'Open Email')
             );
+            $actions[] = $open_link;
 
-            $delete_link = html_writer::link (
-                new moodle_url('/blocks/quickmail/emaillog.php',
-                    $params + array('action' => 'delete')
-                ),
-                $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
-            );
+            if ($can_delete) {
+                $delete_link = html_writer::link (
+                    new moodle_url('/blocks/quickmail/emaillog.php',
+                        $params + array('action' => 'delete')
+                    ),
+                    $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
+                );
 
-            $actions = implode(' ', array($open_link, $delete_link));
+                $actions[] = $delete_link;
+            }
 
-            $table->data[] = array($date, $subject, $attachments, $actions);
+            $action_links = implode(' ', $actions);
+
+            $table->data[] = array($date, $subject, $attachments, $action_links);
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
@@ -257,3 +266,30 @@ abstract class quickmail extends lsu_dev {
     }
 }
 
+function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {
+    // This user does not exists in this course, then they can't see email
+    // content
+    if (!is_enrolled($context)) {
+        send_file_not_found();
+    } else {
+        $fs = get_file_storage();
+        global $DB;
+
+        list($itemid, $filename) = $args;
+        $params = array(
+            'component' => 'block_quickmail',
+            'filearea' => $filearea,
+            'itemid' => $itemid,
+            'filename' => $filename
+        );
+
+        $instanceid = $DB->get_field('files', 'id', $params);
+
+        if (empty($instanceid)) {
+            send_file_not_found();
+        } else {
+            $file = $fs->get_file_by_id($instanceid);
+            send_stored_file($file);
+        }
+    }
+}
