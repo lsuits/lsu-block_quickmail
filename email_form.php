@@ -158,7 +158,19 @@ class email_form extends moodleform {
         $table->data[] = new html_table_row(array($selected_required_label, $role_filter_label));
         $table->data[] = new html_table_row(array($select_filter, $center_buttons, $filters));
 
-        $mform->addElement('static', 'from', quickmail::_s('from'), $USER->email);
+        if (has_capability('block/quickmail:allowalternate', $context)) {
+            $alternates = $this->_customdata['alternates'];
+        } else {
+            $alternates = array();
+        }
+
+        if (empty($alternates)) {
+            $mform->addElement('static', 'from', quickmail::_s('from'), $USER->email);
+        } else {
+            $options = array(0 => $USER->email) + $alternates;
+            $mform->addElement('select', 'alternateid', quickmail::_s('from'), $options);
+        }
+
         $mform->addElement('static', 'selectors', '', html_writer::table($table));
 
         $mform->addElement('filemanager', 'attachments', quickmail::_s('attachment'));

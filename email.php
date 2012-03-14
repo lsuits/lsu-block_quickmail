@@ -44,6 +44,10 @@ if (!$has_permission) {
 $sigs = $DB->get_records('block_quickmail_signatures',
     array('userid' => $USER->id), 'default_flag DESC');
 
+$alt_params = array('courseid' => $course->id, 'valid' => 1);
+$alternates = $DB->get_records_menu('block_quickmail_alternate',
+    $alt_params, '', 'id, address');
+
 $blockname = quickmail::_s('pluginname');
 $header = quickmail::_s('email');
 
@@ -160,7 +164,8 @@ $form = new email_form(null, array(
     'groups' => $groups,
     'users_to_roles' => $users_to_roles,
     'users_to_groups' => $users_to_groups,
-    'sigs' => array_map(function($sig) { return $sig->title; }, $sigs)
+    'sigs' => array_map(function($sig) { return $sig->title; }, $sigs),
+    'alternates' => $alternates
 ));
 
 $warnings = array();
@@ -238,8 +243,16 @@ if ($form->is_cancelled()) {
                 $context->id, 'block_quickmail', $table, $data->id,
                 $editor_options);
 
+            // Same user, alternate email
+            if (!empty($data->alternateid)) {
+                $user = clone($USER);
+                $user->mail = $alternates[$data->alternateid];
+            } else {
+                $user = $USER;
+            }
+
             foreach (explode(',', $data->mailto) as $userid) {
-                $success = email_to_user($everyone[$userid], $USER, $data->subject,
+                $success = email_to_user($everyone[$userid], $user, $subject,
                     strip_tags($data->message), $data->message, $zip, $zipname);
 
                 if(!$success) {
@@ -248,7 +261,7 @@ if ($form->is_cancelled()) {
             }
 
             if ($data->receipt) {
-                email_to_user($USER, $USER, $subject,
+                email_to_user($USER, $user, $subject,
                     strip_tags($data->message), $data->message, $zip, $zipname);
             }
 
