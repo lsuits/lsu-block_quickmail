@@ -1,3 +1,7 @@
+## v1.2.1
+
+- Added French translation (Luiggi Sansonetti)
+
 ## v1.2.0
 
 - Fixed student permissions [#19][19]
