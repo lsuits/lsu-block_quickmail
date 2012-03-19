@@ -68,6 +68,9 @@ the email.';
 $string['courselayout'] = 'Course Layout';
 $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
 
+$string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
+cannot be reversed.';
+
 // Alternate Email strings
 $string['alternate_new'] = 'Add Alternate Address';
 $string['sure'] = 'Are you sure you want to delete {$a->address}? This action cannot be undone.';

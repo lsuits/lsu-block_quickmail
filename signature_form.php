@@ -22,11 +22,11 @@ class signature_form extends moodleform {
 
         $buttons = array(
             $mform->createElement('submit', 'save', get_string('savechanges')),
+            $mform->createElement('submit', 'delete', get_string('delete')),
             $mform->createElement('cancel')
         );
 
         $mform->addGroup($buttons, 'buttons', quickmail::_s('actions'), array(' '), false);
         $mform->addRule('title', null, 'required', null, 'client');
-        $mform->addRule('signature_editor', null, 'required', null, 'client');
     }
 }

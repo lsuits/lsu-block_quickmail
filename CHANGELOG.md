@@ -1,8 +1,10 @@
 ## v1.2.2
 
 - Emergency Fix for alternate emails [#25][25]
+- Embed image permission too strong for thick app clients [#26][26]
 
-[25]: https://github.com/lsuits/quickmail/issues/22
+[25]: https://github.com/lsuits/quickmail/issues/25
+[26]: https://github.com/lsuits/quickmail/issues/26
 
 ## v1.2.1
 
