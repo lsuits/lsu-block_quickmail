@@ -10,6 +10,8 @@ Quickmail is a Moodle block that provides selective, bulk emailing within course
 * Filter by Role
 * Filter by Groups
 * Optionally allow Students to email people within their group.
+* Alternate sending email
+* Embed images and other content in emails and signatures
 
 ## Download
 
