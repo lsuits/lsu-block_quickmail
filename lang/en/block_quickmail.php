@@ -82,16 +82,24 @@ $string['entry_failure'] = 'An email could not be sent to {$a->address}. Please 
 $string['alternate_from'] = 'Moodle: Quickmail';
 $string['alternate_subject'] = 'Alternate email address verification';
 $string['alternate_body'] = '
+<p>
 {$a->fullname} added {$a->address} as an alternate sending address for {$a->course}.
+</p>
 
+<p>
 The purpose of this email was to verify that this address exists, and the owner
 of this address has the appropriate permissions in Moodle.
+</p>
 
+<p>
 If you wish to complete the verification process, please continue by directing
 your browser to the following url: {$a->url}.
+</p>
 
+<p>
 If the description of this email does not make any sense to you, then you may have
 received it by mistake. Simply discard this message.
+</p>
 
 Thank you.
 ';

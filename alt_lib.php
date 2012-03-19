@@ -117,13 +117,14 @@ abstract class quickmail_alternate implements quickmail_alternate_actions {
 
         $a = new stdClass;
         $a->address = $entry->address;
-        $a->url = $approval_url->out();
+        $a->url = html_writer::link($approval_url, $approval_url->out());
         $a->course = $course->fullname;
         $a->fullname = fullname($USER);
 
         $from = quickmail::_s('alternate_from');
         $subject = quickmail::_s('alternate_subject');
-        $body = quickmail::_s('alternate_body', $a);
+        $html_body = quickmail::_s('alternate_body', $a);
+        $body = strip_tags($html_body);
 
         // Send email
         $user = clone($USER);
@@ -131,7 +132,7 @@ abstract class quickmail_alternate implements quickmail_alternate_actions {
         $user->firstname = quickmail::_s('pluginname');
         $user->lastname = quickmail::_s('alternate');
 
-        $result = email_to_user($user, $from, $subject, $body);
+        $result = email_to_user($user, $from, $subject, $body, $html_body);
 
         // Add to log
         add_to_log($course->id, 'quickmail', 'add', $url->out(),

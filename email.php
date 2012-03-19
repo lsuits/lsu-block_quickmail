@@ -246,7 +246,7 @@ if ($form->is_cancelled()) {
             // Same user, alternate email
             if (!empty($data->alternateid)) {
                 $user = clone($USER);
-                $user->mail = $alternates[$data->alternateid];
+                $user->email = $alternates[$data->alternateid];
             } else {
                 $user = $USER;
             }
