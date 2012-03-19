@@ -267,29 +267,23 @@ abstract class quickmail extends lsu_dev {
 }
 
 function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {
-    // This user does not exists in this course, then they can't see email
-    // content
-    if (!is_enrolled($context)) {
+    $fs = get_file_storage();
+    global $DB;
+
+    list($itemid, $filename) = $args;
+    $params = array(
+        'component' => 'block_quickmail',
+        'filearea' => $filearea,
+        'itemid' => $itemid,
+        'filename' => $filename
+    );
+
+    $instanceid = $DB->get_field('files', 'id', $params);
+
+    if (empty($instanceid)) {
         send_file_not_found();
     } else {
-        $fs = get_file_storage();
-        global $DB;
-
-        list($itemid, $filename) = $args;
-        $params = array(
-            'component' => 'block_quickmail',
-            'filearea' => $filearea,
-            'itemid' => $itemid,
-            'filename' => $filename
-        );
-
-        $instanceid = $DB->get_field('files', 'id', $params);
-
-        if (empty($instanceid)) {
-            send_file_not_found();
-        } else {
-            $file = $fs->get_file_by_id($instanceid);
-            send_stored_file($file);
-        }
+        $file = $fs->get_file_by_id($instanceid);
+        send_stored_file($file);
     }
 }
