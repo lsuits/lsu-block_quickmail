@@ -1,3 +1,9 @@
+## v1.2.2
+
+- Emergency Fix for alternate emails [#25][25]
+
+[25]: https://github.com/lsuits/quickmail/issues/22
+
 ## v1.2.1
 
 - Added French translation (Luiggi Sansonetti)
