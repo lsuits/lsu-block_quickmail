@@ -10,6 +10,8 @@ require_login();
 
 $courseid = required_param('courseid', PARAM_INT);
 $sigid = optional_param('id', 0, PARAM_INT);
+$flash = optional_param('flash', 0, PARAM_INT);
+$confirm = optional_param('confirm', 0, PARAM_INT);
 
 if ($courseid and !$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('no_course', 'block_quickmail', '', $courseid);
@@ -75,15 +77,26 @@ $sig = file_prepare_standard_editor($sig, 'signature', $options, $context,
 
 $form = new signature_form(null, array('signature_options' => $options));
 
+if ($confirm) {
+    $DB->delete_records('block_quickmail_signatures', array('id' => $sigid));
+    redirect(new moodle_url('/blocks/quickmail/signature.php', array(
+        'courseid' => $courseid,
+        'flash' => 1
+    )));
+}
+
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
 } else if ($data = $form->get_data()) {
+    if (isset($data->delete)) {
+        $delete = true;
+    }
 
-    if (empty($data->title) or empty($data->signature_editor['text'])) {
+    if (empty($data->title)) {
         $warnings[] = quickmail::_s('required');
     }
 
-    if (empty($warnings)) {
+    if (empty($warnings) and empty($delete)) {
         $data->signature = $data->signature_editor['text'];
 
         if (empty($data->default_flag)) {
@@ -113,7 +126,9 @@ if ($form->is_cancelled()) {
 
         $DB->update_record('block_quickmail_signatures', $data);
 
-        $url = new moodle_url('signature.php', array('id' => $data->id, 'courseid' => $course->id));
+        $url = new moodle_url('signature.php', array(
+            'id' => $data->id, 'courseid' => $course->id, 'flash' => 1
+        ));
         redirect($url);
     }
 }
@@ -127,10 +142,28 @@ $only_names = function ($sig) {
 };
 $sig_options = $first + array_map($only_names, $dbsigs);
 
-echo $OUTPUT->single_select('signature.php?courseid='.$courseid, 'id', $sig_options, $sigid);
-
 $form->set_data($sig);
 
-$form->display();
+if ($flash) {
+    echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
+}
+
+if (!empty($delete)) {
+    $msg = get_string('are_you_sure', 'block_quickmail', $sig);
+    $confirm_url = new moodle_url('/blocks/quickmail/signature.php', array(
+        'id' => $sig->id,
+        'courseid' => $courseid,
+        'confirm' => 1
+    ));
+    $cancel_url = new moodle_url('/blocks/quickmail/signature.php', array(
+        'id' => $sig->id,
+        'courseid' => $courseid
+    ));
+    echo $OUTPUT->confirm($msg, $confirm_url, $cancel_url);
+} else {
+    echo $OUTPUT->single_select('signature.php?courseid='.$courseid, 'id', $sig_options, $sigid);
+
+    $form->display();
+}
 
 echo $OUTPUT->footer();
