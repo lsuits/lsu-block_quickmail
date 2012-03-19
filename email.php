@@ -211,7 +211,9 @@ if ($form->is_cancelled()) {
 
         $prepender = $config['prepend_class'];
         if (!empty($prepender) and !empty($course->$prepender)) {
-            $subject = "[{$course->$prepender}] $email->subject";
+            $subject = "[{$course->$prepender}] $data->subject";
+        } else {
+            $subject = $data->subject;
         }
 
         // An instance id is needed before storing the file repository
