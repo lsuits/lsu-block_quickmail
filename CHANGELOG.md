@@ -1,3 +1,7 @@
+## v1.2.3
+
+- Install script differed from upgrade script
+
 ## v1.2.2
 
 - Emergency Fix for alternate emails [#25][25]
