@@ -1,3 +1,10 @@
+## v1.2.4
+
+- Additional French translation [#28][28] ([luiggisanso][luiggisanso])
+
+[28]: https://github.com/lsuits/quickmail/pull/28
+[luiggisanso]: https://github.com/luiggisanso
+
 ## v1.2.3
 
 - Install script differed from upgrade script
