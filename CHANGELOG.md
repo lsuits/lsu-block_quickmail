@@ -1,8 +1,10 @@
 ## v1.2.4
 
 - Additional French translation [#28][28] ([luiggisanso][luiggisanso])
+- Style fix for Firefox browsers [#29][29]
 
 [28]: https://github.com/lsuits/quickmail/pull/28
+[29]: https://github.com/lsuits/quickmail/issues/29
 [luiggisanso]: https://github.com/luiggisanso
 
 ## v1.2.3
