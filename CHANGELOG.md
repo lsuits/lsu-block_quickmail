@@ -1,8 +1,10 @@
 ## v1.2.5
 
 - Receive copy default setting [#31][31]
+- Empty Signature defaults [#30][30]
 
 [31]: https://github.com/lsuits/quickmail/issues/31
+[30]: https://github.com/lsuits/quickmail/issues/30
 
 ## v1.2.4
 
