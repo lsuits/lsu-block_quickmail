@@ -134,6 +134,11 @@ if (!empty($type)) {
 $email->messageformat = $email->format;
 $email->messagetext = $email->message;
 
+$default_sigid = $DB->get_field('block_quickmail_signatures', 'id', array(
+    'userid' => $USER->id, 'default_flag' => 1
+));
+$email->sigid = $default_sigid ? $default_sigid : -1;
+
 // Some setters for the form
 $email->type = $type;
 $email->typeid = $typeid;
