@@ -1,3 +1,9 @@
+## v1.2.5
+
+- Receive copy default setting [#31][31]
+
+[31]: https://github.com/lsuits/quickmail/issues/31
+
 ## v1.2.4
 
 - Additional French translation [#28][28] ([luiggisanso][luiggisanso])
