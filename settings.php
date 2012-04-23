@@ -34,6 +34,13 @@ if($ADMIN->fulltree) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configselect('block_quickmail_receipt',
+        quickmail::_s('receipt'), quickmail::_s('receipt_help'),
+        0, $select
+        )
+    );
+
     $options = array(
         0 => get_string('none'),
         'idnumber' => get_string('idnumber'),

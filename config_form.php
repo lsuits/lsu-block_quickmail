@@ -35,6 +35,9 @@ class config_form extends moodleform {
         $mform->addElement('select', 'prepend_class',
             quickmail::_s('prepend_class'), $options);
 
+        $mform->addElement('select', 'receipt',
+            quickmail::_s('receipt'), $student_select);
+
         $mform->addElement('submit', 'save', get_string('savechanges'));
         $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
 

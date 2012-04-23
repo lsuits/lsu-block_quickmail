@@ -191,6 +191,8 @@ class email_form extends moodleform {
         );
 
         $mform->addGroup($radio, 'receipt_action', quickmail::_s('receipt'), array(' '), false);
+        $mform->addHelpButton('receipt_action', 'receipt', 'block_quickmail');
+        $mform->setDefault('receipt', !empty($config['receipt']));
 
         $buttons = array();
         $buttons[] =& $mform->createElement('submit', 'send', quickmail::_s('send_email'));

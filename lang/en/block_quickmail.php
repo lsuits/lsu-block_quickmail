@@ -36,6 +36,7 @@ $string['sig'] ='Signature';
 $string['default_flag'] = 'Default';
 $string['config'] = 'Configuration';
 $string['receipt'] = 'Receive a copy';
+$string['receipt_help'] = 'Receive a copy of the email being sent';
 
 $string['no_alternates'] = 'No alternate emails found for {$a->fullname}. Continue to make one.';
 
