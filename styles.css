@@ -55,3 +55,7 @@
    width: 100px;
    height: 25px;
 }
+
+#page-Quickmail .mform input#id_subject {
+  width: 75%;
+}
