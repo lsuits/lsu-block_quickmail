@@ -64,8 +64,8 @@ abstract class quickmail extends lsu_dev {
     static function process_attachments($context, $email, $table, $id) {
         global $CFG, $USER;
 
-        $base_path = "temp/block_quickmail/{$USER->id}";
-        $moodle_base = "$CFG->dataroot/$base_path";
+        $base_path = "block_quickmail/{$USER->id}";
+        $moodle_base = "$CFG->tempdir/$base_path";
 
         if (!file_exists($moodle_base)) {
             mkdir($moodle_base, $CFG->directorypermissions, true);
