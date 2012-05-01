@@ -1,3 +1,7 @@
+## v1.2.6
+
+- Now uses $CFG->tempdir for the temp directory
+
 ## v1.2.5
 
 - Receive copy default setting [#31][31]
