@@ -1,6 +1,10 @@
 ## v1.2.6
 
-- Now uses $CFG->tempdir for the temp directory
+- Now uses $CFG->tempdir for the temp directory [741a64][741a64]
+- Update French translation [#32][32] ([luiggisanso][luiggisanso])
+
+[741a64]: https://github.com/lsuits/quickmail/commit/741a64546344ba1fb639df251f15a8fc2b0c34b4
+[32]: https://github.com/lsuits/quickmail/pull/32
 
 ## v1.2.5
 
