@@ -36,6 +36,7 @@ $string['sig'] ='Signature';
 $string['default_flag'] = 'Par défaut';
 $string['config'] = 'Configuration';
 $string['receipt'] = 'Recevoir une copie';
+$string['receipt_help'] = 'Recevoir une copie du message envoyé';
 
 $string['no_alternates'] = 'Pas d\'adresse secondaire de trouvée pour {$a->fullname}. Poursuivre la création.';
 
