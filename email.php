@@ -272,7 +272,7 @@ if ($form->is_cancelled()) {
                     strip_tags($data->message), $data->message, $zip, $zipname);
             }
 
-            if (!empty($zip)) {
+            if (!empty($actual_zip)) {
                 unlink($actual_zip);
             }
         }

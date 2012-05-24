@@ -75,8 +75,10 @@ abstract class quickmail extends lsu_dev {
 
         if (!empty($email->attachment)) {
             $zipname = "attachment.zip";
-            $zip = "temp/$base_path/$zipname";
             $actual_zip = "$moodle_base/$zipname";
+
+            $safe_path = preg_replace('/\//', "\\/", $CFG->dataroot);
+            $zip = preg_replace("/$safe_path\\//", '', $actual_zip);
 
             $packer = get_file_packer();
             $fs = get_file_storage();
