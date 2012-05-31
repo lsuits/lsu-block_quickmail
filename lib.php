@@ -2,35 +2,9 @@
 
 // Written at Louisiana State University
 
-abstract class lsu_dev {
-    abstract static function pluginname();
-
-    static function is_lsu() {
-        global $CFG;
-        return isset($CFG->is_lsu) and $CFG->is_lsu;
-    }
-
+abstract class quickmail {
     public static function _s($key, $a = null) {
-        $class = get_called_class();
-
-        return get_string($key, $class::pluginname(), $a);
-    }
-
-    /**
-     * Shorten locally called string even more
-     */
-    public static function gen_str() {
-        $class = get_called_class();
-
-        return function ($key, $a = null) use ($class) {
-            return get_string($key, $class::pluginname(), $a);
-        };
-    }
-}
-
-abstract class quickmail extends lsu_dev {
-    static function pluginname() {
-        return 'block_quickmail';
+        return get_string($key, 'block_quickmail', $a);
     }
 
     static function format_time($time) {
