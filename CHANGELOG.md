@@ -1,12 +1,15 @@
 ## v1.2.7
 
+- Install fields were causing problems on install [#34][34] ([mackensen][mackensen])
 - Javascript was blocking Cancel [#33][33]
 - Block now uses icons correctly [213ed0][213ed0]
 - Uses the correct zip in attachments [200fb2][200fb2]
 
+[mackensen]: https://github.com/mackensen
 [213ed0]: https://github.com/lsuits/quickmail/commit/213ed09b58a065608d81df83005dccd4f8b6714d
 [200fb2]: https://github.com/lsuits/quickmail/commit/200fb2e07d01c052a398c799d11607eed3f5ac64
 [33]: https://github.com/lsuits/quickmail/issues/33
+[34]: https://github.com/lsuits/quickmail/issues/34
 
 ## v1.2.6
 
