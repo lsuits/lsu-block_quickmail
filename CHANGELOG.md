@@ -1,3 +1,9 @@
+## v1.2.8
+
+- Type needs to be included in pagination [3333e6][3333e6]
+
+[3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
+
 ## v1.2.7
 
 - Removed dprecated code [#35][35] ([mackensen][mackensen])
