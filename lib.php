@@ -235,7 +235,7 @@ abstract class quickmail {
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
-            '/blocks/quickmail/emaillog.php?courseid='.$courseid);
+            '/blocks/quickmail/emaillog.php?type='.$type.'&amp;courseid='.$courseid);
 
         $html = $paging;
         $html .= html_writer::table($table);
