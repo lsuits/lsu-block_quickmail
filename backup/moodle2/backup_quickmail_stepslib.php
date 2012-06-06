@@ -6,6 +6,7 @@ class backup_quickmail_block_structure_step extends backup_block_structure_step 
 
         $params = array('courseid' => $this->get_courseid());
         $quickmail_logs = $DB->get_records('block_quickmail_log', $params);
+        $include_history = $this->get_setting_value('include_quickmail_log');
 
         $backup_logs = new backup_nested_element('emaillogs', array('courseid'), null);
 
@@ -18,7 +19,7 @@ class backup_quickmail_block_structure_step extends backup_block_structure_step 
 
         $backup_logs->set_source_array(array((object)$params));
 
-        if (!empty($quickmail_logs)) {
+        if (!empty($quickmail_logs) and $include_history) {
             $log->set_source_sql(
                 'SELECT * FROM {block_quickmail_log}
                 WHERE courseid = ?', array(array('sqlparam' => $this->get_courseid()))

@@ -13,7 +13,18 @@ class restore_quickmail_log_structure_step extends restore_activity_structure_st
     protected function process_block($data) {
         $data = (object) $data;
 
-        if (isset($data->emaillogs['log'])) {
+        $restore = $this->get_setting_value('restore_quickmail_history');
+        $overwrite = $this->get_setting_value('overwrite_quickmail_history');
+
+        // Delete current history, if any
+        if ($overwrite) {
+            global $DB;
+
+            $params = array('courseid' => $this->get_courseid());
+            $DB->delete_records('block_quickmail_log', $params);
+        }
+
+        if ($restore and isset($data->emaillogs['log'])) {
             foreach ($data->emaillogs['log'] as $log) {
                 $this->process_log($log);
             }
