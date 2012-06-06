@@ -39,13 +39,15 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table->addKey($key);
 
-        $dbman->create_table($table);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
         foreach (array('log', 'drafts') as $table) {
             // Define field alternateid to be added to block_quickmail_log
             $table = new xmldb_table('block_quickmail_' . $table);
             $field = new xmldb_field('alternateid', XMLDB_TYPE_INTEGER, '10',
-                XMLDB_UNSIGNED, null, null, 'NULL', 'userid');
+                XMLDB_UNSIGNED, null, null, null, 'userid');
 
             // Conditionally launch add field alternateid
             if (!$dbman->field_exists($table, $field)) {
