@@ -45,7 +45,6 @@ class restore_quickmail_block_task extends restore_block_task {
 
             $overwrite_history->set_value(false);
             $overwrite_history->set_status(backup_setting::LOCKED_BY_CONFIG);
-            $overwrite_history->set_visibility(backup_setting::HIDDEN);
         }
 
         $this->add_setting($overwrite_history);

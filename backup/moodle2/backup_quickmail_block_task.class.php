@@ -13,6 +13,7 @@ class backup_quickmail_block_task extends backup_block_task {
     }
 
     protected function define_my_steps() {
+        // TODO: additional steps for drafts and alternate emails
         $this->add_step(new backup_quickmail_block_structure_step('quickmail_structure', 'emaillogs.xml'));
     }
 
