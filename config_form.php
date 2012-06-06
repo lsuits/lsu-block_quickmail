@@ -13,7 +13,7 @@ class config_form extends moodleform {
                 'courseid' => $this->_customdata['courseid'],
                 'reset' => 1
             )), quickmail::_s('reset')
-        ); 
+        );
         $mform->addElement('static', 'reset', '', $reset_link);
 
         $student_select = array(0 => get_string('no'), 1 => get_string('yes'));
