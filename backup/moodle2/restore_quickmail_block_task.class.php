@@ -56,7 +56,7 @@ class restore_quickmail_block_task extends restore_block_task {
     }
 
     public function get_fileareas() {
-        return array('message');
+        return array('log', 'attachment_log');
     }
 
     public function get_configdata_encoded_attributes() {
@@ -64,6 +64,7 @@ class restore_quickmail_block_task extends restore_block_task {
     }
 
     static public function define_decode_contents() {
+        // TODO: perhaps needing this when moving away from email zip attaches
         return array();
     }
 
