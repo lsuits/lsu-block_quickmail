@@ -18,7 +18,7 @@ class backup_quickmail_block_task extends backup_block_task {
     }
 
     public function get_fileareas() {
-        return array('message');
+        return array('log');
     }
 
     public function get_configdata_encoded_attributes() {
