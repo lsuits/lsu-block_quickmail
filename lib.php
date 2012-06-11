@@ -8,7 +8,7 @@ abstract class quickmail {
     }
 
     static function format_time($time) {
-        return date("l, d F Y, h:i A", $time);
+        return userdate($time, '%A, %d %B %Y, %I:%M %P');
     }
 
     static function cleanup($table, $itemid) {
