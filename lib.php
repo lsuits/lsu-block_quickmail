@@ -11,28 +11,35 @@ abstract class quickmail {
         return userdate($time, '%A, %d %B %Y, %I:%M %P');
     }
 
-    static function cleanup($table, $itemid) {
+    static function cleanup($table, $contextid, $itemid) {
         global $DB;
 
         // Clean up the files associated with this email
         // Fortunately, they are only db references, but
         // they shouldn't be there, nonetheless.
-        $params = array('component' => $table, 'itemid' => $itemid);
+        $filearea = end(explode('_', $table));
 
-        $result = (
-            $DB->delete_records('files', $params) and
-            $DB->delete_records($table, array('id' => $itemid))
+        $fs = get_file_storage();
+
+        $fs->delete_area_files(
+            $contextid, 'block_quickmail',
+            'attachment_' . $filearea, $itemid
         );
 
-        return $result;
+        $fs->delete_area_files(
+            $contextid, 'block_quickmail',
+            $filearea, $itemid
+        );
+
+        return $DB->delete_records($table, array('id' => $itemid));
     }
 
-    static function history_cleanup($itemid) {
-        return quickmail::cleanup('block_quickmail_log', $itemid);
+    static function history_cleanup($contextid, $itemid) {
+        return quickmail::cleanup('block_quickmail_log', $contextid, $itemid);
     }
 
-    static function draft_cleanup($itemid) {
-        return quickmail::cleanup('block_quickmail_drafts', $itemid);
+    static function draft_cleanup($contextid, $itemid) {
+        return quickmail::cleanup('block_quickmail_drafts', $contextid, $itemid);
     }
 
     static function process_attachments($context, $email, $table, $id) {
@@ -59,8 +66,8 @@ abstract class quickmail {
 
             $files = $fs->get_area_files(
                 $context->id,
-                'block_quickmail_'.$table,
-                'attachment',
+                'block_quickmail',
+                'attachment_' . $table,
                 $id,
                 'id'
             );

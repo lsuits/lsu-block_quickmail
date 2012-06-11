@@ -223,7 +223,7 @@ if ($form->is_cancelled()) {
 
         // An instance id is needed before storing the file repository
         file_save_draft_area_files($data->attachments, $context->id,
-            'block_quickmail_'.$table, 'attachment', $data->id);
+            'block_quickmail', 'attachment_' . $table, $data->id);
 
         // Send emails
         if (isset($data->send)) {
@@ -283,7 +283,10 @@ if ($form->is_cancelled()) {
 if (empty($email->attachments)) {
     if(!empty($type)) {
         $attachid = file_get_submitted_draft_itemid('attachment');
-        file_prepare_draft_area($attachid, $context->id, 'block_quickmail_'.$type, 'attachment', $typeid);
+        file_prepare_draft_area(
+            $attachid, $context->id, 'block_quickmail',
+            'attachment_' . $type, $typeid
+        );
         $email->attachments = $attachid;
     }
 }

@@ -73,7 +73,7 @@ $count = $DB->count_records($dbtable, $params);
 
 switch ($action) {
     case "confirm":
-        if(quickmail::cleanup($dbtable, $typeid)) {
+        if (quickmail::cleanup($dbtable, $context->id, $typeid)) {
             $url = new moodle_url('/blocks/quickmail/emaillog.php', array(
                 'courseid' => $courseid,
                 'type' => $type

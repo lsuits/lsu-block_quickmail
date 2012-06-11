@@ -59,5 +59,26 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint($result, 2012021014, 'quickmail');
     }
 
+    if ($oldversion < 2012061112) {
+        // Restructure database references to the new filearea locations
+        foreach (array('log', 'drafts') as $type) {
+            $params = array(
+                'component' => 'block_quickmail_' . $type,
+                'filearea' => 'attachment'
+            );
+
+            $attachments = $DB->get_records('files', $params);
+
+            foreach ($attachments as $attachment) {
+                $attachment->filearea = 'attachment_' . $type;
+                $attachment->component = 'block_quickmail';
+
+                $result = $result && $DB->update_record('files', $attachment);
+            }
+        }
+
+        upgrade_block_savepoint($result, 2012061112, 'quickmail');
+    }
+
     return $result;
 }
