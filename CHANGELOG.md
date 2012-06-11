@@ -1,7 +1,7 @@
 ## v1.2.8
 
 - Type needs to be included in pagination [3333e6][3333e6]
-- Fix upgrade failure point [#41][41]
+- Fix upgrade failure point [#41][41] ([mackensen][mackensen])
 - Use correct user time in history and drafts [#42][42]
 
 [3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
