@@ -1,8 +1,10 @@
 ## v1.2.8
 
 - Type needs to be included in pagination [3333e6][3333e6]
+- Fix upgrade failure point [#41][41]
 
 [3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
+[41]: https://github.com/lsuits/quickmail/pull/41
 
 ## v1.2.7
 
