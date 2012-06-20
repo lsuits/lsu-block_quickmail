@@ -226,10 +226,13 @@ abstract class quickmail {
             $actions[] = $open_link;
 
             if ($can_delete) {
+                $delete_params = $params + array(
+                    'userid' => $userid,
+                    'action' => 'delete'
+                );
+
                 $delete_link = html_writer::link (
-                    new moodle_url('/blocks/quickmail/emaillog.php',
-                        $params + array('action' => 'delete')
-                    ),
+                    new moodle_url('/blocks/quickmail/emaillog.php', $delete_params),
                     $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
                 );
 

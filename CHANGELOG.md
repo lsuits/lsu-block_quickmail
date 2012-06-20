@@ -1,10 +1,12 @@
 ## v1.2.8
 
+- Fixes broken delete link for admins [4166c8][4166c8]
 - Improved attachment filearea [#40][40]
 - Type needs to be included in pagination [3333e6][3333e6]
 - Fix upgrade failure point [#41][41] ([mackensen][mackensen])
 - Use correct user time in history and drafts [#42][42]
 
+[4166c8]: https://github.com/lsuits/quickmail/commit/4166c828d531e4ef2538fbae2f156c49bb627cdb
 [3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
 [40]: https://github.com/lsuits/quickmail/issues/40
 [41]: https://github.com/lsuits/quickmail/pull/41
