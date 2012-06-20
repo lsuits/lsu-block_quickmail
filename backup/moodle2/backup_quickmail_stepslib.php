@@ -5,6 +5,8 @@ class backup_quickmail_block_structure_step extends backup_block_structure_step 
         global $DB;
 
         $params = array('courseid' => $this->get_courseid());
+        $context = get_context_instance(CONTEXT_COURSE, $params['courseid']);
+
         $quickmail_logs = $DB->get_records('block_quickmail_log', $params);
         $include_history = $this->get_setting_value('include_quickmail_log');
 
@@ -25,6 +27,11 @@ class backup_quickmail_block_structure_step extends backup_block_structure_step 
                 WHERE courseid = ?', array(array('sqlparam' => $this->get_courseid()))
             );
         }
+
+        $log->annotate_ids('user', 'userid');
+
+        $log->annotate_files('block_quickmail', 'log', 'id', $context->id);
+        $log->annotate_files('block_quickmail', 'attachment_log', 'id', $context->id);
 
         return $this->prepare_block_structure($backup_logs);
     }
