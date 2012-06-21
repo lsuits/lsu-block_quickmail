@@ -1,5 +1,6 @@
 ## v1.2.8
 
+- Backing up and restoring of quickmail hostory [#39][39]
 - Fixes broken delete link for admins [4166c8][4166c8]
 - Improved attachment filearea [#40][40]
 - Type needs to be included in pagination [3333e6][3333e6]
@@ -11,6 +12,7 @@
 [40]: https://github.com/lsuits/quickmail/issues/40
 [41]: https://github.com/lsuits/quickmail/pull/41
 [42]: https://github.com/lsuits/quickmail/issues/42
+[39]: https://github.com/lsuits/quickmail/pull/39
 
 ## v1.2.7
 
