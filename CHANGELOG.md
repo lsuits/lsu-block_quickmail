@@ -1,5 +1,6 @@
 ## v1.2.8
 
+- Russian translation [7a5ccc][7a5ccc] (Sergey Zolotykhin)
 - Backing up and restoring of quickmail hostory [#39][39]
 - Fixes broken delete link for admins [4166c8][4166c8]
 - Improved attachment filearea [#40][40]
@@ -7,6 +8,7 @@
 - Fix upgrade failure point [#41][41] ([mackensen][mackensen])
 - Use correct user time in history and drafts [#42][42]
 
+[7a5ccc]: https://github.com/lsuits/quickmail/commit/7a5cccdff8a1b9d9db7a0a2c3c8e3055a8519e75
 [4166c8]: https://github.com/lsuits/quickmail/commit/4166c828d531e4ef2538fbae2f156c49bb627cdb
 [3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
 [40]: https://github.com/lsuits/quickmail/issues/40
