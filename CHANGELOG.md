@@ -1,5 +1,6 @@
 ## v1.2.8
 
+- Upgrade from 1.9 [a70a5d][a70a5d] ([meyersh][meyersh])
 - Russian translation [7a5ccc][7a5ccc] (Sergey Zolotykhin)
 - Backing up and restoring of quickmail hostory [#39][39]
 - Fixes broken delete link for admins [4166c8][4166c8]
@@ -8,6 +9,8 @@
 - Fix upgrade failure point [#41][41] ([mackensen][mackensen])
 - Use correct user time in history and drafts [#42][42]
 
+[meyersh]: https://github.com/meyersh
+[a70a5d]: https://github.com/lsuits/quickmail/commit/a70a5da1a2c58237078292e8798493643bb38427
 [7a5ccc]: https://github.com/lsuits/quickmail/commit/7a5cccdff8a1b9d9db7a0a2c3c8e3055a8519e75
 [4166c8]: https://github.com/lsuits/quickmail/commit/4166c828d531e4ef2538fbae2f156c49bb627cdb
 [3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
