@@ -1,3 +1,9 @@
+## v1.2.9
+
+- Safe email log restoration: [#45][45]
+
+[45]: https://github.com/lsuits/quickmail/issues/45
+
 ## v1.2.8
 
 - Upgrade from 1.9 [a70a5d][a70a5d] ([meyersh][meyersh])
