@@ -3,7 +3,28 @@
 require_once $CFG->dirroot . '/blocks/quickmail/backup/moodle2/restore_quickmail_stepslib.php';
 
 class restore_quickmail_block_task extends restore_block_task {
+    public function history_exists() {
+        // Weird... folder doesn't exists
+        $fullpath = $this->get_taskbasepath();
+        if (empty($fullpath)) {
+            return false;
+        }
+
+        // Issue #45: trying to restore from a non-existent logfile
+        $fullpath = rtrim($fullpath, '/') . '/emaillogs.xml';
+        if (!file_exists($fullpath)) {
+            return false;
+        }
+
+        return true;
+    }
+
     protected function define_my_settings() {
+        // Nothing to do
+        if (!$this->history_exists()) {
+            return;
+        }
+
         $rootsettings = $this->get_info()->root_settings;
 
         $defaultvalue = false;
@@ -52,7 +73,11 @@ class restore_quickmail_block_task extends restore_block_task {
     }
 
     protected function define_my_steps() {
-        $this->add_step(new restore_quickmail_log_structure_step('quickmail_structure', 'emaillogs.xml'));
+        if ($this->history_exists()) {
+            $this->add_step(new restore_quickmail_log_structure_step(
+                'quickmail_structure', 'emaillogs.xml'
+            ));
+        }
     }
 
     public function get_fileareas() {
