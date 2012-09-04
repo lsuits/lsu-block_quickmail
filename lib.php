@@ -58,8 +58,7 @@ abstract class quickmail {
             $zipname = "attachment.zip";
             $actual_zip = "$moodle_base/$zipname";
 
-            $safe_path = preg_replace('/\//', "\\/", $CFG->dataroot);
-            $zip = preg_replace("/$safe_path\\//", '', $actual_zip);
+            $zip = substr(str_replace($CFG->dataroot, '', $actual_zip), 1);
 
             $packer = get_file_packer();
             $fs = get_file_storage();
