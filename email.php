@@ -75,7 +75,12 @@ $allgroups = groups_get_all_groups($courseid);
 $mastercap = true;
 $groups = $allgroups;
 
-if (!has_capability('moodle/site:accessallgroups', $context)) {
+$restricted_view = (
+    !has_capability('moodle/site:accessallgroups', $context) and
+    $course->groupmode == 1
+);
+
+if ($restricted_view) {
     $mastercap = false;
     $mygroups = groups_get_user_groups($courseid);
     $gids = implode(',', array_values($mygroups['0']));
@@ -94,6 +99,10 @@ $users_to_groups = array();
 $everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
     u.email, u.mailformat, u.maildisplay, r.id AS roleid',
     'u.lastname, u.firstname');
+
+if (count($everyone) == 1) {
+    print_error('no_users', 'block_quickmail');
+}
 
 foreach ($everyone as $userid => $user) {
     $usergroups = groups_get_user_groups($courseid, $userid);
@@ -118,7 +127,7 @@ foreach ($everyone as $userid => $user) {
 }
 
 if (empty($users)) {
-    print_error('no_users', 'block_quickmail');
+    print_error('no_usergroups', 'block_quickmail');
 }
 
 if (!empty($type)) {
