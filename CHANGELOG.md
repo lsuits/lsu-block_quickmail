@@ -1,6 +1,6 @@
 ## v1.2.9
 
-- Fixes attachment path on Windows servers [49][#49]
+- Fixes attachment path on Windows servers [#49][49]
 
 [49]: https://github.com/lsuits/quickmail/issues/49
 
