@@ -277,7 +277,7 @@ if ($form->is_cancelled()) {
 
             foreach (explode(',', $data->mailto) as $userid) {
                 $success = email_to_user($everyone[$userid], $user, $subject,
-                    strip_tags($data->message), $data->message, $zip, $zipname);
+                    strip_tags($data->message), $data->message);
 
                 if(!$success) {
                     $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
@@ -286,11 +286,7 @@ if ($form->is_cancelled()) {
 
             if ($data->receipt) {
                 email_to_user($USER, $user, $subject,
-                    strip_tags($data->message), $data->message, $zip, $zipname);
-            }
-
-            if (!empty($actual_zip)) {
-                unlink($actual_zip);
+                    strip_tags($data->message), $data->message);
             }
         }
     }
