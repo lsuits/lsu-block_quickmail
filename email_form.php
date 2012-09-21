@@ -173,7 +173,10 @@ class email_form extends moodleform {
 
         $mform->addElement('static', 'selectors', '', html_writer::table($table));
 
-        $mform->addElement('filemanager', 'attachments', quickmail::_s('attachment'));
+        $mform->addElement(
+            'filemanager', 'attachments', quickmail::_s('attachment'),
+            null, array('subdirs' => 1, 'accepted_types' => '*')
+        );
 
         $mform->addElement('text', 'subject', quickmail::_s('subject'));
         $mform->setType('subject', PARAM_TEXT);
