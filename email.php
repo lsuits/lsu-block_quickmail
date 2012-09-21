@@ -97,7 +97,7 @@ $users_to_roles = array();
 $users_to_groups = array();
 
 $everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
-    u.email, u.mailformat, u.maildisplay, r.id AS roleid',
+    u.email, u.mailformat, u.suspended, u.maildisplay, r.id AS roleid',
     'u.lastname, u.firstname');
 
 if (count($everyone) == 1) {
@@ -123,7 +123,9 @@ foreach ($everyone as $userid => $user) {
 
     $users_to_groups[$userid] = array_map($groupmapper, $gids);
     $users_to_roles[$userid] = $filterd;
-    $users[$userid] = $user;
+    if(!$user->suspended) {
+        $users[$userid] = $user;
+    }
 }
 
 if (empty($users)) {
