@@ -42,7 +42,58 @@ abstract class quickmail {
         return quickmail::cleanup('block_quickmail_drafts', $contextid, $itemid);
     }
 
+    private static function flatten_subdirs($tree, $gen_link, $level=0) {
+        $attachments = $spaces = '';
+        foreach (range(0, $level) as $space) {
+            $spaces .= "&nbsp; ";
+        }
+        foreach ($tree['files'] as $filename => $file) {
+            $attachments .= $spaces . "- " . $gen_link($filename) . "\n<br/>";
+        }
+        foreach ($tree['subdirs'] as $dirname => $subdir) {
+            $attachments .= $spaces . "- ". $dirname . "\n<br/>";
+            $attachments .= self::flatten_subdirs($subdir, $gen_link, $level + 2);
+        }
+
+        return $attachments;
+    }
+
     static function process_attachments($context, $email, $table, $id) {
+        $attchments = '';
+
+        if (empty($email->attachment)) {
+            return $attachments;
+        }
+
+        $fs = get_file_storage();
+
+        $tree = $fs->get_area_tree(
+            $context->id, 'block_quickmail',
+            'attachment_' . $table, $id, 'id'
+        );
+
+        $base_url = "/$context->id/block_quickmail/attachment_{$table}/$id";
+
+        $gen_link = function ($filename, $text = '') use ($base_url) {
+            if (empty($text)) {
+                $text = $filename;
+            }
+            $url = new moodle_url('/pluginfile.php', array(
+                'forcedownload' => 1,
+                'file' => "/$base_url/$filename"
+            ));
+            return html_writer::link($url, $text);
+        };
+
+        $link = $gen_link("{$email->time}_attachments.zip", self::_s('download_all'));
+
+        $attachments .= self::_s('moodle_attachments', $link);
+        $attachments .= "\n<br/>-------\n<br/>";
+
+        return $attachments . self::flatten_subdirs($tree, $gen_link);
+    }
+
+    static function zip_attachments($context, $table, $id) {
         global $CFG, $USER;
 
         $base_path = "block_quickmail/{$USER->id}";
@@ -52,38 +103,32 @@ abstract class quickmail {
             mkdir($moodle_base, $CFG->directorypermissions, true);
         }
 
-        $zipname = $zip = $actual_zip = '';
+        $zipname = "attachment.zip";
+        $actual_zip = "$moodle_base/$zipname";
 
-        if (!empty($email->attachment)) {
-            $zipname = "attachment.zip";
-            $actual_zip = "$moodle_base/$zipname";
+        $fs = get_file_storage();
+        $packer = get_file_packer();
 
-            $zip = substr(str_replace($CFG->dataroot, '', $actual_zip), 1);
+        $files = $fs->get_area_files(
+            $context->id,
+            'block_quickmail',
+            'attachment_' . $table,
+            $id,
+            'id'
+        );
 
-            $packer = get_file_packer();
-            $fs = get_file_storage();
-
-            $files = $fs->get_area_files(
-                $context->id,
-                'block_quickmail',
-                'attachment_' . $table,
-                $id,
-                'id'
-            );
-
-            $stored_files = array();
-
-            foreach ($files as $file) {
-                if($file->is_directory() and $file->get_filename() == '.')
-                    continue;
-
-                $stored_files[$file->get_filepath().$file->get_filename()] = $file;
+        $stored_files = array();
+        foreach ($files as $file) {
+            if ($file->is_directory() and $file->get_filename() == '.') {
+                continue;
             }
 
-            $packer->archive_to_pathname($stored_files, $actual_zip);
+            $stored_files[$file->get_filepath().$file->get_filename()] = $file;
         }
 
-        return array($zipname, $zip, $actual_zip);
+        $packer->archive_to_pathname($stored_files, $actual_zip);
+
+        return $actual_zip;
     }
 
     static function attachment_names($draft) {
@@ -258,6 +303,18 @@ function block_quickmail_pluginfile($course, $record, $context, $filearea, $args
     global $DB;
 
     list($itemid, $filename) = $args;
+
+    if ($filearea == 'attachment_log') {
+        $time = $DB->get_field('block_quickmail_log', 'time', array(
+            'id' => $itemid
+        ));
+
+        if ("{$time}_attachments.zip" == $filename) {
+            $path = quickmail::zip_attachments($context, 'log', $itemid);
+            send_temp_file($path, 'attachments.zip');
+        }
+    }
+
     $params = array(
         'component' => 'block_quickmail',
         'filearea' => $filearea,

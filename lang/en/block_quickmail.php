@@ -46,6 +46,9 @@ $string['no_alternates'] = 'No alternate emails found for {$a->fullname}. Contin
 $string['select_users'] = 'Select Users ...';
 $string['select_groups'] = 'Select Sections ...';
 
+$string['moodle_attachments'] = 'Moodle Attachments ({$a})';
+$string['download_all'] = 'Download All';
+
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
 $string['select_roles'] = 'Roles to filter by';
