@@ -10,7 +10,7 @@ class block_quickmail extends block_list {
     }
 
     function applicable_formats() {
-        return array('site' => false, 'my' => false, 'course' => true);
+        return array('site' => false, 'my' => false, 'course-view' => true);
     }
 
     function get_content() {
