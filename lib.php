@@ -295,6 +295,68 @@ abstract class quickmail {
         $html .= $paging;
         return $html;
     }
+
+    /**
+     * get all users for a given context
+     * @param $context a moodle context id
+     * @return array of sparse user objects
+     */
+    public static function get_all_users($context){
+        global $DB;
+        $everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
+            u.email, u.mailformat, u.suspended, u.maildisplay, r.id AS roleid',
+            'u.lastname, u.firstname');
+        return $everyone;
+    }
+
+    /**
+     * @TODO this function relies on self::get_all_users, it should not have to
+     * @TODO this is HACKY and make multiple db calls where we should be making one with a nice clean DBAL join 
+     *
+     * returns all users enrolled in a gived coure EXCEPT for those whose 
+     * mdl_user_enrolments.status field is 1 (suspended)
+     * @param $context  moodle context id
+     * @param $courseid the course id
+     */
+    public static function get_non_suspended_users($context, $courseid){
+        global $DB;
+
+        //get the enrolment ids for a given course (this pulls in all enrollment methods)
+        $enrolments = $DB->get_records('enrol', array('courseid'=>$courseid),null ,"id, enrol, status");
+        $enroleids = array();
+        foreach($enrolments as $enrolment){
+            $enrolids[] = $enrolment->id;
+        }
+
+        //get references to users for all the enrolids fetched in the previous query
+        $user_enrolments = $DB->get_records_list('user_enrolments', 'enrolid',$enrolids, null, "id,userid, status");
+        foreach($user_enrolments as $ue){
+            if($ue->status==0){
+                $valid_uids[] = $ue->userid;
+            }
+        }
+
+        //finally, make sparse user db objects
+        $valid_users = $DB->get_records_list('user', 'id', $valid_uids,null,'id, firstname, 
+            lastname,email, mailformat, suspended, maildisplay'); 
+
+        $everyone = self::get_all_users($context);
+
+        //get the intersection of self::all_users and this potentially shorter list
+        $evryone_not_suspended = array_intersect_key($valid_users, $everyone);
+        
+        
+
+        /**
+         * THIS DOES NOT WORK...
+         * $evryone_enrolled = core_enrol_external::get_enrolled_users(
+         *    $courseid,
+         *    array(array('name' => 'onlyactive', 'value' => 1))
+         *  ); 
+         */
+        $recipients = $evryone_not_suspended;
+        return $recipients;
+    }
 }
 
 function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {
