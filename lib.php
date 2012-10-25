@@ -342,8 +342,19 @@ abstract class quickmail {
 
         $everyone = self::get_all_users($context);
 
+
+        $sql = "SELECT u.id, u.firstname, u.lastname, u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
+            FROM {user} as u  
+                JOIN {user_enrolments} as ue                 
+                    ON u.id = ue.userid 
+                JOIN {enrol} as en
+                    ON en.id = ue.enrolid                     
+                WHERE en.courseid = ?
+                    AND ue.status = ?"; 
+        $not_sus = $DB->get_records_sql($sql, array($courseid, 0));
+
         //get the intersection of self::all_users and this potentially shorter list
-        $evryone_not_suspended = array_intersect_key($valid_users, $everyone);
+        $evryone_not_suspended = array_intersect_key($not_sus, $everyone);
         
         
 
