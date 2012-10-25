@@ -77,10 +77,16 @@ $groups = $allgroups;
 
 $restricted_view = (
     !has_capability('moodle/site:accessallgroups', $context) and
-    $course->groupmode == 1
+    $config['ferpa'] == 'strictferpa'
 );
 
-if ($restricted_view) {
+$respected_view = (
+    !has_capability('moodle/site:accessallgroups', $context) and
+    $course->groupmode == 1 and
+    $config['ferpa'] == 'courseferpa'
+);
+
+if ($restricted_view || $respected_view) {
     $mastercap = false;
     $mygroups = groups_get_user_groups($courseid);
     $gids = implode(',', array_values($mygroups['0']));

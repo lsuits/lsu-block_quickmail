@@ -73,6 +73,11 @@ $string['required'] = 'Please fill in the required fields.';
 $string['prepend_class'] = 'Prepend Course name';
 $string['prepend_class_desc'] = 'Prepend the course shortname to the subject of
 the email.';
+$string['ferpa'] = 'FERPA Mode';
+$string['ferpa_desc'] = 'Allows the system to behave either according to the course groupmode setting, ignoring the groupmode setting but separating groups, or ignoring groups altogether.';
+$string['strictferpa'] = 'Always Separate Groups';
+$string['courseferpa'] = 'Respect Course Mode';
+$string['noferpa'] = 'No Group Respect';
 $string['courselayout'] = 'Course Layout';
 $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
 

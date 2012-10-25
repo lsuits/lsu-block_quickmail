@@ -53,4 +53,18 @@ if($ADMIN->fulltree) {
             0, $options
         )
     );
+
+    $groupoptions = array(
+        'strictferpa' => get_string('strictferpa', 'block_quickmail'),
+        'courseferpa' => get_string('courseferpa', 'block_quickmail'),
+        'noferpa' => get_string('noferpa', 'block_quickmail')
+    );
+
+    $settings->add(
+        new admin_setting_configselect('block_quickmail_ferpa',
+            quickmail::_s('ferpa'), quickmail::_s('ferpa_desc'),
+            'strictferpa', $groupoptions
+        )
+    );
+
 }
