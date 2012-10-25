@@ -311,7 +311,6 @@ abstract class quickmail {
 
     /**
      * @TODO this function relies on self::get_all_users, it should not have to
-     * @TODO this is HACKY and make multiple db calls where we should be making one with a nice clean DBAL join 
      *
      * returns all users enrolled in a gived coure EXCEPT for those whose 
      * mdl_user_enrolments.status field is 1 (suspended)
@@ -320,28 +319,7 @@ abstract class quickmail {
      */
     public static function get_non_suspended_users($context, $courseid){
         global $DB;
-
-        //get the enrolment ids for a given course (this pulls in all enrollment methods)
-        $enrolments = $DB->get_records('enrol', array('courseid'=>$courseid),null ,"id, enrol, status");
-        $enroleids = array();
-        foreach($enrolments as $enrolment){
-            $enrolids[] = $enrolment->id;
-        }
-
-        //get references to users for all the enrolids fetched in the previous query
-        $user_enrolments = $DB->get_records_list('user_enrolments', 'enrolid',$enrolids, null, "id,userid, status");
-        foreach($user_enrolments as $ue){
-            if($ue->status==0){
-                $valid_uids[] = $ue->userid;
-            }
-        }
-
-        //finally, make sparse user db objects
-        $valid_users = $DB->get_records_list('user', 'id', $valid_uids,null,'id, firstname, 
-            lastname,email, mailformat, suspended, maildisplay'); 
-
         $everyone = self::get_all_users($context);
-
 
         $sql = "SELECT u.id, u.firstname, u.lastname, u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} as u  
@@ -351,22 +329,13 @@ abstract class quickmail {
                     ON en.id = ue.enrolid                     
                 WHERE en.courseid = ?
                     AND ue.status = ?"; 
+
         $not_sus = $DB->get_records_sql($sql, array($courseid, 0));
 
         //get the intersection of self::all_users and this potentially shorter list
         $evryone_not_suspended = array_intersect_key($not_sus, $everyone);
-        
-        
 
-        /**
-         * THIS DOES NOT WORK...
-         * $evryone_enrolled = core_enrol_external::get_enrolled_users(
-         *    $courseid,
-         *    array(array('name' => 'onlyactive', 'value' => 1))
-         *  ); 
-         */
-        $recipients = $evryone_not_suspended;
-        return $recipients;
+        return $evryone_not_suspended;
     }
 }
 
