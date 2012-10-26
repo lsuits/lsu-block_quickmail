@@ -330,10 +330,27 @@ abstract class quickmail {
                 WHERE en.courseid = ?
                     AND ue.status = ?"; 
 
-        $not_sus = $DB->get_records_sql($sql, array($courseid, 0));
+        //let's use a recordset in case the enrollment is huge
+        $rs_valids = $DB->get_recordset_sql($sql, array($courseid, 0));
 
+        //container for user_enrolments records
+        $valids = array();
+
+        /**
+         * @TODO use a cleaner mechanism from std lib to do this without iterating over the array
+         * for each chunk of the recordset,
+         * insert the record into the valids container
+         * using the id number as the array key;
+         * this amtches the format used by self::get_all_users
+         */
+        foreach($rs_valids as $rsv){
+            $valids[$rsv->id] = $rsv;
+        }
+        //required to close te recordset
+        $rs_valids->close();
+        
         //get the intersection of self::all_users and this potentially shorter list
-        $evryone_not_suspended = array_intersect_key($not_sus, $everyone);
+        $evryone_not_suspended = array_intersect_key($valids, $everyone);
 
         return $evryone_not_suspended;
     }
