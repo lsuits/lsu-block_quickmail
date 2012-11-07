@@ -60,6 +60,7 @@ abstract class quickmail {
 
     static function process_attachments($context, $email, $table, $id) {
         $attachments = '';
+        $filename = '';
 
         if (empty($email->attachment)) {
             return $attachments;
@@ -85,8 +86,15 @@ abstract class quickmail {
             return html_writer::link($url, $text);
         };
 
+            $texturl = new moodle_url('/pluginfile.php', array(
+                'forcedownload' => 1,
+                'file' => "/$base_url/$filename"
+            ));
+
         $link = $gen_link("{$email->time}_attachments.zip", self::_s('download_all'));
+        $attachments .= "\n<br/>-------\n<br/>";
         $attachments .= self::_s('moodle_attachments', $link);
+        $attachments .= "\n<br />" . $texturl . $email->time . "_attachments.zip";
         $attachments .= "\n<br/>-------\n<br/>";
 
         return $attachments . self::flatten_subdirs($tree, $gen_link);
