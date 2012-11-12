@@ -75,7 +75,13 @@ abstract class quickmail {
 
         $base_url = "/$context->id/block_quickmail/attachment_{$table}/$id";
 
-        $gen_link = function ($filename, $text = '') use ($base_url) {
+        /**
+         * @param string $filename name of the file for which we are generating a download link
+         * @param string $text optional param sets the link text; if not given, filename is used
+         * @param bool $plain if itrue, we will output a clean url for plain text email users
+         *
+         */
+        $gen_link = function ($filename, $text = '', $plain=false) use ($base_url) {
             if (empty($text)) {
                 $text = $filename;
             }
@@ -83,18 +89,28 @@ abstract class quickmail {
                 'forcedownload' => 1,
                 'file' => "/$base_url/$filename"
             ));
+
+            //to prevent double encoding of ampersands in urls for our plaintext users,
+            //we use the out() method of moodle_url
+            //@see http://phpdocs.moodle.org/HEAD/moodlecore/moodle_url.html
+            if($plain){
+                return $url->out(false);    
+            }
+
             return html_writer::link($url, $text);
         };
 
-            $texturl = new moodle_url('/pluginfile.php', array(
-                'forcedownload' => 1,
-                'file' => "/$base_url/$filename"
-            ));
+
 
         $link = $gen_link("{$email->time}_attachments.zip", self::_s('download_all'));
+
+        //get a plain text version of the link
+        //by calling gen_link with @param $plain set to true
+        $tlink = $gen_link("{$email->time}_attachments.zip", '', true);
+
         $attachments .= "\n<br/>-------\n<br/>";
         $attachments .= self::_s('moodle_attachments', $link);
-        $attachments .= "\n<br />" . $texturl . $email->time . "_attachments.zip";
+        $attachments .= "\n<br/>".$tlink."\n<br/>";
         $attachments .= "\n<br/>-------\n<br/>";
 
         return $attachments . self::flatten_subdirs($tree, $gen_link);
