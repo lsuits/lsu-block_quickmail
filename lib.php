@@ -110,8 +110,9 @@ abstract class quickmail {
 
         $attachments .= "\n<br/>-------\n<br/>";
         $attachments .= self::_s('moodle_attachments', $link);
-        $attachments .= "\n<br/>".$tlink."\n<br/>";
+        $attachments .= "\n<br/>".$tlink;
         $attachments .= "\n<br/>-------\n<br/>";
+        $attachments .= self::_s('qm_contents') . "\n<br />";
 
         return $attachments . self::flatten_subdirs($tree, $gen_link);
     }
