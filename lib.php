@@ -45,13 +45,13 @@ abstract class quickmail {
     private static function flatten_subdirs($tree, $gen_link, $level=0) {
         $attachments = $spaces = '';
         foreach (range(0, $level) as $space) {
-            $spaces .= "&nbsp; ";
+            $spaces .= " - ";
         }
         foreach ($tree['files'] as $filename => $file) {
-            $attachments .= $spaces . "- " . $gen_link($filename) . "\n<br/>";
+            $attachments .= $spaces . " " . $gen_link($filename) . "\n<br/>";
         }
         foreach ($tree['subdirs'] as $dirname => $subdir) {
-            $attachments .= $spaces . "- ". $dirname . "\n<br/>";
+            $attachments .= $spaces . " ". $dirname . "\n<br/>";
             $attachments .= self::flatten_subdirs($subdir, $gen_link, $level + 2);
         }
 
