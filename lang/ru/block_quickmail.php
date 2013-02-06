@@ -1,6 +1,6 @@
 <?php
 
-$string['pluginname'] = 'Quickmail';
+$string['pluginname'] = 'Quick-argo';
 $string['quickmail:cansend'] = "Разрешить пользователям отправлять email через Quickmail";
 $string['quickmail:canconfig'] = "Разрешить пользователям настраивать Quickmail.";
 $string['quickmail:canimpersonate'] = "Разрешить пользователям доступ к логам и истории.";

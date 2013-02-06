@@ -4,11 +4,16 @@ Quickmail is a Moodle block that provides selective, bulk emailing within course
 
 ## Features
 
+
 * Multiple attachments
 * Drafts
 * Signatures
 * Filter by Role
 * Filter by Groups
+* Create folders
+* Management of email 
+* Email Search 
+* Replicate email in Moodle
 * Optionally allow Students to email people within their group.
 * Alternate sending email
 * Embed images and other content in emails and signatures
@@ -40,6 +45,10 @@ Quickmail adopts the same license that Moodle does.
 ![Email][email]
 
 ---
+![Email] [recibidos]
+---
+![Email][parte_izquierda]
+---
 
 ![Signatures][signature]
 
@@ -49,8 +58,10 @@ Quickmail adopts the same license that Moodle does.
 
 [quickmail_github]: https://github.com/lsuits/quickmail
 [block_doc]: http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins#Block_installation
-[block]: https://tigerbytes2.lsu.edu/users/pcali1/work/block.png
-[config]: https://tigerbytes2.lsu.edu/users/pcali1/work/config.png
+[block]: http://www.fecyl.com/images/quickmail/Bloque.JPG
+[config]: http://www.fecyl.com/images/quickmail/configuracion.JPG
 [signature]: https://tigerbytes2.lsu.edu/users/pcali1/work/signature.png
 [email]: https://tigerbytes2.lsu.edu/users/pcali1/work/email.png
+[recibidos]: http://www.fecyl.com/images/quickmail/recibidos.JPG
+[parte_izquierda]: http://www.fecyl.com/images/quickmail/parte_izquierda.JPG
 [issues]: https://github.com/lsuits/quickmail/issues
