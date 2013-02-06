@@ -1,5 +1,5 @@
 <?php
-
+// Modified  at  www.fecyl.com by Barbara Vergara
 // Written at Louisiana State University
 
 require_once '../../config.php';
@@ -29,6 +29,8 @@ $PAGE->set_title($blockname . ': '. $header);
 $PAGE->set_heading($blockname. ': '. $header);
 $PAGE->navbar->add($header);
 $PAGE->set_pagetype($blockname);
+$PAGE->requires->js('/blocks/quickmail/js/aad.js');
+
 
 $changed = false;
 
@@ -51,6 +53,10 @@ if ($data = $form->get_data()) {
     $config['roleselection'] = implode(',', $config['roleselection']);
 
     quickmail::save_config($courseid, $config);
+    $folder=array('nombre'=>$config['carpeta'],'id_curso'=>$courseid,'id_alumno'=>$USER->id,'creado'=>date('Y-m-d'));
+        if (!quickmail::existe_carpeta($folder['id_curso'], $folder['id_alumno'], $folder['nombre'])){
+            	$uno=$DB->insert_record_raw('block_quickmail_folders',$folder);
+        }
     $changed = true;
 }
 
