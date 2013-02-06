@@ -120,3 +120,13 @@ received it by mistake. Simply discard this message.
 
 Thank you.
 ';
+$string['Destinatario'] ="For";
+$string['received'] ="Received";
+$string['Carpetas'] ="Folders: ";
+$string['Crear_Nueva_carpeta'] ="Create new folder";
+$string['Mover_a'] ="Move marked messages to the selected folder";
+$string['Search'] ="Search";
+$string['Result_Search'] ="Search results";
+$string['Carpeta'] ="folder: ";
+$string['user_filter'] = 'Filter out by User';
+$string['delete_msg'] = 'Deleting Messages';
