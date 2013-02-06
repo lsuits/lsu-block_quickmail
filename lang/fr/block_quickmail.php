@@ -102,3 +102,13 @@ Si le contenu de ce message n\'a aucun sens pour vous, c\'est qu\'il a été env
 
 Cordialement.
 ';
+$string['Destinatario'] ="Pour";
+$string['received'] ="Reçu";
+$string['Carpetas'] ="Dossiers: ";
+$string['Crear_Nueva_carpeta'] ="Cr&eacute;er un nouveau dossier";
+$string['Mover_a'] ="D&eacute;placer les messages marqu&eacute;s dans le dossier s&eacute;lectionn&eacute;";
+$string['Search'] ="Rechercher";
+$string['Result_Search'] ="Les r&eacute;sultats de forage de la recherche";
+$string['Carpeta'] ="Dossier: ";
+$string['user_filter'] = 'Filtrez par l\'utilisateur';
+$string['delete_msg'] = 'Suppression de messages';
