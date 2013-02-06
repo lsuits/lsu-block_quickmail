@@ -96,7 +96,7 @@
  }
                                                                                           
  .fondo_color_drcha {
- background-image:url(http://www.formacion-fecyl.edu.es/blocks/quickmail/pix/fondo_contendor.png);
+ background-image:url(pix/fondo_contendor.png);
  float:right;
  padding-top:12px;
  padding-bottom:20px;
@@ -107,7 +107,7 @@
  height:20px;
  }
  .fondo_color_izqda {
- background-image:url(http://www.formacion-fecyl.edu.es/blocks/quickmail/pix/fondo_contendor.png);
+ background-image:url(pix/fondo_contendor.png);
  float:left;width:25%;
  padding-left: 10px;
  }
@@ -116,7 +116,7 @@
  width:25%;
  text-decoration:underline;
  padding-left:10px;
- background-image:url(http://www.formacion-fecyl.edu.es/pix/y/tn.gif);
+ background-image:url(../../pix/y/tn.gif);
  background-repeat:repeat-y;
  background-position:right;
  padding-top:10px;
@@ -125,15 +125,15 @@
  }
  
  .lateral_izq a{
- background-image:url(http://www.formacion-fecyl.edu.es/pix/f/folder.png);
+ background-image:url(../../pix/f/folder.png);
  background-repeat:no-repeat;
  padding-left:20px;
  }
  .lateral_izq a.escribir{
- background-image:url(http://www.formacion-fecyl.edu.es/pix/t/editstring.png);
+ background-image:url(../../pix/t/editstring.png);
  }
  .lateral_izq a.borrador{
- background-image:url(http://www.formacion-fecyl.edu.es/pix/t/edit.gif);
+ background-image:url(../../pix/t/edit.gif);
  }
  
  #capa_buscar {
@@ -149,7 +149,7 @@
  width:74%;
  }
  .sub_rayado{
- background-image:url(http://www.formacion-fecyl.edu.es/blocks/quickmail/pix/tline.png);   background-repeat:repeat-x; background-position:top; 
+ background-image:url(pix/tline.png);   background-repeat:repeat-x; background-position:top; 
  font-size:12px;
  height:40px;
  }
