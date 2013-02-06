@@ -885,3 +885,180 @@ static function enlazar_adjuntos($courseid, $carpeta,$id_email, $juntar, $tiempo
                      return $attachments . self::flatten_subdirs($tree, $gen_link);    
                      
                      }
+                     static function zip_attachments($context, $table, $id) {
+                            global $CFG, $USER;
+                                     
+                            $base_path = "block_quickmail/{$USER->id}";
+                            $moodle_base = "$CFG->tempdir/$base_path";
+                                                     
+                            if (!file_exists($moodle_base)) {
+                            mkdir($moodle_base, $CFG->directorypermissions, true);
+                            }
+                                                             
+                            $zipname = "attachment.zip";
+                            $actual_zip = "$moodle_base/$zipname";
+                            
+                            $fs = get_file_storage();
+                            $packer = get_file_packer();
+                            
+                            $files = $fs->get_area_files(
+                            $context->id,
+                            'block_quickmail',
+                            'attachment_' . $table,
+                            $id,
+                            'id'
+                            );
+                            
+                            $stored_files = array();
+                            foreach ($files as $file) {
+                            if ($file->is_directory() and $file->get_filename() == '.') {
+                            continue;
+                            }
+                            
+                            $stored_files[$file->get_filepath().$file->get_filename()] = $file;
+                            }
+                            
+                            $packer->archive_to_pathname($stored_files, $actual_zip);
+                            
+                            return $actual_zip;
+                            
+                            }
+                            
+                     static function reflejar_en_mensajes($eventdata)
+                     {
+                     global $SITE,$CFG, $DB;
+                     
+                     //new message ID to return
+                     $messageid = false;
+                     
+                     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
+                     $DB->transactions_forbidden();
+                     
+                     if (is_number($eventdata->userto)) {
+                     $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto));
+                     }
+                     if (is_int($eventdata->userfrom)) {
+                     $eventdata->userfrom = $DB->get_record('user', array('id' => $eventdata->userfrom));
+                     }
+                     if (!isset($eventdata->userto->auth) or !isset($eventdata->userto->suspended) or !isset($eventdata->userto->deleted)) {
+                     $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto->id));
+                     }
+                     
+                     //after how long inactive should the user be considered logged off?
+                     if (isset($CFG->block_online_users_timetosee)) {
+                     $timetoshowusers = $CFG->block_online_users_timetosee * 60;
+                     } else {
+                     $timetoshowusers = 300;//5 minutes
+                     }
+                     
+                     // Create the message object
+                     $savemessage = new stdClass();
+                     $savemessage->useridfrom        = $eventdata->userfrom->id;
+                     $savemessage->useridto          = $eventdata->userto->id;
+                     $savemessage->subject           = $eventdata->subject;
+                     //$savemessage->fullmessage       = $eventdata->fullmessage;
+                     $savemessage->fullmessageformat = $eventdata->fullmessageformat;
+                     //    $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
+                     // $savemessage->smallmessage      = $eventdata->smallmessage;
+                     
+                     $s = new stdClass();
+                     $s->sitename = format_string($SITE->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, SITEID)));
+                     $s->url = $CFG->wwwroot.'/message/index.php?user='.$eventdata->userto->id.'&id='.$eventdata->userfrom->id;
+                     
+                     $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $eventdata->userto->lang);
+                     
+                     $savemessage->fullmessage ="Asunto:".$eventdata->subject."\n\n". $eventdata->fullmessage."\n\n---------------------------------------------------------------------\n".$emailtagline;
+                     $savemessage->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+                     
+                $savemessage->smallmessage  =$eventdata->subject."<br /><br />". $eventdata->smallmessage;
+                if (!empty($eventdata->notification)) {
+                $savemessage->notification = $eventdata->notification;
+                } else {
+                $savemessage->notification = 0;
+                }
+                
+                if (!empty($eventdata->contexturl)) {
+                $savemessage->contexturl = $eventdata->contexturl;
+                } else {
+                $savemessage->contexturl = null;
+                }
+                
+                if (!empty($eventdata->contexturlname)) {
+                $savemessage->contexturlname = $eventdata->contexturlname;
+                } else {
+                $savemessage->contexturlname = null;
+                }
+                
+                $savemessage->timecreated = time();
+                
+                // Process the message
+                // Store unread message just in case we can not send it
+                $messageid = $savemessage->id = $DB->insert_record('message', $savemessage);
+                $eventdata->savedmessageid = $savemessage->id;
+                
+                
+                //prevent users from getting popup notifications of messages to themselves (happens with forum notifications)
+                if ($eventdata->userfrom->id!=$eventdata->userto->id) {
+                $procmessage = new stdClass();
+                $procmessage->unreadmessageid = $eventdata->savedmessageid;
+                $procmessage->processorid     = 3;
+                
+                //save this message for later delivery
+                $DB->insert_record('message_working', $procmessage);
+                }
+                
+                add_to_log(SITEID, 'message', 'write', 'index.php?user='.$savemessage->useridfrom.'&id='.$savemessage->useridto.'&history=1#m'.$eventdata->savedmessageid, $savemessage->useridfrom);
+                
+                }
+                
+                static function save_config($courseid, $data) {
+                global $DB;
+                                
+                quickmail::default_config($courseid);
+                
+                foreach ($data as $name => $value) {
+                $config = new stdClass;
+                $config->coursesid = $courseid;
+                $config->name = $name;
+                $config->value = $value;
+                
+                $DB->insert_record('block_quickmail_config', $config);
+                }
+                }
+                
+                
+                
+                // Fin de la clase
+        }
+        function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {
+         $fs = get_file_storage();
+         global $DB;
+                        
+         list($itemid, $filename) = $args;
+         if ($filearea == 'attachment_log') {
+         $time = $DB->get_field('block_quickmail_log', 'time', array(
+         'id' => $itemid
+         ));
+         
+         if ("{$time}_attachments.zip" == $filename) {
+         $path = quickmail::zip_attachments($context, 'log', $itemid);
+         send_temp_file($path, 'attachments.zip');
+         }
+         }
+         $params = array(
+         'component' => 'block_quickmail',
+         'filearea' => $filearea,
+         'itemid' => $itemid,
+         'filename' => $filename
+         );
+         
+         $instanceid = $DB->get_field('files', 'id', $params);
+         
+         if (empty($instanceid)) {
+         send_file_not_found();
+         } else {
+         $file = $fs->get_file_by_id($instanceid);
+         send_stored_file($file);
+         }
+         }
+                                                                                           
