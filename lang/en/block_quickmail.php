@@ -1,6 +1,6 @@
 <?php
 
-$string['pluginname'] = 'Quickmail';
+$string['pluginname'] = 'Quick-argo';
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
@@ -13,7 +13,7 @@ $string['composenew'] = 'Compose New Email';
 $string['email'] = 'Email';
 $string['drafts'] = 'View Drafts';
 $string['history'] = 'View History';
-$string['log'] = 'View History';
+$string['log'] = $string['history'];
 $string['from'] = 'From';
 $string['selected'] = 'Selected Recipients';
 $string['add_button'] = 'Add';
@@ -48,7 +48,6 @@ $string['select_groups'] = 'Select Sections ...';
 
 $string['moodle_attachments'] = 'Moodle Attachments ({$a})';
 $string['download_all'] = 'Download All';
-$string['qm_contents'] = 'Download File Contents';
 
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
@@ -62,14 +61,13 @@ $string['no_drafts'] = 'You have no email drafts.';
 $string['no_subject'] = 'You must have a subject';
 $string['no_course'] = 'Invalid Course with id of {$a}';
 $string['no_permission'] = 'You do not have permission to send emails with Quickmail.';
-$string['no_usergroups'] = 'There are no users in your group capable of being emailed.';
 $string['no_users'] = 'There are no users you are capable of emailing.';
 $string['no_selected'] = 'You must select some users for emailing.';
 $string['not_valid'] = 'This is not a valid email log viewer type: {$a}';
 $string['not_valid_user'] = 'You can not view other email history.';
 $string['not_valid_action'] = 'You must provide a valid action: {$a}';
 $string['not_valid_typeid'] = 'You must provide a valid email for {$a}';
-$string['delete_failed'] = 'Failed to delete email';
+$string['delete_failed'] = 'Failed to Borrar correo ';
 $string['required'] = 'Please fill in the required fields.';
 $string['prepend_class'] = 'Prepend Course name';
 $string['prepend_class_desc'] = 'Prepend the course shortname to the subject of

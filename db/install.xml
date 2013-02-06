@@ -6,7 +6,7 @@
   <TABLES>
     <TABLE NAME="block_quickmail_log" COMMENT="Stores the email history for the quickmail block" NEXT="block_quickmail_signatures">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"  NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="alternateid"/>
         <FIELD NAME="alternateid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="mailto"/>
@@ -25,11 +25,11 @@
     </TABLE>
     <TABLE NAME="block_quickmail_signatures" COMMENT="Stores signatures for users" PREVIOUS="block_quickmail_log" NEXT="block_quickmail_drafts">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"  NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"  PREVIOUS="id" NEXT="title"/>
-        <FIELD NAME="title" TYPE="char" LENGTH="125" NOTNULL="false" SEQUENCE="false"  PREVIOUS="userid" NEXT="signature"/>
-        <FIELD NAME="signature" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false"  PREVIOUS="title" NEXT="default_flag"/>
-        <FIELD NAME="default_flag" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false"  PREVIOUS="signature"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="125" NOTNULL="false" SEQUENCE="false" PREVIOUS="userid" NEXT="signature"/>
+        <FIELD NAME="signature" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="title" NEXT="default_flag"/>
+        <FIELD NAME="default_flag" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="signature"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -37,16 +37,16 @@
     </TABLE>
     <TABLE NAME="block_quickmail_drafts" COMMENT="Stores drafts for users" PREVIOUS="block_quickmail_signatures" NEXT="block_quickmail_config">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"  NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"  PREVIOUS="id" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"  PREVIOUS="courseid" NEXT="alternateid"/>
-        <FIELD NAME="alternateid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"  PREVIOUS="userid" NEXT="mailto"/>
-        <FIELD NAME="mailto" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false"  PREVIOUS="alternateid" NEXT="subject"/>
-        <FIELD NAME="subject" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false"  PREVIOUS="mailto" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false"  PREVIOUS="subject" NEXT="attachment"/>
-        <FIELD NAME="attachment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false"  PREVIOUS="message" NEXT="format"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false"  PREVIOUS="attachment" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"  PREVIOUS="format"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="alternateid"/>
+        <FIELD NAME="alternateid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="mailto"/>
+        <FIELD NAME="mailto" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="alternateid" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="mailto" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="attachment"/>
+        <FIELD NAME="attachment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="message" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="attachment" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="format"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -54,26 +54,74 @@
     </TABLE>
     <TABLE NAME="block_quickmail_config" COMMENT="Stores config info for teachers, per instance basis." PREVIOUS="block_quickmail_drafts" NEXT="block_quickmail_alternate">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"  NEXT="coursesid"/>
-        <FIELD NAME="coursesid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"  PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"  PREVIOUS="coursesid" NEXT="value"/>
-        <FIELD NAME="value" TYPE="char" LENGTH="125" NOTNULL="false" SEQUENCE="false"  PREVIOUS="name"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="coursesid"/>
+        <FIELD NAME="coursesid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" PREVIOUS="coursesid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="125" NOTNULL="false" SEQUENCE="false" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="block_quickmail_alternate" COMMENT="Stores alternate email sources for users." PREVIOUS="block_quickmail_config">
+    <TABLE NAME="block_quickmail_alternate" COMMENT="Stores alternate email sources for users." PREVIOUS="block_quickmail_config" NEXT="mdl_block_quickmail_delete">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"  NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"  PREVIOUS="id" NEXT="address"/>
-        <FIELD NAME="address" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"  PREVIOUS="courseid" NEXT="valid"/>
-        <FIELD NAME="valid" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"  PREVIOUS="address"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="address"/>
+        <FIELD NAME="address" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="courseid" NEXT="valid"/>
+        <FIELD NAME="valid" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="address"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
+	<TABLE NAME="block_quickmail_delete" COMMENT="Borrado perezoso." PREVIOUS="block_quickmail_alternate" NEXT="mdl_block_quickmail_folders">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="id_email"/>
+        <FIELD NAME="id_email" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id_email" NEXT="id_tabla"/>
+        <FIELD NAME="id_tabla" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="KEY_userid" />
+        <KEY NAME="KEY_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="KEY_id_email"/>
+      </KEYS>
+    </TABLE>
+	<TABLE NAME="block_quickmail_folders" COMMENT="Borrado perezoso." PREVIOUS="mdl_block_quickmail_delete" NEXT="mdl_block_quickmail_folders_msg">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="id_curso"/>
+        <FIELD NAME="id_curso" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="id_alumno"/>
+        <FIELD NAME="id_alumno" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" PREVIOUS="id_curso" NEXT="nombre"/>
+        <FIELD NAME="nombre" TYPE="char" LENGTH="222" NOTNULL="true" SEQUENCE="false" PREVIOUS="id_alumno"  NEXT="creado"/>
+        <FIELD NAME="creado" TYPE="date"  NOTNULL="true" SEQUENCE="false" PREVIOUS="nombre"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"  NEXT="KEY_userid"/>
+        <KEY NAME="KEY_userid" TYPE="foreign" FIELDS="id_alumno" REFTABLE="user" REFFIELDS="id" NEXT="KEY_curso" PREVIOUS="primary"/>
+	    <KEY NAME="KEY_curso" TYPE="foreign" FIELDS="id_curso" REFTABLE="course" REFFIELDS="id" PREVIOUS="KEY_userid"/>
+      </KEYS>
+    </TABLE>
+	<TABLE NAME="block_quickmail_folders_msg" COMMENT="Stores the email history for the quickmail block" NEXT="block_quickmail_folders">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="alternateid"/>
+        <FIELD NAME="id_folder" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="alternateid"/>
+        <FIELD NAME="alternateid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id_folder" NEXT="mailto"/>
+        <FIELD NAME="mailto" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="alternateid" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailto" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="subject" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="message" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="format"  NEXT="id_msg_original"/>
+        <FIELD NAME="id_msg_original" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" PREVIOUS="time" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for block_quickmail_log" NEXT="courseid"/>
+        <KEY NAME="blocquiclog_cou_ix" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary" NEXT="blocquiclog_use_ix"/>
+        <KEY NAME="blocquiclog_use_ix" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="blocquiclog_cou_ix"  NEXT="blocquiclog_msg_ix"/>
+        <KEY NAME="blocquiclog_msg_ix" TYPE="foreign" FIELDS="id_msg_original" REFTABLE="block_quickmail_log" REFFIELDS="id" PREVIOUS="blocquiclog_use_ix"/>
+      </KEYS>
+    </TABLE>
+	
   </TABLES>
 </XMLDB>
 

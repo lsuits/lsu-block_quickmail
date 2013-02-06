@@ -9,19 +9,19 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Local language pack from http://moodlemagic.info/moodle
- *
- * @package    block
- * @subpackage quickmail
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* Local language pack from http://moodlemagic.info/moodle
+*
+* @package block
+* @subpackage quickmail
+* @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +33,7 @@ $string['attachment'] = 'קבצים מצורפים';
 $string['composenew'] = 'כיתבו דוא"ל חדש';
 $string['config'] = 'תצורה';
 $string['default_flag'] = 'ברירת מחדל';
-$string['delete_confirm'] = 'האם אתם בטוחים שברצונכם למחוק את ההודעה בעלת הפרטים הבאים:  {$a}';
+$string['delete_confirm'] = 'האם אתם בטוחים שברצונכם למחוק את ההודעה בעלת הפרטים הבאים: {$a}';
 $string['delete_failed'] = 'נכשלה שליחת הדוא"ל';
 $string['drafts'] = 'תצוגת טיוטות';
 $string['email'] = 'דוא"ל';
@@ -47,19 +47,19 @@ $string['not_valid_user'] = 'אינכם יכולים לצפות בשאר ההי�
 $string['no_course'] = 'מרחב לימוד בעל מספר זיהוי שאינו בתוקף {$a}';
 $string['no_drafts'] = 'אין לכם טיוטות של דוא"ל';
 $string['no_email'] = 'לא ניתן היה לשלוח דוא"ל
- {$a->שם פרטי}
+{$a->שם פרטי}
 {$a->שם משפחה}.';
 $string['no_filter'] = 'ללא סינון';
 $string['no_log'] = 'אין לכם עדיין היסטורית דוא"ל';
 $string['no_permission'] = 'אינכם רשאים לשלוח דוא"ל עם רכיב "דוא"ל מהיר"';
-$string['no_selected'] = 'עליכם לבחור מספר משתמשים לשם שליחת דוא"ל  אליהם.';
+$string['no_selected'] = 'עליכם לבחור מספר משתמשים לשם שליחת דוא"ל אליהם.';
 $string['no_subject'] = 'עליכם לציין את נושא הדוא"ל';
 $string['no_users'] = 'אין משתמשים שניתן לשלוח אליהם דוא"ל';
 $string['pluginname'] = 'דוא"ל מהיר';
 $string['potential_users'] = 'שמות נמענים פוטנציאלים';
 $string['quickmail:canimpersonate'] = 'אפשרו למשתמשים להתחבר כמשתמשים אחרים לשם צפייה בהיסטוריה';
-$string['quickmail:cansend'] = 'אפשרו למשתמשים לשלוח 
-דוא"ל דרך רכיב זה 
+$string['quickmail:cansend'] = 'אפשרו למשתמשים לשלוח
+דוא"ל דרך רכיב זה
 (דוא"ל מהיר)';
 $string['receipt'] = 'קבלת העתק';
 $string['remove_all'] = 'הסרת הכל';
@@ -74,6 +74,8 @@ $string['sig'] = 'חתימה';
 $string['signature'] = 'חתימות';
 $string['subject'] = 'נושא';
 $string['title'] = 'כותרת';
+
+
 $string['Destinatario'] ="עבור";
 $string['received'] ="קבל";
 $string['Carpetas'] ="תיקיות: ";
