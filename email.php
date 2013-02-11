@@ -91,9 +91,18 @@ $users = array();
 $users_to_roles = array();
 $users_to_groups = array();
 
-$everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
-    u.email, u.mailformat, u.maildisplay, r.id AS roleid',
-    'u.lastname, u.firstname');
+// List everyone with role in course.
+// 
+// Note that users with multiple roles will be squashed into one
+// record.
+
+$sql = "SELECT DISTINCT u.id, u.firstname, u.lastname,
+            u.email, u.mailformat, u.suspended, u.maildisplay
+              FROM {role_assignments} ra
+              JOIN {user} u ON u.id = ra.userid
+              JOIN {role} r ON ra.roleid = r.id
+             WHERE (ra.contextid = ? ) ";
+$everyone = $DB->get_records_sql($sql, array($context->id));
 
 foreach ($everyone as $userid => $user) {
     $usergroups = groups_get_user_groups($courseid, $userid);
