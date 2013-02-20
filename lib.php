@@ -330,55 +330,6 @@ abstract class quickmail {
      */
     public static function get_all_users($context){
         global $DB;
-        
-        $start_orig = microtime(true);
-        $everyone_orig = self::get_all_users_orig($context);
-        mtrace(sprintf("%.7f seconds [Original]<br/>", microtime(true)-$start_orig));
-        $count_orig = count($everyone_orig);
-        
-        $start_danB = microtime(true);
-        $everyone_danB = self::get_all_users_danB($context);
-        mtrace(sprintf("%.7f seconds [Dan Bush]<br/>", microtime(true)-$start_danB));
-        $count_danB = count($everyone_danB);
-        
-        $start_perR = microtime(true);
-        $everyone_perR = self::get_all_users_perRole($context);
-        mtrace(sprintf("%.7f seconds [Per Role]<br/>", microtime(true)-$start_perR));
-        $count_perR = count($everyone_perR);
-        
-        //check that each method returned the same number of users
-        $count_same =  $count_orig == $count_danB && $count_orig == $count_perR;
-        $count_same ? mtrace(sprintf("Each method returned %d users<br/>", $count_orig)) 
-                : mtrace(sprintf("Return user count differs: orig = %d, danB = %d, perRole = %d<br/>", $count_orig, $count_danB, $count_perR));
-        
-        //check if the ids returned as array keys for each method are the same set
-        $all_same = array_diff(array_keys($everyone_orig),array_keys($everyone_danB));//, array_keys($everyone_perR));
-        empty($all_same) ? mtrace("All resultsets contain the same user id keys <br>") : mtrace("difference in resultsets<br/>");
-        
-        $options = array($everyone_orig, $everyone_danB, $everyone_perR);
-        $i = rand(0,2);
-        if($i == 0){
-            mtrace("returning recordset from original method<br/>");
-        }elseif($i ==1){
-            mtrace("returning recordset from danB method<br/>");
-        }elseif($i == 2){
-            mtrace("returning recordset from perRole method<br/>");
-        }else{
-            mtrace("error choosing a recordset to return...there should be other errors elsewhere");
-        }
-        return $options[$i];
-    }
-    
-    public static function get_all_users_orig($context){
-        global $DB;
-        $everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
-            u.email, u.mailformat, u.suspended, u.maildisplay, r.id AS roleid',
-            'u.lastname, u.firstname');
-        return $everyone;
-    }
-    
-    public static function get_all_users_danB($context){
-        global $DB;
         // List everyone with role in course.
         //
         // Note that users with multiple roles will be squashed into one
@@ -393,33 +344,6 @@ abstract class quickmail {
         $everyone = $DB->get_records_sql($sql, array($context->id));
         
         return $everyone;
-    }
-    
-    public static function get_all_users_perRole($context){
-    
-        $roles  = get_roles_used_in_context($context);
-        $all    = array();
-        $uids   = array();
-        
-        foreach($roles as $role){
-
-            $role_everyone = get_role_users(
-                    $role->id
-                    ,$context
-                    ,false
-                    ,'u.id, u.firstname, u.lastname,u.email, u.mailformat, u.suspended, u.maildisplay, r.id AS roleid'
-                    ,'u.lastname, u.firstname'
-                    );
-            
-            foreach($role_everyone as $id => $re){
-                if(!in_array($id, $uids)){
-                    $uids[] = $id;
-                    $all[$id] = $re;
-                }
-            }  
-        }
-
-        return $all;
     }
     
 
