@@ -356,7 +356,7 @@ abstract class quickmail {
                     ON en.id = ue.enrolid                     
                 WHERE en.courseid = ?
                     AND ue.status = ?
-                ORDER BY u.lastname"; 
+                ORDER BY u.lastname, u.firstname"; 
 
         //let's use a recordset in case the enrollment is huge
         $rs_valids = $DB->get_recordset_sql($sql, array($courseid, 0));
