@@ -330,10 +330,46 @@ abstract class quickmail {
      */
     public static function get_all_users($context){
         global $DB;
-        $everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
+        
+        $roles = get_roles_used_in_context($context);
+        $all   = array();
+        
+//        $ev_mt_start = microtime(true);
+//        //passing in 0 for $roleid is like passing false;
+//        $everyone = get_role_users(0, $context, false, 'u.id, u.firstname, u.lastname,
+//            u.email, u.mailformat, u.suspended, u.maildisplay, r.id AS roleid',
+//            'u.lastname, u.firstname');
+//        
+//        $ev_elapsed = microtime(true) - $ev_mt_start;
+////        mtrace(sprintf("getting users the old way takes %s microseconds<br/>", $ev_elapsed));
+////        mtrace(sprintf("getting an array of everyone the old way yeilds %s users", count($everyone)));
+//        $ev_uids = array();
+//        foreach($everyone as $ev){
+//            if(!in_array($ev->id, $ev_uids)){
+//                $ev_uids[] = $ev->id;
+//            }
+//        }
+        $uids = array();
+        $all_mt_start = microtime(true);
+        foreach($roles as $role){
+            
+            mtrace(sprintf("getting users in role id %s", $role->id));
+            $role_everyone = get_role_users($role->id, $context, false, 'u.id, u.firstname, u.lastname,
             u.email, u.mailformat, u.suspended, u.maildisplay, r.id AS roleid',
             'u.lastname, u.firstname');
-        return $everyone;
+            foreach($role_everyone as $re){
+                if(!in_array($re->id, $uids)){
+                    $uids[] = $re->id;
+                    $all[] = $re;
+                }
+            }
+            
+        }
+        $all_elapsed = microtime(true) - $all_mt_start;
+        mtrace(sprintf("getting users the new way takes %s microseconds<br/>", $all_elapsed));
+        mtrace(sprintf("getting an array of everyone the new way yeilds %s users", count($all)));
+//        mtrace(print_r(array_diff($uids, $ev_uids)));
+        return $all;
     }
 
     /**
@@ -368,12 +404,12 @@ abstract class quickmail {
          * for each chunk of the recordset,
          * insert the record into the valids container
          * using the id number as the array key;
-         * this amtches the format used by self::get_all_users
+         * this matches the format used by self::get_all_users
          */
         foreach($rs_valids as $rsv){
             $valids[$rsv->id] = $rsv;
         }
-        //required to close te recordset
+        //required to close the recordset
         $rs_valids->close();
         
         //get the intersection of self::all_users and this potentially shorter list
