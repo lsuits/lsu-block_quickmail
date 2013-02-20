@@ -355,7 +355,18 @@ abstract class quickmail {
         $all_same = array_diff(array_keys($everyone_orig),array_keys($everyone_danB));//, array_keys($everyone_perR));
         empty($all_same) ? mtrace("All resultsets contain the same user id keys <br>") : mtrace("difference in resultsets<br/>");
         
-        return $everyone_orig;
+        $options = array($everyone_orig, $everyone_danB, $everyone_perR);
+        $i = rand(0,2);
+        if($i == 0){
+            mtrace("returning recordset from original method<br/>");
+        }elseif($i ==1){
+            mtrace("returning recordset from danB method<br/>");
+        }elseif($i == 2){
+            mtrace("returning recordset from perRole method<br/>");
+        }else{
+            mtrace("error choosing a recordset to return...there should be other errors elsewhere");
+        }
+        return $options[$i];
     }
     
     public static function get_all_users_orig($context){
