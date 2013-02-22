@@ -37,7 +37,7 @@ if ($reset) {
     quickmail::default_config($courseid);
 }
 
-$roles = $DB->get_records_menu('role', null, 'sortorder ASC', 'id, name');
+$roles = $DB->get_records_menu('role', null, 'sortorder ASC', 'id, shortname');
 $form = new config_form(null, array(
     'courseid' => $courseid,
     'roles' => $roles
