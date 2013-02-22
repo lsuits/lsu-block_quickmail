@@ -260,7 +260,7 @@ abstract class quickmail {
         return $html;
     }
 
-    function list_entries($courseid, $type, $page, $perpage, $userid, $count, $can_delete) {
+    static function list_entries($courseid, $type, $page, $perpage, $userid, $count, $can_delete) {
         global $CFG, $DB, $OUTPUT;
 
         $dbtable = 'block_quickmail_'.$type;
@@ -347,7 +347,6 @@ abstract class quickmail {
     public static function get_non_suspended_users($context, $courseid){
         global $DB;
         $everyone = self::get_all_users($context);
-
         $sql = "SELECT u.id, u.firstname, u.lastname, u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} as u  
                 JOIN {user_enrolments} as ue                 
