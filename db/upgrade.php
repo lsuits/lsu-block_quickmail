@@ -158,6 +158,9 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         upgrade_block_savepoint($result, 2012061112, 'quickmail');
     }
+    if ($oldversion < 2012061112) {
+    	migrate_quickmail_20();
+    }
 
     return $result;
 }
