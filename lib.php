@@ -387,6 +387,8 @@ function block_quickmail_pluginfile($course, $record, $context, $filearea, $args
     $fs = get_file_storage();
     global $DB;
 
+    require_course_login($course, true, $record);
+
     list($itemid, $filename) = $args;
 
     if ($filearea == 'attachment_log') {
