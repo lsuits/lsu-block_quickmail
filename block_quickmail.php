@@ -36,9 +36,9 @@ class block_quickmail extends block_list {
 
         $icon_class = array('class' => 'icon');
 
+        $cparam = array('courseid' => $COURSE->id);
+        
         if ($can_send) {
-            $cparam = array('courseid' => $COURSE->id);
-
             $send_email_str = quickmail::_s('composenew');
             $send_email = html_writer::link(
                 new moodle_url('/blocks/quickmail/email.php', $cparam),
