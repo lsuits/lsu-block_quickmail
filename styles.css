@@ -46,9 +46,14 @@
 }
 
 #page-Quickmail .mform fieldset.hidden>div {
-   width: 800px;
-   text-align: left;
-   margin: auto;
+   clear:both;
+   float:none;
+   position:center;
+   overflow:hidden;
+   min-width:900px;
+   width:100%;
+   text-align:left;
+   margin:auto;
 }
 
 #page-Quickmail .mform #add_button, #remove_button, #add_all, #remove_all {
