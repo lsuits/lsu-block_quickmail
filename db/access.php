@@ -38,11 +38,23 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         )
     ),
+
     'block/quickmail:candelete' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
         )
-    )
+    ),
+
+    // New standard capability 'addinstance'.
+    'block/quickmail:addinstance' => array(
+        'captype'       => 'write',
+        'contextlevel'  => CONTEXT_COURSE,
+        'archetypes'    => array(
+            'editingteacher'    => CAP_ALLOW,
+            'manager'           => CAP_ALLOW
+        ),
+        'clonepermissionsfrom'  => 'moodle/site:manageblocks'
+    ),
 );

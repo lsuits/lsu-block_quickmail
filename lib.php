@@ -358,7 +358,6 @@ abstract class quickmail {
     public static function get_non_suspended_users($context, $courseid){
         global $DB;
         $everyone = self::get_all_users($context);
-
         $sql = "SELECT u.id, u.firstname, u.lastname, u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} as u  
                 JOIN {user_enrolments} as ue                 

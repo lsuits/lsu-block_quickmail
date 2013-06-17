@@ -51,10 +51,19 @@ class email_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'mailto', '');
+        $mform->setType('mailto', PARAM_EMAIL);
+        
         $mform->addElement('hidden', 'userid', $USER->id);
+        $mform->setType('userid',PARAM_INT);
+        
         $mform->addElement('hidden', 'courseid', $COURSE->id);
+        $mform->setType('courseid', PARAM_INT);
+        
         $mform->addElement('hidden', 'type', '');
+        $mform->setType('type', PARAM_ALPHA);
+        
         $mform->addElement('hidden', 'typeid', 0);
+        $mform->setType('typeid', PARAM_INT);
 
         $role_options = array('none' => quickmail::_s('no_filter'));
         foreach ($this->_customdata['roles'] as $role) {
