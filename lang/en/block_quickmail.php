@@ -6,6 +6,7 @@ $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance."
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
 $string['quickmail:allowalternate'] = "Allows users to add an alternate email for courses.";
 $string['quickmail:addinstance'] = "Add a new Quickmail block";
+$string['quickmail:candelete'] = "Allows users to delete email from history.";
 $string['backup_history'] = 'Include Quickmail History';
 $string['restore_history'] = 'Restore Quickmail History';
 $string['overwrite_history'] = 'Overwrite Quickmail History';
