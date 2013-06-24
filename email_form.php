@@ -67,7 +67,7 @@ class email_form extends moodleform {
 
         $role_options = array('none' => quickmail::_s('no_filter'));
         foreach ($this->_customdata['roles'] as $role) {
-            $role_options[$role->shortname] = $role->name;
+            $role_options[$role->shortname] = role_get_name($role);
         }
 
         $group_options = empty($this->_customdata['groups']) ? array() : array(
