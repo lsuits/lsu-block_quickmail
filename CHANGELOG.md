@@ -1,3 +1,13 @@
+## v1.3.0
+
+- updates for 2.4 and 2.5 Moodle API changes
+- Swedish translation
+- Hebrew translation
+- configurable FERPA settings
+- Securing email attachments
+- Fixup local css for fixed width themes
+
+
 ## v1.2.9
 
 - Fixes attachment path on Windows servers [#49][49]
