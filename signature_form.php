@@ -11,10 +11,17 @@ class signature_form extends moodleform {
         $mform =& $this->_form;
 
         $mform->addElement('hidden', 'courseid', '');
+        $mform->setType('courseid',PARAM_INT);
+        
         $mform->addElement('hidden', 'id', '');
+        $mform->setType('id',PARAM_INT);
+        
         $mform->addElement('hidden', 'userid', $USER->id);
-
+        $mform->setType('userid',PARAM_INT);
+        
         $mform->addElement('text', 'title', quickmail::_s('title'));
+        $mform->setType('title',PARAM_TEXT);
+        
         $mform->addElement('editor', 'signature_editor', quickmail::_s('sig'),
             null, $this->_customdata['signature_options']);
         $mform->setType('signature_editor', PARAM_RAW);

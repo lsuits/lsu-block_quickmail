@@ -14,9 +14,16 @@ class quickmail_alternate_form extends moodleform {
         $m->addRule('address', get_string('missingemail'), 'required', null, 'server');
 
         $m->addElement('hidden', 'valid', 0);
+        $m->setType('valid',PARAM_INT);
+        
         $m->addElement('hidden', 'courseid', $course->id);
+        $m->setType('courseid',PARAM_INT);
+        
         $m->addElement('hidden', 'id', '');
+        $m->setType('id',PARAM_INT);
+        
         $m->addElement('hidden', 'action', $this->_customdata['action']);
+        $m->setType('action',PARAM_ALPHA);
 
         $buttons = array(
             $m->createElement('submit', 'submit', get_string('savechanges')),

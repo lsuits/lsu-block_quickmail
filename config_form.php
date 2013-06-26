@@ -39,7 +39,9 @@ class config_form extends moodleform {
             quickmail::_s('receipt'), $student_select);
 
         $mform->addElement('submit', 'save', get_string('savechanges'));
+        
         $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
+        $mform->setType('courseid',PARAM_INT);
 
         $mform->addRule('roleselection', null, 'required');
     }
