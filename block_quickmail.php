@@ -45,7 +45,7 @@ class block_quickmail extends block_list {
                 $send_email_str
             );
             $this->content->items[] = $send_email;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/email', $send_email_str, 'moodle', $icon_class);
+            $this->content->icons[] = $OUTPUT->pix_icon('t/email', $send_email_str, 'moodle', $icon_class);
 
             $signature_str = quickmail::_s('signature');
             $signature = html_writer::link(
