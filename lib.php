@@ -232,7 +232,7 @@ abstract class quickmail {
         }
     }
 
-    function delete_dialog($courseid, $type, $typeid) {
+    static function delete_dialog($courseid, $type, $typeid) {
         global $CFG, $DB, $USER, $OUTPUT;
 
         $email = $DB->get_record('block_quickmail_'.$type, array('id' => $typeid));
