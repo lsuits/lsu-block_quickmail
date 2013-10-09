@@ -15,6 +15,14 @@ class block_quickmail extends block_list {
     function has_config() {
         return true;
     }
+    /**
+     * Disable multiple instances of this block
+     * @return bool Returns false
+     */
+    function instance_allow_multiple() {
+        return false;
+    }
+    
     function get_content() {
         global $CFG, $COURSE, $OUTPUT;
 
