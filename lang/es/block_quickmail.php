@@ -41,7 +41,7 @@ $string['sig'] ='Firma';
 $string['default_flag'] = 'Defecto';
 $string['config'] = 'Configuración';
 $string['receipt'] = 'Recibir copia';
-$string['receipt_help'] = 'Recibir una copia del emial que se va a enviar'
+$string['receipt_help'] = 'Recibir una copia del emial que se va a enviar';
 $string['no_alternates'] = 'No hay correos alternativos para {$a->fullname}. Continuar para crear uno.';
 
 $string['select_users'] = 'Selecciona Usuarios ...';
@@ -93,7 +93,7 @@ $string['waiting'] = 'Esperando';
 $string['entry_activated'] = 'Mail alternativo {$a->address} se puede usar en {$a->course}.';
 $string['entry_key_not_valid'] = 'El link ya no es valido para {$a->address}. Continua para reenviar el link de activacion.';
 $string['entry_saved'] = 'Correo alternativo {$a->address} ha sido guardado';
-$string['entry_success'] = 'El emial de verificacion ha sido enviado a {$a->address}. Las instrucciones han sido enviadas en el correo.';
+$string['entry_success'] = 'El email de verificacion ha sido enviado a {$a->address}. Las instrucciones han sido enviadas en el correo.';
 $string['entry_failure'] = 'No puede enviarse un correo a {$a->address}. Por favor compueba que {$a->address} existe y pruebe de nuevo.';
 $string['alternate_from'] = 'Moodle: Quickmail';
 $string['alternate_subject'] = 'Verificación de mail alternativo';
