@@ -7,12 +7,13 @@ defined('MOODLE_INTERNAL') || die;
 if($ADMIN->fulltree) {
     require_once $CFG->dirroot . '/blocks/quickmail/lib.php';
 
-    $select = array(0 => get_string('no'), 1 => get_string('yes'));
+    $select = array(-1 => get_string('never'), 0 => get_string('no'), 1 => get_string('yes'));
 
     $allow = quickmail::_s('allowstudents');
+    $allowdesc = quickmail::_s('allowstudentsdesc');
     $settings->add(
         new admin_setting_configselect('block_quickmail_allowstudents',
-            $allow, $allow, 0, $select
+            $allow, $allowdesc, 0, $select
         )
     );
 

@@ -54,6 +54,7 @@ $string['qm_contents'] = 'Download File Contents';
 
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
+$string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
 $string['select_roles'] = 'Roles to filter by';
 $string['reset'] = 'Restore System Defaults';
 
