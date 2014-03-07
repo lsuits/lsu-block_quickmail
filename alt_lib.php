@@ -231,7 +231,7 @@ abstract class quickmail_alternate implements quickmail_alternate_actions {
 
         $icons = array(
             self::INTERACT => $OUTPUT->pix_icon('i/edit', get_string('edit')),
-            self::DELETE => $OUTPUT->pix_icon('i/cross_red_big', get_string('delete'))
+            self::DELETE => $OUTPUT->pix_icon('i/invalid', get_string('delete'))
         );
 
         foreach ($alternates as $email) {

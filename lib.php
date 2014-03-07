@@ -1,7 +1,7 @@
 <?php
-
+//
 // Written at Louisiana State University
-
+// 
 abstract class quickmail {
     public static function _s($key, $a = null) {
         return get_string($key, 'block_quickmail', $a);
@@ -273,15 +273,18 @@ abstract class quickmail {
             'time DESC', '*', $page * $perpage, $perpage * ($page + 1));
 
         $table->head= array(get_string('date'), quickmail::_s('subject'),
-            quickmail::_s('attachment'), get_string('action'));
-
+            quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
+        
         $table->data = array();
 
         foreach ($logs as $log) {
             $date = quickmail::format_time($log->time);
             $subject = $log->subject;
             $attachments = $log->attachment;
-
+            
+            // DWE -> keep track of user ids that failed. 
+            $failed = $log->failuserids;
+            
             $params = array(
                 'courseid' => $log->courseid,
                 'type' => $type,
@@ -304,7 +307,7 @@ abstract class quickmail {
 
                 $delete_link = html_writer::link (
                     new moodle_url('/blocks/quickmail/emaillog.php', $delete_params),
-                    $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
+                    $OUTPUT->pix_icon("i/invalid", "Delete Email")
                 );
 
                 $actions[] = $delete_link;
@@ -312,7 +315,22 @@ abstract class quickmail {
 
             $action_links = implode(' ', $actions);
 
-            $table->data[] = array($date, $subject, $attachments, $action_links);
+            $statusSENTorNot = quickmail::_s('sent_success');
+            
+            if ( ! empty ($failed) ){
+                $statusSENTorNot = quickmail::_s('message_failure');
+                $params += array(
+                    'fmid' => 1,
+                );
+                $text = quickmail::_s('send_again');
+                $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/email.php", $params), $text);
+                $listFailIDs = strlen($failed);
+            }else{
+                $listFailIDs = $failed;
+                $sendagain = "";
+            }
+            
+            $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$listFailIDs,$sendagain);
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,

@@ -122,3 +122,12 @@ received it by mistake. Simply discard this message.
 
 Thank you.
 ';
+
+
+// Strings for Error Reporting
+
+$string['sent_success'] = 'all messages sent successfully';
+$string['message_failure'] = 'some users did not get message';
+$string['send_again'] = 'send again';
+$string['status'] = 'status';
+$string['failed_to_send_to'] = 'failed to send to';
