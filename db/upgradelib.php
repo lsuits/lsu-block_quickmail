@@ -31,7 +31,8 @@ function migrate_quickmail_20(){
 			$filename=$quickmail_log_record->attachment;
 		}
 		$fs = get_file_storage();
-		$coursecontext = get_context_instance(CONTEXT_COURSE,$quickmail_log_record->courseid);
+                $coursecontext = context_course::instance($quickmail_log_record->courseid);
+
 		$coursefile=$fs->get_file($coursecontext->id, 'course', 'legacy', 0, $filepath, $filename);
 		if($coursefile){
 			if($notrootfile){

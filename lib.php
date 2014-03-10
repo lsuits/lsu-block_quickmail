@@ -159,8 +159,7 @@ abstract class quickmail {
     static function attachment_names($draft) {
         global $USER;
 
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-
+        $usercontext = context_user::instance($USER->id);
         $fs = get_file_storage();
         $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $draft, 'id');
 
@@ -276,15 +275,15 @@ abstract class quickmail {
             quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
         
         $table->data = array();
-
+            $failed = "";
         foreach ($logs as $log) {
             $date = quickmail::format_time($log->time);
             $subject = $log->subject;
             $attachments = $log->attachment;
-            
+            if( ! empty($log->failuserids) ){
             // DWE -> keep track of user ids that failed. 
-            $failed = $log->failuserids;
-            
+                $failed = explode(",",$log->failuserids);
+            }
             $params = array(
                 'courseid' => $log->courseid,
                 'type' => $type,
@@ -324,13 +323,22 @@ abstract class quickmail {
                 );
                 $text = quickmail::_s('send_again');
                 $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/email.php", $params), $text);
-                $listFailIDs = strlen($failed);
-            }else{
+                $listFailIDs = count($failed);
+                
+                $failCount =  (($listFailIDs === 1) ?  $listFailIDs . " " . quickmail::_s("user") :  $listFailIDs . " " . quickmail::_s("users"));         
+                //$failCount = $listFailIDs . " " . quickmail::_s("user");
+                //$failCount = $listFailIDs > 1 ? $failCount.'s' : $failCount;
+
+            }
+
+            else{
+                
                 $listFailIDs = $failed;
                 $sendagain = "";
+                $failCount = "";
             }
-            
-            $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$listFailIDs,$sendagain);
+
+            $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$failCount,$sendagain);
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
@@ -354,12 +362,13 @@ abstract class quickmail {
         // Note that users with multiple roles will be squashed into one
         // record.
 
-        $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname,
+        $sql = "SELECT DISTINCT u.id, " . get_all_user_name_fields(true, 'u') . ",
         u.email, u.mailformat, u.suspended, u.maildisplay
         FROM {role_assignments} ra
         JOIN {user} u ON u.id = ra.userid
         JOIN {role} r ON ra.roleid = r.id
         WHERE (ra.contextid = ? ) ";
+        
         $everyone = $DB->get_records_sql($sql, array($context->id));
         
         return $everyone;
@@ -377,7 +386,7 @@ abstract class quickmail {
     public static function get_non_suspended_users($context, $courseid){
         global $DB;
         $everyone = self::get_all_users($context);
-        $sql = "SELECT u.id, u.firstname, u.lastname, u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
+        $sql = "SELECT u.id, " . get_all_user_name_fields(true, 'u') . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} as u  
                 JOIN {user_enrolments} as ue                 
                     ON u.id = ue.userid 

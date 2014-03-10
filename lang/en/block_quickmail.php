@@ -131,3 +131,6 @@ $string['message_failure'] = 'some users did not get message';
 $string['send_again'] = 'send again';
 $string['status'] = 'status';
 $string['failed_to_send_to'] = 'failed to send to';
+$string['users'] = 'users';
+$string['user'] = 'user';
+$string['s'] = 's';

@@ -5,8 +5,7 @@ class backup_quickmail_block_structure_step extends backup_block_structure_step 
         global $DB;
 
         $params = array('courseid' => $this->get_courseid());
-        $context = get_context_instance(CONTEXT_COURSE, $params['courseid']);
-
+        $context = context_course::instance( $params['courseid']);
         $quickmail_logs = $DB->get_records('block_quickmail_log', $params);
         $include_history = $this->get_setting_value('include_quickmail_log');
 

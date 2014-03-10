@@ -92,8 +92,8 @@ class email_form extends moodleform {
         $draft_link = html_writer::link ($gen_url('drafts'), quickmail::_s('drafts'));
         $links[] =& $mform->createElement('static', 'draft_link', '', $draft_link);
 
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-
+        $context = context_course::instance($COURSE->id);
+        
         $config = quickmail::load_config($COURSE->id);
 
         $can_send = (

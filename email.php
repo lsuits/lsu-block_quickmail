@@ -46,7 +46,7 @@ if (!empty($type) and empty($typeid)) {
 
 $config = quickmail::load_config($courseid);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 $has_permission = (
     has_capability('block/quickmail:cansend', $context) or
     !empty($config['allowstudents'])
@@ -313,11 +313,10 @@ if ($form->is_cancelled()) {
 
                 // create a temporary testing variable to make sure success always equals false
                 //@todo erase this business. 
-                $success = false;
+                //$success = false;
                 
                 if(!$success) {
                     $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
-                
                     $data->failuserids[] = $userid;
                     
                 }
@@ -359,12 +358,12 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($blockname);
 
 foreach ($warnings as $type => $warning) {
-    $class = ($type == 'success') ? 'notifysuccess' : 'notifyproblem';
+    $class = ($type === 'success') ? 'notifysuccess' : 'notifyproblem';
+    //$class = 'notifyproblem';
     echo $OUTPUT->notification($warning, $class);
 }
 
 echo html_writer::start_tag('div', array('class' => 'no-overflow'));
 $form->display();
 echo html_writer::end_tag('div');
-
 echo $OUTPUT->footer();
