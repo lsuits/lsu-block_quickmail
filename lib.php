@@ -275,7 +275,6 @@ abstract class quickmail {
             quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
         
         $table->data = array();
-            $failed = "";
         foreach ($logs as $log) {
             $date = quickmail::format_time($log->time);
             $subject = $log->subject;
@@ -313,7 +312,6 @@ abstract class quickmail {
             }
 
             $action_links = implode(' ', $actions);
-
             $statusSENTorNot = quickmail::_s('sent_success');
             
             if ( ! empty ($failed) ){
@@ -326,8 +324,6 @@ abstract class quickmail {
                 $listFailIDs = count($failed);
                 
                 $failCount =  (($listFailIDs === 1) ?  $listFailIDs . " " . quickmail::_s("user") :  $listFailIDs . " " . quickmail::_s("users"));         
-                //$failCount = $listFailIDs . " " . quickmail::_s("user");
-                //$failCount = $listFailIDs > 1 ? $failCount.'s' : $failCount;
 
             }
 
@@ -356,19 +352,25 @@ abstract class quickmail {
      * @return array of sparse user objects
      */
     public static function get_all_users($context){
-        global $DB;
+        global $DB, $CFG;
         // List everyone with role in course.
         //
         // Note that users with multiple roles will be squashed into one
         // record.
-
-        $sql = "SELECT DISTINCT u.id, " . get_all_user_name_fields(true, 'u') . ",
+        $get_name_string = 'u.firstname, u.lastname';
+        
+        if($CFG->version >= 2013111800){
+               $get_name_string = get_all_user_name_fields(true, 'u');
+        }
+        $sql = "SELECT DISTINCT u.id, " . $get_name_string . ",
         u.email, u.mailformat, u.suspended, u.maildisplay
         FROM {role_assignments} ra
         JOIN {user} u ON u.id = ra.userid
         JOIN {role} r ON ra.roleid = r.id
         WHERE (ra.contextid = ? ) ";
         
+        
+        var_dump($sql);
         $everyone = $DB->get_records_sql($sql, array($context->id));
         
         return $everyone;
@@ -386,7 +388,14 @@ abstract class quickmail {
     public static function get_non_suspended_users($context, $courseid){
         global $DB;
         $everyone = self::get_all_users($context);
-        $sql = "SELECT u.id, " . get_all_user_name_fields(true, 'u') . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
+        
+        $get_name_string = 'u.firstname, u.lastname';
+        
+        if($CFG->version >= 2013111800){
+               $get_name_string = get_all_user_name_fields(true, 'u');
+        }
+
+        $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} as u  
                 JOIN {user_enrolments} as ue                 
                     ON u.id = ue.userid 

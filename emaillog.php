@@ -100,12 +100,6 @@ $html.= html_writer::link(
 if($canimpersonate and $USER->id != $userid) {
     $user = $DB->get_record('user', array('id' => $userid));
     // http://docs.moodle.org/dev/Additional_name_fields
-    // get_all_user_name_fields()
-    
-    get_all_user_name_fields();
-    
-    
-    //$header .= ' for '. fullname($user, true);
     $header .= ' for '. fullname($user);
 
     
@@ -115,20 +109,19 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($header);
 
 if($canimpersonate) {
-    $sql = "SELECT DISTINCT(l.userid)," . get_all_user_name_fields(true, 'u') . "
+    
+    $get_name_string = 'u.firstname, u.lastname';
+
+    if($CFG->version >= 2013111800){
+        $get_name_string = get_all_user_name_fields(true, 'u');
+    }
+    $sql = "SELECT DISTINCT(l.userid)," . $get_name_string . "
                 FROM {block_quickmail_$type} l,
                      {user} u
                 WHERE u.id = l.userid AND courseid = ? ORDER BY u.lastname";
-    
-    //var_dump($sql);
-  
-    $users = $DB->get_records_sql($sql, array($courseid));
-    
-    
-    $user_options = array_map(function($user) { return fullname($user); }, $users);
 
-    //$user_options = array_map(function($user) { return fullname($user, true); }, $users);
-    //$user_options = array_map(function($user) { return get_all_user_name_fields($user); }, $users);
+    $users = $DB->get_records_sql($sql, array($courseid));    
+    $user_options = array_map(function($user) { return fullname($user); }, $users);
 
     $url = new moodle_url('emaillog.php', array(
         'courseid' => $courseid,

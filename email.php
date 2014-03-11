@@ -9,19 +9,6 @@ require_once('email_form.php');
 
 require_login();
 
-
-
-// DWE -> Notes
-//
-//
-//
-//
-//
-//
-//;
-
-
-
 $courseid = required_param('courseid', PARAM_INT);
 $type = optional_param('type', '', PARAM_ALPHA);
 $typeid = optional_param('typeid', 0, PARAM_INT);
@@ -310,10 +297,6 @@ if ($form->is_cancelled()) {
             foreach (explode(',', $data->mailto) as $userid) {
                 $success = email_to_user($everyone[$userid], $user, $subject,
                     strip_tags($data->message), $data->message);
-
-                // create a temporary testing variable to make sure success always equals false
-                //@todo erase this business. 
-                //$success = false;
                 
                 if(!$success) {
                     $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
@@ -359,7 +342,6 @@ echo $OUTPUT->heading($blockname);
 
 foreach ($warnings as $type => $warning) {
     $class = ($type === 'success') ? 'notifysuccess' : 'notifyproblem';
-    //$class = 'notifyproblem';
     echo $OUTPUT->notification($warning, $class);
 }
 
