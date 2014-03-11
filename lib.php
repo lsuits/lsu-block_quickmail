@@ -369,8 +369,6 @@ abstract class quickmail {
         JOIN {role} r ON ra.roleid = r.id
         WHERE (ra.contextid = ? ) ";
         
-        
-        var_dump($sql);
         $everyone = $DB->get_records_sql($sql, array($context->id));
         
         return $everyone;
@@ -386,7 +384,7 @@ abstract class quickmail {
      * @param $courseid the course id
      */
     public static function get_non_suspended_users($context, $courseid){
-        global $DB;
+        global $DB, $CFG;
         $everyone = self::get_all_users($context);
         
         $get_name_string = 'u.firstname, u.lastname';
