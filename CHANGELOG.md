@@ -1,3 +1,7 @@
+## v1.4.0
+- Added two DB fields for status of message (whether it sent or not) and the ids of those it failed to send to
+- Added alternative name fields for moodle 2.6 compatibility issues, and changed get_context_instance methods to context::instance_by_id
+
 ## v1.3.2
 
 - adds German translation contributed by [jlackner](https://github.com/lsuits/quickmail/issues/86)

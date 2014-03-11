@@ -274,16 +274,16 @@ abstract class quickmail {
         $table->head= array(get_string('date'), quickmail::_s('subject'),
             quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
         
-        $failed = "";
         
         $table->data = array();
         foreach ($logs as $log) {
+            $array_of_failed_user_ids = array();
             $date = quickmail::format_time($log->time);
             $subject = $log->subject;
             $attachments = $log->attachment;
             if( ! empty($log->failuserids) ){
             // DWE -> keep track of user ids that failed. 
-                $failed = explode(",",$log->failuserids);
+                $array_of_failed_user_ids = explode(",",$log->failuserids);
             }
             $params = array(
                 'courseid' => $log->courseid,
@@ -316,14 +316,14 @@ abstract class quickmail {
             $action_links = implode(' ', $actions);
             $statusSENTorNot = quickmail::_s('sent_success');
             
-            if ( ! empty ($failed) ){
+            if ( ! empty ($array_of_failed_user_ids) ){
                 $statusSENTorNot = quickmail::_s('message_failure');
                 $params += array(
                     'fmid' => 1,
                 );
                 $text = quickmail::_s('send_again');
                 $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/email.php", $params), $text);
-                $listFailIDs = count($failed);
+                $listFailIDs = count($array_of_failed_user_ids);
                 
                 $failCount =  (($listFailIDs === 1) ?  $listFailIDs . " " . quickmail::_s("user") :  $listFailIDs . " " . quickmail::_s("users"));         
 
@@ -331,7 +331,7 @@ abstract class quickmail {
 
             else{
                 
-                $listFailIDs = $failed;
+                $listFailIDs = $array_of_failed_user_ids;
                 $sendagain = "";
                 $failCount = "";
             }
