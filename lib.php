@@ -269,8 +269,8 @@ abstract class quickmail {
 
         $params = array('courseid' => $courseid, 'userid' => $userid);
         $logs = $DB->get_records($dbtable, $params,
-            'time DESC', '*', $page * $perpage, $perpage * ($page + 1));
-
+            'time DESC', '*', $page * $perpage, $perpage/*$perpage * ($page + 1)*/);
+        
         $table->head= array(get_string('date'), quickmail::_s('subject'),
             quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
         
