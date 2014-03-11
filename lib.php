@@ -274,6 +274,8 @@ abstract class quickmail {
         $table->head= array(get_string('date'), quickmail::_s('subject'),
             quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
         
+        $failed = " ";
+        
         $table->data = array();
         foreach ($logs as $log) {
             $date = quickmail::format_time($log->time);
