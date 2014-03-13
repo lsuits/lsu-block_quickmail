@@ -12,8 +12,7 @@ $flash = optional_param('flash', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
-
+$context = context_course::instance($courseid);
 // Permission
 require_login($course);
 require_capability('block/quickmail:allowalternate', $context);

@@ -161,6 +161,21 @@ function xmldb_block_quickmail_upgrade($oldversion) {
     if ($oldversion < 2012061112) {
     	migrate_quickmail_20();
     }
+if($oldversion < 2014022713){
 
+        // Define field status to be added to block_quickmail_log.
+        $table = new xmldb_table('block_quickmail_log');
+        $field = new xmldb_field('status', XMLDB_TYPE_TEXT, null, null, null, null, null, 'time');
+	$field2 = new xmldb_field('failuserids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'time');
+        // Conditionally launch add field status.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+	if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2014022713, 'quickmail');
+    }
     return $result;
 }

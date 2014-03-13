@@ -19,7 +19,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('no_course', 'block_quickmail', '', $courseid);
 }
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 
 // Has to be in on of these
 if (!in_array($type, array('log', 'drafts'))) {
@@ -99,19 +99,28 @@ $html.= html_writer::link(
 
 if($canimpersonate and $USER->id != $userid) {
     $user = $DB->get_record('user', array('id' => $userid));
+    // http://docs.moodle.org/dev/Additional_name_fields
     $header .= ' for '. fullname($user);
+
+    
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($header);
 
 if($canimpersonate) {
-    $sql = "SELECT DISTINCT(l.userid), u.firstname, u.lastname
+    
+    $get_name_string = 'u.firstname, u.lastname';
+
+    if($CFG->version >= 2013111800){
+        $get_name_string = get_all_user_name_fields(true, 'u');
+    }
+    $sql = "SELECT DISTINCT(l.userid)," . $get_name_string . "
                 FROM {block_quickmail_$type} l,
                      {user} u
                 WHERE u.id = l.userid AND courseid = ? ORDER BY u.lastname";
-    $users = $DB->get_records_sql($sql, array($courseid));
 
+    $users = $DB->get_records_sql($sql, array($courseid));    
     $user_options = array_map(function($user) { return fullname($user); }, $users);
 
     $url = new moodle_url('emaillog.php', array(

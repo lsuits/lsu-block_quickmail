@@ -13,6 +13,7 @@ $courseid = required_param('courseid', PARAM_INT);
 $type = optional_param('type', '', PARAM_ALPHA);
 $typeid = optional_param('typeid', 0, PARAM_INT);
 $sigid = optional_param('sigid', 0, PARAM_INT);
+$messageIDresend = optional_param('fmid',0,PARAM_INT);
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('no_course', 'block_quickmail', '', $courseid);
@@ -32,7 +33,7 @@ if (!empty($type) and empty($typeid)) {
 
 $config = quickmail::load_config($courseid);
 
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 $has_permission = (
     has_capability('block/quickmail:cansend', $context) or
     !empty($config['allowstudents'])
@@ -140,6 +141,12 @@ if (empty($users)) {
 
 if (!empty($type)) {
     $email = $DB->get_record('block_quickmail_'.$type, array('id' => $typeid));
+    
+    if($messageIDresend == 1){
+        $email->mailto = $email->failuserids;
+        //$email->message = " ";
+    }
+    
 } else {
     $email = new stdClass;
     $email->id = null;
@@ -261,8 +268,11 @@ if ($form->is_cancelled()) {
                 $signaturetext = file_rewrite_pluginfile_urls($sig->signature,
                     'pluginfile.php', $context->id, 'block_quickmail',
                     'signature', $sig->id, $editor_options);
-
-                $data->message .= $signaturetext;
+                    
+                    
+                        $data->message .= $signaturetext;
+                    
+                
             }
 
             // Append links to attachments, if any
@@ -282,15 +292,20 @@ if ($form->is_cancelled()) {
             } else {
                 $user = $USER;
             }
+            $data->failuserids = array();
 
             foreach (explode(',', $data->mailto) as $userid) {
                 $success = email_to_user($everyone[$userid], $user, $subject,
                     strip_tags($data->message), $data->message);
-
+                
                 if(!$success) {
                     $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
+                    $data->failuserids[] = $userid;
+                    
                 }
             }
+            $data->failuserids = implode(',',$data->failuserids);
+            $DB->update_record('block_quickmail_log', $data);
 
             if ($data->receipt) {
                 email_to_user($USER, $user, $subject,
@@ -326,12 +341,11 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($blockname);
 
 foreach ($warnings as $type => $warning) {
-    $class = ($type == 'success') ? 'notifysuccess' : 'notifyproblem';
+    $class = ($type === 'success') ? 'notifysuccess' : 'notifyproblem';
     echo $OUTPUT->notification($warning, $class);
 }
 
 echo html_writer::start_tag('div', array('class' => 'no-overflow'));
 $form->display();
 echo html_writer::end_tag('div');
-
 echo $OUTPUT->footer();
