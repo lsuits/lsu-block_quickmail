@@ -113,10 +113,16 @@ class email_form extends moodleform {
         $table = new html_table();
         $table->attributes['class'] = 'emailtable';
 
-        $selected_required_label = new html_table_cell();
-        $selected_required_label->text = html_writer::tag('strong',
-            quickmail::_s('selected') . $req_img, array('class' => 'required'));
+        //$selected_required_label = new html_table_cell();
+        //$selected_required_label->text = html_writer::tag('strong',
+        //    quickmail::_s('selected') . $req_img, array('class' => 'required'));
 
+        
+        // DWE -> NON REQUIRED VERSION
+        $selected_label = new html_table_cell();
+        $selected_label->text = html_writer::tag('strong',
+            quickmail::_s('selected') . " "/*$req_img*/);
+        
         $role_filter_label = new html_table_cell();
         $role_filter_label->colspan = "2";
         $role_filter_label->text = html_writer::tag('div',
@@ -164,7 +170,12 @@ class email_form extends moodleform {
             array('id' => 'from_users', 'multiple' => 'multiple', 'size' => 20))
         );
 
-        $table->data[] = new html_table_row(array($selected_required_label, $role_filter_label));
+        
+        // DWE -> NON REQUIRED VERSION
+        $table->data[] = new html_table_row(array($selected_label, $role_filter_label));
+
+        
+        //$table->data[] = new html_table_row(array($selected_required_label, $role_filter_label));
         $table->data[] = new html_table_row(array($select_filter, $center_buttons, $filters));
 
         if (has_capability('block/quickmail:allowalternate', $context)) {
@@ -182,6 +193,14 @@ class email_form extends moodleform {
 
         $mform->addElement('static', 'selectors', '', html_writer::table($table));
 
+        // DWE -> how would I go about validating multiple email addresses
+        // https://tracker.moodle.org/browse/MDL-20318
+        // https://moodle.org/mod/forum/discuss.php?d=109235
+        
+        
+        $mform->addElement('text', 'additional_emails', 'Additional Email Addresses',array('style'=>'width: 50%;'));
+        $mform->setType('additional_emails', PARAM_TEXT);                
+                
         $mform->addElement(
             'filemanager', 'attachments', quickmail::_s('attachment'),
             null, array('subdirs' => 1, 'accepted_types' => '*')
