@@ -76,15 +76,15 @@ $mastercap = true;
 $groups = $allgroups;
 
 $restricted_view = (
-        !has_capability('moodle/site:accessallgroups', $context) and
-        $config['ferpa'] == 'strictferpa'
-        );
+    !has_capability('moodle/site:accessallgroups', $context) and
+    $config['ferpa'] == 'strictferpa'
+    );
 
 $respected_view = (
-        !has_capability('moodle/site:accessallgroups', $context) and
-        $course->groupmode == 1 and
-        $config['ferpa'] == 'courseferpa'
-        );
+    !has_capability('moodle/site:accessallgroups', $context) and
+    $course->groupmode == 1 and
+    $config['ferpa'] == 'courseferpa'
+    );
 
 if ($restricted_view || $respected_view) {
     $mastercap = false;
