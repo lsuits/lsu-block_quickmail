@@ -78,13 +78,13 @@ $groups = $allgroups;
 $restricted_view = (
     !has_capability('moodle/site:accessallgroups', $context) and
     $config['ferpa'] == 'strictferpa'
-    );
+);
 
 $respected_view = (
     !has_capability('moodle/site:accessallgroups', $context) and
     $course->groupmode == 1 and
     $config['ferpa'] == 'courseferpa'
-    );
+);
 
 if ($restricted_view || $respected_view) {
     $mastercap = false;
@@ -115,15 +115,15 @@ foreach ($everyone as $userid => $user) {
     $usergroups = groups_get_user_groups($courseid, $userid);
 
     $gids = ($globalaccess or $mastercap) ?
-            array_values($usergroups['0']) :
-            array_intersect(array_values($mygroups['0']), array_values($usergroups['0']));
+        array_values($usergroups['0']) :
+        array_intersect(array_values($mygroups['0']), array_values($usergroups['0']));
 
     $userroles = get_user_roles($context, $userid);
     $filterd = quickmail::filter_roles($userroles, $roles);
 
     // Available groups
     if ((!$globalaccess and !$mastercap) and
-            empty($gids) or empty($filterd) or $userid == $USER->id)
+        empty($gids) or empty($filterd) or $userid == $USER->id)
         continue;
 
     $groupmapper = function($id) use ($allgroups) { return $allgroups[$id]; };
@@ -177,7 +177,7 @@ $email->messagetext = $email->message;
 
 $default_sigid = $DB->get_field('block_quickmail_signatures', 'id', array(
     'userid' => $USER->id, 'default_flag' => 1
-        ));
+));
 $email->sigid = $default_sigid ? $default_sigid : -1;
 
 // Some setters for the form
@@ -193,7 +193,7 @@ $editor_options = array(
 );
 
 $email = file_prepare_standard_editor(
-        $email, 'message', $editor_options, $context, 'block_quickmail', $type, $email->id
+    $email, 'message', $editor_options, $context, 'block_quickmail', $type, $email->id
 );
 
 $selected = array();
@@ -219,7 +219,7 @@ $form = new email_form(null, array(
     'users_to_groups' => $users_to_groups,
     'sigs' => array_map(function($sig) { return $sig->title; }, $sigs),
     'alternates' => $alternates
-        ));
+));
 
 $warnings = array();
 
@@ -259,7 +259,7 @@ if ($form->is_cancelled()) {
         }
 
         $data = file_postupdate_standard_editor(
-                $data, 'message', $editor_options, $context, 'block_quickmail', $table, $data->id
+            $data, 'message', $editor_options, $context, 'block_quickmail', $table, $data->id
         );
 
         $DB->update_record('block_quickmail_' . $table, $data);
@@ -293,7 +293,7 @@ if ($form->is_cancelled()) {
 
             // Append links to attachments, if any
             $data->message .= quickmail::process_attachments(
-                            $context, $data, $table, $data->id
+                $context, $data, $table, $data->id
             );
 
             // Prepare html content of message
@@ -356,7 +356,7 @@ if (empty($email->attachments)) {
     if (!empty($type)) {
         $attachid = file_get_submitted_draft_itemid('attachment');
         file_prepare_draft_area(
-                $attachid, $context->id, 'block_quickmail', 'attachment_' . $type, $typeid
+            $attachid, $context->id, 'block_quickmail', 'attachment_' . $type, $typeid
         );
         $email->attachments = $attachid;
     }
