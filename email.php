@@ -13,7 +13,7 @@ $courseid = required_param('courseid', PARAM_INT);
 $type = optional_param('type', '', PARAM_ALPHA);
 $typeid = optional_param('typeid', 0, PARAM_INT);
 $sigid = optional_param('sigid', 0, PARAM_INT);
-$messageIDresend = optional_param('fmid',0, PARAM_INT);
+$messageIDresend = optional_param('fmid', 0, PARAM_INT);
 
 if (!$course = $DB->get_record('course', array('id' => $courseid)))
 {
@@ -325,7 +325,7 @@ if ($form->is_cancelled())
                 $signaturetext = file_rewrite_pluginfile_urls($sig->signature, 'pluginfile.php', $context->id, 'block_quickmail', 'signature', $sig->id, $editor_options);
 
 
-                $data->message .= $signaturetext;
+                $data->message .= "\n\n" .$signaturetext;
             }
 
             // Append links to attachments, if any
@@ -371,7 +371,7 @@ if ($form->is_cancelled())
 
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
                 
-                
+                //force fail
 
                 if (   !  $additional_email_success)
                 {
