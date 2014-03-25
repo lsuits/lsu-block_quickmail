@@ -327,14 +327,18 @@ if ($form->is_cancelled()) {
             $i = 0;
 
             foreach ($additional_email_array as $additional_email) {
-                
+                $additional_email = trim($additional_email); 
                 if( ! (validate_email($additional_email))){
-                    $warnings[] = get_string("no_email_address", 'block_quickmail', $additional_email);
-                    continue;
-                }
+		    if($additional_email !== ''){
+                        $warnings[] = get_string("no_email_address", 'block_quickmail', $additional_email);
+		    }
+		    continue;
+		}
+
+
                 $fakeuser = new object();
                 $fakeuser->id = 99999900 + $i;
-                $fakeuser->email = trim($additional_email);
+                $fakeuser->email = $additional_email;
 
 
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
