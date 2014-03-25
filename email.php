@@ -147,8 +147,6 @@ if (!empty($type)) {
 
     $email = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
 
-
-    
     if ($messageIDresend == 1) {
         $email->additional_emails = array();
         $email->failuserids = explode(',', $email->failuserids);        
@@ -199,11 +197,6 @@ $email = file_prepare_standard_editor(
 $selected = array();
 if (!empty($email->mailto)) {
     foreach (explode(',', $email->mailto) as $id) {
-
-        if (is_string($id)) {
-            continue;
-        }
-
         $selected[$id] = $users[$id];
         unset($users[$id]);
     }
