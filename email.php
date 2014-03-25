@@ -147,10 +147,10 @@ if (!empty($type)) {
 
     $email = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
 
-    $email->additional_emails = array();
 
     
     if ($messageIDresend == 1) {
+        $email->additional_emails = array();
         $email->failuserids = explode(',', $email->failuserids);        
     
         foreach ($email->failuserids as $failed_address_or_id) {
@@ -161,8 +161,7 @@ if (!empty($type)) {
         }
         
         $email->additional_emails = implode(',', $email->additional_emails);
-    
-        $email->mailto = implode( ',' , $email->failuserids);
+        $email->mailto 		  = implode(',', $email->failuserids);
 
     }
 } else {
