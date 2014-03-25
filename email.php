@@ -6,6 +6,7 @@ require_once('../../config.php');
 require_once('../../enrol/externallib.php');
 require_once('lib.php');
 require_once('email_form.php');
+require_once('../../lib/weblib.php');
 
 require_login();
 
@@ -320,15 +321,24 @@ if ($form->is_cancelled()) {
             }
 
 
+        $additional_email_array = explode(',', $data->additional_emails);
+
+
             $i = 0;
-            foreach (explode(',', $data->additional_emails) as $additional_email) {
+
+            foreach ($additional_email_array as $additional_email) {
                 
+                if( ! (validate_email($additional_email))){
+                    $warnings[] = get_string("no_email_address", 'block_quickmail', $additional_email);
+                    continue;
+                }
                 $fakeuser = new object();
                 $fakeuser->id = 99999900 + $i;
                 $fakeuser->email = trim($additional_email);
 
+
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
-                
+
                 //force fail
 
                 if (!$additional_email_success) {
@@ -340,6 +350,7 @@ if ($form->is_cancelled()) {
 
                 $i++;
             }
+            
 
             $data->failuserids = implode(',', $data->failuserids);
             $DB->update_record('block_quickmail_log', $data);
