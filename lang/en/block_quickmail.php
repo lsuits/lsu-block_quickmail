@@ -1,6 +1,7 @@
 <?php
 
 $string['pluginname'] = 'Quickmail';
+$string['mainsettings'] = 'Quickmail Settings';
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
@@ -134,3 +135,9 @@ $string['status'] = 'status';
 $string['failed_to_send_to'] = 'failed to send to';
 $string['users'] = 'users';
 $string['user'] = 'user';
+
+// Strings for category limiting
+$string['categorylimit'] = 'Category Limiting';
+$string['categorylimit_help'] = 'help';
+$string['categories'] = 'Categories';
+$string['categories_help'] = 'c_help';

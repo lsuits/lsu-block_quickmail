@@ -196,13 +196,17 @@ abstract class quickmail {
             $prepender = get_config($m, 'block_quickmail_prepend_class');
             $receipt = get_config($m, 'block_quickmail_receipt');
             $ferpa = get_config($m, 'block_quickmail_ferpa');
+            $categorylimit = get_config($m, 'block_quickmail_categorylimit');
+            $cats = get_config($m, 'block_quickmail_cats');
 
             $config = array(
                 'allowstudents' => $allowstudents,
                 'roleselection' => $roleselection,
                 'prepend_class' => $prepender,
                 'receipt' => $receipt,
-                'ferpa' => $ferpa
+                'ferpa' => $ferpa,
+                'categorylimit' => $categorylimit,
+                'cats' => $cats
             );
         }
 

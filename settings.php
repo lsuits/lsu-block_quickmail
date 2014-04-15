@@ -67,4 +67,22 @@ if($ADMIN->fulltree) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configcheckbox('block_quickmail_categorylimit',
+            get_string('categorylimit', 'block_quickmail'),
+            get_string('categorylimit_help', 'block_quickmail'), 0
+        )
+    );
+
+    $course_cats = $DB->get_records_menu(
+        'course_categories', null, 'name ASC', 'id, name');
+
+    $settings->add(
+        new admin_setting_configmultiselect(
+            'block_quickmail_cats', get_string('categories', 'block_quickmail'),
+                get_string('categories_help', 'block_quickmail'),
+                array(), $course_cats
+        )
+    );
+
 }

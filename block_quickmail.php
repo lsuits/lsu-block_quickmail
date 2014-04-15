@@ -9,12 +9,32 @@ class block_quickmail extends block_list {
         $this->title = quickmail::_s('pluginname');
     }
 
-    function applicable_formats() {
-        return array('site' => false, 'my' => false, 'course-view' => true);
+    public static function is_supported($course) {
+        global $COURSE;
+
+        // Enabled system wide?
+        $config = quickmail::load_config($COURSE->id);
+        $enabled = $config['categorylimit'];
+        $cats = explode(',', $config['cats']);
+        $is_cat = ($enabled == 1 ? (empty($cats) or in_array($course->category, $cats)) : true);
+
+        return ($is_cat);
     }
+
+    function applicable_formats() {
+        global $COURSE;
+
+        if (!block_quickmail::is_supported($COURSE)) {
+            return array('site' => false, 'my' => false, 'course-view' => false);
+        } else {
+            return array('site' => false, 'my' => false, 'course-view' => true);
+        }
+    }
+
     function has_config() {
         return true;
     }
+
     /**
      * Disable multiple instances of this block
      * @return bool Returns false
