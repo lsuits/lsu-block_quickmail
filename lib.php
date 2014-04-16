@@ -197,6 +197,11 @@ abstract class quickmail {
             $receipt = get_config($m, 'block_quickmail_receipt');
             $ferpa = get_config($m, 'block_quickmail_ferpa');
 
+            // Convert Never (-1) to No (0) in case site config is changed.
+            if ($allowstudents == -1) {
+                $allowstudents = 0;
+            }
+
             $config = array(
                 'allowstudents' => $allowstudents,
                 'roleselection' => $roleselection,
@@ -204,6 +209,14 @@ abstract class quickmail {
                 'receipt' => $receipt,
                 'ferpa' => $ferpa
             );
+
+        } else {
+            // See if allow students is disabled at the site level.
+            $allowstudents = get_config('moodle', 'block_quickmail_allowstudents');
+            if ($allowstudents == -1) {
+                $config['allowstudents'] = 0;
+            }
+			$config['ferpa'] = get_config('moodle', 'block_quickmail_ferpa');
         }
 
         return $config;

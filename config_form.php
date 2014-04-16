@@ -18,8 +18,13 @@ class config_form extends moodleform {
 
         $student_select = array(0 => get_string('no'), 1 => get_string('yes'));
 
-        $mform->addElement('select', 'allowstudents',
-            quickmail::_s('allowstudents'), $student_select);
+        $allowstudents = get_config('moodle', 'block_quickmail_allowstudents');
+        if ($allowstudents != -1) {
+            // If we disallow "Allow students to use Quickmail" at the site
+            // level, then disallow the config to be set at the course level.
+            $mform->addElement('select', 'allowstudents',
+                quickmail::_s('allowstudents'), $student_select);
+        }
 
         $roles =& $mform->addElement('select', 'roleselection',
             quickmail::_s('select_roles'), $this->_customdata['roles']);
