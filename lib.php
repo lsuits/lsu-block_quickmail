@@ -396,10 +396,10 @@ abstract class quickmail {
         }
 
         $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
-            FROM {user} as u  
-                JOIN {user_enrolments} as ue                 
+            FROM {user} AS u  
+                JOIN {user_enrolments} AS ue                 
                     ON u.id = ue.userid 
-                JOIN {enrol} as en
+                JOIN {enrol} AS en
                     ON en.id = ue.enrolid                     
                 WHERE en.courseid = ?
                     AND ue.status = ?
