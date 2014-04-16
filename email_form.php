@@ -26,13 +26,17 @@ class email_form extends moodleform {
     private function option_value($user) {
         $users_to_groups = $this->_customdata['users_to_groups'];
         $users_to_roles = $this->_customdata['users_to_roles'];
-
         $only_sn = function($role) { return $role->shortname; };
-
-        $roles = implode(',', array_map($only_sn, $users_to_roles[$user->id]));
+        if(!is_numeric($user->id)) { 
+           $roles = NULL;
+        } else { 
+            $roles = implode(',', array_map($only_sn, $users_to_roles[$user->id]));
+        }
 
         // everyone defaults to none
+        if(is_numeric($user->id)) {
         $roles .= ',none';
+        }
 
         if (empty($users_to_groups[$user->id])) {
             $groups = 0;

@@ -144,22 +144,23 @@ if (empty($users)) {
 // we are presenting the form with values populated from either the log or drafts table in the db
 if (!empty($type)) {
     
-
     $email = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
-
+    $emailmailto = array();
     if ($messageIDresend == 1) {
         $email->additional_emails = array();
         $email->failuserids = explode(',', $email->failuserids);        
     
         foreach ($email->failuserids as $failed_address_or_id) {
-            if ( ! is_numeric($failed_address_or_id)) {
-                $email->additional_emails [] = $failed_address_or_id;
+            if(!is_numeric($failed_address_or_id)) {
+                $email->additional_emails[] = $failed_address_or_id;
                 unset($failed_address_or_id);
+            } else {
+                $emailmailto[] = $failed_address_or_id;
             }
         }
         
         $email->additional_emails = implode(',', $email->additional_emails);
-        $email->mailto 		  = implode(',', $email->failuserids);
+        $email->mailto 		  = implode(',', $emailmailto);
 
     }
 } else {
@@ -197,7 +198,10 @@ $email = file_prepare_standard_editor(
 $selected = array();
 if (!empty($email->mailto)) {
     foreach (explode(',', $email->mailto) as $id) {
-        $selected[$id] = $users[$id];
+        $selected[$id] = (object) array('id'=>$id,'firstname'=>null,'lastname'=>null,'email'=>$id,'mailformat'=>'1','suspended'=>'0','maildisplay'=>'2','status'=>'0'); 
+        if(is_numeric($selected[$id]->id)) {
+            $selected[$id] = $users[$id];
+        } 
         unset($users[$id]);
     }
 }
@@ -304,7 +308,6 @@ if ($form->is_cancelled()) {
                 foreach (explode(',', $data->mailto) as $userid) {
                     // WHERE THE ACTUAL EMAILING IS HAPPENING
                     $success = email_to_user($everyone[$userid], $user, $subject, strip_tags($data->message), $data->message);
-
                     if (!$success) {
                         $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
                         $data->failuserids[] = $userid;
@@ -336,6 +339,7 @@ if ($form->is_cancelled()) {
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
 
                 //force fail
+		// $additional_email_success = false;
 
                 if (!$additional_email_success) {
                     $data->failuserids[] = $additional_email;
