@@ -161,7 +161,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
     if ($oldversion < 2012061112) {
     	migrate_quickmail_20();
     }
-if($oldversion < 2014022713){
+if($oldversion < 2014041611){
 
         // Define field status to be added to block_quickmail_log.
         $table = new xmldb_table('block_quickmail_log');
@@ -175,7 +175,7 @@ if($oldversion < 2014022713){
             $dbman->add_field($table, $field2);
         }
         // Quickmail savepoint reached.
-        upgrade_block_savepoint(true, 2014022713, 'quickmail');
+        upgrade_block_savepoint(true, 2014041611, 'quickmail');
     }
     return $result;
 }
