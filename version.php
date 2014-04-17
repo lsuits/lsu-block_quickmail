@@ -1,6 +1,6 @@
 <?php
 
 // Written at Louisiana State University
-$plugin->version = 2014041611;
+$plugin->version = 2014042914;
 $plugin->requires = 2012120304;
-$plugin->release = "v1.3.2";
+$plugin->release = "v1.5.0";
