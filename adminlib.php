@@ -71,7 +71,12 @@ class Message {
         $timeLine   = sprintf("Time elapsed: %d seconds<br/>", $this->endTime - $this->startTime);
         $warnline   = sprintf("Warnings: %d<br/>", count($this->warnings));
         $msgLine    = sprintf("message body as follows<br/><br/><hr/>%s<hr/>", $this->html);
-        $recipLine  = sprintf("sent successfully to the following users:<br/><br/>%s", implode(',', $this->sentUsers));
+print_r($this->sentUsers);
+        if(count($this->sentUsers) > 0) {
+            $recipLine  = sprintf("sent successfully to the following users:<br/><br/>%s", implode(',', $this->sentUsers));
+        } else {
+            $recipLine  = sprintf("It looks like you either have email sending disabled or things are very broken%s",NULL);
+        }
         return $usersLine.$warnline.$timeLine.$msgLine.$recipLine;
     }
 

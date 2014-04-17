@@ -80,31 +80,27 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/blocks/admin_email/'));
 } else if ($data = $form->get_data()) {
     $message = new Message($data, array_keys($users));
-        $data->courseid = 1;
-        $data->userid = $USER->id;
-        $data->alternateid = NULL;
-        $data->mailto = implode(',', $emailed);
-        $data->message = implode(' ', $data->body);
-        $data->attachment = '';
-        $data->time = time();
-        $data->failuserids = NULL;
-        $data->status = NULL;
 
-//        (object) array_merge((array)$data, array($emailed));
+    $data->courseid = 1;
+    $data->userid = $USER->id;
+    $data->alternateid = NULL;
+    $data->mailto = implode(',', $emailed);
+    unset($data->body['format']);
+    $data->message = implode(' ', $data->body);
+    $data->attachment = '';
+    $data->time = time();
+    $data->failuserids = NULL;
+    $data->status = NULL;
 
-            $data->id = $DB->insert_record('block_quickmail_log', $data);
-            $table = 'log';
-
-        print_r($data)  and die;
-
-//    $message->send();
-//    $message->sendAdminReceipt();
+    $message->send();
+    $message->sendAdminReceipt();
     // Finished processing
     // Empty errors mean that you can go back home
     if(empty($message->warnings)) {
+    $data->id = $DB->insert_record('block_quickmail_log', $data);
+    $table = 'log';
+print_r($data) and die;
         redirect(new moodle_url('/'));
-    } else {
-        print_r($data) and die;
     }
      
 }
