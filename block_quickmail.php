@@ -24,7 +24,7 @@ class block_quickmail extends block_list {
     }
     
     function get_content() {
-        global $CFG, $COURSE, $OUTPUT;
+        global $USER, $CFG, $COURSE, $OUTPUT;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -45,7 +45,7 @@ class block_quickmail extends block_list {
         $icon_class = array('class' => 'icon');
 
         $cparam = array('courseid' => $COURSE->id);
-        
+
         if ($can_send) {
             $send_email_str = quickmail::_s('composenew');
             $send_email = html_writer::link(
@@ -100,6 +100,16 @@ class block_quickmail extends block_list {
             );
             $this->content->items[] = $config;
             $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $config_str, 'moodle', $icon_class);
+        }
+
+        if(is_siteadmin($USER->id)) {
+            $send_adminemail_str = quickmail::_s('sendadmin');
+            $send_adminemail = html_writer::link(
+                new moodle_url('/blocks/quickmail/admin_email.php'),
+                $send_adminemail_str
+            );
+            $this->content->items[] = $send_adminemail;
+            $this->content->icons[] = $OUTPUT->pix_icon('t/email', $send_adminemail_str, 'moodle', $icon_class);
         }
 
         return $this->content;

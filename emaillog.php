@@ -90,12 +90,19 @@ switch ($action) {
         $html = quickmail::list_entries($courseid, $type, $page, $perpage, $userid, $count, $can_delete);
 }
 
-$html.= html_writer::link(
-    new moodle_url(
+if($courseid == 1) {
+    $html.= html_writer::link(
+        new moodle_url('/blocks/quickmail/admin_email.php'),
+        quickmail::_s('composenew')
+     );
+} else {
+    $html.= html_writer::link(
+        new moodle_url(
             '/blocks/quickmail/email.php', 
             array('courseid' => $courseid)),
-    quickmail::_s('composenew')
-);
+        quickmail::_s('composenew')
+    );
+}
 
 if($canimpersonate and $USER->id != $userid) {
     $user = $DB->get_record('user', array('id' => $userid));

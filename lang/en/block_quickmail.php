@@ -1,6 +1,7 @@
 <?php
 
 $string['pluginname'] = 'Quickmail';
+$string['sendadmin'] = 'Admin Email';
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
@@ -135,3 +136,15 @@ $string['status'] = 'status';
 $string['failed_to_send_to'] = 'failed to send to';
 $string['users'] = 'users';
 $string['user'] = 'user';
+
+
+// Admin Email
+$string['send_email'] = 'Send Email';
+$string['subject'] = 'Subject';
+$string['noreply'] = 'No-Reply';
+$string['body'] = 'Body';
+$string['email_error'] = 'Could not email: {$a->firstname} {$a->lastname} ({$a->email})';
+$string['email_error_field'] = 'Can not have an empty: {$a}';
+$string['block/admin_email:addinstance'] = "Add Admin Email block.";
+$string['admin_email:addinstance'] = "Add Admin Email block.";
+$string['messageprovider:broadcast'] = 'Send broadcast messages using Admin Email.';

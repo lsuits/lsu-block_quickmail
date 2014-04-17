@@ -260,12 +260,22 @@ abstract class quickmail {
 
         $table = new html_table();
         $table->head = array(get_string('date'), quickmail::_s('subject'));
+        if($courseid ==1 ) {
+        $table->data = array(
+            new html_table_row(array(
+                new html_table_cell(quickmail::format_time($email->time)),
+                new html_table_cell($email->subject),
+                new html_table_cell($email->message))
+            )
+        );
+        } else {
         $table->data = array(
             new html_table_row(array(
                 new html_table_cell(quickmail::format_time($email->time)),
                 new html_table_cell($email->subject))
             )
         );
+        }
 
         $msg = quickmail::_s('delete_confirm', html_writer::table($table));
 
@@ -284,15 +294,20 @@ abstract class quickmail {
         $logs = $DB->get_records($dbtable, $params,
             'time DESC', '*', $page * $perpage, $perpage);
         
+        if ($courseid == 1) {
+        $table->head= array(get_string('date'), quickmail::_s('subject'),
+            quickmail::_s('message'), get_string('action'), quickmail::_s('status'));
+        } else {
         $table->head= array(get_string('date'), quickmail::_s('subject'),
             quickmail::_s('attachment'), get_string('action'), quickmail::_s('status'), quickmail::_s('failed_to_send_to'),quickmail::_s('send_again'));
-        
+        }
         
         $table->data = array();
         foreach ($logs as $log) {
             $array_of_failed_user_ids = array();
             $date = quickmail::format_time($log->time);
             $subject = $log->subject;
+            $message = $log->message;
             $attachments = $log->attachment;
             if( ! empty($log->failuserids) ){
             // DWE -> keep track of user ids that failed. 
@@ -306,10 +321,14 @@ abstract class quickmail {
 
             $actions = array();
 
-            $open_link = html_writer::link(
-                new moodle_url('/blocks/quickmail/email.php', $params),
-                $OUTPUT->pix_icon('i/search', 'Open Email')
-            );
+            if($courseid == 1) {
+                $open_link = null;
+            } else {
+                $open_link = html_writer::link(
+                    new moodle_url('/blocks/quickmail/email.php', $params),
+                    $OUTPUT->pix_icon('i/search', 'Open Email')
+                );
+            }
             $actions[] = $open_link;
 
             if ($can_delete) {
@@ -329,7 +348,7 @@ abstract class quickmail {
             $action_links = implode(' ', $actions);
             $statusSENTorNot = quickmail::_s('sent_success');
             
-            if ( ! empty ($array_of_failed_user_ids) ){
+            if (!empty ($array_of_failed_user_ids) ){
                 $statusSENTorNot = quickmail::_s('message_failure');
                 $params += array(
                     'fmid' => 1,
@@ -337,9 +356,7 @@ abstract class quickmail {
                 $text = quickmail::_s('send_again');
                 $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/email.php", $params), $text);
                 $listFailIDs = count($array_of_failed_user_ids);
-                
                 $failCount =  (($listFailIDs === 1) ?  $listFailIDs . " " . quickmail::_s("user") :  $listFailIDs . " " . quickmail::_s("users"));         
-
             }
 
             else{
@@ -348,8 +365,11 @@ abstract class quickmail {
                 $sendagain = "";
                 $failCount = "";
             }
-
-            $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$failCount,$sendagain);
+            if ($courseid == 1) {
+                $table->data[] = array($date, $subject, $message, $action_links, $statusSENTorNot);
+            } else {
+                $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$failCount,$sendagain);
+            }
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
