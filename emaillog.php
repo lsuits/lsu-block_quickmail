@@ -143,7 +143,11 @@ if($canimpersonate) {
 if(empty($count)) {
     echo $OUTPUT->notification(quickmail::_s('no_'.$type));
 
-    echo $OUTPUT->continue_button('/blocks/quickmail/email.php?courseid='.$courseid);
+    if ($COURSE->id == 1) {
+        echo $OUTPUT->continue_button('/blocks/quickmail/admin_email.php?courseid='.$courseid);
+    } else {
+        echo $OUTPUT->continue_button('/blocks/quickmail/email.php?courseid='.$courseid);
+    }
 
     echo $OUTPUT->footer();
     exit;

@@ -71,7 +71,6 @@ class Message {
         $timeLine   = sprintf("Time elapsed: %d seconds<br/>", $this->endTime - $this->startTime);
         $warnline   = sprintf("Warnings: %d<br/>", count($this->warnings));
         $msgLine    = sprintf("message body as follows<br/><br/><hr/>%s<hr/>", $this->html);
-print_r($this->sentUsers);
         if(count($this->sentUsers) > 0) {
             $recipLine  = sprintf("sent successfully to the following users:<br/><br/>%s", implode(',', $this->sentUsers));
         } else {

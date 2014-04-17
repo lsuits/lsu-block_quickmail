@@ -16,6 +16,9 @@ $page       = optional_param('page', 0, PARAM_INT);
 $perpage    = optional_param('perpage', 20, PARAM_INT);
 $sort       = optional_param('sort', '', PARAM_ACTION);
 $direction  = optional_param('dir', 'ASC', PARAM_ACTION);
+$courseid = optional_param('courseid', '', PARAM_INT);
+$type = optional_param('type', '', PARAM_ALPHA);
+$typeid = optional_param('typeid', 0, PARAM_INT);
 
 $blockname  = get_string('pluginname', 'block_quickmail');
 $header     = get_string('sendadmin', 'block_quickmail');
@@ -75,16 +78,51 @@ $emailed[] = $user->email;
 $form = new admin_email_form();
 
 // Process data submission
+// Re-used form
+if(!empty($type)) {
+    $data = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
+    if($data = $form->get_data()) {
+        $message = new Message($data, array_keys($users));
+        $data->courseid = 1;
+        $data->userid = $USER->id;
+        $data->alternateid = NULL;
+        $data->mailto = implode(',', $emailed);
+        $data->format = $data->body['format'];
+        unset($data->body['format']);
+        $data->message = implode(' ', $data->body);
+        $data->attachment = '';
+        $data->time = time();
+        $data->failuserids = NULL;
+        $data->status = NULL;
+
+        // Send the messages
+        $message->send();
+        $message->sendAdminReceipt();
+
+        // Finished processing
+        // Empty errors mean that you can go back home
+        if(empty($message->warnings)) {
+            unset($data->body);
+            unset($data->noreply);
+            unset($data->send);
+            $data->id = $DB->insert_record('block_quickmail_log', $data);
+            $table = 'log';
+            redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
+        }    
+    }
+}
+
+// New form
 if ($form->is_cancelled()) {
     unset($SESSION->user_filtering);
-    redirect(new moodle_url('/blocks/admin_email/'));
+    redirect(new moodle_url('/blocks/quickmail/admin_email.php'));
 } else if ($data = $form->get_data()) {
     $message = new Message($data, array_keys($users));
-
     $data->courseid = 1;
     $data->userid = $USER->id;
     $data->alternateid = NULL;
     $data->mailto = implode(',', $emailed);
+    $data->format = $data->body['format'];
     unset($data->body['format']);
     $data->message = implode(' ', $data->body);
     $data->attachment = '';
@@ -92,17 +130,20 @@ if ($form->is_cancelled()) {
     $data->failuserids = NULL;
     $data->status = NULL;
 
+    // Send the messages
     $message->send();
     $message->sendAdminReceipt();
+
     // Finished processing
     // Empty errors mean that you can go back home
     if(empty($message->warnings)) {
-    $data->id = $DB->insert_record('block_quickmail_log', $data);
-    $table = 'log';
-print_r($data) and die;
-        redirect(new moodle_url('/'));
+        unset($data->body);
+        unset($data->noreply);
+        unset($data->send);
+        $data->id = $DB->insert_record('block_quickmail_log', $data);
+        $table = 'log';
+        redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
     }
-     
 }
 
 echo $OUTPUT->header();

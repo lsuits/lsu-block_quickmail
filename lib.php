@@ -323,6 +323,10 @@ abstract class quickmail {
 
             if($courseid == 1) {
                 $open_link = null;
+                $open_link = html_writer::link(
+                    new moodle_url('/blocks/quickmail/admin_email.php', $params),
+                    $OUTPUT->pix_icon('i/search', 'Open Email')
+                );
             } else {
                 $open_link = html_writer::link(
                     new moodle_url('/blocks/quickmail/email.php', $params),
