@@ -161,7 +161,7 @@ if(!empty($display_users)) {
     $columns = array('firstname', 'lastname', 'email', 'city', 'lastaccess');
     foreach($columns as $column) {
         $direction = ($sort == $column and $direction == "ASC") ? "DESC" : "ASC";
-        $$column = html_writer::link('index.php?sort='.$column.'&dir='.
+        $$column = html_writer::link('admin_email.php?sort='.$column.'&dir='.
             $direction, get_string($column));
     }
     $table = new html_table();
