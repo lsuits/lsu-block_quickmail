@@ -12,18 +12,19 @@ require_once 'admin_email_form.php';
 
 require_login();
 
+// get page params
 $page       = optional_param('page', 0, PARAM_INT);
 $perpage    = optional_param('perpage', 20, PARAM_INT);
-$sort       = optional_param('sort', '', PARAM_ACTION);
+$sort       = optional_param('sort', 'lastname', PARAM_ACTION);
 $direction  = optional_param('dir', 'ASC', PARAM_ACTION);
-$courseid = optional_param('courseid', '', PARAM_INT);
-$type = optional_param('type', '', PARAM_ALPHA);
-$typeid = optional_param('typeid', 0, PARAM_INT);
+$courseid   = optional_param('courseid', '', PARAM_INT);
+$type       = optional_param('type', '', PARAM_ALPHA);
+$typeid     = optional_param('typeid', 0, PARAM_INT);
 
 $blockname  = get_string('pluginname', 'block_quickmail');
 $header     = get_string('sendadmin', 'block_quickmail');
 
-$context    = get_context_instance(CONTEXT_SYSTEM);
+$context    = context_system::instance();
 
 $PAGE->set_context($context);
 $PAGE->set_url($CFG->wwwroot . '/blocks/quickmail/admin_email.php');
@@ -60,8 +61,6 @@ list($sql, $params) = $ufiltering->get_sql_filter();
 $usersearchcount    = get_users(false, '', true, null, '', '', '', '', '', 
                 '*', $sql, $params);
 
-if(empty($sort)) $sort = 'lastname';
-
 $display_users  = empty($sql) ? array() :
     get_users_listing($sort, $direction, $page*$perpage, 
     $perpage, '', '', '', $sql, $params);
@@ -72,59 +71,35 @@ $users          = empty($sql) ? array() :
 
 $emailed = array();
 foreach ($users as $user) {
-$emailed[] = $user->email;
+    $emailed[] = $user->email;
 }
 
-$form = new admin_email_form();
+$editor_options = array(
+        'trusttext' => true,
+        'subdirs' => 1,
+        'maxfiles' => EDITOR_UNLIMITED_FILES,
+        'accepted_types' => '*',
+        'context' => $context
+    );
+
+$form = new admin_email_form(null, array(
+    'editor_options' => $editor_options
+));
 
 // Process data submission
-// Re-used form
-if(!empty($type)) {
-    $data = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
-    if($data = $form->get_data()) {
-        $message = new Message($data, array_keys($users));
-        $data->courseid = 1;
-        $data->userid = $USER->id;
-        $data->alternateid = NULL;
-        $data->mailto = implode(',', $emailed);
-        $data->format = $data->body['format'];
-        unset($data->body['format']);
-        $data->message = implode(' ', $data->body);
-        $data->attachment = '';
-        $data->time = time();
-        $data->failuserids = NULL;
-        $data->status = NULL;
-
-        // Send the messages
-        $message->send();
-        $message->sendAdminReceipt();
-
-        // Finished processing
-        // Empty errors mean that you can go back home
-        if(empty($message->warnings)) {
-            unset($data->body);
-            unset($data->noreply);
-            unset($data->send);
-            $data->id = $DB->insert_record('block_quickmail_log', $data);
-            $table = 'log';
-            redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
-        }    
-    }
-}
-
-// New form
 if ($form->is_cancelled()) {
     unset($SESSION->user_filtering);
     redirect(new moodle_url('/blocks/quickmail/admin_email.php'));
 } else if ($data = $form->get_data()) {
+   
     $message = new Message($data, array_keys($users));
+
     $data->courseid = 1;
     $data->userid = $USER->id;
     $data->alternateid = NULL;
     $data->mailto = implode(',', $emailed);
-    $data->format = $data->body['format'];
-    unset($data->body['format']);
-    $data->message = implode(' ', $data->body);
+    $data->format = $data->message_editor['format'];
+    $data->message = $data->message_editor['text'];
     $data->attachment = '';
     $data->time = time();
     $data->failuserids = NULL;
@@ -137,17 +112,24 @@ if ($form->is_cancelled()) {
     // Finished processing
     // Empty errors mean that you can go back home
     if(empty($message->warnings)) {
-        unset($data->body);
-        unset($data->noreply);
-        unset($data->send);
         $data->id = $DB->insert_record('block_quickmail_log', $data);
-        $table = 'log';
         redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
     }
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($header);
+
+// get data for form
+if(!empty($type)) {
+    $data = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
+    $data->messageformat = $USER->mailformat;
+    $data = file_prepare_standard_editor(
+        $data, 'message', $editor_options, $context, 'block_quickmail', $type, $data->id
+    );
+}else{
+    $data = new stdClass();
+}
 
 // Notify the admin.
 if(!empty($message->warnings)) {
@@ -194,10 +176,11 @@ if(!empty($display_users)) {
         return array($fullname, $email, $city, $lastaccess_time);
     }, $display_users);
     echo html_writer::table($table);
-    $form->set_data(array('noreply' => $CFG->noreplyaddress));
-    echo $form->display();
 }
 
-echo $paging_bar;
+$data->noreply = $CFG->noreplyaddress;
+$form->set_data($data);
+echo $form->display();
 
+echo $paging_bar;
 echo $OUTPUT->footer();

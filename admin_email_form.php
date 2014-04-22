@@ -8,32 +8,15 @@ class admin_email_form extends moodleform {
 
     function definition() {
 
-        $type = optional_param('type', '', PARAM_ALPHA);
-        $typeid = optional_param('typeid', 0, PARAM_INT);
-
-        global $CFG, $DB;
-
-        if(!empty($type)) {
-            $data = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
-        }
-
         $mform =& $this->_form;
 
-        if(!empty($type)) {
-            $mform->addElement('text', 'subject', get_string('subject', 'block_admin_email'))->setValue($data->subject);
-        } else {
-            $mform->addElement('text', 'subject', get_string('subject', 'block_admin_email'));
-        }
+        $mform->addElement('text', 'subject', get_string('subject', 'block_admin_email'));
         $mform->setType('subject', PARAM_TEXT);
         
         $mform->addElement('text', 'noreply', get_string('noreply', 'block_admin_email'));
         $mform->setType('noreply', PARAM_TEXT);
-        
-        if(!empty($type)) {
-            $mform->addElement('editor', 'body',  get_string('body', 'block_admin_email'))->setValue(array('text'=> $data->message));
-        } else {
-            $mform->addElement('editor', 'body',  get_string('body', 'block_admin_email'));
-        }
+
+        $mform->addElement('editor', 'message_editor',  get_string('body', 'block_admin_email'), null, $this->_customdata['editor_options']);
         $mform->setType('body', PARAM_RAW);
 
         $buttons = array(
@@ -44,7 +27,7 @@ class admin_email_form extends moodleform {
 
         $mform->addRule('subject', null, 'required', 'client');
         $mform->addRule('noreply', null, 'required', 'client');
-        $mform->addRule('body', null, 'required');
+        $mform->addRule('message_editor', null, 'required');
     }
 
     function validation($data, $files) {

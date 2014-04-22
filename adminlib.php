@@ -20,15 +20,15 @@ class Message {
         $this->warnings = array();
 
         $this->subject  = $data->subject;
-        $this->html     = $data->body['text'];
-        $this->text     = strip_tags($data->body['text']);
+        $this->html     = $data->message_editor['text'];
+        $this->text     = strip_tags($data->message_editor['text']);
         $this->noreply  = $data->noreply;
         $this->warnings = array();
         $this->users    = array_values($DB->get_records_list('user', 'id', $users));
     }
 
     public function send($users = null){
-
+        
         $this->startTime = time();
         $users = empty($users) ? $this->users : $users;
 
@@ -40,7 +40,6 @@ class Message {
         $noreplyUser->maildisplay   = 2;
 
         foreach($users as $user) {
-
             $success = email_to_user(
                     $user,          // to
                     $noreplyUser,   // from
@@ -72,7 +71,7 @@ class Message {
         $warnline   = sprintf("Warnings: %d<br/>", count($this->warnings));
         $msgLine    = sprintf("message body as follows<br/><br/><hr/>%s<hr/>", $this->html);
         if(count($this->sentUsers) > 0) {
-            $recipLine  = sprintf("sent successfully to the following users:<br/><br/>%s", implode(',', $this->sentUsers));
+            $recipLine  = sprintf("sent successfully to the following users:<br/><br/>%s", implode(', ', $this->sentUsers));
         } else {
             $recipLine  = sprintf("It looks like you either have email sending disabled or things are very broken%s",NULL);
         }
