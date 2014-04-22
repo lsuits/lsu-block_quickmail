@@ -146,9 +146,9 @@ if (!empty($type)) {
     
     $email = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
     $emailmailto = array();
-    if ($messageIDresend == 1) {
+//    if ($messageIDresend == 1) {
         $email->additional_emails = array();
-        $email->failuserids = explode(',', $email->failuserids);        
+        $email->failuserids = explode(',', $email->mailto);        
     
         foreach ($email->failuserids as $failed_address_or_id) {
             if(!is_numeric($failed_address_or_id)) {
@@ -157,7 +157,7 @@ if (!empty($type)) {
             } else {
                 $emailmailto[] = $failed_address_or_id;
             }
-        }
+       // }
         
         $email->additional_emails = implode(',', $email->additional_emails);
         $email->mailto 		  = implode(',', $emailmailto);
