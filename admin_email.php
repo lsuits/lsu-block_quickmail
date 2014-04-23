@@ -32,6 +32,11 @@ $PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
 $PAGE->set_heading($SITE->shortname.': '.$blockname);
 
+if($type == 'log'){
+    $log_message = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
+    $SESSION->user_filtering = isset($log_message->mailto) ? unserialize($log_message->mailto) : $SESSION->user_filtering;
+}
+
 // Get Our users
 $fields = array(
     'realname'      => 1,
@@ -69,10 +74,6 @@ $users          = empty($sql) ? array() :
     get_users_listing($sort, $direction, 0, 
     0, '', '', '', $sql, $params);
 
-$emailed = array();
-foreach ($users as $user) {
-    $emailed[] = $user->email;
-}
 
 $editor_options = array(
         'trusttext' => true,
@@ -94,42 +95,48 @@ if ($form->is_cancelled()) {
    
     $message = new Message($data, array_keys($users));
 
-    $data->courseid = 1;
-    $data->userid = $USER->id;
-    $data->alternateid = NULL;
-    $data->mailto = implode(',', $emailed);
-    $data->format = $data->message_editor['format'];
-    $data->message = $data->message_editor['text'];
+    // @todo refactor so that we're not building two similar structures, namely: $data and $message.
+    $data->courseid   = SITEID;
+    $data->userid     = $USER->id;
+    $data->mailto     = isset($SESSION->user_filtering) ? serialize($SESSION->user_filtering) : "unknown filter";
+    $data->format     = $data->message_editor['format'];
+    $data->message    = $data->message_editor['text'];
     $data->attachment = '';
     $data->time = time();
-    $data->failuserids = NULL;
-    $data->status = NULL;
 
     // Send the messages
     $message->send();
     $message->sendAdminReceipt();
 
+    // save record of the message, regardless of errors.
+    $data->id = $DB->insert_record('block_quickmail_log', $data);
+
     // Finished processing
     // Empty errors mean that you can go back home
     if(empty($message->warnings)) {
-        $data->id = $DB->insert_record('block_quickmail_log', $data);
+        unset($SESSION->user_filtering);
         redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
+    }else{
+        // update DB to reflect fail status.
+        $data->status = sprintf("Send failed for %d users.", count($message->warnings));
+        $DB->update_record('block_quickmail_log', $data);
     }
 }
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading($header);
-
 // get data for form
 if(!empty($type)) {
-    $data = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
-    $data->messageformat = $USER->mailformat;
-    $data = file_prepare_standard_editor(
-        $data, 'message', $editor_options, $context, 'block_quickmail', $type, $data->id
+    $data = $log_message;
+    $log_message->messageformat = $USER->mailformat;
+    $log_message = file_prepare_standard_editor(
+        $log_message, 'message', $editor_options, $context, 'block_quickmail', $type, $log_message->id
     );
 }else{
-    $data = new stdClass();
+    $log_message = new stdClass();
 }
+
+// begin output.
+echo $OUTPUT->header();
+echo $OUTPUT->heading($header);
 
 // Notify the admin.
 if(!empty($message->warnings)) {
@@ -169,8 +176,8 @@ if(!empty($display_users)) {
     $table->head = array("$firstname / $lastname", $email, $city, $lastaccess); 
     $table->data = array_map(function($user) {
         $fullname = fullname($user);
-        $email = $user->email;
-        $city = $user->city;
+        $email    = $user->email;
+        $city     = $user->city;
         $lastaccess_time = isset($user->lastaccess) ? 
             format_time(time() - $user->lastaccess) : get_string('never');
         return array($fullname, $email, $city, $lastaccess_time);
@@ -178,9 +185,11 @@ if(!empty($display_users)) {
     echo html_writer::table($table);
 }
 
-$data->noreply = $CFG->noreplyaddress;
-$form->set_data($data);
-echo $form->display();
+// need no-reply in both cases.
+$log_message->noreply = $CFG->noreplyaddress;
 
+// display form and done.
+$form->set_data($log_message);
+echo $form->display();
 echo $paging_bar;
 echo $OUTPUT->footer();
