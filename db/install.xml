@@ -16,8 +16,8 @@
         <FIELD NAME="attachment" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="message" NEXT="format"/>
         <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="attachment" NEXT="time"/>
         <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="format" NEXT="failuserids"/>
-        <FIELD NAME="failuserids" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="time" NEXT="status"/>
-        <FIELD NAME="status" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="failuserids"/>
+        <FIELD NAME="failuserids" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="time" NEXT="additional_emails"/>
+        <FIELD NAME="additional_emails" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" PREVIOUS="failuserids"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for block_quickmail_log" NEXT="courseid"/>
@@ -78,4 +78,3 @@
     </TABLE>
   </TABLES>
 </XMLDB>
-

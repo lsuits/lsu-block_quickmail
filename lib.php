@@ -433,10 +433,10 @@ abstract class quickmail {
         }
 
         $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
-            FROM {user} AS u  
-                JOIN {user_enrolments} AS ue                 
+            FROM {user} u  
+                JOIN {user_enrolments} ue                 
                     ON u.id = ue.userid 
-                JOIN {enrol} AS en
+                JOIN {enrol} en
                     ON en.id = ue.enrolid                     
                 WHERE en.courseid = ?
                     AND ue.status = ?
@@ -465,6 +465,25 @@ abstract class quickmail {
         $evryone_not_suspended = array_intersect_key($valids, $everyone);
 
         return $evryone_not_suspended;
+    }
+    
+        public static function clean($failuserids){
+        $additional_emails = array();
+        $failuserids = explode(',', $failuserids);        
+    
+        foreach ($failuserids as $id => $failed_address_or_id) {
+            if ( ! is_numeric($failed_address_or_id)) {
+                $additional_emails [] = $failed_address_or_id;
+                
+                 
+                unset($failuserids[$id]);
+            }
+        }
+        
+        $additional_emails = implode(',', $additional_emails);
+        $mailto            = implode(',', $failuserids);
+
+        return array($mailto, $additional_emails);
     }
 }
 

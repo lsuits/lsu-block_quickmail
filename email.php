@@ -145,22 +145,24 @@ if (empty($users)) {
 if (!empty($type)) {
     
     $email = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
-    $emailmailto = array();
-//    if ($messageIDresend == 1) {
-        $email->additional_emails = array();
-        $email->failuserids = explode(',', $email->mailto);        
-    
-        foreach ($email->failuserids as $failed_address_or_id) {
-            if(!is_numeric($failed_address_or_id)) {
-                $email->additional_emails[] = $failed_address_or_id;
-                unset($failed_address_or_id);
-            } else {
-                $emailmailto[] = $failed_address_or_id;
-            }
-       // }
+    //$emailmailto = array();
+    if ($messageIDresend == 1) {
+                    list($email->mailto, $email->additional_emails) = quickmail::clean($email->failuserids);
+
+//        $email->additional_emails = array();
+//        $email->failuserids = explode(',', $email->mailto);        
+//    
+//        foreach ($email->failuserids as $failed_address_or_id) {
+//            if(!is_numeric($failed_address_or_id)) {
+//                $email->additional_emails[] = $failed_address_or_id;
+//                unset($failed_address_or_id);
+//            } else {
+//                $emailmailto[] = $failed_address_or_id;
+//            }
+        //}
         
-        $email->additional_emails = implode(',', $email->additional_emails);
-        $email->mailto 		  = implode(',', $emailmailto);
+//        $email->additional_emails = implode(',', $email->additional_emails);
+//        $email->mailto 		  = implode(',', $emailmailto);
 
     }
 } else {
@@ -339,7 +341,7 @@ if ($form->is_cancelled()) {
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
 
                 //force fail
-		//$additional_email_success = false;
+		$additional_email_success = false;
 
                 if (!$additional_email_success) {
                     $data->failuserids[] = $additional_email;
