@@ -26,6 +26,9 @@ $header     = get_string('sendadmin', 'block_quickmail');
 
 $context    = context_system::instance();
 
+// page params for ui filter
+$filterparams = $typeid > 0 ? array('courseid'=>$courseid, 'type'=>$type, 'typeid'=>$typeid) : null;
+
 $PAGE->set_context($context);
 $PAGE->set_url($CFG->wwwroot . '/blocks/quickmail/admin_email.php');
 $PAGE->navbar->add($blockname);
@@ -68,7 +71,7 @@ $fields = array(
     'mnethostid'    => 1,
     );
 
-$ufiltering         = new user_filtering($fields);
+$ufiltering         = new user_filtering($fields, null, $filterparams);
 list($sql, $params) = $ufiltering->get_sql_filter();
 $usersearchcount    = get_users(false, '', true, null, '', '', '', '', '', 
                 '*', $sql, $params);
