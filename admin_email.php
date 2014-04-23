@@ -20,6 +20,7 @@ $direction  = optional_param('dir', 'ASC', PARAM_ACTION);
 $courseid   = optional_param('courseid', '', PARAM_INT);
 $type       = optional_param('type', '', PARAM_ALPHA);
 $typeid     = optional_param('typeid', 0, PARAM_INT);
+$fmid       = optional_param('fmid', 0, PARAM_INT);
 
 $blockname  = get_string('pluginname', 'block_quickmail');
 $header     = get_string('sendadmin', 'block_quickmail');
@@ -69,12 +70,21 @@ $fields = array(
     'nevermodified' => 1,
     'auth'          => 1,
     'mnethostid'    => 1,
+    'language'      => 1,
+    'firstnamephonetic' => 1,
+    'lastnamephonetic' => 1,
+    'middlename' => 1,
+    'alternatename' => 1
     );
 
 $ufiltering         = new user_filtering($fields, null, $filterparams);
 list($sql, $params) = $ufiltering->get_sql_filter();
 $usersearchcount    = get_users(false, '', true, null, '', '', '', '', '', 
                 '*', $sql, $params);
+
+if($fmid == 1){
+    $sql = 'id IN (' . $log_message->failuserids . ')';
+}
 
 $display_users  = empty($sql) ? array() :
     get_users_listing($sort, $direction, $page*$perpage, 
@@ -114,12 +124,14 @@ if ($form->is_cancelled()) {
     $data->attachment = '';
     $data->time = time();
 
-    // Send the messages
-    $message->send();
-    $message->sendAdminReceipt();
-
     // save record of the message, regardless of errors.
     $data->id = $DB->insert_record('block_quickmail_log', $data);
+    
+    // Send the messages and save the failed users if there are any
+    $data->failuserids = implode(',',$message->send());
+    $message->sendAdminReceipt();
+
+
 
     // Finished processing
     // Empty errors mean that you can go back home
@@ -155,9 +167,11 @@ if(!empty($message->warnings)) {
     }
 }
 
-// Start work
-$ufiltering->display_add();
-$ufiltering->display_active();
+// Start work   
+if($fmid != 1){
+    $ufiltering->display_add();
+    $ufiltering->display_active();
+}
 
 $paging_bar = !$sql ? '' :
     $OUTPUT->paging_bar($usersearchcount, $page, $perpage,
