@@ -12,6 +12,7 @@ class Message {
             $warnings,
             $noreply,
             $sentUsers,
+            $failuserids,
             $startTime,
             $endTime;
 
@@ -25,6 +26,7 @@ class Message {
         $this->noreply  = $data->noreply;
         $this->warnings = array();
         $this->users    = array_values($DB->get_records_list('user', 'id', $users));
+        $this->failuserids = array();
     }
 
     public function send($users = null){
@@ -38,7 +40,10 @@ class Message {
         $noreplyUser->username      = 'moodleadmin';
         $noreplyUser->email         = $this->noreply;
         $noreplyUser->maildisplay   = 2;
-
+        $noreplyUser->alternatename = "";
+        $noreplyUser->firstnamephonetic = "";
+        $noreplyUser->lastnamephonetic = "";
+        $noreplyUser->middlename = "";
         foreach($users as $user) {
             $success = email_to_user(
                     $user,          // to
@@ -52,13 +57,19 @@ class Message {
                     $this->noreply, // reply-to address
                     get_string('pluginname', 'block_admin_email') // reply-to name
                     );
-            if(!$success)
+            if(!$success){
+ 
                 $this->warnings[] = get_string('email_error', 'block_admin_email', $user);
+                $this->failuserids[] = $user->id;
+            }
             else{
                 $this->sentUsers[] = $user->username;
             }
         }
+        
         $this->endTime = time();
+        
+        return $this->failuserids;
     }
 
     public function buildAdminReceipt(){
