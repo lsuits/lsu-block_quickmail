@@ -34,7 +34,14 @@ $PAGE->set_heading($SITE->shortname.': '.$blockname);
 
 if($type == 'log'){
     $log_message = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
-    $SESSION->user_filtering = isset($log_message->mailto) ? unserialize($log_message->mailto) : $SESSION->user_filtering;
+    // try to get the saved, serialized filters from mailto.
+    if(isset($log_message->mailto)) {
+        // will give a Notice if content of mailto in not unserializable.
+        $filters = @unserialize($log_message->mailto);
+        if($filters !== false && is_array($filters)){
+            $SESSION->user_filtering = $filters;
+        }
+    }
 }
 
 // Get Our users
