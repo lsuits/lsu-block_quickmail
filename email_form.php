@@ -117,15 +117,9 @@ class email_form extends moodleform {
         $table = new html_table();
         $table->attributes['class'] = 'emailtable';
 
-        //$selected_required_label = new html_table_cell();
-        //$selected_required_label->text = html_writer::tag('strong',
-        //    quickmail::_s('selected') . $req_img, array('class' => 'required'));
-
-        
-        // DWE -> NON REQUIRED VERSION
         $selected_label = new html_table_cell();
         $selected_label->text = html_writer::tag('strong',
-            quickmail::_s('selected') . " "/*$req_img*/);
+            quickmail::_s('selected') . " ");
         
         $role_filter_label = new html_table_cell();
         $role_filter_label->colspan = "2";
