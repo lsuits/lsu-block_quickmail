@@ -264,8 +264,7 @@ abstract class quickmail {
         $table->data = array(
             new html_table_row(array(
                 new html_table_cell(quickmail::format_time($email->time)),
-                new html_table_cell($email->subject),
-                new html_table_cell($email->message))
+                new html_table_cell($email->subject))
             )
         );
         } else {
