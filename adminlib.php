@@ -2,6 +2,10 @@
 //
 // Written at Louisiana State University
 //
+
+//library functions for the admin email part of quickmail. 
+//
+
 class Message {
 
     public  $subject,
@@ -15,7 +19,13 @@ class Message {
             $failuserids,
             $startTime,
             $endTime;
-
+    
+    /*  Message constructor
+     *  Constructs a message object for mailing to groups filtered by admin_email
+     *  @param array $data - an array of variables related to the emailing
+     *  @param array $users - an array of users to be emailed
+     * @return void / nothing
+     */
     public function __construct($data, $users){
         global $DB;
         $this->warnings = array();
@@ -28,7 +38,12 @@ class Message {
         $this->users    = array_values($DB->get_records_list('user', 'id', $users));
         $this->failuserids = array();
     }
-
+    
+    /* 
+     * sends the message
+     * @params array $users
+     * @return array $this->failuserids;
+     */
     public function send($users = null){
         
         $this->startTime = time();
@@ -72,27 +87,34 @@ class Message {
         return $this->failuserids;
     }
 
+    /* builds a receipt emailed to admin that displays details of the group message
+     * @return string $usersLine.$warnline.$timeLine.$msgLine.$recipLine
+     */
+    
     public function buildAdminReceipt(){
         global $CFG, $DB;
         $adminIds     = explode(',',$CFG->siteadmins);
         $this->admins = $DB->get_records_list('user', 'id',$adminIds);
 
-        $usersLine  = sprintf("Message sent to %d/%d users.<br/>", count($this->sentUsers), count($this->users));
-        $timeLine   = sprintf("Time elapsed: %d seconds<br/>", $this->endTime - $this->startTime);
-        $warnline   = sprintf("Warnings: %d<br/>", count($this->warnings));
-        $msgLine    = sprintf("message body as follows<br/><br/><hr/>%s<hr/>", $this->html);
+        $usersLine      = quickmail::_s('message_sent_to') . count($this->sentUsers) . quickmail::_s('users'); // count($this->mailto));
+        $timeLine       = quickmail::_s('time_elapsed') .  $this->endTime - $this->startTime . quickmail::_s('seconds') . " <br />"; 
+        $warnline       = quickmail::_s('warnings') . " " . count($this->warnings);
+        $msgLine        = quickmail::_s('message_body_as_follows') . "<br/><br/><hr/>" . $this->html . "<hr />";
         if(count($this->sentUsers) > 0) {
-            $recipLine  = sprintf("sent successfully to the following users:<br/><br/>%s", implode(', ', $this->sentUsers));
+            $recipLine      = quickmail::_s("sent_successfully_to_the_following_users") . " <br/><br/>" . $names . "<br />" . quickmail::_s('and_the_following_email_addresses')  . $this->additional_emails;
         } else {
-            $recipLine  = sprintf("It looks like you either have email sending disabled or things are very broken%s",NULL);
+            $recipLine  = quickmail::_s('something_broke');
         }
         return $usersLine.$warnline.$timeLine.$msgLine.$recipLine;
     }
 
+    /*
+     * sends the admin receipt
+     */
     public function sendAdminReceipt(){
         $this->html = $this->buildAdminReceipt();
         $this->text = $this->buildAdminReceipt();
-        $this->subject = "Admin Email send receipt";
+        $this->subject  = quickmail::_s("admin_email_send_recepit");
         $this->send($this->admins);
     }
 }

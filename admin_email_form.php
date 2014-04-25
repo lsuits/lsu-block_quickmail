@@ -3,7 +3,7 @@
 // Written at Louisiana State University
 
 require_once $CFG->libdir . '/formslib.php';
-
+// describe the form created for admin_emial.php
 class admin_email_form extends moodleform {
 
     function definition() {

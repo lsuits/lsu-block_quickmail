@@ -140,7 +140,7 @@ if ($form->is_cancelled()) {
         redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
     }else{
         // update DB to reflect fail status.
-        $data->status = sprintf("Send failed for %d users.", count($message->warnings));
+        $data->status = quickmail::_s('failed_to_send_to') + count($message->warnings) + quickmail::_s('users');
         $DB->update_record('block_quickmail_log', $data);
     }
 }
