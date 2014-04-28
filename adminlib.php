@@ -59,6 +59,9 @@ class Message {
         $noreplyUser->firstnamephonetic = "";
         $noreplyUser->lastnamephonetic = "";
         $noreplyUser->middlename = "";
+        if(empty($users)){
+            $this->warnings[] = get_string('no_users', 'block_quickmail');
+        }
         foreach($users as $user) {
             $success = email_to_user(
                     $user,          // to
@@ -70,11 +73,11 @@ class Message {
                     '',             // attachment name
                     true,           // user true address ($USER)
                     $this->noreply, // reply-to address
-                    get_string('pluginname', 'block_admin_email') // reply-to name
+                    get_string('pluginname', 'block_quickmail') // reply-to name
                     );
             if(!$success){
  
-                $this->warnings[] = get_string('email_error', 'block_admin_email', $user);
+                $this->warnings[] = get_string('email_error', 'block_quickmail', $user);
                 $this->failuserids[] = $user->id;
             }
             else{
@@ -101,7 +104,7 @@ class Message {
         $warnline       = quickmail::_s('warnings') . " " . count($this->warnings);
         $msgLine        = quickmail::_s('message_body_as_follows') . "<br/><br/><hr/>" . $this->html . "<hr />";
         if(count($this->sentUsers) > 0) {
-            $recipLine      = quickmail::_s("sent_successfully_to_the_following_users") . " <br/><br/>" . $names . "<br />" . quickmail::_s('and_the_following_email_addresses')  . $this->additional_emails;
+            $recipLine      = quickmail::_s("sent_successfully_to_the_following_users") . " <br/><br/>" . $this->sentUsers . "<br />" . quickmail::_s('and_the_following_email_addresses')  . $this->additional_emails;
         } else {
             $recipLine  = quickmail::_s('something_broke');
         }
@@ -114,7 +117,7 @@ class Message {
     public function sendAdminReceipt(){
         $this->html = $this->buildAdminReceipt();
         $this->text = $this->buildAdminReceipt();
-        $this->subject  = quickmail::_s("admin_email_send_recepit");
+        $this->subject  = quickmail::_s("admin_email_send_receipt");
         $this->send($this->admins);
     }
 }

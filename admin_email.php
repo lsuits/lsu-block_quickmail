@@ -132,13 +132,13 @@ if ($form->is_cancelled()) {
     $message->sendAdminReceipt();
 
 
-
     // Finished processing
     // Empty errors mean that you can go back home
     if(empty($message->warnings)) {
         unset($SESSION->user_filtering);
         redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $COURSE->id)));
-    }else{
+    } 
+    else{
         // update DB to reflect fail status.
         $data->status = quickmail::_s('failed_to_send_to') + count($message->warnings) + quickmail::_s('users');
         $DB->update_record('block_quickmail_log', $data);

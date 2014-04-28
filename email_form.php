@@ -3,6 +3,7 @@
 // Written at Louisiana State University
 
 require_once($CFG->libdir . '/formslib.php');
+$PAGE->requires->js('/blocks/quickmail/validation.js');
 
 class email_form extends moodleform {
     private function reduce_users($in, $user) {
@@ -198,7 +199,8 @@ class email_form extends moodleform {
         
         $mform->addElement('text', 'additional_emails', 'Additional Email Addresses',array('style'=>'width: 50%;'));
         $mform->setType('additional_emails', PARAM_TEXT);                
-                
+        $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'mycallback', 'client');
+        
         $mform->addElement(
             'filemanager', 'attachments', quickmail::_s('attachment'),
             null, array('subdirs' => 1, 'accepted_types' => '*')

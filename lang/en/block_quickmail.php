@@ -158,3 +158,5 @@ $string['sent_successfully_to_the_following_users'] = 'sent successfully to the 
 $string['and_the_following_email_addresses'] = 'and the following email addresses: ';
 $string['admin_email_send_receipt'] = 'Admin Email send receipt';
 $string['something_broke'] = 'It looks like you either have email sending disabled or things are very broken';        
+
+$string['no_users'] = "No users selected";

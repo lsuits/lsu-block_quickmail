@@ -225,7 +225,7 @@ if ($form->is_cancelled()) {
         $data->format = $data->message_editor['format'];
         $data->message = $data->message_editor['text'];
         $data->attachment = quickmail::attachment_names($data->attachments);
-
+        $data->messageWithSigAndAttach = "";
         // Store data; id is needed for file storage
         if (isset($data->send)) {
             $data->id = $DB->insert_record('block_quickmail_log', $data);
@@ -270,15 +270,14 @@ if ($form->is_cancelled()) {
 
                 $signaturetext = file_rewrite_pluginfile_urls($sig->signature, 'pluginfile.php', $context->id, 'block_quickmail', 'signature', $sig->id, $editor_options);
 
-
-                $data->message .= "\n\n" .$signaturetext;
+                $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
+                
             }
 
             // Append links to attachments, if any
-            $data->message .= quickmail::process_attachments(
-                $context, $data, $table, $data->id
-            );
-
+                $data->messageWithSigAndAttach .= quickmail::process_attachments(
+                    $context, $data, $table, $data->id
+                );
             // Prepare html content of message
             $data->message = file_rewrite_pluginfile_urls($data->message, 'pluginfile.php', $context->id, 'block_quickmail', $table, $data->id, $editor_options);
 
@@ -293,7 +292,8 @@ if ($form->is_cancelled()) {
             if(!empty($data->mailto)) {
                 foreach (explode(',', $data->mailto) as $userid) {
                     // WHERE THE ACTUAL EMAILING IS HAPPENING
-                    $success = email_to_user($everyone[$userid], $user, $subject, strip_tags($data->message), $data->message);
+                    $success = email_to_user($everyone[$userid], $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
+                    //$success = false;
                     if (!$success) {
                         $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
                         $data->failuserids[] = $userid;
@@ -309,12 +309,12 @@ if ($form->is_cancelled()) {
 
             foreach ($additional_email_array as $additional_email) {
                 $additional_email = trim($additional_email); 
-                if( ! (validate_email($additional_email))){
-		    if($additional_email !== ''){
-                        $warnings[] = get_string("no_email_address", 'block_quickmail', $additional_email);
-		    }
-		    continue;
-		}
+                //if( ! (validate_email($additional_email))){
+		//    if($additional_email !== ''){
+                //        $warnings[] = get_string("no_email_address", 'block_quickmail', $additional_email);
+		//    }
+		//    continue;
+		//}
 
 
                 $fakeuser = new object();
@@ -322,8 +322,9 @@ if ($form->is_cancelled()) {
                 $fakeuser->email = $additional_email;
 
 
-                $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
+                $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
 
+                $additional_email_success = false;
                 if (!$additional_email_success) {
                     $data->failuserids[] = $additional_email;
 
