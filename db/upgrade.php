@@ -162,7 +162,16 @@ function xmldb_block_quickmail_upgrade($oldversion) {
     	migrate_quickmail_20();
     }
     
-    if($oldversion < 2014041611){
+    if($oldversion < 2014042914){
+
+         // Define field status to be dropped from block_quickmail_log.
+        $table = new xmldb_table('block_quickmail_log');
+        $field = new xmldb_field('status');
+
+        // Conditionally launch drop field status.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
 
         // Define field status to be added to block_quickmail_log.
         $table = new xmldb_table('block_quickmail_log');
