@@ -317,7 +317,7 @@ if ($form->is_cancelled()) {
 
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
 
-                $additional_email_success = false;
+                //$additional_email_success = false;
                 if (!$additional_email_success) {
                     $data->failuserids[] = $additional_email;
 
