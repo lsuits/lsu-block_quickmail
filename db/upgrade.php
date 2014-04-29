@@ -185,7 +185,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
             $dbman->add_field($table, $field2);
         }
         // Quickmail savepoint reached.
-        upgrade_block_savepoint(true, 2014041611, 'quickmail');
+        upgrade_block_savepoint(true, 2014042914, 'quickmail');
     }
     return $result;
 }
