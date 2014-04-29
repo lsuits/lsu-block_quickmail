@@ -167,7 +167,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         // Define field status to be added to block_quickmail_log.
         $table = new xmldb_table('block_quickmail_log');
 	$field = new xmldb_field('failuserids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'time');
-        $field2 = new xmldb_field('additional_email', XMLDB_TYPE_TEXT, null, null, null, null, null, 'failuserids');
+        $field2 = new xmldb_field('additional_emails', XMLDB_TYPE_TEXT, null, null, null, null, null, 'failuserids');
         // Conditionally launch add field status.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
