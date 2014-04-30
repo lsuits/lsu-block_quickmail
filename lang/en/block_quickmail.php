@@ -28,6 +28,11 @@ $string['potential_users'] = 'Potential Recipients';
 $string['potential_sections'] = 'Potential Sections';
 $string['no_section'] = 'Not in a section';
 $string['all_sections'] = 'All Sections';
+$string['additional_emails'] = 'Additional email addresses';
+$string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma separated list. Example:
+
+email1@example.com, Someone &lt;email2@example.com&gt;
+';
 $string['attachment'] = 'Attachment(s)';
 $string['subject'] = 'Subject';
 $string['message'] = 'Message';
@@ -85,6 +90,7 @@ $string['courseferpa'] = 'Respect Course Mode';
 $string['noferpa'] = 'No Group Respect';
 $string['courselayout'] = 'Course Layout';
 $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
+$string['invalidadditional'] = '<div>Additional email address "{$a}" is invalid.</div>';
 
 $string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
 cannot be reversed.';

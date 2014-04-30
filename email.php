@@ -316,36 +316,61 @@ if ($form->is_cancelled()) {
             }
 
 
-        $additional_email_array = explode(',', $data->additional_emails);
+            $additional_email_array = explode(',', $data->additional_emails);
 
 
             $i = 0;
 
             foreach ($additional_email_array as $additional_email) {
-                $additional_email = trim($additional_email); 
-                if( ! (validate_email($additional_email))){
-		    if($additional_email !== ''){
-                        $warnings[] = get_string("no_email_address", 'block_quickmail', $additional_email);
-		    }
-		    continue;
-		}
+                $address = false;
+                $name = false;
+                $additional_email = trim($additional_email);
+                if (validate_email($additional_email)) {
+                    $address = $additional_email;
+                    $cleanadditionalemail = $address;
+                } else {
+                    preg_match('/(.*)<(.*[@].*)>/', $additional_email, $matches);
+                    if (isset($matches[2])) {
+                        if (validate_email($matches[2])) {
+                            // Clean and rebuild it make sure it's clean.
+                            $name = clean_param($matches[1], PARAM_TEXT);
+                            $address = $matches[2];
+                            $cleanadditionalemail = $name.'<'.$address.'>';
+                        }
+                    }
+                }
+
+                if (!$address) {
+                    if ($address !== '') {
+                        $warnings[] = get_string("invalidadditional", 'block_quickmail', s($additional_email));
+                    }
+                    continue;
+                }
 
 
                 $fakeuser = new object();
                 $fakeuser->id = 99999900 + $i;
-                $fakeuser->email = $additional_email;
+                $fakeuser->email = $address;
+                if ($name) {
+                    $fields = get_all_user_name_fields();
+                    // Have to add all name fields to make sure there are no errors from fullname().
+                    foreach ($fields as $field) {
+                        $fakeuser->$field = '';
+                    }
+                    $fakeuser->lastname = $name;
+                }
 
 
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->message), $data->message);
 
                 //force fail
-		// $additional_email_success = false;
+                // $additional_email_success = false;
 
                 if (!$additional_email_success) {
-                    $data->failuserids[] = $additional_email;
+                    $data->failuserids[] = $cleanadditionalemail;
 
                     // will need to notify that an email is incorrect
-                    $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
+                    $warnings[] = get_string("no_email_address", 'block_quickmail', s($cleanadditionalemail));
                 }
 
                 $i++;
