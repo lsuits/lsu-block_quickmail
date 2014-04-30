@@ -1,7 +1,6 @@
 <?php
 
 $string['pluginname'] = 'Quickmail';
-$string['sendadmin'] = 'Admin Email';
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
@@ -55,7 +54,6 @@ $string['qm_contents'] = 'Download File Contents';
 
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
-$string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
 $string['select_roles'] = 'Roles to filter by';
 $string['reset'] = 'Restore System Defaults';
 
@@ -129,7 +127,7 @@ Thank you.
 
 // Strings for Error Reporting
 
-$string['sent_success'] = 'all messages sent successfully';
+$string['logsuccess'] = 'all messages sent successfully';
 $string['message_failure'] = 'some users did not get message';
 $string['send_again'] = 'send again';
 $string['status'] = 'status';
@@ -137,26 +135,4 @@ $string['failed_to_send_to'] = 'failed to send to';
 $string['users'] = 'users';
 $string['user'] = 'user';
 
-
-// Admin Email
-$string['send_email'] = 'Send Email';
-$string['subject'] = 'Subject';
-$string['noreply'] = 'No-Reply';
-$string['body'] = 'Body';
-$string['email_error'] = 'Could not email: {$a->firstname} {$a->lastname} ({$a->email})';
-$string['email_error_field'] = 'Can not have an empty: {$a}';
-$string['block/admin_email:addinstance'] = "Add Admin Email block.";
-$string['admin_email:addinstance'] = "Add Admin Email block.";
-$string['messageprovider:broadcast'] = 'Send broadcast messages using Admin Email.';
-$string['message_sent_to'] = 'Message sent to';
-$string['time_elapsed'] = "Time elapsed:";
-$string['seconds'] = 'seconds';
-$string['warnings'] = 'Warnings:';
-$string['message_body_as_follows'] = "message body as follows";
-
-$string['sent_successfully_to_the_following_users'] = 'sent successfully to the following users:';
-$string['and_the_following_email_addresses'] = 'and the following email addresses: ';
-$string['admin_email_send_receipt'] = 'Admin Email send receipt';
-$string['something_broke'] = 'It looks like you either have email sending disabled or things are very broken';        
-
-$string['no_users'] = "No users selected";
+$string['draftssuccess'] = "Draft";
