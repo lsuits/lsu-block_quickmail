@@ -203,7 +203,7 @@ class email_form extends moodleform {
         
         
         $mform->addElement('text', 'additional_emails', 'Additional Email Addresses',array('style'=>'width: 50%;'));
-        $mform->setType('additional_emails', PARAM_TEXT);                
+        $mform->setType('additional_emails', PARAM_RAW);
                 
         $mform->addElement(
             'filemanager', 'attachments', quickmail::_s('attachment'),
@@ -235,5 +235,44 @@ class email_form extends moodleform {
         $buttons[] =& $mform->createElement('cancel');
 
         $mform->addGroup($buttons, 'buttons', quickmail::_s('actions'), array(' '), false);
+    }
+
+    /**
+     * Perform minimal validation on the settings form.
+     *
+     * @param array $data
+     * @param array $files
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (!empty($data['additional_emails'])) {
+            $additional = explode(',', $data['additional_emails']);
+
+            foreach ($additional as $address) {
+                $address = trim($address);
+
+                // Check if it is an email.
+                if (validate_email($address)) {
+                    continue;
+                }
+
+                // Check if it contains a email in <>.
+                preg_match('/.*<(.*[@].*)>/', $address, $matches);
+                if (isset($matches[1])) {
+                    if (validate_email($matches[1])) {
+                        continue;
+                    }
+                }
+
+                if (!isset($errors['additional_emails'])) {
+                    $errors['additional_emails'] = quickmail::_s('invalidadditional', s($address));
+                } else {
+                    $errors['additional_emails'] .= quickmail::_s('invalidadditional', s($address));
+                }
+            }
+        }
+
+        return $errors;
     }
 }

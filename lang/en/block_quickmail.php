@@ -85,6 +85,7 @@ $string['courseferpa'] = 'Respect Course Mode';
 $string['noferpa'] = 'No Group Respect';
 $string['courselayout'] = 'Course Layout';
 $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
+$string['invalidadditional'] = '<div>Additional email address "{$a}" is invalid.</div>';
 
 $string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
 cannot be reversed.';
