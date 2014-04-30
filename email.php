@@ -270,10 +270,11 @@ if ($form->is_cancelled()) {
 
                 $signaturetext = file_rewrite_pluginfile_urls($sig->signature, 'pluginfile.php', $context->id, 'block_quickmail', 'signature', $sig->id, $editor_options);
 
-                $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
                 
             }
-
+            
+            $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
+            
             // Append links to attachments, if any
                 $data->messageWithSigAndAttach .= quickmail::process_attachments(
                     $context, $data, $table, $data->id
