@@ -292,11 +292,18 @@ abstract class quickmail {
             );
 
             $actions = array();
-
+            if($courseid == '1'){
+                $open_link = html_writer::link(
+                new moodle_url('/blocks/quickmail/admin_email.php', $params),
+                $OUTPUT->pix_icon('i/search', 'Open Email')
+            ); 
+            }
+            else{
             $open_link = html_writer::link(
                 new moodle_url('/blocks/quickmail/email.php', $params),
                 $OUTPUT->pix_icon('i/search', 'Open Email')
             );
+            }
             $actions[] = $open_link;
 
             if ($can_delete) {
@@ -322,8 +329,13 @@ abstract class quickmail {
                 $params += array(
                     'fmid' => 1,
                 );
-                $text = quickmail::_s('send_again');
-                $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/email.php", $params), $text);
+                $text = quickmail::_s('send_again');            
+                
+                if($courseid == '1'){
+                    $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/admin_email.php", $params), $text);
+                }else{
+                    $sendagain = html_writer::link(new moodle_url("/blocks/quickmail/email.php", $params), $text);
+                }
                 $listFailIDs = count($array_of_failed_user_ids);
                 
                 $failCount =  (($listFailIDs === 1) ?  $listFailIDs . " " . quickmail::_s("user") :  $listFailIDs . " " . quickmail::_s("users"));         
