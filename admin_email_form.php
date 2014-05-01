@@ -34,7 +34,7 @@ class admin_email_form extends moodleform {
         $errors = array();
         foreach(array('subject', 'body', 'noreply') as $field) {
             if(empty($data[$field]))
-                $errors[$field] = get_string('email_error_field', 'block_', $field);
+                $errors[$field] = get_string('email_error_field', 'block_quickmail', $field);
         }
     }
 }

@@ -155,3 +155,5 @@ $string['message_body_as_follows'] = 'message body as follows ';
 $string['sent_successfully_to_the_following_users'] = 'sent successfully to the following users: ' ;
 $string['seconds'] = 'seconds';
 $string['admin_email_send_receipt'] = 'Admin Email Send Receipt';
+$string['something_broke'] = 'It looks like you either have email sending disabled or things are very broken';
+$string['time_elapsed'] = 'Time Elapsed: ';
