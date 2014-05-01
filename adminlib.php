@@ -99,16 +99,16 @@ class Message {
         $adminIds     = explode(',',$CFG->siteadmins);
         $this->admins = $DB->get_records_list('user', 'id',$adminIds);
 
-        $usersLine      = quickmail::_s('message_sent_to') . " " . count($this->sentUsers) . " " . quickmail::_s('users') . " <br /> "; // count($this->mailto));
-        $timeLine       = quickmail::_s('time_elapsed') . " " . $this->endTime - $this->startTime . " " . quickmail::_s('seconds') . " <br />"; 
-        $warnline       = quickmail::_s('warnings') . " " . count($this->warnings);
+        $usersLine      = quickmail::_s('message_sent_to') . " " . count($this->sentUsers) . " " . quickmail::_s('users') . " <br /> "; 
+        $timeLine       = quickmail::_s('time_elapsed') . " " . ($this->endTime - $this->startTime) . " " . quickmail::_s('seconds') . " <br />"; 
+        $warnline       = quickmail::_s('warnings') . " " . count($this->warnings) . " <br />";
         $msgLine        = quickmail::_s('message_body_as_follows') . " <br/><br/><hr/>" . $this->html . "<hr />";
         if(count($this->sentUsers) > 0) {
             $recipLine      = quickmail::_s("sent_successfully_to_the_following_users") . " <br/><br/> " . implode(', ', $this->sentUsers);
         } else {
             $recipLine  = quickmail::_s('something_broke');
         }
-        return $usersLine.$warnline.$timeLine.$msgLine.$recipLine;
+        return $usersLine.$timeLine.$warnline.$msgLine.$recipLine;
     }
 
     /*
