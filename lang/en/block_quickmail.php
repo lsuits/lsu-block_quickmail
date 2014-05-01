@@ -148,3 +148,10 @@ $string['email_error_field'] = 'Can not have an empty: {$a}';
 //$string['block/admin_email:addinstance'] = "Add Admin Email block.";
 //$string['admin_email:addinstance'] = "Add Admin Email block.";
 $string['messageprovider:broadcast'] = 'Send broadcast messages using Admin Email.';
+
+$string['message_sent_to'] = 'Message sent to ';
+$string['warnings'] = 'Warnings';
+$string['message_body_as_follows'] = 'message body as follows ';
+$string['sent_successfully_to_the_following_users'] = 'sent successfully to the following users: ' ;
+$string['seconds'] = 'seconds';
+$string['admin_email_send_receipt'] = 'Admin Email Send Receipt';
