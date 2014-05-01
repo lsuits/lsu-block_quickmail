@@ -334,7 +334,7 @@ if ($form->is_cancelled()) {
             $DB->update_record('block_quickmail_log', $data);
 
             if ($data->receipt) {
-                email_to_user($USER, $user, $subject, strip_tags($data->message), $data->message);
+                email_to_user($USER, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
             }
         }
     }
