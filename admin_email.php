@@ -175,7 +175,7 @@ if($fmid != 1){
 
 $paging_bar = !$sql ? '' :
     $OUTPUT->paging_bar($usersearchcount, $page, $perpage,
-        new moodle_url('/blocks/admin_email/index.php', array(
+        new moodle_url('/blocks/quickmail/admin_email.php', array(
             'sort' => $sort,
             'dir' => $direction,
             'perpage' => $perpage

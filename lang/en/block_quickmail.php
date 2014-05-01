@@ -54,6 +54,8 @@ $string['qm_contents'] = 'Download File Contents';
 
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
+$string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
+
 $string['select_roles'] = 'Roles to filter by';
 $string['reset'] = 'Restore System Defaults';
 
@@ -136,3 +138,13 @@ $string['users'] = 'users';
 $string['user'] = 'user';
 
 $string['draftssuccess'] = "Draft";
+
+//admin
+$string['sendadmin'] = 'Send Admin Email';
+$string['noreply'] = 'No-Reply';
+$string['body'] = 'Body';
+$string['email_error'] = 'Could not email: {$a->firstname} {$a->lastname} ({$a->email})';
+$string['email_error_field'] = 'Can not have an empty: {$a}';
+//$string['block/admin_email:addinstance'] = "Add Admin Email block.";
+//$string['admin_email:addinstance'] = "Add Admin Email block.";
+$string['messageprovider:broadcast'] = 'Send broadcast messages using Admin Email.';
