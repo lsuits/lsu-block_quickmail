@@ -1,6 +1,7 @@
 <?php
 
 $string['pluginname'] = 'Quickmail';
+$string['sendadmin'] = 'Admin Email';   
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
@@ -128,7 +129,7 @@ Thank you.
 
 
 // Strings for Error Reporting
-
+$string['sent_success'] = 'all messages sent successfully';
 $string['logsuccess'] = 'all messages sent successfully';
 $string['message_failure'] = 'some users did not get message';
 $string['send_again'] = 'send again';

@@ -197,6 +197,11 @@ abstract class quickmail {
             $receipt = get_config($m, 'block_quickmail_receipt');
             $ferpa = get_config($m, 'block_quickmail_ferpa');
 
+            // Convert Never (-1) to No (0) in case site config is changed.
+            if ($allowstudents == -1) {
+                $allowstudents = 0;
+            }
+            
             $config = array(
                 'allowstudents' => $allowstudents,
                 'roleselection' => $roleselection,
@@ -204,6 +209,14 @@ abstract class quickmail {
                 'receipt' => $receipt,
                 'ferpa' => $ferpa
             );
+            
+        } else {
+             // See if allow students is disabled at the site level.
+             $allowstudents = get_config('moodle', 'block_quickmail_allowstudents');
+             if ($allowstudents == -1) {
+                 $config['allowstudents'] = 0;
+             }
+                 $config['ferpa'] = get_config('moodle', 'block_quickmail_ferpa');    
         }
 
         return $config;
@@ -247,13 +260,21 @@ abstract class quickmail {
 
         $table = new html_table();
         $table->head = array(get_string('date'), quickmail::_s('subject'));
+        if($courseid ==1 ) {
+           $table->data = array(
+           new html_table_row(array(
+           new html_table_cell(quickmail::format_time($email->time)),
+           new html_table_cell($email->subject))
+           )
+         );
+        } else {
         $table->data = array(
             new html_table_row(array(
                 new html_table_cell(quickmail::format_time($email->time)),
                 new html_table_cell($email->subject))
             )
-        );
-
+           );
+        }
         $msg = quickmail::_s('delete_confirm', html_writer::table($table));
 
         $html = $OUTPUT->confirm($msg, $optionyes, $optionno);
@@ -350,8 +371,13 @@ abstract class quickmail {
             }
             
 
-            $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$failCount,$sendagain);
-        }
+            if ($courseid == 1) {
+                $table->data[] = array($date, $subject, $action_links, $statusSENTorNot, $failCount, $sendagain);
+            } else {
+                 $table->data[] = array($date, $subject, $attachments, $action_links, $statusSENTorNot,$failCount,$sendagain);
+             }        
+             
+            }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
             '/blocks/quickmail/emaillog.php?type='.$type.'&amp;courseid='.$courseid);
@@ -410,10 +436,10 @@ abstract class quickmail {
         }
 
         $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
-            FROM {user} as u  
-                JOIN {user_enrolments} as ue                 
+            FROM {user} u  
+                JOIN {user_enrolments} ue                 
                     ON u.id = ue.userid 
-                JOIN {enrol} as en
+                JOIN {enrol} en
                     ON en.id = ue.enrolid                     
                 WHERE en.courseid = ?
                     AND ue.status = ?
@@ -443,6 +469,26 @@ abstract class quickmail {
 
         return $evryone_not_suspended;
     }
+    
+     public static function clean($failuserids){
+         $additional_emails = array();
+         $failuserids = explode(',', $failuserids);        
+     
+         foreach ($failuserids as $id => $failed_address_or_id) {
+             if ( ! is_numeric($failed_address_or_id)) {
+                 $additional_emails [] = $failed_address_or_id;
+                 
+                  
+                 unset($failuserids[$id]);
+             }
+         }
+         
+         $additional_emails = implode(',', $additional_emails);
+         $mailto            = implode(',', $failuserids);
+ 
+         return array($mailto, $additional_emails);
+     }
+   
 }
 
 function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {

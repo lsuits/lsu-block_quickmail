@@ -294,7 +294,6 @@ if ($form->is_cancelled()) {
                 foreach (explode(',', $data->mailto) as $userid) {
                     // WHERE THE ACTUAL EMAILING IS HAPPENING
                     $success = email_to_user($everyone[$userid], $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
-                    //$success = false;
                     if (!$success) {
                         $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
                         $data->failuserids[] = $userid;
@@ -317,8 +316,6 @@ if ($form->is_cancelled()) {
 
 
                 $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
-
-                //$additional_email_success = false;
                 if (!$additional_email_success) {
                     $data->failuserids[] = $additional_email;
 
