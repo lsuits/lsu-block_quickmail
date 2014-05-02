@@ -46,8 +46,6 @@ if($type == 'log'){
             $SESSION->user_filtering = $filters;
         }
     }
-}else{
-        unset($SESSION->user_filtering);
 }
 
 // Get Our users
