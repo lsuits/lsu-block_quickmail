@@ -272,9 +272,12 @@ if ($form->is_cancelled()) {
 
                 
             }
-            
-            $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
-            
+            if(empty($signaturetext)){
+                $data->messageWithSigAndAttach = $data->message;
+            }
+            else{
+                $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
+            }
             // Append links to attachments, if any
                 $data->messageWithSigAndAttach .= quickmail::process_attachments(
                     $context, $data, $table, $data->id
@@ -301,31 +304,31 @@ if ($form->is_cancelled()) {
                 }
             }
 
-
-        $additional_email_array = explode(',', $data->additional_emails);
-
-
-            $i = 0;
-
-            foreach ($additional_email_array as $additional_email) {
-                $additional_email = trim($additional_email); 
-
-                $fakeuser = new object();
-                $fakeuser->id = 99999900 + $i;
-                $fakeuser->email = $additional_email;
+        if(!empty($data->additional_emails)){
+            $additional_email_array = explode(',', $data->additional_emails);
 
 
-                $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
-                if (!$additional_email_success) {
-                    $data->failuserids[] = $additional_email;
+                $i = 0;
 
-                    // will need to notify that an email is incorrect
-                    $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
+                foreach ($additional_email_array as $additional_email) {
+                    $additional_email = trim($additional_email); 
+
+                    $fakeuser = new object();
+                    $fakeuser->id = 99999900 + $i;
+                    $fakeuser->email = $additional_email;
+
+
+                    $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
+                    if (!$additional_email_success) {
+                        $data->failuserids[] = $additional_email;
+
+                        // will need to notify that an email is incorrect
+                        $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
+                    }
+
+                    $i++;
                 }
-
-                $i++;
-            }
-            
+        }
 
             $data->failuserids = implode(',', $data->failuserids);
             $DB->update_record('block_quickmail_log', $data);
