@@ -43,7 +43,7 @@ if($type == 'log'){
     if(isset($log_message->mailto)) {
         // will give a Notice if content of mailto in not unserializable.
         $filters = @unserialize($log_message->mailto);
-        if($filters !== false && is_array($filters)&& empty($_POST['addfilter'])){
+    if (  $filters !== false && is_array($filters) && ( empty($_POST['addfilter']) && empty($_POST['removeselected']) )  ){
             $SESSION->user_filtering = $filters;
         }
     }
