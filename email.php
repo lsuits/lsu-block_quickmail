@@ -316,7 +316,8 @@ if ($form->is_cancelled()) {
                     $fakeuser = new object();
                     $fakeuser->id = 99999900 + $i;
                     $fakeuser->email = $additional_email;
-
+                    // TODO make this into a menu option
+                    $fakeuser->mailformat = 1;
 
                     $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
                     if (!$additional_email_success) {
