@@ -305,8 +305,10 @@ if ($form->is_cancelled()) {
             }
 
         if(!empty($data->additional_emails)){
-            $additional_email_array = explode(',', $data->additional_emails);
+            
+            $additional_email_array = preg_split('/[,;]/', $data->additional_emails);
 
+            
 
                 $i = 0;
 
