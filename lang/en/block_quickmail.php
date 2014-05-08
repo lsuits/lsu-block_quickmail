@@ -158,3 +158,8 @@ $string['seconds'] = 'seconds';
 $string['admin_email_send_receipt'] = 'Admin Email Send Receipt';
 $string['something_broke'] = 'It looks like you either have email sending disabled or things are very broken';
 $string['time_elapsed'] = 'Time Elapsed: ';
+$string['additional_emails'] = 'Additional Emails';
+$string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
+ 
+ email1@example.com, email2@example.com
+ ';

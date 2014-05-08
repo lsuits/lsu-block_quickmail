@@ -197,10 +197,10 @@ class email_form extends moodleform {
         // https://moodle.org/mod/forum/discuss.php?d=109235
         
         
-        $mform->addElement('text', 'additional_emails', 'Additional Email Addresses',array('style'=>'width: 50%;'));
+        $mform->addElement('text', 'additional_emails', quickmail::_s('additional_emails'), array('style'=>'width: 50%;'));
         $mform->setType('additional_emails', PARAM_TEXT);                
         $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'mycallback', 'client');
-        
+        $mform->addHelpButton('additional_emails', 'additional_emails', 'block_quickmail');
         $mform->addElement(
             'filemanager', 'attachments', quickmail::_s('attachment'),
             null, array('subdirs' => 1, 'accepted_types' => '*')
