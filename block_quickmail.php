@@ -95,6 +95,17 @@ class block_quickmail extends block_list {
                 $this->content->items[] = $alt;
                 $this->content->icons[] = $OUTPUT->pix_icon('i/edit', $alt_str, 'moodle', $icon_class);
             }
+            
+            if (has_capability('block/quickmail:canconfig', $context)) {
+            $config_str = quickmail::_s('config');
+            $config = html_writer::link(
+                new moodle_url('/blocks/quickmail/config.php', $cparam),
+                $config_str
+            );
+            $this->content->items[] = $config;
+            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $config_str, 'moodle', $icon_class);
+        }
+
 
         }
 
@@ -116,15 +127,6 @@ class block_quickmail extends block_list {
             $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
         }
 
-        if (has_capability('block/quickmail:canconfig', $context)) {
-            $config_str = quickmail::_s('config');
-            $config = html_writer::link(
-                new moodle_url('/blocks/quickmail/config.php', $cparam),
-                $config_str
-            );
-            $this->content->items[] = $config;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $config_str, 'moodle', $icon_class);
-        }
 
         return $this->content;
     }
