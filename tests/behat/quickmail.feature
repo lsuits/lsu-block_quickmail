@@ -24,7 +24,7 @@ Background:
     When I add the "Quickmail" block
     Then I should see "Compose New Email" in the "Quickmail" "block"
 
-Scenario: Test that email sends with 'additional emails' only.
+Scenario: Test that form re-populates correctly.
     Given I click on "Compose New Email" "link" in the "Quickmail" "block"
     And I set the following fields to these values:
         | from_users | Student 1, Student 2|
@@ -38,7 +38,7 @@ Scenario: Test that email sends with 'additional emails' only.
     And I follow "Open Email"
     Then I should see "Student 1" in the "#mail_users" "css_element"
     And I should see "Student 2" in the "#mail_users" "css_element"
-    And I should see "fake1@example.com;fake2@example.com, fake3@example.com" in the "#id_additional_emails" "css_element"
+    And the field "Additional Emails" matches value "fake1@example.com;fake2@example.com, fake3@example.com"
 
 Scenario: Test that email sends to selected students.
     Given I click on "Compose New Email" "link" in the "Quickmail" "block"
