@@ -12,6 +12,7 @@
 /**
  * function to migrate quickmail history files attachment to the new file version from 1.9 to 2.x
  */
+require_once($CFG->dirroot.'/blocks/quickmail/db/upgradelib.php');
 function migrate_quickmail_20(){
 	global $DB;
 	//migration of attachments
