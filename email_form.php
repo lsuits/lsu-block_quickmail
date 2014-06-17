@@ -12,16 +12,32 @@ class email_form extends moodleform {
     }
 
     private function option_display($user) {
-        $users_to_groups = $this->_customdata['users_to_groups'];
+        global $DB;
 
-        if (empty($users_to_groups[$user->id])) {
-            $groups = quickmail::_s('no_section');
+        // Display the roles of the current user relative to the other users of the courses for mentors users, the groups otherwise.
+        $details = '';
+        if (isset($user->childsfullname)) {
+            $roles = array();
+            foreach ($user->childsfullname as $roleshortname => $childsfullname) {
+                $role = $DB->get_record('role', array('shortname' => $roleshortname));
+                $config = new stdClass();
+                $config->role = role_get_name($role);
+                $config->userlist = implode(quickmail::_s('separator'), $childsfullname);
+                $roles[] = quickmail::_s('role_of_users', $config);
+            }
+            $details = implode(quickmail::_s('separator'), $roles);
         } else {
-            $only_names = function($group) { return $group->name; };
-            $groups = implode(',', array_map($only_names, $users_to_groups[$user->id]));
+            $users_to_groups = $this->_customdata['users_to_groups'];
+
+            if (empty($users_to_groups[$user->id])) {
+                $details = quickmail::_s('no_section');
+            } else {
+                $only_names = function($group) { return $group->name; };
+                $details = implode(quickmail::_s('separator'), array_map($only_names, $users_to_groups[$user->id]));
+            }
         }
 
-        return sprintf("%s (%s)", fullname($user), $groups);
+        return sprintf("%s (%s)", fullname($user), $details);
     }
 
     private function option_value($user) {
