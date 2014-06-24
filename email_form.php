@@ -46,7 +46,7 @@ class email_form extends moodleform {
             $groups = implode(',', array_map($only_id, $users_to_groups[$user->id]));
             $groups .= ',all';
         }
-
+            $groups .= ',1';
         return sprintf("%s %s %s", $user->id, $groups, $roles);
     }
 
@@ -82,7 +82,7 @@ class email_form extends moodleform {
             $group_options[$group->id] = $group->name;
         }
         $group_options[0] = quickmail::_s('no_section');
-
+        $group_options[1] = "All Users";
         $user_options = array();
         foreach ($this->_customdata['users'] as $user) {
             $user_options[$this->option_value($user)] = $this->option_display($user);
@@ -191,11 +191,6 @@ class email_form extends moodleform {
         }
 
         $mform->addElement('static', 'selectors', '', html_writer::table($table));
-
-        // DWE -> how would I go about validating multiple email addresses
-        // https://tracker.moodle.org/browse/MDL-20318
-        // https://moodle.org/mod/forum/discuss.php?d=109235
-        
         
         $mform->addElement('text', 'additional_emails', quickmail::_s('additional_emails'), array('style'=>'width: 50%;'));
         $mform->setType('additional_emails', PARAM_TEXT);                
