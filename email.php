@@ -51,6 +51,7 @@ $alternates = $DB->get_records_menu('block_quickmail_alternate', $alt_params, ''
 
 $blockname = quickmail::_s('pluginname');
 $header = quickmail::_s('email');
+$returnurl = '/blocks/quickmail/email.php?courseid=' . $courseid;
 
 $PAGE->set_context($context);
 $PAGE->set_course($course);
@@ -58,6 +59,7 @@ $PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
 $PAGE->set_title($blockname . ': ' . $header);
 $PAGE->set_heading($blockname . ': ' . $header);
+$PAGE->set_url('/course/view.php', array('id' => $courseid, 'return' => $returnurl));
 $PAGE->set_pagetype($blockname);
 $PAGE->set_pagelayout('standard');
 
