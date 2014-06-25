@@ -105,13 +105,6 @@ $users_to_groups = array();
 
 $everyone = quickmail::get_non_suspended_users($context, $courseid);
 
-// DWE -> Check to see if there are email addresses
-// DWE -> MOVING THIS CHECK DOWN TO WHERE $DATA-> ADDITIONAL_EMAILS is available. 
-//if (count($everyone) == 1)
-//{
-//    print_error('no_users', 'block_quickmail');
-//}
-
 foreach ($everyone as $userid => $user) {
     $usergroups = groups_get_user_groups($courseid, $userid);
 
@@ -208,7 +201,7 @@ $warnings = array();
 
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/course/view.php?id=' . $courseid));
-    // DWE -> DATA IS ABOUT TO BE INITIALIZED, we should check if we have selected users or emails around here. 
+    // DWE we should check if we have selected users or emails around here. 
 } else if ($data = $form->get_data()) {
     if (empty($data->subject)) {
         $warnings[] = get_string('no_subject', 'block_quickmail');
