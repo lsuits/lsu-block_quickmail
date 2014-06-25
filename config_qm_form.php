@@ -9,7 +9,7 @@ class config_form extends moodleform {
         $mform =& $this->_form;
 
         $reset_link = html_writer::link(
-            new moodle_url('/blocks/quickmail/config.php', array(
+            new moodle_url('/blocks/quickmail/config_qm.php', array(
                 'courseid' => $this->_customdata['courseid'],
                 'reset' => 1
             )), quickmail::_s('reset')

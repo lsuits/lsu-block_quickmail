@@ -4,7 +4,7 @@
 
 require_once '../../config.php';
 require_once 'lib.php';
-require_once 'config_form.php';
+require_once 'config_qm_form.php';
 
 require_login();
 
@@ -24,7 +24,7 @@ $header = quickmail::_s('config');
 
 $PAGE->set_context($context);
 $PAGE->set_course($course);
-$PAGE->set_url('/blocks/quickmail/config.php', array('courseid' => $courseid));
+$PAGE->set_url('/blocks/quickmail/config_qm.php', array('courseid' => $courseid));
 $PAGE->set_title($blockname . ': '. $header);
 $PAGE->set_heading($blockname. ': '. $header);
 $PAGE->navbar->add($header);

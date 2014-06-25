@@ -99,7 +99,7 @@ class block_quickmail extends block_list {
             if (has_capability('block/quickmail:canconfig', $context)) {
             $config_str = quickmail::_s('config');
             $config = html_writer::link(
-                new moodle_url('/blocks/quickmail/config.php', $cparam),
+                new moodle_url('/blocks/quickmail/config_qm.php', $cparam),
                 $config_str
             );
             $this->content->items[] = $config;
