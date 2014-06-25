@@ -65,7 +65,6 @@ $PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
 $PAGE->set_title($blockname . ': ' . $header);
 $PAGE->set_heading($blockname . ': ' . $header);
-$PAGE->set_url('/course/view.php', array('id' => $courseid));
 $PAGE->set_pagetype($blockname);
 
 $dbtable = 'block_quickmail_' . $type;
