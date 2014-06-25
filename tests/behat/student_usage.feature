@@ -6,14 +6,14 @@ Feature: Control student usage of Quickmail
   the decision to the instructor
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -26,7 +26,7 @@ Feature: Control student usage of Quickmail
   Scenario: Leaving "Allow student to use Quickmail" at default values
     Given I click on "Configuration" "link" in the "Quickmail" "block"
     Then I should see "Allow students to use Quickmail"
-    And the "Allow students to use Quickmail" field should match "No" value
+    And the field "Allow students to use Quickmail" matches value "No"
 
   Scenario: Disabling "Allow student to use Quickmail" at the site level
     Given I set the following administration settings values:
@@ -39,7 +39,7 @@ Feature: Control student usage of Quickmail
 
   Scenario: Allow access at course level, then disable it at site level
     Given I click on "Configuration" "link" in the "Quickmail" "block"
-    Then I fill the moodle form with:
+    Then I set the following fields to these values:
         | Allow students to use Quickmail | Yes |
     And I press "Save changes"
     And I log out
