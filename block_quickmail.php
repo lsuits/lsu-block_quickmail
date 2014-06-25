@@ -11,7 +11,7 @@ class block_quickmail extends block_list {
 
     function applicable_formats() {
         global $USER;
-        if(is_siteadmin($USER->id)) {
+        if(has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) {
             return array('site' => true, 'my' => true, 'course-view' => true);
         } else {
             return array('site' => false, 'my' => false, 'course-view' => true);
@@ -109,7 +109,7 @@ class block_quickmail extends block_list {
 
         }
 
-        if(is_siteadmin($USER->id) && $COURSE->id == 1) {
+        if((has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) && $COURSE->id == 1) {
             $send_adminemail_str = quickmail::_s('sendadmin');
             $send_adminemail = html_writer::link(
                 new moodle_url('/blocks/quickmail/admin_email.php'),
@@ -117,7 +117,8 @@ class block_quickmail extends block_list {
             );
             $this->content->items[] = $send_adminemail;
             $this->content->icons[] = $OUTPUT->pix_icon('t/email', $send_adminemail_str, 'moodle', $icon_class);
-
+        } 
+        if (is_siteadmin($USER->id) && $COURSE->id == 1) {
             $history_str = quickmail::_s('history');
             $history = html_writer::link(
                 new moodle_url('/blocks/quickmail/emaillog.php', $cparam),
