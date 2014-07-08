@@ -11,7 +11,7 @@ class block_quickmail extends block_list {
 
     function applicable_formats() {
         global $USER;
-        if(has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) {
+        if(is_siteadmin($USER->id) || has_capability('block/quickmail:myaddinstance', context_system::instance())) {
             return array('site' => true, 'my' => true, 'course-view' => true);
         } else {
             return array('site' => false, 'my' => false, 'course-view' => true);
