@@ -42,6 +42,10 @@ $string['title'] = 'Title';
 $string['sig'] ='Signature';
 $string['default_flag'] = 'Default';
 $string['config'] = 'Configuration';
+$string['downloads'] = 'Download Security';
+$string['downloads_desc'] = 'This setting determines who can download attachments';
+$string['download_auth_only'] = 'Authorized Users Only';
+$string['download_open'] = 'Open Downloads';
 $string['receipt'] = 'Receive a copy';
 $string['receipt_help'] = 'Receive a copy of the email being sent';
 
