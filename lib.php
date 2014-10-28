@@ -498,8 +498,9 @@ function block_quickmail_pluginfile($course, $record, $context, $filearea, $args
     $fs = get_file_storage();
     global $DB;
 
-    if ($CFG->block_quickmail_downloads == download_auth_only) {
-    require_course_login($course, true, $record);
+    if (!empty($CFG->block_quickmail_downloads)) {
+
+        require_course_login($course, true, $record);
     }
 
     list($itemid, $filename) = $args;

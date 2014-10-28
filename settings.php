@@ -3,6 +3,7 @@
 // Written at Louisiana State University
 
 defined('MOODLE_INTERNAL') || die;
+    var_dump($CFG->block_quickmail_downloads);
 
 if($ADMIN->fulltree) {
     require_once $CFG->dirroot . '/blocks/quickmail/lib.php';
@@ -68,15 +69,22 @@ if($ADMIN->fulltree) {
         )
     );
 
-    $download_auth_only = array(
-        'download_auth_only' => get_string('download_auth_only', 'block_quickmail'),
-        'download_open' => get_string('download_open', 'block_quickmail')
-    );
+//    $download_auth_only = array(
+//        'download_auth_only' => get_string('download_auth_only', 'block_quickmail'),
+//        'download_open' => get_string('download_open', 'block_quickmail')
+//    );
+//
+//    $settings->add(
+//        new admin_setting_configselect('block_quickmail_downloads',
+//            quickmail::_s('downloads'), quickmail::_s('downloads_desc'),
+//            'download_auth_only', $download_auth_only
+//        )
+//    );
 
     $settings->add(
-        new admin_setting_configselect('block_quickmail_downloads',
+        new admin_setting_configcheckbox('block_quickmail_downloads',
             quickmail::_s('downloads'), quickmail::_s('downloads_desc'),
-            'download_auth_only', $download_auth_only
+            1
         )
     );
 
