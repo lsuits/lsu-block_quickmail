@@ -3,7 +3,6 @@
 // Written at Louisiana State University
 
 defined('MOODLE_INTERNAL') || die;
-    var_dump($CFG->block_quickmail_downloads);
 
 if($ADMIN->fulltree) {
     require_once $CFG->dirroot . '/blocks/quickmail/lib.php';

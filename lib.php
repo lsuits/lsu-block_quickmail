@@ -496,7 +496,7 @@ abstract class quickmail {
 
 function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {
     $fs = get_file_storage();
-    global $DB;
+    global $DB, $CFG;
 
     if (!empty($CFG->block_quickmail_downloads)) {
 
