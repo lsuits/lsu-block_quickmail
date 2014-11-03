@@ -68,4 +68,11 @@ if($ADMIN->fulltree) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configcheckbox('block_quickmail_downloads',
+            quickmail::_s('downloads'), quickmail::_s('downloads_desc'),
+            1
+        )
+    );
+
 }
