@@ -1,56 +1,56 @@
-#page-blocks-quickmail-admin_email div.region-content table.generaltable {
+#page-block-quickmail-admin_email div.region-content table.generaltable {
    margin: 0 auto 30px auto;
    width: 70%;
 }
 
-#page-Quickmail div.region-content select.select, #page-Quickmail div.region-content table.generaltable, #page-Quickmail div.region-content div.generalbox {
+#page-block-quickmail div.region-content select.select, #page-block-quickmail div.region-content table.generaltable, #page-block-quickmail div.region-content div.generalbox {
    margin-left: 20px;
    margin-right: 20px;
 }
 
-#page-Quickmail select[multiple] {
+#page-block-quickmail select[multiple] {
    min-width: 250px;
    max-width: 250px;
 }
 
-#page-Quickmail .mform {
+#page-block-quickmail .mform {
 }
 
-#page-Quickmail .emailtable {
+#page-block-quickmail .emailtable {
     background-color: inherit;
 }
 
-#page-Quickmail .emailtable .r1 .c0, .emailtable .r1 .c2 {
+#page-block-quickmail .emailtable .r1 .c0, .emailtable .r1 .c2 {
     width: 275px;
 }
 
-#page-Quickmail .object_labels {
+#page-block-quickmail .object_labels {
     margin-right: 20px;
     font-weight: bold;
 }
 
-#page-Quickmail .emailtable .cell {
+#page-block-quickmail .emailtable .cell {
     border: none;
 }
 
-#page-Quickmail .emailtable .r0 .cell {
+#page-block-quickmail .emailtable .r0 .cell {
     padding: .5em .5em .3em .5em;
 }
 
-#page-Quickmail .emailtable .r1 .c1 {
+#page-block-quickmail .emailtable .r1 .c1 {
     text-align: center;
     vertical-align: middle;
 }
 
-#page-Quickmail .emailtable .r1 .c2 div {
+#page-block-quickmail .emailtable .r1 .c2 div {
     padding: 2px 0;
 }
 
-#page-Quickmail .emailtable .r1 .c2, .emailtable .r0 .c1 {
+#page-block-quickmail .emailtable .r1 .c2, .emailtable .r0 .c1 {
     text-align: right;
 }
 
-#page-Quickmail .mform fieldset.hidden>div {
+#page-block-quickmail .mform fieldset.hidden>div {
    clear:both;
    float:none;
    position:center;
@@ -61,11 +61,11 @@
    margin:auto;
 }
 
-#page-Quickmail .mform #add_button, #remove_button, #add_all, #remove_all {
+#page-block-quickmail .mform #add_button, #remove_button, #add_all, #remove_all {
    width: 100px;
    height: 25px;
 }
 
-#page-Quickmail .mform input#id_subject {
+#page-block-quickmail .mform input#id_subject {
   width: 75%;
 }

@@ -29,7 +29,7 @@ $PAGE->set_title($blockname . ': '. $header);
 $PAGE->set_heading($blockname. ': '. $header);
 $PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
-$PAGE->set_pagetype($blockname);
+$PAGE->set_pagetype(quickmail::PAGE_TYPE);
 
 $changed = false;
 
