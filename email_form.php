@@ -82,7 +82,7 @@ class email_form extends moodleform {
             $group_options[$group->id] = $group->name;
         }
         $group_options[0] = quickmail::_s('no_section');
-        $group_options[1] = "All Users";
+        $group_options[1] = quickmail::_s('allusers');
         $user_options = array();
         foreach ($this->_customdata['users'] as $user) {
             $user_options[$this->option_value($user)] = $this->option_display($user);
@@ -194,7 +194,7 @@ class email_form extends moodleform {
         
         $mform->addElement('text', 'additional_emails', quickmail::_s('additional_emails'), array('style'=>'width: 50%;'));
         $mform->setType('additional_emails', PARAM_TEXT);                
-        $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'mycallback', 'client');
+        $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'block_quickmail_mycallback', 'client');
         $mform->addHelpButton('additional_emails', 'additional_emails', 'block_quickmail');
         $mform->addElement(
             'filemanager', 'attachments', quickmail::_s('attachment'),

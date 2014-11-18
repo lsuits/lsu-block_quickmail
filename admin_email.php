@@ -7,7 +7,7 @@ require_once "$CFG->dirroot/course/lib.php";
 require_once "$CFG->libdir/adminlib.php";
 require_once "$CFG->dirroot/user/filters/lib.php";
 require_once 'lib.php';
-require_once 'adminlib.php';
+require_once 'classes/message.php';
 require_once 'admin_email_form.php';
 
 require_login();

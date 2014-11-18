@@ -1,5 +1,5 @@
 <?php
-
+$string['allusers'] = ' All Users';
 $string['pluginname'] = 'Quickmail';
 $string['sendadmin'] = 'Admin Email';   
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
