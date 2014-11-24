@@ -65,6 +65,9 @@ $string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "
 $string['select_roles'] = 'Roles to filter by';
 $string['reset'] = 'Restore System Defaults';
 
+$string['studentsonly'] = 'Allow Students Only (Overwrite filters)';
+$string['overwritefullname'] = 'Overwrite Full Names (Firstname Lastname)';
+
 $string['no_type'] = '{$a} is not in the acceptable type viewer. Please use the applciation correctly.';
 $string['no_email'] = 'Could not email {$a->firstname} {$a->lastname}.';
 $string['no_email_address'] = 'Could not email {$a}';

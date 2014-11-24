@@ -392,45 +392,13 @@ abstract class quickmail {
     }
 
     /**
-     * get all users for a given context
-     * @param $context a moodle context id
-     * @return array of sparse user objects
-     */
-    public static function get_all_users($context){
-        global $DB, $CFG;
-        // List everyone with role in course.
-        //
-        // Note that users with multiple roles will be squashed into one
-        // record.
-        $get_name_string = 'u.firstname, u.lastname';
-        
-        if($CFG->version >= 2013111800){
-               $get_name_string = get_all_user_name_fields(true, 'u');
-        }
-        $sql = "SELECT DISTINCT u.id, " . $get_name_string . ",
-        u.email, u.mailformat, u.suspended, u.maildisplay
-        FROM {role_assignments} ra
-        JOIN {user} u ON u.id = ra.userid
-        JOIN {role} r ON ra.roleid = r.id
-        WHERE (ra.contextid = ? ) ";
-        
-        $everyone = $DB->get_records_sql($sql, array($context->id));
-        
-        return $everyone;
-    }
-    
-
-    /**
-     * @TODO this function relies on self::get_all_users, it should not have to
-     *
      * returns all users enrolled in a gived coure EXCEPT for those whose 
      * mdl_user_enrolments.status field is 1 (suspended)
      * @param $context  moodle context id
      * @param $courseid the course id
      */
-    public static function get_non_suspended_users($context, $courseid){
+    public static function get_non_suspended_users($context, $courseid, $studentsonly){
         global $DB, $CFG;
-        $everyone = self::get_all_users($context);
         
         $get_name_string = 'u.firstname, u.lastname';
         
@@ -438,60 +406,68 @@ abstract class quickmail {
                $get_name_string = get_all_user_name_fields(true, 'u');
         }
 
-        $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
-            FROM {user} u  
-                JOIN {user_enrolments} ue                 
-                    ON u.id = ue.userid 
-                JOIN {enrol} en
-                    ON en.id = ue.enrolid                     
-                WHERE en.courseid = ?
-                    AND ue.status = ?
-                ORDER BY u.lastname, u.firstname"; 
+        $sql = "SELECT DISTINCT u.id, " . $get_name_string . ", u.email, u.mailformat, u.suspended, u.maildisplay,
+                (
+                    SELECT GROUP_CONCAT(g.id ORDER BY g.id SEPARATOR ',')
+                    FROM mdl_groups_members AS gm
+                    LEFT JOIN mdl_groups as g on gm.groupid = g.id
+                    WHERE gm.userid = u.id
+                    AND g.courseid = ?
+                ) AS 'groups'
+                FROM mdl_role_assignments ra
+                JOIN mdl_user u ON u.id = ra.userid
+                JOIN mdl_role r ON ra.roleid = r.id
+                WHERE ra.contextid = ?
+                AND u.suspended = 0
+                AND u.id NOT IN
+                (
+                    SELECT DISTINCT u.id
+                    FROM mdl_user u
+                    JOIN mdl_user_enrolments ue
+                    ON u.id = ue.userid
+                    JOIN mdl_enrol en
+                    ON en.id = ue.enrolid
+                    WHERE en.courseid = ?
+                    AND ue.status = 1
+                )";
+
+        if ($studentsonly) {
+            $sql .= ' AND ra.roleid = 5';
+        }
+
+        $sql .= ' ORDER BY u.lastname, u.firstname';
 
         //let's use a recordset in case the enrollment is huge
-        $rs_valids = $DB->get_recordset_sql($sql, array($courseid, 0));
+        $rs_valids = $DB->get_recordset_sql($sql, array($courseid, $context->id, $courseid));
 
-        //container for user_enrolments records
         $valids = array();
 
-        /**
-         * @TODO use a cleaner mechanism from std lib to do this without iterating over the array
-         * for each chunk of the recordset,
-         * insert the record into the valids container
-         * using the id number as the array key;
-         * this matches the format used by self::get_all_users
-         */
         foreach($rs_valids as $rsv){
             $valids[$rsv->id] = $rsv;
         }
+
         //required to close the recordset
         $rs_valids->close();
-        
-        //get the intersection of self::all_users and this potentially shorter list
-        $evryone_not_suspended = array_intersect_key($valids, $everyone);
 
-        return $evryone_not_suspended;
+        return $valids;
     }
     
-     public static function clean($failuserids){
-         $additional_emails = array();
-         $failuserids = explode(',', $failuserids);        
-     
-         foreach ($failuserids as $id => $failed_address_or_id) {
-             if ( ! is_numeric($failed_address_or_id)) {
-                 $additional_emails [] = $failed_address_or_id;
-                 
-                  
-                 unset($failuserids[$id]);
-             }
-         }
-         
-         $additional_emails = implode(',', $additional_emails);
-         $mailto            = implode(',', $failuserids);
- 
-         return array($mailto, $additional_emails);
-     }
-   
+    public static function clean($failuserids) {
+        $additional_emails = array();
+        $failuserids = explode(',', $failuserids);        
+
+        foreach ($failuserids as $id => $failed_address_or_id) {
+            if ( ! is_numeric($failed_address_or_id)) {
+                $additional_emails [] = $failed_address_or_id;
+                unset($failuserids[$id]);
+            }
+        }
+
+        $additional_emails = implode(',', $additional_emails);
+        $mailto            = implode(',', $failuserids);
+
+        return array($mailto, $additional_emails);
+    } 
 }
 
 function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {
@@ -499,7 +475,6 @@ function block_quickmail_pluginfile($course, $record, $context, $filearea, $args
     global $DB, $CFG;
 
     if (!empty($CFG->block_quickmail_downloads)) {
-
         require_course_login($course, true, $record);
     }
 

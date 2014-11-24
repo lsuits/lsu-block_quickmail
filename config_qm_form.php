@@ -43,6 +43,12 @@ class config_form extends moodleform {
         $mform->addElement('select', 'receipt',
             quickmail::_s('receipt'), $student_select);
 
+        $mform->addElement('select', 'studentsonly',
+            quickmail::_s('studentsonly'), $student_select);
+
+        $mform->addElement('select', 'overwritefullname',
+            quickmail::_s('overwritefullname'), $student_select);
+
         $mform->addElement('submit', 'save', get_string('savechanges'));
         
         $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);

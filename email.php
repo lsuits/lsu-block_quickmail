@@ -103,19 +103,25 @@ $globalaccess = empty($allgroups);
 $users = array();
 $users_to_roles = array();
 $users_to_groups = array();
+$studentsonly = !empty($config['studentsonly']);
 
-$everyone = quickmail::get_non_suspended_users($context, $courseid);
+$everyone = quickmail::get_non_suspended_users($context, $courseid, $studentsonly);
 
 foreach ($everyone as $userid => $user) {
-    $usergroups = groups_get_user_groups($courseid, $userid);
-
+    $usergroups = array('0' => array());
+    if (!empty($user->groups)) {
+        $usergroups['0'] = explode(',', $user->groups);
+    }
     $gids = ($globalaccess or $mastercap) ?
         array_values($usergroups['0']) :
         array_intersect(array_values($mygroups['0']), array_values($usergroups['0']));
 
-    $userroles = get_user_roles($context, $userid);
-    $filterd = quickmail::filter_roles($userroles, $roles);
-
+    if ($studentsonly) {
+        $filterd = $roles;
+    } else {
+        $userroles = get_user_roles($context, $userid);
+        $filterd = quickmail::filter_roles($userroles, $roles);
+    }
     // Available groups
     if ((!$globalaccess and !$mastercap) and
         empty($gids) or empty($filterd) or $userid == $USER->id)
@@ -125,9 +131,7 @@ foreach ($everyone as $userid => $user) {
 
     $users_to_groups[$userid] = array_map($groupmapper, $gids);
     $users_to_roles[$userid] = $filterd;
-    if (!$user->suspended) {
-        $users[$userid] = $user;
-    }
+    $users[$userid] = $user;
 }
 
 if (empty($users)) {
