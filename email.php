@@ -107,37 +107,32 @@ $studentsonly = !empty($config['studentsonly']);
 
 $everyone = quickmail::get_non_suspended_users($context, $courseid, $studentsonly);
 
-foreach ($everyone as $userid => $user) {
-    $usergroups = array('0' => array());
-    if (!empty($user->groups)) {
-        $usergroups['0'] = explode(',', $user->groups);
+foreach ($everyone as $user) {
+    // if user is already in users[userid]
+    if(empty($users_to_groups[$user->id])){
+        $users_to_groups[$user->id] = array();
     }
-    $gids = ($globalaccess or $mastercap) ?
-        array_values($usergroups['0']) :
-        array_intersect(array_values($mygroups['0']), array_values($usergroups['0']));
 
-    if ($studentsonly) {
-        $filterd = $roles;
-    } else {
-        $userroles = get_user_roles($context, $userid);
-        $filterd = quickmail::filter_roles($userroles, $roles);
+    if($globalaccess or $mastercap or in_array($user->gid, $mygroups)){
+        $users_to_groups[$user->id][] = $allgroups[$user->gid];
     }
-    // Available groups
+    $userroles = get_user_roles($context, $user->id);
+    $filterd = quickmail::filter_roles($userroles, $roles);
+
+// Available groups
     if ((!$globalaccess and !$mastercap) and
-        empty($gids) or empty($filterd) or $userid == $USER->id)
-        continue;
+        empty($users_to_groups) or empty($filterd) or $user->id == $USER->id){
+        var_dump(empty($filterd));
+            continue;
+    }
 
-    $groupmapper = function($id) use ($allgroups) { return $allgroups[$id]; };
-
-    $users_to_groups[$userid] = array_map($groupmapper, $gids);
-    $users_to_roles[$userid] = $filterd;
-    $users[$userid] = $user;
+    $users_to_roles[$user->id] = $filterd;
+    $users[$user->id] = $user;
 }
 
 if (empty($users)) {
     print_error('no_usergroups', 'block_quickmail');
 }
-
 
 // we are presenting the form with values populated from either the log or drafts table in the db
 if (!empty($type)) {

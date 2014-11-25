@@ -406,44 +406,31 @@ abstract class quickmail {
                $get_name_string = get_all_user_name_fields(true, 'u');
         }
 
-        $sql = "SELECT DISTINCT u.id, " . $get_name_string . ", u.email, u.mailformat, u.suspended, u.maildisplay,
-                (
-                    SELECT GROUP_CONCAT(g.id ORDER BY g.id SEPARATOR ',')
-                    FROM mdl_groups_members AS gm
-                    LEFT JOIN mdl_groups as g on gm.groupid = g.id
-                    WHERE gm.userid = u.id
-                    AND g.courseid = ?
-                ) AS 'groups'
-                FROM mdl_role_assignments ra
-                JOIN mdl_user u ON u.id = ra.userid
-                JOIN mdl_role r ON ra.roleid = r.id
-                WHERE ra.contextid = ?
-                AND u.suspended = 0
-                AND u.id NOT IN
-                (
-                    SELECT DISTINCT u.id
-                    FROM mdl_user u
-                    JOIN mdl_user_enrolments ue
+        $sql = "SELECT u.id, " . $get_name_string . ", u.email, u.mailformat, u.suspended, u.maildisplay, g.id gid, g.courseid
+                FROM mdl_user u
+                LEFT JOIN mdl_groups_members gm
+                    ON gm.userid = u.id
+                JOIN mdl_groups g on g.id = gm.groupid
+                WHERE u.suspended = 0
+                    AND u.id NOT IN (SELECT DISTINCT u.id
+                FROM   mdl_user u
+                JOIN mdl_user_enrolments ue
                     ON u.id = ue.userid
-                    JOIN mdl_enrol en
+                JOIN mdl_enrol en
                     ON en.id = ue.enrolid
-                    WHERE en.courseid = ?
-                    AND ue.status = 1
-                )";
-
-        if ($studentsonly) {
-            $sql .= ' AND ra.roleid = 5';
-        }
-
-        $sql .= ' ORDER BY u.lastname, u.firstname';
+                WHERE  en.courseid = ?
+                    AND ue.status = 1)
+                    AND g.courseid = ?
+                    AND gm.userid = u.id
+               ORDER BY u.lastname, u.firstname";
 
         //let's use a recordset in case the enrollment is huge
-        $rs_valids = $DB->get_recordset_sql($sql, array($courseid, $context->id, $courseid));
+        $rs_valids = $DB->get_recordset_sql($sql, array($context->id, $courseid, $courseid));
 
         $valids = array();
 
         foreach($rs_valids as $rsv){
-            $valids[$rsv->id] = $rsv;
+            $valids[] = $rsv;
         }
 
         //required to close the recordset
