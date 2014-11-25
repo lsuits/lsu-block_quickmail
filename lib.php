@@ -425,7 +425,7 @@ abstract class quickmail {
                ORDER BY u.lastname, u.firstname";
 
         //let's use a recordset in case the enrollment is huge
-        $rs_valids = $DB->get_recordset_sql($sql, array($context->id, $courseid, $courseid));
+        $rs_valids = $DB->get_recordset_sql($sql, array($courseid, $courseid));
 
         $valids = array();
 
