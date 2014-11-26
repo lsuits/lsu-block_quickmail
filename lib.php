@@ -424,8 +424,13 @@ abstract class quickmail {
                     ON en.id = ue.enrolid
                     WHERE en.courseid = ?
                     AND ue.status = 1
-                )
-                ORDER BY u.lastname ASC, u.firstname, g.id DESC";
+                )";
+
+        if ($studentsonly) {
+            $sql .= ' AND ra.roleid = 5';
+        }
+
+        $sql .= ' ORDER BY u.lastname ASC, u.firstname, g.id DESC';
 
         //let's use a recordset in case the enrollment is huge
         $rs_valids = $DB->get_recordset_sql($sql, array($courseid, $context->id, $courseid));

@@ -124,8 +124,12 @@ foreach ($everyone as $user) {
         continue;
     }
 
-    $userroles = get_user_roles($context, $user->id);
-    $filterd = quickmail::filter_roles($userroles, $roles);
+    if ($studentsonly) {
+        $filterd = $roles;
+    } else {
+        $userroles = get_user_roles($context, $user->id);
+        $filterd = quickmail::filter_roles($userroles, $roles);
+    }
 
     // Available groups
     if ((!$globalaccess and !$mastercap) and
