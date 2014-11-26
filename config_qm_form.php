@@ -43,11 +43,23 @@ class config_form extends moodleform {
         $mform->addElement('select', 'receipt',
             quickmail::_s('receipt'), $student_select);
 
+        $mform->addElement('header', 'experimental', quickmail::_s('experimental'));
+
         $mform->addElement('select', 'studentsonly',
             quickmail::_s('studentsonly'), $student_select);
 
         $mform->addElement('select', 'overwritefullname',
             quickmail::_s('overwritefullname'), $student_select);
+
+        // Check for previous versions of Moodle where this is not available
+        if (method_exists($mform, 'setExpanded')) {
+            $mform->setExpanded('experimental', false);
+        }
+
+        // Check for previous versions of Moodle where this is not available
+        if (method_exists($mform, 'closeHeaderBefore')) {
+            $mform->closeHeaderBefore('save');
+        }
 
         $mform->addElement('submit', 'save', get_string('savechanges'));
         
