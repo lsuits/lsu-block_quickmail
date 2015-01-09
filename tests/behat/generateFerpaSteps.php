@@ -15,10 +15,11 @@ class Base {
 }
 class User {
 
-    const TEACHER = 1;
+    const EDITINGTEACHER = 1;
+    const TEACHER = 3;
     const STUDENT = 0;
 
-    public $username, $groups, $role, $firstname, $lastname;
+    public $username, $groups = array(), $role, $firstname, $lastname;
 
     public function __construct($username) {
 
@@ -26,17 +27,33 @@ class User {
             $this->username = $this->firstname = $username;
 
             if(substr($username, 0, 1) === 't'){
-                $this->role = self::TEACHER;
                 $this->lastname  = "Teacher";
+
+                if($this->username === 't4'){
+                    $this->role = self::EDITINGTEACHER;
+                }else{
+                    $this->role = self::TEACHER;
+                }
             }else{
                 $this->role = self::STUDENT;
                 $this->lastname = "Student";
+                $this->role = self::STUDENT;
             }
         }
     }
 
+    public function roleName(){
+        if($this->role === self::EDITINGTEACHER){
+            return 'editingteacher';
+        }elseif($this->role === self::TEACHER){
+            return 'teacher';
+        }else{
+            return 'student';
+        }
+    }
+
     public function isTeacher(){
-        return $this->role === self::TEACHER;
+        return $this->role == self::EDITINGTEACHER || $this->role == self::TEACHER;
     }
 
     public function __toString() {
@@ -228,9 +245,9 @@ class Config extends Base{
             $groupModeLang = self::$langMap['groupsCourse']['name'];
             $groupMode = self::$langMap['groupsCourse']['values'][$this->groupsCourse];
 
-            $str .= "\t\tThen I follow \"Edit settings\"\n";
-            $str .= "\t\tAnd I expand the \"Groups\" node\n";
-            $str .= "\t\tAnd I set the following fields to these values\n";
+            $str .= "\t\tAnd I follow \"Edit settings\"\n";
+            $str .= "\t\tAnd I expand all fieldsets\n";
+            $str .= "\t\tAnd I set the following fields to these values:\n";
             $str .= sprintf("\t\t\t|%s|%s|\n", $groupModeLang, $groupMode);
 
         }
@@ -239,9 +256,10 @@ class Config extends Base{
 
             $allowStudentsValue = self::$langMap['allowStudentsCourse']['values'][$this->allowStudentsCourse];
             $allowStudentsName  = self::$langMap['allowStudentsCourse']['name'];
-            $str .= "\t\tAnd I click on \"Configuration\" \"link\" in the \"Quickmail\" \"block\"\n";
+            $str .= "\n\t\t# NOTE: Editingteachers and Teachers are able to see all users in all roles - is this correct ?\n";
             $str .= "\t\tThen I set the following fields to these values:\n";
             $str .= sprintf("\t\t\t|%s|%s|\n", $allowStudentsName, $allowStudentsValue);
+            $str .= "\t\tAnd I press \"Save changes\"\n";
         }
 
         $str .= "\t\tAnd I log out\n\n";
@@ -282,6 +300,32 @@ class Config extends Base{
         }else{
             return $this->groupsCourse > -1;
         }
+    }
+
+    public function groupsIgnored(){
+        if($this->groupsGlobal === self::GRP_GLOBAL_IGNORE){
+            return true;
+        }
+
+        if($this->groupsGlobal === self::GRP_GLOBAL_COURSE && $this->groupsCourse === self::GRP_COURSE_NONE){
+            return true;
+        }
+    }
+
+    public function openGroups(){
+        return $this->groupsGlobal === self::GRP_GLOBAL_COURSE && $this->groupsCourse === self::GRP_COURSE_VIS;
+    }
+
+    public function separateGroups(){
+        if($this->groupsGlobal === self::GRP_GLOBAL_SEP){
+            return true;
+        }
+
+        if($this->groupsGlobal === self::GRP_GLOBAL_COURSE && $this->groupsCourse === self::GRP_COURSE_SEP){
+            return true;
+        }
+
+        return false;
     }
 
     public static function getConfigs() {
@@ -346,7 +390,7 @@ class Background extends Base{
                     if(!array_key_exists($username, $tmp)){
                         $tmp[$username] = $m;
                     }
-                    $tmp[$username]->groups[] = $g;
+                    $tmp[$username]->groups[$g->name] = $g;
                 }
             }
             $this->users = $tmp;
@@ -378,8 +422,7 @@ class Background extends Base{
         $str = "\tAnd the following \"course enrolments\" exist:\n"
                 . "\t\t| user | course | role |\n";
         foreach($this->users as $user){
-            $role = $user->role == User::TEACHER ? 'editingteacher' : 'student';
-            $str .= "\t\t|$user->username|$this->courseShort|$role|\n";
+            $str .= "\t\t|$user->username|$this->courseShort|{$user->roleName()}|\n";
         }
         return $str;
     }
@@ -412,7 +455,7 @@ class Background extends Base{
     }
 
     public function enableQuickmail(){
-        return "\tGiven I log in as \"t1\"
+        return "\tGiven I log in as \"t4\"
             \tAnd I follow \"Course One\"
             \tAnd I turn editing mode on
             \tWhen I add the \"Quickmail\" block
@@ -453,12 +496,9 @@ class Scenario extends Background {
 
         foreach($this->users as $u){
             $str .= $this->logInAs($u);
-
-            $clickOnCompose = $this->clickOnComposeEmail($u);
-            $str .= $clickOnCompose;
-
-            $str.= $this->thenIShouldSee($u);
-            $str.= $this->andILogOut();
+            $str .= $this->clickOnComposeEmail($u);
+            $str .= $this->thenIShouldSee($u);
+            $str .= $this->andILogOut();
         }
         return $str."\n\n";
     }
@@ -467,10 +507,27 @@ class Scenario extends Background {
         return sprintf("\t\tGiven I log in as \"%s\"\n\t\tAnd I follow \"Course One\"\n", $who->username);
     }
 
+    public function noUsersInYourGroup(User $u){
+        if(count($u->groups) === 1){
+            $keys = array_keys($u->groups);
+
+        $nogroup  = $u->groups[$keys[0]]->name === 'Not in a group';
+            if($this->config->separateGroups() && $nogroup){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function clickOnComposeEmail(User $user){
+
         $canUse = $this->config->userCanUse($user);
         if($canUse){
-            return "\t\tWhen I click on \"Compose New Email\" \"link\" in the \"Quickmail\" \"block\"\n";
+            $s = "\t\tWhen I click on \"Compose New Email\" \"link\" in the \"Quickmail\" \"block\"\n";
+            if($this->noUsersInYourGroup($user)){
+                return $s."\t\tThen I should see \"There are no users in your group capable of being emailed.\"\n";
+            }
+            return $s;
         }
         return "\t\tThen I should not see \"Quickmail\"\n";
     }
@@ -479,16 +536,65 @@ class Scenario extends Background {
         return "\t\tAnd I log out\n\n";
     }
 
+    public function userDisplayString(User $viewer, User $viewed){
+        $allGroups = function() use($viewed){
+            $groups = array();
+                foreach($viewed->groups as $vg){
+                    $groups[] = $vg->name;
+                }
+                $grpStr = implode(',',$groups);
+                return sprintf("%s %s (%s)", $viewed->firstname, $viewed->lastname, $grpStr);
+        };
+
+        $intersectGroups = function() use($viewer, $viewed){
+            $viewerGroups     = array();
+            foreach($viewer->groups as $vg){
+                $viewerGroups[] = $vg->name;
+            }
+
+            $viewedGroups  = array();
+            foreach($viewed->groups as $tg){
+                $viewedGroups[] = $tg->name;
+            }
+            $commonGroups = array_intersect($viewerGroups, $viewedGroups);
+
+            $groupsNamesStr = ' ('.implode(',',$commonGroups).')';
+            return sprintf("%s %s%s", $viewed->firstname, $viewed->lastname, $groupsNamesStr);
+        };
+
+        if($this->config->groupsIgnored()){
+            //printf("==========ignoring groups\n");
+            return sprintf("%s %s", $viewed->firstname, $viewed->lastname);
+        }
+
+        if($this->config->openGroups() || $viewer->isTeacher()){
+            return $allGroups();
+        }
+
+        if($this->config->separateGroups()){
+            return $intersectGroups();
+        }
+
+        if($this->config->noGroups()){
+
+        }
+
+        return "ERROR!!";
+    }
+
     public function thenIShouldSee(User $u) {
+
         $str = '';
-        if(!$this->config->userCanUse($u)){
+        if(!$this->config->userCanUse($u) || $this->noUsersInYourGroup($u)){
             return $str;
         }
+
         $allButMe = array_diff_assoc($this->allUsers(), array($u->username => $u));
         $allUsers = $shouldNotSee = $allButMe;
         $shouldSee = array();
 
-        if($this->config->canSeeEveryone()){
+
+        if($this->config->canSeeEveryone() || $u->role == User::EDITINGTEACHER){
             $shouldSee = $allUsers;
             $shouldNotSee = array();
         }else{
@@ -496,7 +602,7 @@ class Scenario extends Background {
                 if(!empty($g->members)){
                     foreach($g->members as $m){
                         if(!array_key_exists($m->username, $shouldSee) && $m->username !== $u->username){
-                            $shouldSee[$m->username] = $m;
+                            $shouldSee[$m->username] = $this->users[$m->username];
                         }
                         unset($shouldNotSee[$m->username]);
                     }
@@ -505,10 +611,10 @@ class Scenario extends Background {
         }
 
         foreach($shouldSee as $user){
-            $str.="\t\tThen I should see \"$user\" in the \"#from_users\" \"css_element\"\n";
+            $str.= sprintf("\t\tThen I should see \"%s\" in the \"#from_users\" \"css_element\"\n", $this->userDisplayString($u, $user));
         }
         foreach($shouldNotSee as $user){
-            $str.="\t\tThen I should not see \"$user\" in the \"#from_users\" \"css_element\"\n";
+            $str.= sprintf("\t\tThen I should not see \"%s %s\" in the \"#from_users\" \"css_element\"\n", $user->firstname, $user->lastname);
         }
         return $str;
     }
