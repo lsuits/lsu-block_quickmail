@@ -146,13 +146,9 @@ if (!empty($type)) {
 } else {
     $email = new stdClass;
     $email->id = null;
-    $email->subject = optional_param('subject', '', PARAM_TEXT);
-    $email->message = optional_param('message_editor[text]', '', PARAM_RAW);
-    $email->mailto = optional_param('mailto', '', PARAM_TEXT);
     $email->format = $USER->mailformat;
 }
 $email->messageformat = $email->format;
-$email->messagetext = $email->message;
 
 $default_sigid = $DB->get_field('block_quickmail_signatures', 'id', array(
     'userid' => $USER->id, 'default_flag' => 1
@@ -164,7 +160,7 @@ $email->type = $type;
 $email->typeid = $typeid;
 
 $editor_options = array(
-    'trusttext' => true,
+    'trusttext' => false,
     'subdirs' => 1,
     'maxfiles' => EDITOR_UNLIMITED_FILES,
     'accepted_types' => '*',
@@ -287,10 +283,15 @@ if ($form->is_cancelled()) {
                 $user = $USER;
             }
             $data->failuserids = array();
+            $messagehtml = $data->messageWithSigAndAttach;
+            $messagetext = strip_tags($data->messageWithSigAndAttach);
+            if ($data->format == 0){
+                $messagehtml = NULL;
+            }
             if(!empty($data->mailto)) {
                 foreach (explode(',', $data->mailto) as $userid) {
                     // WHERE THE ACTUAL EMAILING IS HAPPENING
-                    $success = email_to_user($everyone[$userid], $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
+                    $success = email_to_user($everyone[$userid], $user, $subject, $messagetext, $messagehtml);
                     if (!$success) {
                         $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
                         $data->failuserids[] = $userid;
@@ -315,7 +316,7 @@ if ($form->is_cancelled()) {
                     // TODO make this into a menu option
                     $fakeuser->mailformat = 1;
 
-                    $additional_email_success = email_to_user($fakeuser, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
+                    $additional_email_success = email_to_user($fakeuser, $user, $subject, $messagetext, $messagehtml);
                     if (!$additional_email_success) {
                         $data->failuserids[] = $additional_email;
 
@@ -331,7 +332,7 @@ if ($form->is_cancelled()) {
             $DB->update_record('block_quickmail_log', $data);
 
             if ($data->receipt) {
-                email_to_user($USER, $user, $subject, strip_tags($data->messageWithSigAndAttach), $data->messageWithSigAndAttach);
+                email_to_user($USER, $user, $subject, $messagetext, $messagehtml);
             }
         }
     }
