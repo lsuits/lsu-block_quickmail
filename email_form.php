@@ -12,41 +12,38 @@ class email_form extends moodleform {
     }
 
     private function option_display($user) {
-        $users_to_groups = $this->_customdata['users_to_groups'];
-
-        if (empty($users_to_groups[$user->id])) {
-            $groups = quickmail::_s('no_section');
+        if (empty($this->users_to_groups[$user->id])) {
+            $groups = $this->no_section;
         } else {
             $only_names = function($group) { return $group->name; };
-            $groups = implode(',', array_map($only_names, $users_to_groups[$user->id]));
+            $groups = implode(',', array_map($only_names, $this->users_to_groups[$user->id]));
         }
 
         return sprintf("%s (%s)", fullname($user), $groups);
     }
 
     private function option_value($user) {
-        $users_to_groups = $this->_customdata['users_to_groups'];
-        $users_to_roles = $this->_customdata['users_to_roles'];
         $only_sn = function($role) { return $role->shortname; };
-        if(!is_numeric($user->id)) { 
+        $is_numeric = is_numeric($user->id);
+        if (!$is_numeric) {
            $roles = NULL;
-        } else { 
-            $roles = implode(',', array_map($only_sn, $users_to_roles[$user->id]));
+        } else {
+            $roles = implode(',', array_map($only_sn, $this->users_to_roles[$user->id]));
         }
 
         // everyone defaults to none
-        if(is_numeric($user->id)) {
-        $roles .= ',none';
+        if ($is_numeric) {
+            $roles .= ',none';
         }
 
-        if (empty($users_to_groups[$user->id])) {
+        if (empty($this->users_to_groups[$user->id])) {
             $groups = 0;
         } else {
             $only_id = function($group) { return $group->id; };
-            $groups = implode(',', array_map($only_id, $users_to_groups[$user->id]));
+            $groups = implode(',', array_map($only_id, $this->users_to_groups[$user->id]));
             $groups .= ',all';
         }
-            $groups .= ',1';
+        $groups .= ',1';
         return sprintf("%s %s %s", $user->id, $groups, $roles);
     }
 
@@ -81,9 +78,13 @@ class email_form extends moodleform {
         foreach ($this->_customdata['groups'] as $group) {
             $group_options[$group->id] = $group->name;
         }
-        $group_options[0] = quickmail::_s('no_section');
+        $config = quickmail::load_config($COURSE->id);
+        $this->no_section = quickmail::_s('no_section');
+        $group_options[0] = $this->no_section;
         $group_options[1] = quickmail::_s('allusers');
         $user_options = array();
+        $this->users_to_groups = $this->_customdata['users_to_groups'];
+        $this->users_to_roles = $this->_customdata['users_to_roles'];
         foreach ($this->_customdata['users'] as $user) {
             $user_options[$this->option_value($user)] = $this->option_display($user);
         }
@@ -99,8 +100,6 @@ class email_form extends moodleform {
 
         $context = context_course::instance($COURSE->id);
         
-        $config = quickmail::load_config($COURSE->id);
-
         $can_send = (
             has_capability('block/quickmail:cansend', $context) or
             !empty($config['allowstudents'])

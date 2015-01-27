@@ -175,13 +175,13 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // Define field status to be added to block_quickmail_log.
         $table = new xmldb_table('block_quickmail_log');
-	$field = new xmldb_field('failuserids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'time');
+        $field = new xmldb_field('failuserids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'time');
         $field2 = new xmldb_field('additional_emails', XMLDB_TYPE_TEXT, null, null, null, null, null, 'failuserids');
         // Conditionally launch add field status.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-	if (!$dbman->field_exists($table, $field2)) {
+        if (!$dbman->field_exists($table, $field2)) {
             $dbman->add_field($table, $field2);
         }
         
@@ -197,6 +197,18 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         
         // Quickmail savepoint reached.
         upgrade_block_savepoint(true, 2014042914, 'quickmail');
+    }
+    if ($oldversion < 2014082001) {
+
+        // Changing precision of field name on table block_quickmail_config to (50).
+        $table = new xmldb_table('block_quickmail_config');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'coursesid');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2014082001, 'quickmail');
     }
     return $result;
 }
