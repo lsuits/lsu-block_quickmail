@@ -24,15 +24,16 @@ class email_form extends moodleform {
 
     private function option_value($user) {
         $only_sn = function($role) { return $role->shortname; };
-        if(!is_numeric($user->id)) { 
+        $is_numeric = is_numeric($user->id);
+        if (!$is_numeric) {
            $roles = NULL;
-        } else { 
+        } else {
             $roles = implode(',', array_map($only_sn, $this->users_to_roles[$user->id]));
         }
 
         // everyone defaults to none
-        if(is_numeric($user->id)) {
-        $roles .= ',none';
+        if ($is_numeric) {
+            $roles .= ',none';
         }
 
         if (empty($this->users_to_groups[$user->id])) {
@@ -42,7 +43,7 @@ class email_form extends moodleform {
             $groups = implode(',', array_map($only_id, $this->users_to_groups[$user->id]));
             $groups .= ',all';
         }
-            $groups .= ',1';
+        $groups .= ',1';
         return sprintf("%s %s %s", $user->id, $groups, $roles);
     }
 
