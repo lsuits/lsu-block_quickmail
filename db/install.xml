@@ -59,7 +59,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"  NEXT="coursesid"/>
         <FIELD NAME="coursesid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"  PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false"  PREVIOUS="coursesid" NEXT="value"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"  PREVIOUS="coursesid" NEXT="value"/>
         <FIELD NAME="value" TYPE="char" LENGTH="125" NOTNULL="false" SEQUENCE="false"  PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
