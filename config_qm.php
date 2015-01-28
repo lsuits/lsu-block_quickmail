@@ -27,6 +27,7 @@ $PAGE->set_course($course);
 $PAGE->set_url('/blocks/quickmail/config_qm.php', array('courseid' => $courseid));
 $PAGE->set_title($blockname . ': '. $header);
 $PAGE->set_heading($blockname. ': '. $header);
+$PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
 $PAGE->set_pagetype($blockname);
 
