@@ -3,6 +3,12 @@
 // Written at Louisiana State University
 // 
 abstract class quickmail {
+
+    /**
+     * @const string The page type for this block.
+     */
+    const PAGE_TYPE = 'block-quickmail';
+
     public static function _s($key, $a = null) {
         return get_string($key, 'block_quickmail', $a);
     }

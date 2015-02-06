@@ -66,7 +66,7 @@ $PAGE->navbar->add($header);
 $PAGE->set_title($blockname . ': ' . $header);
 $PAGE->set_heading($blockname . ': ' . $header);
 $PAGE->set_url('/blocks/quickmail/emaillog.php', array('courseid' => $courseid));
-$PAGE->set_pagetype($blockname);
+$PAGE->set_pagetype(quickmail::PAGE_TYPE);
 
 $dbtable = 'block_quickmail_' . $type;
 

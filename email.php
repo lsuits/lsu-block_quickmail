@@ -59,7 +59,7 @@ $PAGE->navbar->add($header);
 $PAGE->set_title($blockname . ': ' . $header);
 $PAGE->set_heading($blockname . ': ' . $header);
 $PAGE->set_url('/blocks/quickmail/email.php', array('courseid' => $courseid));
-$PAGE->set_pagetype($blockname);
+$PAGE->set_pagetype(quickmail::PAGE_TYPE);
 $PAGE->set_pagelayout('standard');
 
 $PAGE->requires->js('/blocks/quickmail/js/jquery.js');
