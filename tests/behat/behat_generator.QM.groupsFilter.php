@@ -1,7 +1,7 @@
 <?php
 
 require_once('behat_generator/BehatGenerator.php');
-require_once('QM.BehatGenerator.php');
+require_once('behat_generator.QM.php');
 
 class groupsFilterScenario extends QMScenario {
 
