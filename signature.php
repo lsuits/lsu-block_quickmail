@@ -45,7 +45,7 @@ $PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->set_pagetype($blockname);
+$PAGE->set_pagetype(quickmail::PAGE_TYPE);
 
 $params = array('userid' => $USER->id);
 $dbsigs = $DB->get_records('block_quickmail_signatures', $params);
