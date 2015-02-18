@@ -19,16 +19,16 @@
  * Quickmail-specific subclass of the parent behat library.
  *
  * @package    block_quickmail
- * @copyright  2014 Louisiana State University
+ * @copyright  2015 Louisiana State University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('behat_generator/BehatGenerator.php');
+require_once('generator/BehatGenerator.php');
 
 /**
  * Adds some additional steps to the Background definiton.
  */
-class QMBackground extends Background {
+class QMBackground extends Background implements Prefix {
 
     /**
      * Concatenate the steps required to enable the Quickmail block
@@ -36,7 +36,7 @@ class QMBackground extends Background {
      * @return string Mink steps
      */
     protected function enableQuickmail(){
-        $str = $this->loginAs($this->u('t4')->username, 'Given', 1);
+        $str = $this->loginAs($this->u('t4')->username, Prefix::GIVEN, 1);
         $str.= $this->follow('Course One');
         $str.= $this->turnEditingOn();
         $str.= $this->addBlock('Quickmail');
@@ -55,7 +55,7 @@ class QMBackground extends Background {
     protected function disableViewAllGroupsForTeachers(){
         $t = $this->t(2);
         $n = $this->n();
-        $str = $this->loginAs('admin', 'Given', 1);
+        $str = $this->loginAs('admin', Prefix::GIVEN, 1);
         $str.= "{$t}And I navigate to \"Define roles\" node in \"Site administration > Users > Permissions\"$n";
         $str.= $this->iClickOn('Edit', 'link', 'Non-editing teacher', 'table_row');
         $str.= $this->iClickOn("Allow", "checkbox", "Access all groups", "table_row");
@@ -100,8 +100,6 @@ class QMConfig extends Config {
     const GRP_COURSE_NONE   =  0;
     const GRP_COURSE_SEP    = -1;
 
-    const KEY_IGNORED = '-';
-
     /**
      * Most importantly, this constructor initializes the full set of
      * settings and options that afect Quickmail.
@@ -117,22 +115,26 @@ class QMConfig extends Config {
      */
     public function __construct($params = array()){
         parent::__construct($params);
-        $this->initSettings();
-        if(empty($params['rawsettings'])){
-            throw new Exception("must supply rawsettings to QMConfig::__constuct()\n");
-        }
-        foreach($params['rawsettings'] as $k => $v){
-            $this->settings[$k]->value($v);
+
+        foreach(self::settings() as $setting){
+            $s = new Setting($setting['setting']);
+
+            foreach($setting['options'] as $o){
+                $s->addOption($o);
+            }
+            $this->settings[$s->key] = $s;
         }
     }
 
     /**
      * Contains a map of all QM settings, options and labels and values for each.
      * Initializes the local settings array
+     * @todo consider promoting the children of 'setting', removing the 'setting'
+     * level.
      * @see QMConfig::$settings $settings
      */
-    private function initSettings(){
-        $settings = array(
+    protected static function settings() {
+        return array(
             array(
                 'setting' => array(
                     'key' => self::KEY_ALLOW_STUDENTS_GLOBAL,
@@ -169,10 +171,6 @@ class QMConfig extends Config {
                         'key' => self::ALLOW_STUDENTS_COURSE_YES,
                         'label' => 'Yes',
                     )),
-                    new SettingOption(array(
-                        'key' => self::KEY_IGNORED,
-                        'label' => 'ignored',
-                    )),
                 )
             ),
             array(
@@ -207,20 +205,9 @@ class QMConfig extends Config {
                         'key' => self::GRP_COURSE_VIS,
                         'label' => 'Visible groups',
                     )),
-                    new SettingOption(array(
-                        'key' => self::KEY_IGNORED,
-                        'label' => 'ignored',
-                    )),
                 )
             )
         );
-        foreach($settings as $setting){
-            $s = new Setting($setting['setting']);
-            foreach($setting['options'] as $o){
-                $s->addOption($o);
-            }
-            $this->settings[$s->key] = $s;
-        }
     }
 
     /**
@@ -238,11 +225,12 @@ class QMConfig extends Config {
     }
 
     /**
-     * Configure administrative settings
+     * Configure QM administrative settings
+     * @see Steps::setFields()
      * @return string Mink steps for setting up admin settings values
      */
     public function adminSettings(){
-        $str = $this->loginAs('admin', 'Given', 1);
+        $str = $this->loginAs('admin', Prefix::GIVEN, 1);
 
         $fields = array(
             array(
@@ -259,17 +247,13 @@ class QMConfig extends Config {
     }
 
     /**
-     * Configure course-level settings
+     * Configure course-level settings.
+     * @see Steps::setFields()
+     *
      * @return string Mink steps for setting up course-level settings values
      */
     public function courseSettings(){
         $str = '';
-
-        $skipcoursesettingallow = $this->settings[self::KEY_ALLOW_STUDENTS_COURSE]->value() === '-';
-        $skipcoursesettinggroup = $this->settings[self::KEY_GRP_COURSE]->value() === '-';
-        if($skipcoursesettingallow && $skipcoursesettinggroup) {
-            return $str;
-        }
 
         $str.= $this->loginAs('t4');
         $str.= $this->follow('Course One');
@@ -297,21 +281,36 @@ class QMConfig extends Config {
     }
 
     /**
+     * Answers the question: 'Given the current settings configuration, should
+     * students be allowed to use QM?'.
+     * @see QMConfig::userRoleAllowed()
      * @return boolean true | false whether students can | cannot use Quickmail
      */
     public function allowStudents(){
-        $prohibited = $this->settings[self::KEY_ALLOW_STUDENTS_GLOBAL]->value() == self::ALLOW_STUDENTS_GLOBAL_NVR;
 
-        if($prohibited){
+        // Setting the admin setting to 'Never' should prohibit student use,
+        // regardless of the course-level setting.
+        $prohibitStudents = $this->settings[self::KEY_ALLOW_STUDENTS_GLOBAL]->value() == self::ALLOW_STUDENTS_GLOBAL_NVR;
+
+        if($prohibitStudents){
+            // Admin setting rules.
             return false;
         }else{
-            return $this->settings[self::KEY_ALLOW_STUDENTS_COURSE]->value() == self::ALLOW_STUDENTS_COURSE_YES ? true : false;
+            // Defer to course-level setting.
+            $allowAtCourseLevel = $this->settings[self::KEY_ALLOW_STUDENTS_COURSE]->value() == self::ALLOW_STUDENTS_COURSE_YES;
+            return $allowAtCourseLevel ? true : false;
         }
     }
 
     /**
+     * Client of self::allowStudents() and User::isTeacher(), this fn answers
+     * the question: 'Can this \User $user access QM, given the current settings
+     * configuration?'.
+     *
      * @param User $user
      * @see User::$role User::$role
+     * @see User::isTeacher()
+     * @see QMConfig::allowStudents()
      * @return boolean  false if student, true if any other role
      */
     public function userRoleAllowed(User $user){
@@ -323,7 +322,8 @@ class QMConfig extends Config {
     }
 
     /**
-     * Based on the settings, can group members see the members of groups they don't belong to ?
+     * Given the current settings configuration, is the notion of
+     * 'Separate Groups' being enforced ?
      * @return boolean true for all-visible, false for group-restricted
      */
     public function everyoneVisible(){
@@ -391,58 +391,18 @@ class QMConfig extends Config {
         return false;
     }
 
-    /**
-     * inline database of configuration settings values combinations
-     * @return \QMConfig
-     */
-    public static function getConfigs() {
-        $raw = array(
-            array('1','-1','-','1'),
-                array('1','-1','-','0'),
-                array('1','0','0','1'),
-                array('1','0','0','0'),
-                array('1','0','-1','1'),
-                array('1','0','-1','0'),
-                array('1','0','1','1'),
-                array('1','0','1','0'),
-                array('1','1','-','1'),
-                array('1','1','-','0'),
-                array('0','-1','-','1'),
-                array('0','-1','-','0'),
-                array('0','0','0','1'),
-                array('0','0','0','0'),
-                array('0','0','-1','1'),
-                array('0','0','-1','0'),
-                array('0','0','1','1'),
-                array('0','0','1','0'),
-                array('0','1','-','1'),
-                array('0','1','-','0'),
-                array('-1','-1','-','-'),
-                array('-1','0','0','-'),
-                array('-1','0','-1','-'),
-                array('-1','0','1','-'),
-                array('-1','1','-','-'),
-        );
-        $keys = array(
-            self::KEY_ALLOW_STUDENTS_GLOBAL,
-            self::KEY_GRP_GLOBAL,
-            self::KEY_GRP_COURSE,
-            self::KEY_ALLOW_STUDENTS_COURSE
-        );
-        $settings = array();
-        foreach($raw as $r){
-            $settings[] = new QMConfig(array('rawsettings' => array_combine($keys, $r)));
-        }
-        return $settings;
-    }
 
     public function __toString() {
         return '';
     }
 
+    public static function filter(\Config $config) {
+        return true;
+    }
+
 }
 
-class QMScenario extends Scenario {
+class QMScenario extends Scenario implements Prefix {
     public $commonGroups = array('All Users', 'Not in a group', 'All Groups');
 
     public function headerComment(){
@@ -460,7 +420,7 @@ class QMScenario extends Scenario {
         }
         return $members;
     }
-    public function userDisplayString(User $viewer, User $viewed){
+    public function userDisplayString(User $viewer, User $viewed) {
         $allGroups = function() use($viewed){
             $groups = $viewed->groups();
             if($viewed->role === Role::EDITINGTEACHER){
@@ -498,10 +458,10 @@ class QMScenario extends Scenario {
 
     protected function seeWhoWhere($users, $where, $whereType, $not){
         $str = '';
-        $prefix = 'Then';
+        $prefix = Prefix::THEN;
         foreach($users as $u){
             $str .= $this->shouldSeeWhere($u, $where, $whereType, $not, $prefix, 3);
-            $prefix = 'And';
+            $prefix = Prefix::_AND;
         }
         return $str;
     }
@@ -534,7 +494,7 @@ class QMScenario extends Scenario {
         if($canUse){
             return $this->iClickOn("Compose New Email", 'link', 'Quickmail', 'block', 'When');
         }
-        return $this->shouldSee('Quickmail', true, 'Then');
+        return $this->shouldSee('Quickmail', true, Prefix::THEN);
     }
 }
 

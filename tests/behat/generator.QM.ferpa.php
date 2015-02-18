@@ -1,9 +1,9 @@
 <?php
 
-require_once('behat_generator/BehatGenerator.php');
-require_once('behat_generator.QM.php');
+require_once('generator/BehatGenerator.php');
+require_once('generator.QM.php');
 
-class ferpaScenario extends QMScenario {
+class ferpaScenario extends QMScenario implements Prefix {
 
     public function steps(){
         $str = '';
@@ -53,7 +53,7 @@ class ferpaScenario extends QMScenario {
         }
 
         if($this->notInAGroup($u)){
-            $str.= $this->shouldSee("There are no users in your group capable of being emailed.", false, 'Then');
+            $str.= $this->shouldSee("There are no users in your group capable of being emailed.", false, Prefix::THEN);
             return $str;
         }
 
@@ -79,11 +79,11 @@ class ferpaScenario extends QMScenario {
         }
 
         foreach($shouldSee as $user){
-            $str.= $this->shouldSeeWhere($this->userDisplayString($u, $user), "#from_users", "css_element", false, 'Then', 3);
+            $str.= $this->shouldSeeWhere($this->userDisplayString($u, $user), "#from_users", "css_element", false, Prefix::THEN, 3);
         }
         foreach($shouldNotSee as $user){
             $name = sprintf("%s %s", $user->firstname, $user->lastname);
-            $str .= $this->shouldSeeWhere($name, "#from_users", "css_element", true, 'Then', 3);
+            $str .= $this->shouldSeeWhere($name, "#from_users", "css_element", true, Prefix::THEN, 3);
         }
         return $str;
     }
@@ -105,7 +105,7 @@ class ferpaFeature extends QMFeature {
 # Because settings at the administrative level override those at the block level, 29 of those can be removed,
 # leaving the 25 given in the test.
 
-# NB: Because of the additional complexity, the %s test does not account for the groups filter.", $this->file, count(QMConfig::getConfigs()), $this->file);
+# NB: Because of the additional complexity, the %s test does not account for the groups filter.", $this->file, count(QMConfig::allConfigs()), $this->file);
 
         $this->appendComment($comment);
         $this->addTag('ferpa');
@@ -121,12 +121,12 @@ $featureParams = array(
 
 $f = new ferpaFeature($featureParams);
 $f->background = new QMBackground($f);
-$configs = QMConfig::getConfigs();
+$configs = QMConfig::allConfigs();
 
 foreach($configs as $c){
     $s = new ferpaScenario();
     $s->config = $c;
     $f->addScenario($s);
 }
-echo $f->string();
+
 $f->toFile();
