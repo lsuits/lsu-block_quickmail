@@ -1,5 +1,5 @@
 <?php
-
+$string['allusers'] = ' All Users';
 $string['pluginname'] = 'Quickmail';
 $string['sendadmin'] = 'Admin Email';   
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
@@ -10,6 +10,7 @@ $string['quickmail:addinstance'] = "Add a new Quickmail block to a course page";
 $string['quickmail:myaddinstance'] = "Add a new Quickmail block to the /my page";
 $string['quickmail:candelete'] = "Allows users to delete email from history.";
 $string['backup_history'] = 'Include Quickmail History';
+$string['backup_block_configuration'] = 'Backup Quickmail Block Level Configuration Settings (Such as [Allow Students to use Quickmail])';
 $string['restore_history'] = 'Restore Quickmail History';
 $string['overwrite_history'] = 'Overwrite Quickmail History';
 $string['alternate'] = 'Alternate Emails';

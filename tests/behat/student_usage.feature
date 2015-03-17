@@ -1,4 +1,4 @@
-@block @block_quickmail
+@block @block_quickmail @usage @javascript
 Feature: Control student usage of Quickmail
   In order to prevent or allow student usage of Quickmail block
   As a system administrator
@@ -17,6 +17,7 @@ Feature: Control student usage of Quickmail
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+#Then I wait "3" seconds
     And I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on

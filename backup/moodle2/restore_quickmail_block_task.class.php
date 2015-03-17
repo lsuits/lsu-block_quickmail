@@ -11,7 +11,7 @@ class restore_quickmail_block_task extends restore_block_task {
         }
 
         // Issue #45: trying to restore from a non-existent logfile
-        $fullpath = rtrim($fullpath, '/') . '/emaillogs.xml';
+        $fullpath = rtrim($fullpath, '/') . '/emaillogs_and_block_configuration.xml';
         if (!file_exists($fullpath)) {
             return false;
         }
@@ -75,7 +75,7 @@ class restore_quickmail_block_task extends restore_block_task {
     protected function define_my_steps() {
         if ($this->history_exists()) {
             $this->add_step(new restore_quickmail_log_structure_step(
-                'quickmail_structure', 'emaillogs.xml'
+                'quickmail_structure', 'emaillogs_and_block_configuration.xml'
             ));
         }
     }

@@ -51,7 +51,7 @@ class block_quickmail extends block_list {
 
         $cparam = array('courseid' => $COURSE->id);
 
-        if ($can_send && $COURSE->id > 1) {
+        if ($can_send && $COURSE->id != SITEID) {
             $send_email_str = quickmail::_s('composenew');
             $send_email = html_writer::link(
                 new moodle_url('/blocks/quickmail/email.php', $cparam),
@@ -109,7 +109,7 @@ class block_quickmail extends block_list {
 
         }
 
-        if((has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) && $COURSE->id == 1) {
+        if((has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) && $COURSE->id == SITEID) {
             $send_adminemail_str = quickmail::_s('sendadmin');
             $send_adminemail = html_writer::link(
                 new moodle_url('/blocks/quickmail/admin_email.php'),
@@ -118,7 +118,7 @@ class block_quickmail extends block_list {
             $this->content->items[] = $send_adminemail;
             $this->content->icons[] = $OUTPUT->pix_icon('t/email', $send_adminemail_str, 'moodle', $icon_class);
         } 
-        if (is_siteadmin($USER->id) && $COURSE->id == 1) {
+        if (is_siteadmin($USER->id) && $COURSE->id == SITEID) {
             $history_str = quickmail::_s('history');
             $history = html_writer::link(
                 new moodle_url('/blocks/quickmail/emaillog.php', $cparam),

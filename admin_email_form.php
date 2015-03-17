@@ -14,10 +14,10 @@ class admin_email_form extends moodleform {
         $mform->setType('subject', PARAM_TEXT);
         
         $mform->addElement('text', 'noreply', get_string('noreply', 'block_quickmail'));
-        $mform->setType('noreply', PARAM_TEXT);
+        $mform->setType('noreply', PARAM_EMAIL);
 
         $mform->addElement('editor', 'message_editor',  get_string('body', 'block_quickmail'), null, $this->_customdata['editor_options']);
-        $mform->setType('body', PARAM_RAW);
+        $mform->setType('message', PARAM_RAW);
 
         $buttons = array(
             $mform->createElement('submit', 'send', get_string('send_email', 'block_quickmail')),
@@ -32,9 +32,10 @@ class admin_email_form extends moodleform {
 
     function validation($data, $files) {
         $errors = array();
-        foreach(array('subject', 'body', 'noreply') as $field) {
+        foreach(array('subject', 'message_editor') as $field) {
             if(empty($data[$field]))
                 $errors[$field] = get_string('email_error_field', 'block_quickmail', $field);
         }
+        return $errors;
     }
 }

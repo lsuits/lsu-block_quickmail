@@ -90,7 +90,7 @@ switch ($action) {
         $html = quickmail::list_entries($courseid, $type, $page, $perpage, $userid, $count, $can_delete);
 }
 
-if($courseid == 1) {
+if($courseid == SITEID) {
     $html.= html_writer::link(
         new moodle_url('/blocks/quickmail/admin_email.php'),
         quickmail::_s('composenew')
