@@ -1,4 +1,4 @@
-@block @block_quickmail @usage @javascript
+@block @block_quickmail @usage @javascript @block_quickmail_student_usage_feature
 Feature: Control student usage of Quickmail
   In order to prevent or allow student usage of Quickmail block
   As a system administrator
