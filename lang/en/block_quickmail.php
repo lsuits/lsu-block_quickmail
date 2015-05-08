@@ -14,6 +14,7 @@ $string['backup_block_configuration'] = 'Backup Quickmail Block Level Configurat
 $string['restore_history'] = 'Restore Quickmail History';
 $string['overwrite_history'] = 'Overwrite Quickmail History';
 $string['alternate'] = 'Alternate Emails';
+$string['eventalternateemailadded'] = 'Alternate email added';
 $string['composenew'] = 'Compose New Email';
 $string['email'] = 'Email';
 $string['drafts'] = 'View Drafts';

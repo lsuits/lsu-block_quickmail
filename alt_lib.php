@@ -134,9 +134,15 @@ abstract class quickmail_alternate implements quickmail_alternate_actions {
 
         $result = email_to_user($user, $from, $subject, $body, $html_body);
 
-        // Add to log
-        add_to_log($course->id, 'quickmail', 'add', $url->out(),
-            quickmail::_s('alternate') . ' ' . $entry->address);
+        // Create the event, trigger it.
+        $event = \block_quickmail\event\alternate_email_added::create(array(
+            'courseid' => $course->id,
+            'context' => context_course::instance($course->id),
+            'other'    => array(
+                'address'=> $entry->address
+            )
+        ));
+        $event->trigger();
 
         $html = $OUTPUT->box_start();
 
