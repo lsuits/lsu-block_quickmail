@@ -76,13 +76,15 @@ class email_form extends moodleform {
         }
 
         $group_options = empty($this->_customdata['groups']) ? array() : array(
-            'all' => quickmail::_s('all_sections')
+            'allusers' => quickmail::_s('allusers')
         );
+
+        $group_options['all'] = quickmail::_s('all_sections');
         foreach ($this->_customdata['groups'] as $group) {
             $group_options[$group->id] = $group->name;
         }
-        $group_options[0] = quickmail::_s('no_section');
-        $group_options['allusers'] = quickmail::_s('allusers');
+
+		$group_options[0] = quickmail::_s('no_section');
 
         $user_options = array();
         foreach ($this->_customdata['users'] as $user) {
