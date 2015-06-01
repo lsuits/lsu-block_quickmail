@@ -75,4 +75,11 @@ if($ADMIN->fulltree) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configcheckbox('block_quickmail_addionalemail',
+            quickmail::_s('addionalemail'), quickmail::_s('addionalemail_desc'),
+            0
+        )
+    );
+
 }
