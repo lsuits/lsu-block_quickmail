@@ -1,7 +1,7 @@
 <?php
 $string['allusers'] = ' All Users';
 $string['pluginname'] = 'Quickmail';
-$string['sendadmin'] = 'Admin Email';   
+$string['sendadmin'] = 'Admin Email';
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
 $string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
 $string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
@@ -97,6 +97,9 @@ $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Qui
 $string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
 cannot be reversed.';
 
+$string['addionalemail'] = 'Allow emails to external email addresses';
+$string['addionalemail_desc'] = 'If this option is enabled quickmail emails are also sent so external email adresses the user entered within the form.';
+
 // Alternate Email strings
 $string['alternate_new'] = 'Add Alternate Address';
 $string['sure'] = 'Are you sure you want to delete {$a->address}? This action cannot be undone.';
@@ -164,6 +167,6 @@ $string['something_broke'] = 'It looks like you either have email sending disabl
 $string['time_elapsed'] = 'Time Elapsed: ';
 $string['additional_emails'] = 'Additional Emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
- 
+
  email1@example.com, email2@example.com
  ';
