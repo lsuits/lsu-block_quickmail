@@ -286,7 +286,7 @@ if ($form->is_cancelled()) {
             // DWE -> Begin hopefully new way of dealing with messagetext and messagehtml
 
             // TEXT
-            // This is where we'll need to factor in the preferences of the user. 
+            // This is where we'll need to factor in the preferences of the receiver.
             // CONTINUE HERE!
             $messagetext = format_text_email($data->messageWithSigAndAttach, $data->format);
 
