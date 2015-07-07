@@ -132,7 +132,6 @@ if (empty($users)) {
     print_error('no_usergroups', 'block_quickmail');
 }
 
-
 // we are presenting the form with values populated from either the log or drafts table in the db
 if (!empty($type)) {
     
@@ -144,10 +143,8 @@ if (!empty($type)) {
 } else {
     $email = new stdClass;
     $email->id = null;
-    $email->format = $USER->mailformat;
 }
-$email->messageformat = $email->format;
-
+$email->messageformat =  editors_get_preferred_format();
 $default_sigid = $DB->get_field('block_quickmail_signatures', 'id', array(
     'userid' => $USER->id, 'default_flag' => 1
 ));
@@ -179,6 +176,7 @@ if (!empty($email->mailto)) {
         unset($users[$id]);
     }
 }
+
 
 $form = new email_form(null, array(
     'editor_options' => $editor_options,
@@ -264,7 +262,11 @@ if ($form->is_cancelled()) {
                 $data->messageWithSigAndAttach = $data->message;
             }
             else{
-                $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
+                if($data->format == 0){
+                    $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
+                }else{
+                    $data->messageWithSigAndAttach = $data->message . "<br /> <br /> <p></p>" .$signaturetext;
+                }
             }
             // Append links to attachments, if any /////////////////////////////
                 $data->messageWithSigAndAttach .= quickmail::process_attachments(
@@ -287,15 +289,10 @@ if ($form->is_cancelled()) {
 
             // TEXT
             // This is where we'll need to factor in the preferences of the receiver.
-            // CONTINUE HERE!
             $messagetext = format_text_email($data->messageWithSigAndAttach, $data->format);
 
             // HTML
             $messagehtml = format_text($data->messageWithSigAndAttach, $data->format);
-
-            //if ($data->format == 0){
-            //  $messagehtml = NULL;
-            //}
 
             if(!empty($data->mailto)) {
                 foreach (explode(',', $data->mailto) as $userid) {
@@ -359,7 +356,6 @@ if (empty($email->attachments)) {
 }
 
 $form->set_data($email);
-
 if (empty($warnings)) {
     if (isset($email->send)) {
         redirect(new moodle_url('/blocks/quickmail/emaillog.php', array('courseid' => $course->id)));
