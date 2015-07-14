@@ -191,7 +191,7 @@ $form = new email_form(null, array(
 ));
 
 $warnings = array();
-
+//
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/course/view.php?id=' . $courseid));
     // DWE we should check if we have selected users or emails around here. 
@@ -207,7 +207,6 @@ if ($form->is_cancelled()) {
         $data->time = time();
         $data->format = $data->message_editor['format'];
         $data->message = $data->message_editor['text'];
-
         $data->attachment = quickmail::attachment_names($data->attachments);
         $data->messageWithSigAndAttach = "";
         // Store data; id is needed for file storage ///////////////////////////
@@ -262,7 +261,7 @@ if ($form->is_cancelled()) {
                 $data->messageWithSigAndAttach = $data->message;
             }
             else{
-                if($data->format == 0){
+                if($data->format == 0 || $data->format == 2 ){
                     $data->messageWithSigAndAttach = $data->message . "\n\n" .$signaturetext;
                 }else{
                     $data->messageWithSigAndAttach = $data->message . "<br /> <br /> <p></p>" .$signaturetext;
