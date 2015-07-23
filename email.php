@@ -61,7 +61,7 @@ $PAGE->set_url('/blocks/quickmail/email.php', array('courseid' => $courseid));
 $PAGE->set_pagetype(quickmail::PAGE_TYPE);
 $PAGE->set_pagelayout('standard');
 
-$PAGE->requires->js('/blocks/quickmail/js/jquery.js');
+$PAGE->requires->jquery();
 $PAGE->requires->js('/blocks/quickmail/js/selection.js');
 
 $course_roles = get_roles_used_in_context($context);
