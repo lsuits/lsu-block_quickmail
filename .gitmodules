@@ -1,3 +1,0 @@
-[submodule "tests/behat/behat_generator"]
-	path = tests/behat/generator
-	url = https://github.com/lsuits/behat_generator.git

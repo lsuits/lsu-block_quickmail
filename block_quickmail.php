@@ -53,57 +53,57 @@ class block_quickmail extends block_list {
 
         if ($can_send && $COURSE->id != SITEID) {
             $send_email_str = quickmail::_s('composenew');
+            $icon = $OUTPUT->pix_icon('t/email', $send_email_str, 'moodle', $icon_class);
             $send_email = html_writer::link(
                 new moodle_url('/blocks/quickmail/email.php', $cparam),
-                $send_email_str
+                $icon.$send_email_str
             );
             $this->content->items[] = $send_email;
-            $this->content->icons[] = $OUTPUT->pix_icon('t/email', $send_email_str, 'moodle', $icon_class);
 
             $signature_str = quickmail::_s('signature');
+            $icon = $OUTPUT->pix_icon('i/edit', $signature_str, 'moodle', $icon_class);
             $signature = html_writer::link(
                 new moodle_url('/blocks/quickmail/signature.php', $cparam),
-                $signature_str
+                $icon.$signature_str
             );
             $this->content->items[] = $signature;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/edit', $signature_str, 'moodle', $icon_class);
 
             $draft_params = $cparam + array('type' => 'drafts');
             $drafts_email_str = quickmail::_s('drafts');
+            $icon = $OUTPUT->pix_icon('i/settings', $drafts_email_str, 'moodle', $icon_class);
             $drafts = html_writer::link(
                 new moodle_url('/blocks/quickmail/emaillog.php', $draft_params),
-                $drafts_email_str
+                $icon.$drafts_email_str
             );
             $this->content->items[] = $drafts;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $drafts_email_str, 'moodle', $icon_class);
 
             $history_str = quickmail::_s('history');
+            $icon = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
             $history = html_writer::link(
                 new moodle_url('/blocks/quickmail/emaillog.php', $cparam),
-                $history_str
+                $icon.$history_str
             );
             $this->content->items[] = $history;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
 
             if (has_capability('block/quickmail:allowalternate', $context)) {
                 $alt_str = quickmail::_s('alternate');
+                $icon = $OUTPUT->pix_icon('i/edit', $alt_str, 'moodle', $icon_class);
                 $alt = html_writer::link(
                     new moodle_url('/blocks/quickmail/alternate.php', $cparam),
-                    $alt_str
+                    $icon.$alt_str
                 );
 
                 $this->content->items[] = $alt;
-                $this->content->icons[] = $OUTPUT->pix_icon('i/edit', $alt_str, 'moodle', $icon_class);
             }
             
             if (has_capability('block/quickmail:canconfig', $context)) {
             $config_str = quickmail::_s('config');
+            $icon = $OUTPUT->pix_icon('i/settings', $config_str, 'moodle', $icon_class);
             $config = html_writer::link(
                 new moodle_url('/blocks/quickmail/config_qm.php', $cparam),
-                $config_str
+                $icon.$config_str
             );
             $this->content->items[] = $config;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $config_str, 'moodle', $icon_class);
         }
 
 
@@ -111,21 +111,21 @@ class block_quickmail extends block_list {
 
         if((has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) && $COURSE->id == SITEID) {
             $send_adminemail_str = quickmail::_s('sendadmin');
+            $icon = $OUTPUT->pix_icon('t/email', $send_adminemail_str, 'moodle', $icon_class);
             $send_adminemail = html_writer::link(
                 new moodle_url('/blocks/quickmail/admin_email.php'),
-                $send_adminemail_str
+                $icon.$send_adminemail_str
             );
             $this->content->items[] = $send_adminemail;
-            $this->content->icons[] = $OUTPUT->pix_icon('t/email', $send_adminemail_str, 'moodle', $icon_class);
         } 
         if (is_siteadmin($USER->id) && $COURSE->id == SITEID) {
             $history_str = quickmail::_s('history');
+            $icon = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
             $history = html_writer::link(
                 new moodle_url('/blocks/quickmail/emaillog.php', $cparam),
-                $history_str
+                $icon.$history_str
             );
             $this->content->items[] = $history;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
         }
 
 
