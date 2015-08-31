@@ -195,7 +195,7 @@ class email_form extends moodleform {
 
         $mform->addElement('static', 'selectors', '', html_writer::table($table));
 
-        if (!empty($CFG->block_quickmail_addionalemail)) {
+        if (!empty($CFG->block_quickmail_allow_additional_email)) {
         $mform->addElement('text', 'additional_emails', quickmail::_s('additional_emails'), array('style'=>'width: 50%;'));
         $mform->setType('additional_emails', PARAM_TEXT);
         $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'block_quickmail_mycallback', 'client');
