@@ -33,13 +33,13 @@ class restore_quickmail_log_structure_step extends restore_structure_step {
             $params = array(
                 'backupid' => $this->get_restoreid(),
                 'itemname' => 'context',
-                'newitemid' => $current->id
+                'newitemid' => $context->id
             );
 
             $id = $DB->get_record('backup_ids_temp', $params)->itemid;
 
             foreach ($data->emaillogs['log'] as $log) {
-                $this->process_log($log, $id, $current);
+                $this->process_log($log, $id, $context);
             }
         }
 
