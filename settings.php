@@ -45,7 +45,8 @@ if($ADMIN->fulltree) {
     $options = array(
         0 => get_string('none'),
         'idnumber' => get_string('idnumber'),
-        'shortname' => get_string('shortname')
+        'shortname' => get_string('shortname'),
+        'fullname' => get_string('fullname')
     );
 
     $settings->add(
