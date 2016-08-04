@@ -159,6 +159,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint($result, 2012061112, 'quickmail');
     }
     if ($oldversion < 2012061112) {
+        require_once( require_once(__DIR__.'/upgradelib.php') );
     	migrate_quickmail_20();
     }
     
