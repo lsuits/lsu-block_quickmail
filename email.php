@@ -315,7 +315,7 @@ if ($form->is_cancelled()) {
                 foreach ($additional_email_array as $additional_email) {
                     $additional_email = trim($additional_email); 
 
-                    $fakeuser = new object();
+                    $fakeuser = new stdClass();
                     $fakeuser->id = 99999900 + $i;
                     $fakeuser->email = $additional_email;
                     // TODO make this into a menu option
