@@ -8,7 +8,7 @@
     clear_selections = function() {
       var clear;
       clear = function(index, selector) {
-        return $(selector).children(":selected").attr("selected", false);
+        return $(selector).children(":selected").prop("selected", false);
       };
       return $(selectors).each(clear);
     };
@@ -32,7 +32,7 @@
             };
             selected = true;
             if (in_list(role, roles) && in_list($(group).val(), groups)) {
-              return $(option).attr('selected', selected);
+              return $(option).prop('selected', selected);
             }
           });
         });
