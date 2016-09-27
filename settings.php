@@ -77,8 +77,8 @@ if($ADMIN->fulltree) {
     );
 
     $settings->add(
-        new admin_setting_configcheckbox('block_quickmail_addionalemail',
-            quickmail::_s('addionalemail'), quickmail::_s('addionalemail_desc'),
+        new admin_setting_configcheckbox('block_quickmail_allow_additional_email',
+            quickmail::_s('allow_additional_email'), quickmail::_s('allow_additional_email_desc'),
             0
         )
     );
