@@ -162,7 +162,7 @@ class email_form extends moodleform {
             quickmail::_s('potential_sections'),
             array('class' => 'object_labels')
         ) . html_writer::tag('div',
-            html_writer::select($group_options, '', 'all', null,
+            html_writer::select($group_options, '', 'allusers', null,
             array('id' => 'groups', 'multiple' => 'multiple', 'size' => 5))
         ) . html_writer::tag('div',
             quickmail::_s('potential_users'),
