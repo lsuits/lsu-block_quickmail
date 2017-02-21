@@ -273,7 +273,7 @@ if ($form->is_cancelled()) {
                 );
 
                 // Prepare html content of message
-            $data->message = file_rewrite_pluginfile_urls($data->message, 'pluginfile.php', $context->id, 'block_quickmail', $table, $data->id, $editor_options);
+            $data->messageWithSigAndAttach = file_rewrite_pluginfile_urls($data->messageWithSigAndAttach, 'pluginfile.php', $context->id, 'block_quickmail', $table, $data->id, $editor_options);
 
 
             // Same user, alternate email //////////////////////////////////////
