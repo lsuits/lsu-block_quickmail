@@ -128,10 +128,6 @@ foreach ($everyone as $userid => $user) {
     }
 }
 
-if (empty($users)) {
-    print_error('no_usergroups', 'block_quickmail');
-}
-
 // we are presenting the form with values populated from either the log or drafts table in the db
 if (!empty($type)) {
     
