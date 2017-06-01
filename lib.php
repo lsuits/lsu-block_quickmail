@@ -444,7 +444,7 @@ abstract class quickmail {
                $get_name_string = get_all_user_name_fields(true, 'u');
         }
 
-        $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.mailformat, u.suspended, u.maildisplay, ue.status  
+        $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.username, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} u  
                 JOIN {user_enrolments} ue                 
                     ON u.id = ue.userid 
