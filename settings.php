@@ -24,7 +24,7 @@ if($ADMIN->fulltree) {
         return in_array($role->shortname, $default_sns);
     });
 
-    $only_names = function ($role) { return $role->shortname; };
+    $only_names = function ($role) { return $role->name ? trim(format_string($role->name)) : $role->shortname; };
 
     $select_roles = quickmail::_s('select_roles');
     $settings->add(
