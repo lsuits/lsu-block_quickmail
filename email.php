@@ -74,6 +74,7 @@ $allgroups = groups_get_all_groups($courseid);
 
 $mastercap = true;
 $groups = $allgroups;
+$attributes = null;
 
 $restricted_view = (
     !has_capability('moodle/site:accessallgroups', $context) and
@@ -146,6 +147,10 @@ if (!empty($type)) {
     
     $email = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));
     //$emailmailto = array();
+    if ($type == 'log') {
+        $attributes = array ('id' => "{$typeid}_id_message_editor");
+    }
+
     if ($messageIDresend == 1) {
         list($email->mailto, $email->additional_emails) = quickmail::clean($email->failuserids);
     }
@@ -196,7 +201,8 @@ $form = new email_form(null, array(
     'users_to_roles' => $users_to_roles,
     'users_to_groups' => $users_to_groups,
     'sigs' => array_map(function($sig) { return $sig->title; }, $sigs),
-    'alternates' => $alternates
+    'alternates' => $alternates,
+    'attributes' => $attributes
 ));
 
 $warnings = array();
