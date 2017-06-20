@@ -212,7 +212,7 @@ class email_form extends moodleform {
         $mform->addElement('editor', 'message_editor', quickmail::_s('message'),
             null, $this->_customdata['editor_options']);
 
-        $options = $this->_customdata['sigs'] + array(-1 => 'No '. quickmail::_s('sig'));
+        $options = $this->_customdata['sigs'] + array(-1 => quickmail::_s('no').' '.quickmail::_s('sig'));
         $mform->addElement('select', 'sigid', quickmail::_s('signature'), $options);
 
         $radio = array(

@@ -135,7 +135,7 @@ if ($form->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($header);
 
-$first = array(0 => 'New '.quickmail::_s('sig'));
+$first = array(0 => quickmail::_s('new').' '.quickmail::_s('sig'));
 $only_names = function ($sig) {
     return ($sig->default_flag) ? $sig->title . ' (Default)': $sig->title;
 };

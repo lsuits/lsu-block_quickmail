@@ -1,5 +1,5 @@
 <?php
-
+$string['allusers'] = ' All Users';
 $string['pluginname'] = 'Quickmail';
 $string['sendadmin'] = 'Admin Email';   
 $string['quickmail:cansend'] = "Allows users to send email through Quickmail";
@@ -10,9 +10,11 @@ $string['quickmail:addinstance'] = "Add a new Quickmail block to a course page";
 $string['quickmail:myaddinstance'] = "Add a new Quickmail block to the /my page";
 $string['quickmail:candelete'] = "Allows users to delete email from history.";
 $string['backup_history'] = 'Include Quickmail History';
+$string['backup_block_configuration'] = 'Backup Quickmail Block Level Configuration Settings (Such as [Allow Students to use Quickmail])';
 $string['restore_history'] = 'Restore Quickmail History';
 $string['overwrite_history'] = 'Overwrite Quickmail History';
 $string['alternate'] = 'Alternate Emails';
+$string['eventalternateemailadded'] = 'Alternate email added';
 $string['composenew'] = 'Compose New Email';
 $string['email'] = 'Email';
 $string['drafts'] = 'View Drafts';
@@ -39,9 +41,15 @@ $string['actions'] = 'Actions';
 $string['signature'] = 'Signatures';
 $string['delete_confirm'] = 'Are you sure you want to delete message with the following details: {$a}';
 $string['title'] = 'Title';
+$string['no'] = 'No';
+$string['new'] = 'New';
 $string['sig'] ='Signature';
 $string['default_flag'] = 'Default';
 $string['config'] = 'Configuration';
+$string['downloads'] = 'Require login for attachments';
+$string['downloads_desc'] = 'This setting determines if attachments are available only to logged in Moodle users';
+$string['download_auth_only'] = 'Authorized Users Only';
+$string['download_open'] = 'Open Downloads';
 $string['receipt'] = 'Receive a copy';
 $string['receipt_help'] = 'Receive a copy of the email being sent';
 
@@ -88,6 +96,8 @@ $string['courseferpa'] = 'Respect Course Mode';
 $string['noferpa'] = 'No Group Respect';
 $string['courselayout'] = 'Course Layout';
 $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
+$string['addionalemail'] = 'Allow emails to external email addresses';
+$string['addionalemail_desc'] = 'If this option is enabled quickmail emails are also sent so external email adresses the user entered within the form.';
 
 $string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
 cannot be reversed.';
