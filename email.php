@@ -303,8 +303,12 @@ if ($form->is_cancelled()) {
             $messagehtml = format_text($data->messageWithSigAndAttach, $data->format);
 
             if(!empty($data->mailto)) {
+
                 foreach (explode(',', $data->mailto) as $userid) {
                     // Email gets sent here
+
+                    if ($everyone[$userid]->value) { $everyone[$userid]->email = $everyone[$userid]->value; }
+
                     $success = email_to_user($everyone[$userid], $user, $subject,$messagetext, $messagehtml);
                     if (!$success) {
                         $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);

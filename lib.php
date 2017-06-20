@@ -414,9 +414,10 @@ abstract class quickmail {
                $get_name_string = get_all_user_name_fields(true, 'u');
         }
         $sql = "SELECT DISTINCT u.id, " . $get_name_string . ",
-        u.email, u.mailformat, u.suspended, u.maildisplay
+        u.email, up.value, u.mailformat, u.suspended, u.maildisplay
         FROM {role_assignments} ra
         JOIN {user} u ON u.id = ra.userid
+        LEFT JOIN {user_preferences} up on u.id = up.userid AND up.name = 'message_processor_email_email'
         JOIN {role} r ON ra.roleid = r.id
         WHERE (ra.contextid = ? ) ";
         
@@ -444,10 +445,13 @@ abstract class quickmail {
                $get_name_string = get_all_user_name_fields(true, 'u');
         }
 
-        $sql = "SELECT u.id, " . $get_name_string . " , u.email, u.username, u.mailformat, u.suspended, u.maildisplay, ue.status  
+        $sql = "SELECT u.id, " . $get_name_string . " , u.email, up.value, u.username, u.mailformat, u.suspended, u.maildisplay, ue.status  
             FROM {user} u  
                 JOIN {user_enrolments} ue                 
-                    ON u.id = ue.userid 
+                    ON u.id = ue.userid
+                LEFT JOIN {user_preferences} up 
+                    ON u.id = up.userid 
+                    AND up.name = 'message_processor_email_email' 
                 JOIN {enrol} en
                     ON en.id = ue.enrolid                     
                 WHERE en.courseid = ?
