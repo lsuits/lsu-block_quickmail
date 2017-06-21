@@ -302,10 +302,6 @@ if ($form->is_cancelled()) {
             $options = array('filter' => false);
             $messagehtml = format_text($data->messageWithSigAndAttach, $data->format, $options);
 
-            if (!empty($CFG->block_quickmail_downloads)) {
-                $messagehtml = '<p><center><strong>Embedded images and videos cannot be viewed inline due to login restrictions imposed by your system administrator.</strong></center></p><br />' . $messagehtml;
-            }
-
             if(!empty($data->mailto)) {
 
                 foreach (explode(',', $data->mailto) as $userid) {

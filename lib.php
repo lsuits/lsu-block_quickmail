@@ -506,7 +506,7 @@ function block_quickmail_pluginfile($course, $record, $context, $filearea, $args
     $fs = get_file_storage();
     global $DB, $CFG;
 
-    if (!empty($CFG->block_quickmail_downloads)) {
+    if (!empty($CFG->block_quickmail_downloads) && $filearea != 'log') {
         require_course_login($course, true, $record);
     }
 
