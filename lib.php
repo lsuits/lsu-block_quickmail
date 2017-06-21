@@ -92,10 +92,8 @@ abstract class quickmail {
             if (empty($text)) {
                 $text = $filename;
             }
-            $url = new moodle_url('/pluginfile.php', array(
-                'forcedownload' => 1,
-                'file' => "/$base_url/$filename"
-            ));
+
+            $url = moodle_url::make_file_url('/pluginfile.php', "$base_url/$filename", true);
 
             //to prevent double encoding of ampersands in urls for our plaintext users,
             //we use the out() method of moodle_url
@@ -509,7 +507,6 @@ function block_quickmail_pluginfile($course, $record, $context, $filearea, $args
     global $DB, $CFG;
 
     if (!empty($CFG->block_quickmail_downloads)) {
-
         require_course_login($course, true, $record);
     }
 

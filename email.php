@@ -263,14 +263,11 @@ if ($form->is_cancelled()) {
             // deal with possible signature, will be appended to message in a little bit.
             if (!empty($sigs) and $data->sigid > -1) {
                 $sig = $sigs[$data->sigid];
-
                 $signaturetext = file_rewrite_pluginfile_urls($sig->signature, 'pluginfile.php', $context->id, 'block_quickmail', 'signature', $sig->id, $editor_options);
-
-                
             }
 
             // Prepare html content of message /////////////////////////////////
-            //$data->message = file_rewrite_pluginfile_urls($data->message, 'pluginfile.php', $context->id, 'block_quickmail', $table, $data->id, $editor_options);
+            $data->message = file_rewrite_pluginfile_urls($data->message, 'pluginfile.php', $context->id, 'block_quickmail', $table, $data->id, $editor_options);
 
             if(empty($signaturetext)){
                 $data->messageWithSigAndAttach = $data->message;
@@ -287,10 +284,6 @@ if ($form->is_cancelled()) {
                     $context, $data, $table, $data->id
                 );
 
-                // Prepare html content of message
-            $data->message = file_rewrite_pluginfile_urls($data->message, 'pluginfile.php', $context->id, 'block_quickmail', $table, $data->id, $editor_options);
-
-
             // Same user, alternate email //////////////////////////////////////
             if (!empty($data->alternateid)) {
                 $user = clone($USER);
@@ -306,15 +299,18 @@ if ($form->is_cancelled()) {
             $messagetext = format_text_email($data->messageWithSigAndAttach, $data->format);
 
             // HTML
-            $messagehtml = format_text($data->messageWithSigAndAttach, $data->format);
+            $options = array('filter' => false);
+            $messagehtml = format_text($data->messageWithSigAndAttach, $data->format, $options);
+
+            if (!empty($CFG->block_quickmail_downloads)) {
+                $messagehtml = '<p><center><strong>Embedded images and videos cannot be viewed inline due to login restrictions imposed by your system administrator.</strong></center></p><br />' . $messagehtml;
+            }
 
             if(!empty($data->mailto)) {
 
                 foreach (explode(',', $data->mailto) as $userid) {
                     // Email gets sent here
-
                     if ($everyone[$userid]->value) { $everyone[$userid]->email = $everyone[$userid]->value; }
-
                     $success = email_to_user($everyone[$userid], $user, $subject,$messagetext, $messagehtml);
                     if (!$success) {
                         $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
@@ -324,30 +320,21 @@ if ($form->is_cancelled()) {
             }
 
         if(!empty($data->additional_emails)){
-            
             $additional_email_array = preg_split('/[,;]/', $data->additional_emails);
-
-            
-
                 $i = 0;
-
                 foreach ($additional_email_array as $additional_email) {
                     $additional_email = trim($additional_email); 
-
                     $fakeuser = new stdClass();
                     $fakeuser->id = 99999900 + $i;
                     $fakeuser->email = $additional_email;
                     // TODO make this into a menu option
                     $fakeuser->mailformat = 1;
-
                     $additional_email_success = email_to_user($fakeuser, $user, $subject, $messagetext, $messagehtml);
                     if (!$additional_email_success) {
                         $data->failuserids[] = $additional_email;
-
                         // will need to notify that an email is incorrect
                         $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
                     }
-
                     $i++;
                 }
         }
