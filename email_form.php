@@ -94,11 +94,12 @@ class email_form extends moodleform {
             $role_options[$role->shortname] = role_get_name($role);
         }
 
-        $group_options = empty($this->_customdata['groups']) ? array() : array(
-            'allusers' => quickmail::_s('allusers')
-        );
+        $group_options['allusers'] = quickmail::_s('allusers');
 
-        $group_options['all'] = quickmail::_s('all_sections');
+        if (!empty($this->_customdata['groups'])) {
+            $group_options['all'] = quickmail::_s('all_sections');
+        }
+
         foreach ($this->_customdata['groups'] as $group) {
             $group_options[$group->id] = $group->name;
         }
@@ -179,7 +180,7 @@ class email_form extends moodleform {
             quickmail::_s('potential_sections'),
             array('class' => 'object_labels')
         ) . html_writer::tag('div',
-            html_writer::select($group_options, '', 'all', null,
+            html_writer::select($group_options, '', 'allusers', null,
             array('id' => 'groups', 'multiple' => 'multiple', 'size' => 5))
         ) . html_writer::tag('div',
             quickmail::_s('potential_users'),
