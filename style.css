@@ -1,0 +1,14 @@
+label {
+  font-weight: 500;
+  color: dimgray; }
+
+label[for=id_select_signature_id] {
+  display: block !important; }
+  label[for=id_select_signature_id] img.spinner-img {
+    margin-left: 30px;
+    display: none; }
+
+#delete_confirmation_confirm {
+  margin-right: 20px; }
+
+/*# sourceMappingURL=style.css.map */

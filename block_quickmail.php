@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,134 +21,212 @@
  * @copyright  2008-2017 Adam Zapletal, Chad Mazilly, Philip Cali, Robert Russo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
-
 class block_quickmail extends block_list {
-    function init() {
-        $this->title = quickmail::_s('pluginname');
+    
+    public $course;
+    public $user;
+    public $context;
+
+    public function init() {
+        $this->title = $this->get_title();
+        // $this->version = $this->get_version();
+        $this->set_course();
+        $this->set_user();
+        $this->context = block_quickmail_plugin::resolve_context($this->course->id);
     }
 
-    function applicable_formats() {
+    public function get_title() {
+        return block_quickmail_plugin::_s('pluginname');
+    }
+
+    public function set_course() {
+        global $COURSE;
+
+        $this->course = $COURSE;
+    }
+
+    public function set_user() {
         global $USER;
-        if(is_siteadmin($USER->id) || has_capability('block/quickmail:myaddinstance', context_system::instance())) {
-            return array('site' => true, 'my' => true, 'course-view' => true, 'mod-scorm-view' => true);
-        } else {
-            return array('site' => false, 'my' => false, 'course-view' => true, 'mod-scorm-view' => true);
-        }
+
+        $this->user = $USER;
     }
-    function has_config() {
-        return true;
-    }
+
+    // TODO: can we pull this from version.php?!?
+    // public function get_version() {
+    //     return 2017091400;
+    // }
+
     /**
-     * Disable multiple instances of this block
-     * @return bool Returns false
+     * Indicates which pages types this block may be added to
+     * 
+     * @return array
      */
-    function instance_allow_multiple() {
-        return false;
+    public function applicable_formats() {
+        $formats = [
+            'course-view' => true, 
+            'mod-scorm-view' => true
+        ];
+
+        if (block_quickmail_plugin::user_has_permission_in_context('myaddinstance', $this->context)) {
+            return array_merge($formats, [
+                'site' => true, 
+                'my' => true, 
+            ]);
+        }
+
+        return array_merge($formats, [
+            'site' => false, 
+            'my' => false, 
+        ]);
     }
     
-    function get_content() {
-        global $USER, $CFG, $COURSE, $OUTPUT;
+    /**
+     * Indicates that this block has its own configuration settings
+     * 
+     * @return bool
+     */
+    public function has_config() {
+        return true;
+    }
+    
+    /**
+     * Sets the content to be rendered when displaying this block
+     * 
+     * @return object
+     */
+    public function get_content() {
+        // @TODO: find a better way to deal with unauthenticated users
+        if ($this->user->id == 0) {
+            return null;
+        }
 
-        if ($this->content !== NULL) {
+        // cache the content for this instance
+        // @TODO: should we cache the content?
+        if ( ! empty($this->content)) {
             return $this->content;
         }
 
-        $this->content = new stdClass;
-        $this->content->items = array();
-        $this->content->icons = array();
-        $this->content->footer = '';
+        $this->content = $this->get_new_content_container();
 
-        $context = context_course::instance($COURSE->id);
+        // begin building content...
 
-        $config = quickmail::load_config($COURSE->id);
-        $permission = has_capability('block/quickmail:cansend', $context);
+        // if this user has the ability to send quickmail messages
+        if (block_quickmail_plugin::user_has_permission_in_context('cansend', $this->context)) {
+            $content_list_items = [
+                // compose message
+                [
+                    'lang_key' => 'compose',
+                    'icon_key' => 't/email',
+                    'page' => 'compose',
+                ],
+                // manage signatures
+                [
+                    'lang_key' => 'manage_signatures',
+                    'icon_key' => 'i/edit',
+                    'page' => 'signature',
+                ],
+                // manage drafts
+                // [
+                //     'lang_key' => 'drafts',
+                //     'icon_key' => 'i/settings',
+                //     'page' => 'emaillog',
+                //     'extra_link_params' => ['type' => 'drafts'],
+                // ],
+                // view send history
+                // [
+                //     'lang_key' => 'history',
+                //     'icon_key' => 'i/settings',
+                //     'page' => 'emaillog',
+                // ],
+            ];
 
-        $can_send = ($permission or !empty($config['allowstudents']));
-
-        $icon_class = array('class' => 'icon');
-
-        $cparam = array('courseid' => $COURSE->id);
-
-        if ($can_send && $COURSE->id != SITEID) {
-            $send_email_str = quickmail::_s('composenew');
-            $icon = $OUTPUT->pix_icon('t/email', $send_email_str, 'moodle', $icon_class);
-            $send_email = html_writer::link(
-                new moodle_url('/blocks/quickmail/email.php', $cparam),
-                $icon.$send_email_str
-            );
-            $this->content->items[] = $send_email;
-
-            $signature_str = quickmail::_s('signature');
-            $icon = $OUTPUT->pix_icon('i/edit', $signature_str, 'moodle', $icon_class);
-            $signature = html_writer::link(
-                new moodle_url('/blocks/quickmail/signature.php', $cparam),
-                $icon.$signature_str
-            );
-            $this->content->items[] = $signature;
-
-            $draft_params = $cparam + array('type' => 'drafts');
-            $drafts_email_str = quickmail::_s('drafts');
-            $icon = $OUTPUT->pix_icon('i/settings', $drafts_email_str, 'moodle', $icon_class);
-            $drafts = html_writer::link(
-                new moodle_url('/blocks/quickmail/emaillog.php', $draft_params),
-                $icon.$drafts_email_str
-            );
-            $this->content->items[] = $drafts;
-
-            $history_str = quickmail::_s('history');
-            $icon = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
-            $history = html_writer::link(
-                new moodle_url('/blocks/quickmail/emaillog.php', $cparam),
-                $icon.$history_str
-            );
-            $this->content->items[] = $history;
-
-            if (has_capability('block/quickmail:allowalternate', $context)) {
-                $alt_str = quickmail::_s('alternate');
-                $icon = $OUTPUT->pix_icon('i/edit', $alt_str, 'moodle', $icon_class);
-                $alt = html_writer::link(
-                    new moodle_url('/blocks/quickmail/alternate.php', $cparam),
-                    $icon.$alt_str
-                );
-
-                $this->content->items[] = $alt;
-            }
+            // TODO: add in items only available in course context
             
-            if (has_capability('block/quickmail:canconfig', $context)) {
-            $config_str = quickmail::_s('config');
-            $icon = $OUTPUT->pix_icon('i/settings', $config_str, 'moodle', $icon_class);
-            $config = html_writer::link(
-                new moodle_url('/blocks/quickmail/config_qm.php', $cparam),
-                $icon.$config_str
-            );
-            $this->content->items[] = $config;
+            // manage alternate send-from emails
+            // if (block_quickmail_plugin::user_has_permission_in_context('allowalternate', $this->context)) {
+            //     $content_list_items[] = [
+            //             'lang_key' => 'alternate',
+            //             'icon_key' => 'i/edit',
+            //             'page' => 'alternate',
+            //         ];
+            // }
+
+            // manage quickmail config
+            // if (block_quickmail_plugin::user_has_permission_in_context('canconfig', $this->context)) {
+            //     $content_list_items[] = [
+            //             'lang_key' => 'config',
+            //             'icon_key' => 'i/settings',
+            //             'page' => 'configuration',
+            //         ];
+            // }
         }
 
-
+        // construct and add all of the items to the content to be output
+        foreach ($content_list_items as $item_attributes) {
+            $this->add_item_to_content($item_attributes);
         }
-
-        if((has_capability('block/quickmail:myaddinstance', context_system::instance()) || is_siteadmin($USER->id)) && $COURSE->id == SITEID) {
-            $send_adminemail_str = quickmail::_s('sendadmin');
-            $icon = $OUTPUT->pix_icon('t/email', $send_adminemail_str, 'moodle', $icon_class);
-            $send_adminemail = html_writer::link(
-                new moodle_url('/blocks/quickmail/admin_email.php'),
-                $icon.$send_adminemail_str
-            );
-            $this->content->items[] = $send_adminemail;
-        } 
-        if (is_siteadmin($USER->id) && $COURSE->id == SITEID) {
-            $history_str = quickmail::_s('history');
-            $icon = $OUTPUT->pix_icon('i/settings', $history_str, 'moodle', $icon_class);
-            $history = html_writer::link(
-                new moodle_url('/blocks/quickmail/emaillog.php', $cparam),
-                $icon.$history_str
-            );
-            $this->content->items[] = $history;
-        }
-
 
         return $this->content;
+    }
+
+    /**
+     * Builds and adds an item to the content container for the given params
+     * 
+     * @param  array $attributes  [lang_key,icon_key,page,extra_link_params]
+     * @return void
+     */
+    private function add_item_to_content($attributes)
+    {
+        $item = $this->build_item($attributes);
+
+        $this->content->items[] = $item;
+    }
+
+    /**
+     * Builds a content item (link) for the given params
+     * 
+     * @param  array $attributes  [lang_key,icon_key,page,extra_link_params]
+     * @return uhh...
+     */
+    private function build_item($attributes)
+    {
+        global $OUTPUT;
+
+        $label = block_quickmail_plugin::_s($attributes['lang_key']);
+        
+        $icon = $OUTPUT->pix_icon($attributes['icon_key'], $label, 'moodle', $this->get_content_icon_class());
+
+        $extra_link_params = array_key_exists('extra_link_params', $attributes) ? $attributes['extra_link_params'] : [];
+        
+        return html_writer::link(
+            new moodle_url('/blocks/quickmail/' . $attributes['page'] . '.php', $this->get_content_link_params($extra_link_params)),
+            $icon . $label
+        );
+    }
+
+    /**
+     * Returns an empty "block list" content container to be filled with content
+     * 
+     * @return object
+     */
+    private function get_new_content_container()
+    {
+        $content = new stdClass;
+        
+        $content->items = [];
+        $content->icons = [];
+        $content->footer = '';
+
+        return $content;
+    }
+
+    private function get_content_icon_class()
+    {
+        return ['class' => 'icon'];
+    }
+
+    private function get_content_link_params($extra_params = [])
+    {
+        return ['courseid' => $this->course->id] + $extra_params;
     }
 }

@@ -1,187 +1,144 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * @package    block_quickmail
- * @copyright  2008-2017 Louisiana State University
- * @copyright  2008-2017 Adam Zapletal, Chad Mazilly, Philip Cali, Robert Russo
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 require_once('../../config.php');
-require_once('lib.php');
-require_once('signature_form.php');
-
+ 
 require_login();
 
-$courseid = required_param('courseid', PARAM_INT);
-$sigid = optional_param('id', 0, PARAM_INT);
-$flash = optional_param('flash', 0, PARAM_INT);
-$confirm = optional_param('confirm', 0, PARAM_INT);
+$page_url = '/blocks/quickmail/signature.php';
 
-if ($courseid and !$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('no_course', 'block_quickmail', '', $courseid);
+$page_params = [
+    'id' => optional_param('id', 0, PARAM_INT), // signature id, if any
+    'courseid' => optional_param('courseid', 0, PARAM_INT), // course id, if any, for redirection
+];
+
+$page_context = context_system::instance();
+
+////////////////////////////////////////
+/// CONSTRUCT PAGE
+////////////////////////////////////////
+
+$PAGE->set_context($page_context);
+$PAGE->set_pagetype('block-quickmail');
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('manage_signatures'));
+$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
+$PAGE->navbar->add(block_quickmail_plugin::_s('signatures'));
+$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('manage_signatures'));
+$PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
+$PAGE->requires->jquery();
+$PAGE->requires->js_call_amd('block_quickmail/manage-signatures', 'init', ['courseid' => $page_params['courseid']]);
+
+// find the requested signature, if any, which must belong to the auth user
+if ( ! $signature = block_quickmail\persistents\signature::find_user_signature_or_null($USER->id, $page_params['id'])) {
+    // if signature could not be found for user, reset the given signature param for the page
+    $page_params['id'] = 0;
 }
 
-$config = quickmail::load_config($courseid);
+////////////////////////////////////////
+/// INSTANTIATE PAGE RENDERER
+////////////////////////////////////////
+$renderer = $PAGE->get_renderer('block_quickmail');
 
-$context = context_course::instance($courseid);
-$has_permission = (
-    has_capability('block/quickmail:cansend', $context) or
-    !empty($config['allowstudents'])
+////////////////////////////////////////
+/// INSTANTIATE SIGNATURE FORM
+////////////////////////////////////////
+$manage_signatures_form = block_quickmail_form::make_manage_signatures_form(
+    $page_context, 
+    $USER, 
+    $signature, 
+    $page_params['courseid']
 );
 
-if (!$has_permission) {
-    print_error('no_permission', 'block_quickmail');
+////////////////////////////////////////
+/// HANDLE SIGNATURE FORM SUBMISSION (if any)
+////////////////////////////////////////
+
+// instantiate "signature" request
+$signature_request = \block_quickmail\requests\signature_request::make_signature_request($manage_signatures_form);
+
+// if cancelling form
+if ($signature_request->was_cancelled()) {
+    
+    // redirect back to appropriate page
+    $signature_request->redirect_back();
+
+// if requesting to delete a signature
+} else if ($signature_request->to_delete_signature()) {
+
+    // soft delete the signature, flagging a new default if necessary
+    $signature->soft_delete();
+
+    // redirect back to the user's edit default signature (if any) page
+    $signature_request->redirect_to_edit_users_default_signature('warning', $USER, \block_quickmail_plugin::_s('user_signature_deleted'));
+
+// if saving signature
+} else if ($signature_request->to_save_signature()) {
+
+    try {
+        // if no id (signature) was submitted, create a new signature
+        if ( ! $page_params['id']) {
+            // create a new signature
+            $signature = new block_quickmail\persistents\signature(0, $signature_request->get_request_data_object());
+            $signature->create();
+
+        // otherwise, update the signature
+        } else {
+            // update the current signature
+            $signature->from_record($signature_request->get_request_data_object());
+            $signature->update();
+        }
+    } catch (\core\invalid_persistent_exception $e) {
+        // if validation error, redirect back to signature attempting to be modified, or "create new" if none
+        $signature_request->redirect_to_edit_signature_id('error', $page_params['id'], $e->a);
+    } 
+
+    // handle the text editor persistence stuff...
+    handle_post_signature_save_or_update($page_context, $signature, $signature_request);
+
+    // redirect to this signature edit page, notifying user of update
+    $signature_request->redirect_to_edit_signature_id('success', $signature->get('id'), get_string('changessaved'));
 }
 
-$blockname = quickmail::_s('pluginname');
-$header = quickmail::_s('signature');
-
-$title = "{$blockname}: {$header}";
-
-$PAGE->set_context($context);
-
-$PAGE->set_course($course);
-$PAGE->set_url('/blocks/quickmail/signature.php', array(
-    'courseid' => $courseid, 'id' => $sigid
-));
-
-$PAGE->navbar->add($blockname);
-$PAGE->navbar->add($header);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-$PAGE->set_pagetype(quickmail::PAGE_TYPE);
-
-$params = array('userid' => $USER->id);
-$dbsigs = $DB->get_records('block_quickmail_signatures', $params);
-
-$sig = (!empty($sigid) and isset($sigs[$sigid])) ? $sigs[$sigid] : new stdClass;
-
-if (empty($sigid) or !isset($dbsigs[$sigid])) {
-    $sig = new stdClass;
-    $sig->id = null;
-    $sig->title = '';
-    $sig->signature = '';
-} else {
-    $sig = $dbsigs[$sigid];
-}
-
-$sig->courseid = $courseid;
-$sig->signatureformat = $USER->mailformat;
-
-$options = array(
-    'trusttext' => true,
-    'subdirs' => true,
-    'maxfiles' => EDITOR_UNLIMITED_FILES,
-    'context' => $context
-);
-
-$sig = file_prepare_standard_editor($sig, 'signature', $options, $context,
-    'block_quickmail', 'signature', $sig->id);
-
-$form = new signature_form(null, array('signature_options' => $options));
-
-if ($confirm) {
-    $DB->delete_records('block_quickmail_signatures', array('id' => $sigid));
-    redirect(new moodle_url('/blocks/quickmail/signature.php', array(
-        'courseid' => $courseid,
-        'flash' => 1
-    )));
-}
-
-if ($form->is_cancelled()) {
-    redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
-} else if ($data = $form->get_data()) {
-    if (isset($data->delete)) {
-        $delete = true;
-    }
-
-    if (empty($data->title)) {
-        $warnings[] = quickmail::_s('required');
-    }
-
-    if (empty($warnings) and empty($delete)) {
-        $data->signature = $data->signature_editor['text'];
-
-        if (empty($data->default_flag)) {
-            $data->default_flag = 0;
-        }
-
-        $params = array('userid' => $USER->id, 'default_flag' => 1);
-        $default = $DB->get_record('block_quickmail_signatures', $params);
-
-        if ($default and !empty($data->default_flag)) {
-            $default->default_flag = 0;
-            $DB->update_record('block_quickmail_signatures', $default);
-        }
-
-        if (!$default) {
-            $data->default_flag = 1;
-        }
-
-        if (empty($data->id)) {
-            $data->id = null;
-            $data->id = $DB->insert_record('block_quickmail_signatures', $data);
-        }
-
-        // Persist relative links
-        $data = file_postupdate_standard_editor($data, 'signature', $options,
-            $context, 'block_quickmail', 'signature', $data->id);
-
-        $DB->update_record('block_quickmail_signatures', $data);
-
-        $url = new moodle_url('signature.php', array(
-            'id' => $data->id, 'courseid' => $course->id, 'flash' => 1
-        ));
-        redirect($url);
-    }
-}
+// get the rendered form
+$rendered_signature_form = $renderer->manage_signatures_component([
+    'context' => $page_context,
+    'signature' => $signature,
+    'user' => $USER,
+    'manage_signatures_form' => $manage_signatures_form,
+]);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($header);
 
-$first = array(0 => quickmail::_s('new').' '.quickmail::_s('sig'));
-$only_names = function ($sig) {
-    return ($sig->default_flag) ? $sig->title . ' (Default)': $sig->title;
-};
-$sig_options = $first + array_map($only_names, $dbsigs);
-
-$form->set_data($sig);
-
-if ($flash) {
-    echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
-}
-
-if (!empty($delete)) {
-    $msg = get_string('are_you_sure', 'block_quickmail', $sig);
-    $confirm_url = new moodle_url('/blocks/quickmail/signature.php', array(
-        'id' => $sig->id,
-        'courseid' => $courseid,
-        'confirm' => 1
-    ));
-    $cancel_url = new moodle_url('/blocks/quickmail/signature.php', array(
-        'id' => $sig->id,
-        'courseid' => $courseid
-    ));
-    echo $OUTPUT->confirm($msg, $confirm_url, $cancel_url);
-} else {
-    echo $OUTPUT->single_select('signature.php?courseid='.$courseid, 'id', $sig_options, $sigid);
-
-    $form->display();
-}
+// display the manage signature form
+echo $rendered_signature_form;
 
 echo $OUTPUT->footer();
+
+/**
+ * Handles the persistence and display of text editor content after updating a signature
+ * 
+ * @param  object             $context
+ * @param  signature          $signature
+ * @param  signature_request  $signature_request
+ * @return void
+ */
+function handle_post_signature_save_or_update($context, $signature, $signature_request) {
+    $record = $signature->to_record();
+    $record->signatureformat = (int) $signature_request->form->user->mailformat;
+    $record->signature_editor = $signature_request->form_data->signature_editor;
+
+    file_postupdate_standard_editor(
+        $record,
+        'signature', 
+        \block_quickmail_plugin::get_editor_options($context),
+        $context, 
+        \block_quickmail_plugin::$name, 
+        'signature_editor',
+        $signature->get('id')
+    );
+}
+
+function dd($thing = null) {
+    var_dump($thing);die;
+}
