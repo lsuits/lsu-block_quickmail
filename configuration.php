@@ -24,97 +24,96 @@
 
 require_once('../../config.php');
 
-require_login();
-
 $page_url = '/blocks/quickmail/configuration.php';
 
 $page_params = [
-    // if courseid == 0, we can assume this is "admin scope" (as opposed to "course scope")
-    'courseid' => optional_param('courseid', 0, PARAM_INT),
-    // 'reset' => optional_param('reset', 0, PARAM_INT);
+    'courseid' => required_param('courseid', PARAM_INT),
 ];
 
+require_login();
+
 try {
-    // instantiate a quickmail plugin instance
-    $quickmail = block_quickmail_plugin::make($page_params);
-
-    ////////////////////////////////////////
-    /// CONSTRUCT PAGE
-    ////////////////////////////////////////
-
-    $PAGE->set_context($quickmail->context);
-    
-    if ($quickmail->is_in_scope('course'))
-        $PAGE->set_course($quickmail->course);
-
-    $PAGE->set_pagetype('block-quickmail');
-    $PAGE->set_pagelayout('standard');
-    $PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('config'));
-    $PAGE->set_url($page_url, $page_params);
-
-    $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-    $PAGE->navbar->add(block_quickmail_plugin::_s('config'));
-    $PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('config'));
-
-    ////////////////////////////////////////
-    /// RENDER PAGE
-    ////////////////////////////////////////
-
-    $output = $PAGE->get_renderer('block_quickmail');
-
-    echo $output->header();
-    
-    // echo $output->message_nav_links($quickmail);
-
-    // instantiate "course configuration" form
-    $mform = $quickmail->make_form('course_configuration_form', $page_params);
-
-    // form was cancelled
-    if ($mform->is_cancelled()) {
-        
-        redirect($quickmail->get_back_url());
-
-    // form was successfully posted
-    } else if ($request = $mform->get_data()) {
-
-        // if updating settings
-        if (property_exists($request, 'save')) {
-            $params = block_quickmail_plugin::validate_update_course_configuration_request($request);
-
-            $quickmail->update_course_configuration($params);
-        
-            echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
-        }
-
-        // or, if resetting settings
-        else if (property_exists($request, 'reset')) {
-            $quickmail->reset_course_configuration();
-
-            redirect($quickmail->get_back_url(), block_quickmail_plugin::_s('reset_success_message'), null, \core\output\notification::NOTIFY_SUCCESS);
-        }
-    }
-    
-    // display the configuration form
-    echo $output->course_configuration_component($quickmail, [
-        'course_configuration_form' => $mform,
-    ]);
-
-    echo $output->footer();
-
-} catch (\block_quickmail\exceptions\critical_exception $e) {
-    
-    // show the moodle error page
-    $e->render_moodle_error();
-} catch (\block_quickmail\exceptions\validation_exception $e) {
-    
-    // show the moodle error page
-    $e->render_moodle_error();
-} catch (\block_quickmail\exceptions\authorization_exception $e) {
-    
-    // show the moodle error page
-    $e->render_moodle_error();
+    // get page context and course
+    list($page_context, $course) = block_quickmail_plugin::resolve_context('course', $page_params['courseid']);
+} catch (Exception $e) {
+    print_error('no_course', 'block_quickmail', '', $page_params['courseid']);
 }
 
-function dd($thing) {
-    var_dump($thing);die;
+block_quickmail_plugin::check_user_permission('canconfig', $page_context);
+    
+////////////////////////////////////////
+/// CONSTRUCT PAGE
+////////////////////////////////////////
+
+$PAGE->set_context($page_context);
+$PAGE->set_course($course);
+$PAGE->set_pagetype('block-quickmail');
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('config'));
+$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
+$PAGE->navbar->add(block_quickmail_plugin::_s('config'));
+$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('config'));
+// $PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
+$PAGE->requires->js_call_amd('block_quickmail/course-config', 'init', ['courseid' => $page_params['courseid']]);
+
+////////////////////////////////////////
+/// INSTANTIATE PAGE RENDERER
+////////////////////////////////////////
+$renderer = $PAGE->get_renderer('block_quickmail');
+
+////////////////////////////////////////
+/// INSTANTIATE CONFIGURATION FORM
+////////////////////////////////////////
+$course_config_form = block_quickmail_form::make_course_config_form(
+    $page_context, 
+    $USER, 
+    $course
+);
+
+////////////////////////////////////////
+/// HANDLE SIGNATURE FORM SUBMISSION (if any)
+////////////////////////////////////////
+
+// instantiate "course configuration" request
+$course_config_request = \block_quickmail\requests\course_config_request::make($course_config_form);
+
+// if cancelling form
+if ($course_config_request->was_cancelled()) {
+    
+    // redirect back to appropriate page
+    $course_config_request->redirect_back();
+
+// if requesting to restore defaults
+} else if ($course_config_request->to_restore_defaults()) {
+    
+    // delete this course's config settings
+    block_quickmail_plugin::delete_course_config($course->id);
+
+    // redirect to this signature edit page, notifying user of update
+    $course_config_request->redirect_to_course_config_page('success', $course->id, get_string('changessaved'));
+
+// if saving signature
+} else if ($course_config_request->to_save_configuration()) {
+
+    // replace this course's config settings with those that were submitted
+    block_quickmail_plugin::update_course_config($course->id, $course_config_request->get_request_data_object());
+
+    // redirect to this signature edit page, notifying user of update
+    $course_config_request->redirect_to_course_config_page('success', $course->id, get_string('changessaved'));
 }
+
+// get the rendered form
+$rendered_config_form = $renderer->course_config_component([
+    'context' => $page_context,
+    'course' => $course,
+    'user' => $USER,
+    'course_config_form' => $course_config_form,
+]);
+
+echo $OUTPUT->header();
+
+// display the manage signature form
+echo $rendered_config_form;
+
+echo $OUTPUT->footer();

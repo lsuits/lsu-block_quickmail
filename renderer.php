@@ -24,11 +24,11 @@
 
 require_once 'classes/forms/compose_message_form.php';
 require_once 'classes/forms/manage_signatures_form.php';
-require_once 'classes/forms/course_configuration_form.php';
+require_once 'classes/forms/course_config_form.php';
 
 use block_quickmail\renderables\compose_message_component;
 use block_quickmail\renderables\manage_signatures_component;
-use block_quickmail\renderables\course_configuration_component;
+use block_quickmail\renderables\course_config_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
 
@@ -55,28 +55,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
     }
 
     ////////////////////////////////////////
-    /// CONFIGURATION (COURSE) FORM
-    ////////////////////////////////////////
-    
-    public function course_configuration_component($params = []) {
-        $course_configuration_component = new course_configuration_component($params);
-        
-        return $this->render($course_configuration_component);
-    }
-
-    protected function render_course_configuration_component(course_configuration_component $course_configuration_component) {
-        $out = '';
-        
-        // render configuration form
-        $out .= $course_configuration_component->course_configuration_form->render();
-
-        return $this->output->container($out, 'course_configuration_component');
-    }
-
-
-
-
-    ////////////////////////////////////////
     /// MANAGE SIGNATURES (USER) FORM
     ////////////////////////////////////////
     
@@ -96,6 +74,25 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $component->form->render();
 
         return $this->output->container($out, 'manage_signatures_component');
+    }
+
+    ////////////////////////////////////////
+    /// CONFIGURATION (COURSE) FORM
+    ////////////////////////////////////////
+    
+    public function course_config_component($params = []) {
+        $course_config_component = new course_config_component($params);
+        
+        return $this->render($course_config_component);
+    }
+
+    protected function render_course_config_component(course_config_component $course_config_component) {
+        $out = '';
+        
+        // render config form
+        $out .= $course_config_component->course_config_form->render();
+
+        return $this->output->container($out, 'course_config_component');
     }
 
 }

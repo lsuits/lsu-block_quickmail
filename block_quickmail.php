@@ -51,11 +51,6 @@ class block_quickmail extends block_list {
         $this->user = $USER;
     }
 
-    // TODO: can we pull this from version.php?!?
-    // public function get_version() {
-    //     return 2017091400;
-    // }
-
     /**
      * Indicates which pages types this block may be added to
      * 
@@ -152,13 +147,13 @@ class block_quickmail extends block_list {
             // }
 
             // manage quickmail config
-            // if (block_quickmail_plugin::user_has_permission_in_context('canconfig', $this->context)) {
-            //     $content_list_items[] = [
-            //             'lang_key' => 'config',
-            //             'icon_key' => 'i/settings',
-            //             'page' => 'configuration',
-            //         ];
-            // }
+            if (block_quickmail_plugin::user_has_permission_in_context('canconfig', $this->context)) {
+                $content_list_items[] = [
+                    'lang_key' => 'config',
+                    'icon_key' => 'i/settings',
+                    'page' => 'configuration',
+                ];
+            }
         }
 
         // construct and add all of the items to the content to be output

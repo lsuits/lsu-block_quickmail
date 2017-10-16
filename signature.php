@@ -1,8 +1,6 @@
 <?php
 
 require_once('../../config.php');
- 
-require_login();
 
 $page_url = '/blocks/quickmail/signature.php';
 
@@ -11,7 +9,9 @@ $page_params = [
     'courseid' => optional_param('courseid', 0, PARAM_INT), // course id, if any, for redirection
 ];
 
-$page_context = context_system::instance();
+require_login();
+
+$page_context = block_quickmail_plugin::resolve_context('system');
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
@@ -26,7 +26,6 @@ $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
 $PAGE->navbar->add(block_quickmail_plugin::_s('signatures'));
 $PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('manage_signatures'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
-$PAGE->requires->jquery();
 $PAGE->requires->js_call_amd('block_quickmail/manage-signatures', 'init', ['courseid' => $page_params['courseid']]);
 
 // find the requested signature, if any, which must belong to the auth user
@@ -55,7 +54,7 @@ $manage_signatures_form = block_quickmail_form::make_manage_signatures_form(
 ////////////////////////////////////////
 
 // instantiate "signature" request
-$signature_request = \block_quickmail\requests\signature_request::make_signature_request($manage_signatures_form);
+$signature_request = \block_quickmail\requests\signature_request::make($manage_signatures_form);
 
 // if cancelling form
 if ($signature_request->was_cancelled()) {
@@ -137,8 +136,4 @@ function handle_post_signature_save_or_update($context, $signature, $signature_r
         'signature_editor',
         $signature->get('id')
     );
-}
-
-function dd($thing = null) {
-    var_dump($thing);die;
 }

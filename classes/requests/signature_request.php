@@ -34,8 +34,6 @@ class signature_request extends \block_quickmail_request {
 
     public $form_data;
 
-    public $data;
-
     public $course;
     
     public static $public_attributes = [
@@ -71,7 +69,7 @@ class signature_request extends \block_quickmail_request {
      * @param  \manage_signatures_form   $manage_signatures_form
      * @return \signature_request
      */
-    public static function make_signature_request(\manage_signatures_form $manage_signatures_form) {
+    public static function make(\manage_signatures_form $manage_signatures_form) {
         // instantiate "signature" request
         $request = new self($manage_signatures_form);
 
@@ -174,9 +172,8 @@ class signature_request extends \block_quickmail_request {
 
         // otherwise, redirect back to course page
         } else {
-            $this->redirect_as_type('info', \block_quickmail_plugin::_s('redirect_back_to_course_from_signature', $this->course->fullname), '/course/view.php', ['id' => $this->course->id], 2);
+            $this->redirect_as_type('info', \block_quickmail_plugin::_s('cancel_and_redirect_to_course', $this->course->fullname), '/course/view.php', ['id' => $this->course->id], 2);
         }
-
     }
 
     /**

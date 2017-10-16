@@ -24,29 +24,49 @@
 
 require_once $CFG->libdir . '/formslib.php';
 
-class course_configuration_form extends moodleform {
+class course_config_form extends moodleform {
 
-    public $quickmail;
+    public $context;
+
+    public $user;
+
+    public $course;
+
+    public $course_config;
 
     public function definition() {
 
         $mform =& $this->_form;
 
-        // get this specific quickmail plugin instatiation
-        $this->quickmail = $this->_customdata['plugin'];
+        // set the context
+        $this->context = $this->_customdata['context'];
+        
+        // set the user
+        $this->user = $this->_customdata['user'];
+
+        // set the course
+        $this->course = $this->_customdata['course'];
+
+        // set this course config values
+        $this->course_config = block_quickmail_plugin::_c('', $this->course->id);
+
+        // restore flag
+        $mform->addElement('hidden', 'restore_flag');
+        $mform->setType('restore_flag', PARAM_INT);
+        $mform->setDefault('restore_flag', 0);
 
         ////////////////////////////////////////////////////////////
         ///  allow students (select)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_allow_students()) {
             $mform->addElement('select', 'allowstudents', block_quickmail_plugin::_s('allowstudents'), $this->get_allow_student_options());
-            $mform->setDefault('allowstudents', $this->quickmail->config['allowstudents']);
+            $mform->setDefault('allowstudents', $this->course_config['allowstudents']);
         }
 
         ////////////////////////////////////////////////////////////
         ///  role selection (select)
         ////////////////////////////////////////////////////////////
-        $mform->addElement('select', 'roleselection', block_quickmail_plugin::_s('select_roles'), $this->quickmail->all_available_roles())->setMultiple(true);
+        $mform->addElement('select', 'roleselection', block_quickmail_plugin::_s('select_roles'), $this->get_all_available_roles())->setMultiple(true);
         $mform->getElement('roleselection')->setSelected($this->get_selected_role_ids_array());
         $mform->addRule('roleselection', null, 'required');
 
@@ -54,13 +74,13 @@ class course_configuration_form extends moodleform {
         ///  prepend class (select)
         ////////////////////////////////////////////////////////////
         $mform->addElement('select', 'prepend_class', block_quickmail_plugin::_s('prepend_class'), $this->get_prepend_class_options());
-        $mform->setDefault('prepend_class', $this->quickmail->config['prepend_class']);
+        $mform->setDefault('prepend_class', $this->course_config['prepend_class']);
 
         ////////////////////////////////////////////////////////////
         ///  receipt (select)
         ////////////////////////////////////////////////////////////
         $mform->addElement('select', 'receipt', block_quickmail_plugin::_s('receipt'), $this->get_receipt_options());
-        $mform->setDefault('receipt', $this->quickmail->config['receipt']);
+        $mform->setDefault('receipt', $this->course_config['receipt']);
 
         ////////////////////////////////////////////////////////////
         ///  buttons
@@ -81,7 +101,7 @@ class course_configuration_form extends moodleform {
      */
     private function should_show_allow_students()
     {
-        return $this->quickmail->config['allowstudents'] == 1;
+        return block_quickmail_plugin::_c('allowstudents') == 1;
     }
 
     /**
@@ -95,6 +115,26 @@ class course_configuration_form extends moodleform {
             0 => get_string('no'), 
             1 => get_string('yes')
         ];
+    }
+
+    /**
+     * Returns all available roles for configuration options
+     * 
+     * @return array
+     */
+    private function get_all_available_roles()
+    {
+        return role_fix_names(get_all_roles($this->context), $this->context, ROLENAME_ALIAS, true);
+    }
+
+    /**
+     * Returns the currently selected role ids as array
+     * 
+     * @return array
+     */
+    private function get_selected_role_ids_array()
+    {
+        return explode(',', $this->course_config['roleselection']);
     }
 
     /**
@@ -122,16 +162,6 @@ class course_configuration_form extends moodleform {
             0 => get_string('no'), 
             1 => get_string('yes')
         ];
-    }
-
-    /**
-     * Returns the currently selected role ids as array
-     * 
-     * @return array
-     */
-    private function get_selected_role_ids_array()
-    {
-        return explode(',', $this->quickmail->config['roleselection']);
     }
 
 }

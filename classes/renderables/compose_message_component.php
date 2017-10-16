@@ -42,7 +42,6 @@ class compose_message_component extends renderable_component implements \rendera
     private function get_form_heading() {
         return \block_quickmail_plugin::_s('compose_heading', (object) [
             // @TODO: make this happen... (dynamic heading content based on context Admin/Course)
-            // 'scope' => ucfirst(\block_quickmail_plugin::resolve_context_scope()), 
             'scope' => '',
             'output_channel' => ucfirst(\block_quickmail_plugin::get_output_channel())
         ]);

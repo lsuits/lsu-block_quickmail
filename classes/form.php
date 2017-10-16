@@ -87,4 +87,18 @@ class block_quickmail_form {
         ], 'post', '', ['id' => 'mform-manage-signatures']);
     }
 
+    public static function make_course_config_form($context, $user, $course)
+    {
+        // build target URL
+        $target = '?' . http_build_query([
+            'courseid' => $course->id,
+        ], '', '&');
+
+        return new course_config_form($target, [
+            'context' => $context,
+            'user' => $user,
+            'course' => $course,
+        ], 'post', '', ['id' => 'mform-course-config']);
+    }
+
 }

@@ -26,14 +26,14 @@ namespace block_quickmail\renderables;
 
 use block_quickmail\renderables\renderable_component;
 
-class course_configuration_component extends renderable_component implements \renderable {
+class course_config_component extends renderable_component implements \renderable {
 
-    public $course_configuration_form;
+    public $course_config_form;
 
     public function __construct($params = []) {
         parent::__construct($params);
 
-        $this->course_configuration_form = $this->get_param('course_configuration_form');
+        $this->course_config_form = $this->get_param('course_config_form');
     }
 
 }

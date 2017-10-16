@@ -212,7 +212,7 @@ $string['something_broke'] = 'It looks like you either have email sending disabl
 $string['time_elapsed'] = 'Time Elapsed: ';
 
 $string['redirect_back_to_course_from_message'] = 'Your message has been cancelled and you are now being redirected back to your course, {$a}';
-$string['redirect_back_to_course_from_signature'] = 'Any changes have been cancelled and you are now being redirected back to your course, {$a}';
+$string['cancel_and_redirect_to_course'] = 'Any changes have been cancelled and you are now being redirected back to your course, {$a}';
 $string['redirect_back_to_dashboard_from_signature'] = 'Any changes have been cancelled and you are now being redirected back to your dashboard.';
 
 $string['back_to_course'] = 'Back to course';

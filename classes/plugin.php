@@ -60,22 +60,36 @@ class block_quickmail_plugin {
     /**
      * Resolves a context (system or course) based on a given course id
      * 
-     * @param int  $course_id
+     * @param string  $type        system|course
+     * @param int     $course_id
      * @throws critical_exception
-     * @return context_system|context_course
+     * @return mixed  context_system|context_course, course
      */
-    public static function resolve_context($course_id = 0) {
-        if (empty($course_id)) {
-            throw new critical_exception('no_course', $course_id);
+    public static function resolve_context($type = 'system', $course_id = 0) {
+        switch ($type) {
+            case 'course':
+                // if course context is required, make sure we have an id
+                if (empty($course_id)) {
+                    throw new critical_exception('no_course', $course_id);
+                }
+                
+                // fetch the course
+                $course = self::get_valid_course($course_id);
+
+                // fetch the course context
+                $context = context_course::instance($course->id);
+
+                // return the context AND course
+                return [$context, $course];
+
+                break;
+            
+            case 'system':
+            default:
+                // return only the context
+                return context_system::instance();
+                break;
         }
-
-        // make sure the course is valid
-        $course = self::get_valid_course($course_id);
-
-        // if this course if the "site course" return a system context, otherwise course context
-        $context = $course_id == SITEID ? context_system::instance() : context_course::instance($course->id);
-
-        return $context;
     }
 
     /**
@@ -147,8 +161,8 @@ class block_quickmail_plugin {
      */
     public static function _c($key = '', $course_id = 0) {
         return $course_id ? 
-            self::get_block_config($key) : 
-            self::get_course_config($course_id, $key);
+            self::get_course_config($course_id, $key) :
+            self::get_block_config($key);
     }
 
     /**
@@ -202,6 +216,40 @@ class block_quickmail_plugin {
             // 'accepted_types' => '*',
             'context' => $context
         ];
+    }
+
+    /**
+     * Updates a given course's settings to match the given params
+     * 
+     * @param  int $course_id
+     * @param  array $params
+     * @return void
+     */
+    public static function update_course_config($course_id, $params = [])
+    {
+        // first, clear out old settings
+        self::delete_course_config($course_id);
+
+        // next, iterate over each given param, inserting each record for this course
+        foreach ($params as $name => $value) {
+            $config = new \stdClass;
+            $config->coursesid = $course_id;
+            $config->name = $name;
+            $config->value = $value;
+
+            self::get_db()->insert_record('block_quickmail_config', $config);
+        }
+    }
+
+    /**
+     * Deletes a given course's settings
+     * 
+     * @param  int $course_id
+     * @return void
+     */
+    public static function delete_course_config($course_id)
+    {
+        self::get_db()->delete_records('block_quickmail_config', ['coursesid' => $course_id]);
     }
 
     ////////////////////////////////////////////////////
