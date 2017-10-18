@@ -20,6 +20,7 @@ $string['additional_emails_help'] = 'Other email addresses you would like the me
  email1@example.com, email2@example.com
  ';
 
+$string['fullname'] ='Full name';
 $string['signature_title_required'] = 'A signature title is required.';
 $string['signature_signature_required'] = 'A signature is required.';
 $string['sig'] ='Signature';
@@ -150,6 +151,10 @@ cannot be reversed.';
 
 // Alternate Email strings
 $string['alternate_new'] = 'Add Alternate Address';
+$string['alternate_availability'] = 'Availability of this alternate address';
+$string['alternate_availability_only'] = 'Available only to me for this course only';
+$string['alternate_availability_user'] = 'Available only to me';
+$string['alternate_availability_course'] = 'Available to all course senders';
 $string['sure'] = 'Are you sure you want to delete {$a->address}? This action cannot be undone.';
 $string['valid'] = 'Activation Status';
 $string['approved'] = 'Approved';

@@ -22,8 +22,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2017101700;
-$plugin->requires = 2017051500;
-$plugin->release = "v2.0.0";
-$plugin->maturity = MATURITY_STABLE; 
-$plugin->component = 'block_quickmail';
+namespace block_quickmail\renderables;
+
+use block_quickmail\renderables\renderable_component;
+
+class manage_alternates_component extends renderable_component implements \renderable {
+
+    public $form;
+
+    public $heading;
+    
+    public function __construct($params = []) {
+        parent::__construct($params);
+
+        // set the form
+        $this->form = $this->get_param('manage_alternates_form');
+        
+        $this->heading = false;
+    }
+
+}

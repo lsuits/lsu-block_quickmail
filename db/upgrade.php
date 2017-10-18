@@ -428,10 +428,27 @@ function xmldb_block_quickmail_upgrade($oldversion) {
             // define the field
             $field = new xmldb_field('timedeleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-            // Conditionally launch add field additional_emails.
             if (!$dbman->field_exists($table, $field)) {
                 $dbman->add_field($table, $field);
             }
+        }
+    }
+
+    // add first and last name to alternate email addresses
+    if ($oldversion < 2017101700) {
+        // get the table
+        $table = new xmldb_table('block_quickmail_alt_emails');
+
+        // define the fields
+        $firstname_field = new xmldb_field('firstname', XMLDB_TYPE_CHAR, '125', null, XMLDB_NOTNULL, null, null);
+        $lastname_field = new xmldb_field('lastname', XMLDB_TYPE_CHAR, '125', null, XMLDB_NOTNULL, null, null);
+
+        if (!$dbman->field_exists($table, $firstname_field)) {
+            $dbman->add_field($table, $firstname_field);
+        }
+
+        if (!$dbman->field_exists($table, $lastname_field)) {
+            $dbman->add_field($table, $lastname_field);
         }
     }
 

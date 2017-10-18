@@ -22,6 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_quickmail\forms\compose_message_form;
+use block_quickmail\forms\manage_signatures_form;
+use block_quickmail\forms\course_config_form;
+use block_quickmail\forms\manage_alternates_form;
+use block_quickmail\persistents\signature;
+
 class block_quickmail_form {
 
     /**
@@ -40,7 +46,7 @@ class block_quickmail_form {
         ], '', '&');
 
         // get the auth user's current signatures as array (id => title)
-        $user_signature_array = block_quickmail\persistents\signature::get_flat_array_for_user($user->id);
+        $user_signature_array = signature::get_flat_array_for_user($user->id);
 
         return new compose_message_form($target, [
             'context' => $context,
@@ -76,7 +82,7 @@ class block_quickmail_form {
         }
 
         // get the auth user's current signatures as array (id => title)
-        $user_signature_array = block_quickmail\persistents\signature::get_flat_array_for_user($user->id);
+        $user_signature_array = signature::get_flat_array_for_user($user->id);
 
         return new manage_signatures_form($target, [
             'context' => $context,
@@ -99,6 +105,20 @@ class block_quickmail_form {
             'user' => $user,
             'course' => $course,
         ], 'post', '', ['id' => 'mform-course-config']);
+    }
+
+    public static function make_manage_alternates_form($context, $user, $course)
+    {
+        // build target URL
+        $target = '?' . http_build_query([
+            'courseid' => $course->id,
+        ], '', '&');
+
+        return new manage_alternates_form($target, [
+            'context' => $context,
+            'user' => $user,
+            'course' => $course,
+        ], 'post', '', ['id' => 'mform-manage-alternates']);
     }
 
 }

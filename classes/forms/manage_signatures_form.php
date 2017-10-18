@@ -22,11 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_quickmail\forms;
+
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\persistents\signature;
 
-class manage_signatures_form extends moodleform {
+class manage_signatures_form extends \moodleform {
 
     public $context;
 

@@ -29,6 +29,8 @@ require_once 'classes/forms/course_config_form.php';
 use block_quickmail\renderables\compose_message_component;
 use block_quickmail\renderables\manage_signatures_component;
 use block_quickmail\renderables\course_config_component;
+use block_quickmail\renderables\alternate_index_component;
+use block_quickmail\renderables\manage_alternates_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
 
@@ -93,6 +95,41 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $course_config_component->course_config_form->render();
 
         return $this->output->container($out, 'course_config_component');
+    }
+
+    ////////////////////////////////////////
+    /// ALTERNATE EMAILS INDEX
+    ////////////////////////////////////////
+    
+    public function alternate_index_component($params = []) {
+        $alternate_index_component = new alternate_index_component($params);
+        
+        return $this->render($alternate_index_component);
+    }
+
+    protected function render_alternate_index_component(alternate_index_component $alternate_index_component) {
+        $data = $alternate_index_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/alternate_index', $data);
+    }
+
+    ////////////////////////////////////////
+    /// MANAGE ALTERNATE EMAILS FORM
+    ////////////////////////////////////////
+    
+    public function manage_alternates_component($params = []) {
+        $component = new manage_alternates_component($params);
+        
+        return $this->render($component);
+    }
+
+    protected function render_manage_alternates_component(manage_alternates_component $component) {
+        $out = '';
+        
+        // render form
+        $out .= $component->form->render();
+
+        return $this->output->container($out, 'manage_alternates_component');
     }
 
 }

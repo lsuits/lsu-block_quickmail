@@ -24,6 +24,7 @@
 
 namespace block_quickmail\requests;
 
+use block_quickmail\forms\manage_signatures_form;
 use block_quickmail\persistents\signature;
 
 // require_once('../../lib/weblib.php');
@@ -47,7 +48,7 @@ class signature_request extends \block_quickmail_request {
      * 
      * @param manage_signatures_form  $manage_signatures_form  (extends moodleform)
      */
-    public function __construct(\manage_signatures_form $manage_signatures_form) {
+    public function __construct(manage_signatures_form $manage_signatures_form) {
         $this->form = $manage_signatures_form;
         $this->form_data = ! empty($this->form) ? $this->form->get_data() : null;
         $this->course = $this->get_request_course();
@@ -66,10 +67,10 @@ class signature_request extends \block_quickmail_request {
     /**
      * Instantiates and returns a signature request
      * 
-     * @param  \manage_signatures_form   $manage_signatures_form
-     * @return \signature_request
+     * @param  manage_signatures_form   $manage_signatures_form
+     * @return signature_request
      */
-    public static function make(\manage_signatures_form $manage_signatures_form) {
+    public static function make(manage_signatures_form $manage_signatures_form) {
         // instantiate "signature" request
         $request = new self($manage_signatures_form);
 

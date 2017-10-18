@@ -1,0 +1,36 @@
+{{< core/modal }}
+    {{$title}}{{#str}} alternate_new, block_quickmail {{/str}}{{/title}}
+    {{$body}}
+        <div class="container" id="create-alternative-modal-container">
+            <form>
+                <div class="form-group">
+                    <label for="inputEmail" class="control-label">{{#str}} email {{/str}}</label>
+                    <input type="email" class="form-control" id="inputEmail">
+                </div>
+
+                <div class="form-group">
+                    <label for="inputFirstname" class="control-label">{{#str}} firstname {{/str}}</label>
+                    <input type="text" class="form-control" id="inputFirstname">
+                </div>
+
+                <div class="form-group">
+                    <label for="inputLastname" class="control-label">{{#str}} lastname {{/str}}</label>
+                    <input type="text" class="form-control" id="inputLastname">
+                </div>
+
+                <div class="form-group">
+                    <label for="inputAvailability" class="control-label">{{#str}} alternate_availability, block_quickmail {{/str}}</label>
+                    <select class="form-control" id="inputAvailability">
+                        <option value="only">{{#str}} alternate_availability_only, block_quickmail {{/str}}</option>
+                        <option value="user">{{#str}} alternate_availability_user, block_quickmail {{/str}}</option>
+                        <option value="course">{{#str}} alternate_availability_course, block_quickmail {{/str}}</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    {{/body}}
+    {{$footer}}
+        <button type="button" class="btn btn-primary" data-action="create">{{#str}} create {{/str}}</button>
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel {{/str}}</button>
+    {{/footer}}
+{{/ core/modal }}

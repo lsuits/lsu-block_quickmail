@@ -138,13 +138,13 @@ class block_quickmail extends block_list {
             // TODO: add in items only available in course context
             
             // manage alternate send-from emails
-            // if (block_quickmail_plugin::user_has_permission_in_context('allowalternate', $this->context)) {
-            //     $content_list_items[] = [
-            //             'lang_key' => 'alternate',
-            //             'icon_key' => 'i/edit',
-            //             'page' => 'alternate',
-            //         ];
-            // }
+            if (block_quickmail_plugin::user_has_permission_in_context('allowalternate', $this->context)) {
+                $content_list_items[] = [
+                        'lang_key' => 'alternate',
+                        'icon_key' => 'i/edit',
+                        'page' => 'alternate',
+                    ];
+            }
 
             // manage quickmail config
             if (block_quickmail_plugin::user_has_permission_in_context('canconfig', $this->context)) {

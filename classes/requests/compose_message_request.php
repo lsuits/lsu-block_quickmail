@@ -24,6 +24,8 @@
 
 namespace block_quickmail\requests;
 
+use block_quickmail\forms\compose_message_form;
+
 class compose_message_request extends \block_quickmail_request {
 
     public $form;
@@ -46,7 +48,7 @@ class compose_message_request extends \block_quickmail_request {
      * 
      * @param compose_message_form  $compose_message_form  (extends moodleform)
      */
-    public function __construct(\compose_message_form $compose_message_form) {
+    public function __construct(compose_message_form $compose_message_form) {
         $this->form = $compose_message_form;
         $this->form_data = ! empty($this->form) ? $this->form->get_data() : null;
         $this->course = $this->get_request_course();
@@ -67,7 +69,7 @@ class compose_message_request extends \block_quickmail_request {
      * @param  \compose_message_form   $compose_message_form
      * @return \compose_message_request
      */
-    public static function make_compose_request(\compose_message_form $compose_message_form) {
+    public static function make_compose_request(compose_message_form $compose_message_form) {
         // instantiate "compose message" request
         $request = new self($compose_message_form);
 

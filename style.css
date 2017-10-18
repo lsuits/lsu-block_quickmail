@@ -11,4 +11,7 @@ label[for=id_select_signature_id] {
 #delete_confirmation_confirm {
   margin-right: 20px; }
 
+#create-alternative-modal-container .form-control.has-error {
+  border: 1px solid red; }
+
 /*# sourceMappingURL=style.css.map */

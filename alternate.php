@@ -23,18 +23,14 @@
  */
 
 require_once('../../config.php');
-// require_once('../../enrol/externallib.php');
-// require_once('../../lib/weblib.php');
 
-
-$page_url = '/blocks/quickmail/compose.php';
+$page_url = '/blocks/quickmail/alternate.php';
 
 $page_params = [
     'courseid' => required_param('courseid', PARAM_INT),
-    'draftid' => optional_param('draftid', 0, PARAM_INT),
 ];
 
-require_login($page_params['courseid']);
+require_login();
 
 try {
     // get page context and course
@@ -43,25 +39,24 @@ try {
     print_error('no_course', 'block_quickmail', '', $page_params['courseid']);
 }
 
-block_quickmail_plugin::check_user_permission('cansend', $page_context);
-
+block_quickmail_plugin::check_user_permission('allowalternate', $page_context);
+    
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
 ////////////////////////////////////////
 
 $PAGE->set_context($page_context);
+$PAGE->set_course($course);
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
+$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('alternate'));
 $PAGE->set_url(new moodle_url($page_url, $page_params));
 $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('compose'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
-// $PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
-$PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseid' => $page_params['courseid']]);
-// $PAGE->requires->js('/blocks/quickmail/js/selection.js'); // Get rid of this
-
-// TODO: get draft here, if any
+$PAGE->navbar->add(block_quickmail_plugin::_s('alternate'));
+$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('alternate'));
+$PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
+// $PAGE->requires->js_call_amd('block_quickmail/course-config', 'init', ['courseid' => $page_params['courseid']]);
+$PAGE->requires->js_call_amd('block_quickmail/alternate-index', 'init');
 
 ////////////////////////////////////////
 /// INSTANTIATE PAGE RENDERER
@@ -69,60 +64,58 @@ $PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['course
 $renderer = $PAGE->get_renderer('block_quickmail');
 
 ////////////////////////////////////////
-/// INSTANTIATE COMPOSE FORM
+/// INSTANTIATE DELETE ALTERNATE FORM
 ////////////////////////////////////////
-$compose_form = block_quickmail_form::make_compose_message_form(
+$manage_alternates_form = block_quickmail_form::make_manage_alternates_form(
     $page_context, 
     $USER, 
-    $course
-    // $draft_message,
+    $course 
 );
 
 ////////////////////////////////////////
-/// HANDLE COMPOSE FORM SUBMISSION (if any)
+/// HANDLE ALTERNATE FORM SUBMISSION (if any)
 ////////////////////////////////////////
 
-// instantiate "compose message" request
-$compose_request = \block_quickmail\requests\compose_message_request::make_compose_request($compose_form);
+// instantiate "alternate" request
+$alternate_request = \block_quickmail\requests\alternate_request::make($manage_alternates_form);
 
-// if cancelling form
-if ($compose_request->was_cancelled()) {
-    
-    // redirect back to course
-    $compose_request->redirect_back_to_course();
-
-// if sending message
-} else if ($compose_request->to_send_message()) {
-
-    dd(\block_quickmail_plugin::get_output_channel());
-
-    // instantiate sender here, and do the thing
-
-    // validate request and send messages
-    $sender_response = block_quickmail_sender::send_composed($compose_request);
-    dd($sender_response);
-    
-    // after send redirect to history
-
-// if saving draft
-} else if ($compose_request->to_save_draft()) {
-    dd('save draft!');
+if ($alternate_request->to_delete_alternate()) {
+    // delete alternate...
+    dd('delete!');
+    // dd($alternate_request->delete_alternate_id);
+} else if ($alternate_request->to_create_alternate()) {
+    dd($alternate_request->get_create_request_data_object());
 }
 
+// get all alternate emails belonging to this user
+$alternate_emails = block_quickmail\persistents\alternate_email::get_all_for_user($USER->id);
+
+// get the rendered index
+$rendered_alternate_index = $renderer->alternate_index_component([
+    'alternate_emails' => $alternate_emails,
+    'user' => $USER,
+    'course' => $course,
+]);
+
 // get the rendered form
-$rendered_compose_form = $renderer->compose_message_component([
+$rendered_manage_alternates_form = $renderer->manage_alternates_component([
     'context' => $page_context,
     'user' => $USER,
-    'course' => $COURSE,
-    'compose_form' => $compose_form,
+    'course' => $course,
+    'manage_alternates_form' => $manage_alternates_form,
 ]);
+
 
 echo $OUTPUT->header();
 
-// display the compose form
-echo $rendered_compose_form;
+// display the alternate email index table
+echo $rendered_alternate_index;
+
+// render the hidden form
+echo $rendered_manage_alternates_form;
 
 echo $OUTPUT->footer();
+
 
 function dd($thing) {
     var_dump($thing);die;

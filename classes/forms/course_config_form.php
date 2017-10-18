@@ -22,9 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_quickmail\forms;
+
 require_once $CFG->libdir . '/formslib.php';
 
-class course_config_form extends moodleform {
+class course_config_form extends \moodleform {
 
     public $context;
 

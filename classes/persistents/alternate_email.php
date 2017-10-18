@@ -10,7 +10,7 @@ use block_quickmail\persistents\concerns\can_be_soft_deleted;
  
 class alternate_email extends persistent {
  
-    use enhanced_persistent
+    use enhanced_persistent,
         can_be_soft_deleted;
 
     /** Table name for the persistent. */
@@ -25,6 +25,12 @@ class alternate_email extends persistent {
         return [
             'setup_user_id' => [
                 'type' => PARAM_INT,
+            ],
+            'firstname' => [
+                'type' => PARAM_TEXT,
+            ],
+            'lastname' => [
+                'type' => PARAM_TEXT,
             ],
             'course_id' => [
                 'type' => PARAM_INT,
@@ -83,6 +89,32 @@ class alternate_email extends persistent {
         $userId = $this->get('user_id');
 
         return $userId ? core_user::get_user($this->get('user_id')) : false;
+    }
+
+    ///////////////////////////////////////////////
+    ///
+    ///  GETTERS
+    /// 
+    ///////////////////////////////////////////////
+    
+    /**
+     * Returns the status of this alternates approval (approved or waiting)
+     * 
+     * @return string
+     */
+    public function get_status() {
+        return $this->get('is_validated') ?
+            \block_quickmail_plugin::_s('approved') :
+            \block_quickmail_plugin::_s('waiting');
+    }
+
+    /**
+     * Returns the full name assigned to this alternate
+     * 
+     * @return string
+     */
+    public function get_fullname() {
+        return $this->get('firstname') . ' ' .  $this->get('lastname');
     }
 
     ///////////////////////////////////////////////
@@ -200,6 +232,16 @@ class alternate_email extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    //
+    /**
+     * Returns all alternate emails belonging to the given user id
+     * 
+     * @param  int     $user_id
+     * @return array
+     */
+    public static function get_all_for_user($user_id)
+    {
+        // get all alternate emails set up by this user, if any
+        return self::get_records(['setup_user_id' => $user_id, 'timedeleted' => 0]);
+    }
  
 }

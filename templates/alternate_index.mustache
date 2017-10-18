@@ -1,0 +1,23 @@
+<div class="block_quickmail_alternate_index">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {{# tableHeadings }}
+                <th>{{.}}</th>
+                {{/ tableHeadings }}
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ email }}</td>
+                    <td>{{ fullname }}</td>
+                    <td>{{ status }}</td>
+                    <td><button role="button" class="btn btn-danger btn-sm btn-delete-alt" data-alternate-id="{{ id }}">Delete</button></td>
+                </tr>
+            {{/ tableRows }}
+        </tbody>
+    </table>
+
+    <button role="button" class="btn btn-primary btn-create-alt">Create New</button>
+</div>
