@@ -38,8 +38,6 @@ define(['jquery', 'core/notification', 'core/custom_interaction_events', 'core/m
         Modal.prototype.registerEventListeners.call(this);
  
         this.getModal().on(CustomEvents.events.activate, SELECTORS.CREATE_BUTTON, function(e, data) {
-            console.log(data);
-
             var saveEvent = $.Event(ModalEvents.save);
             this.getRoot().trigger(saveEvent, this);
 

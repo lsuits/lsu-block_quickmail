@@ -13,12 +13,20 @@ $string['save_draft'] = 'Save Draft';
 $string['save_signature'] = 'Save Signature';
 $string['delete_signature'] = 'Delete Signature';
 $string['user_signature_deleted'] = 'Your signature has been deleted.';
+$string['alternate_deleted'] = 'Your alternate sending email has been deleted.';
 $string['send_message'] = 'Send {$a}';
 $string['additional_emails'] = 'Additional Recipient Emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
 
  email1@example.com, email2@example.com
  ';
+$string['alternate_confirm_invalid_params'] = 'Invalid parameters, could not confirm this alternate!';
+$string['alternate_confirm_invalid_token'] = 'Invalid token or token has expired!';
+$string['alternate_no_record'] = 'Could not find that alternate email record.';
+$string['alternate_confirm_already'] = 'Alternate email already confirmed!';
+$string['alternate_created'] = 'Alternate sending email successfully created!';
+$string['alternate_resend_confirmation'] = 'Re-send confirm email';
+$string['alternate_confirmation_email_resent'] = 'The confirmation email has been resent!';
 
 $string['fullname'] ='Full name';
 $string['signature_title_required'] = 'A signature title is required.';
@@ -27,6 +35,7 @@ $string['sig'] ='Signature';
 $string['select_signature_for_edit'] ='Select Signature To Edit';
 $string['no_signatures_create'] = 'You have no signatures. {$a}.';
 $string['create_one_now'] = 'Create one now';
+$string['create_new'] = 'Create New';
 
 $string['send_email'] = 'Send Email'; // <---- deprecate
 
@@ -118,7 +127,7 @@ $string['download_auth_only'] = 'Authorized Users Only';
 $string['download_open'] = 'Open Downloads';
 
 
-$string['no_alternates'] = 'No alternate emails found for {$a->fullname}. Continue to make one.';
+$string['no_alternates'] = 'You have no alternate emails. Create a new one now!';
 
 $string['select_users'] = 'Select Users ...';
 $string['select_groups'] = 'Select Sections ...';
@@ -159,7 +168,7 @@ $string['sure'] = 'Are you sure you want to delete {$a->address}? This action ca
 $string['valid'] = 'Activation Status';
 $string['approved'] = 'Approved';
 $string['waiting'] = 'Waiting';
-$string['entry_activated'] = 'Alternate email {$a->address} can now be used in {$a->course}.';
+$string['entry_activated'] = 'Alternate email {$a} can now be used!';
 $string['entry_key_not_valid'] = 'Activation link is no longer valid for {$a->address}. Continue to resend activation link.';
 $string['entry_saved'] = 'Alternate address {$a->address} has been saved.';
 $string['entry_success'] = 'An email to verify that the address is valid has been sent to {$a->address}. Instructions on how to activate the address is contained in its contents.';
@@ -168,7 +177,7 @@ $string['alternate_from'] = 'Moodle: Quickmail';
 $string['alternate_subject'] = 'Alternate email address verification';
 $string['alternate_body'] = '
 <p>
-{$a->fullname} added {$a->address} as an alternate sending address for {$a->course}.
+{$a->fullname} added {$a->email} as an alternate sending address for {$a->plugin_name}.
 </p>
 
 <p>

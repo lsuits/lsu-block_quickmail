@@ -2,8 +2,6 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str', 'block_
  
     return {
         init: function() {
-            // window.onbeforeunload = null;
-
             $(document).click(function(e) {
                 if ($(e.target).hasClass("btn-delete-alt")) {
                     deleteAlternateId = $(e.target).attr("data-alternate-id");
@@ -86,9 +84,9 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str', 'block_
 
                         // update values of page hidden form
                         $('input[name="create_flag"]').val(1);
-                        $('input[name="firstname"]').val(inputEmail);
-                        $('input[name="lastname"]').val(inputFirstname);
-                        $('input[name="email"]').val(inputLastname);
+                        $('input[name="firstname"]').val(inputFirstname);
+                        $('input[name="lastname"]').val(inputLastname);
+                        $('input[name="email"]').val(inputEmail);
                         $('input[name="availability"]').val(inputAvailability);
 
                         // submit the page form

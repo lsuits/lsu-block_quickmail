@@ -12,12 +12,26 @@
                 <tr>
                     <td>{{ email }}</td>
                     <td>{{ fullname }}</td>
+                    <td>{{ scope }}</td>
                     <td>{{ status }}</td>
-                    <td><button role="button" class="btn btn-danger btn-sm btn-delete-alt" data-alternate-id="{{ id }}">Delete</button></td>
+                    <td>
+                        <button role="button" class="btn btn-danger btn-sm btn-delete-alt" data-alternate-id="{{ id }}">{{# str }} delete {{/ str }}</button>
+                        {{^ isValidated }}
+                            <a href="?courseid={{ courseId }}&resendid={{ id }}" class="btn btn-success btn-sm btn-resend-alt">{{# str }} alternate_resend_confirmation, block_quickmail {{/ str }}</a>
+                        {{/ isValidated }}
+                    </td>
+                </tr>
+            {{/ tableRows }}
+
+            {{^ tableRows }}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} no_alternates, block_quickmail {{/ str }}</td>
                 </tr>
             {{/ tableRows }}
         </tbody>
     </table>
 
-    <button role="button" class="btn btn-primary btn-create-alt">Create New</button>
+    <button role="button" class="btn btn-primary btn-create-alt">{{# str }} create_new, block_quickmail {{/ str }}</button>
+    
+    <a href="{{ urlBack }}" class="btn btn-info">{{# str }} back_to_course, block_quickmail {{/ str }}</a>
 </div>

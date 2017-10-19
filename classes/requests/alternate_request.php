@@ -26,8 +26,6 @@ namespace block_quickmail\requests;
 
 use block_quickmail\forms\manage_alternates_form;
 
-// require_once('../../lib/weblib.php');
-
 class alternate_request extends \block_quickmail_request {
 
     public $form;
@@ -35,7 +33,13 @@ class alternate_request extends \block_quickmail_request {
     public $form_data;
 
     public $course;
-    
+
+    public $confirm_alternate_id;
+
+    public $confirm_alternate_token;
+
+    public $resend_confirm_id;
+
     public static $public_attributes = [
         'firstname',
         'lastname',
@@ -49,11 +53,16 @@ class alternate_request extends \block_quickmail_request {
      * Construct the message submission request
      * 
      * @param manage_alternates_form  $manage_alternates_form  (extends moodleform)
+     * @param array                   $page_params
      */
-    public function __construct(manage_alternates_form $manage_alternates_form) {
+    public function __construct(manage_alternates_form $manage_alternates_form, array $page_params) {
         $this->form = $manage_alternates_form;
         $this->form_data = ! empty($this->form) ? $this->form->get_data() : null;
         $this->course = $this->get_request_course();
+        // optional query string params for page
+        $this->confirm_alternate_id = $page_params['confirmid'];
+        $this->confirm_alternate_token = $page_params['token'];
+        $this->resend_confirm_id = $page_params['resendid'];
     }
 
     public function get_request_course() {
@@ -70,11 +79,15 @@ class alternate_request extends \block_quickmail_request {
      * Instantiates and returns an alternate email request
      * 
      * @param  \manage_alternates_form   $manage_alternates_form
+     * @param  array                     $page_params
      * @return \alternate_request
      */
-    public static function make(manage_alternates_form $manage_alternates_form) {
+    public static function make(manage_alternates_form $manage_alternates_form, array $page_params) {
         // instantiate "alternate" request
-        $request = new self($manage_alternates_form);
+        $request = new self(
+            $manage_alternates_form, 
+            $page_params
+        );
 
         return $request;
     }
@@ -92,6 +105,24 @@ class alternate_request extends \block_quickmail_request {
      */
     public function to_create_alternate() {
         return $this->has_form_data_matching('create_flag', 1);
+    }
+
+    /**
+     * Helper function to report whether or not the request was submitted with intent to confirm an alternate
+     * 
+     * @return bool
+     */
+    public function to_confirm_alternate() {
+        return ! empty($this->confirm_alternate_id) && ! empty($this->confirm_alternate_token);
+    }
+
+    /**
+     * Helper function to report whether or not the request was submitted with intent to resend a confirmation link
+     * 
+     * @return bool
+     */
+    public function to_resend_alternate() {
+        return (bool) $this->resend_confirm_id;
     }
 
     /**
@@ -121,12 +152,13 @@ class alternate_request extends \block_quickmail_request {
     public function get_create_request_data_object() {
         $data = new \stdClass();
         
-        $data->user_id = (int) $this->form->user->id;
-        $data->course_id = (int) $this->course->id;
+        $data->setup_user_id = (int) $this->form->user->id;
         $data->firstname = $this->firstname;
         $data->lastname = $this->lastname;
         $data->email = $this->email;
-        $data->availability = $this->availability;
+        $data->course_id = in_array($this->availability, ['only', 'course']) ? (int) $this->course->id : 0;
+        $data->user_id = in_array($this->availability, ['only', 'user']) ? (int) $this->form->user->id : 0;
+        // $data->is_validated = 0;
 
         return $data;
     }
@@ -137,7 +169,7 @@ class alternate_request extends \block_quickmail_request {
      * @return string
      */
     public function firstname($form_data = null) {
-        return ! empty($form_data) ? (string) $this->form_data->firstname : '';
+        return ! empty($form_data) ? (string) ucfirst($this->form_data->firstname) : '';
     }
 
     /**
@@ -146,7 +178,7 @@ class alternate_request extends \block_quickmail_request {
      * @return string
      */
     public function lastname($form_data = null) {
-        return ! empty($form_data) ? (string) $this->form_data->lastname : '';
+        return ! empty($form_data) ? (string) ucfirst($this->form_data->lastname) : '';
     }
 
     /**
@@ -155,7 +187,7 @@ class alternate_request extends \block_quickmail_request {
      * @return string
      */
     public function email($form_data = null) {
-        return ! empty($form_data) ? (string) $this->form_data->email : '';
+        return ! empty($form_data) ? (string) strtolower($this->form_data->email) : '';
     }
 
     /**
@@ -164,7 +196,11 @@ class alternate_request extends \block_quickmail_request {
      * @return string
      */
     public function availability($form_data = null) {
-        return ! empty($form_data) ? (string) $this->form_data->availability : '';
+        if (empty($form_data)) {
+            return '';
+        }
+
+        return ! in_array($this->form_data->availability, ['only', 'user', 'course']) ? 'user' : (string) $this->form_data->availability;
     }
 
     /**
