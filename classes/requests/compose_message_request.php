@@ -25,6 +25,8 @@
 namespace block_quickmail\requests;
 
 use block_quickmail\forms\compose_message_form;
+use moodle_url;
+use block_quickmail_plugin;
 
 class compose_message_request extends \block_quickmail_request {
 
@@ -36,10 +38,10 @@ class compose_message_request extends \block_quickmail_request {
     
     protected static $public_attributes = [
         'subject',
-        'noreply_email',
         'additional_emails',
         'message',
         'signature_id',
+        'output_channel',
         'receipt'
     ];
 
@@ -107,21 +109,32 @@ class compose_message_request extends \block_quickmail_request {
     /////////////////////////////////////////////////////////////
 
     /**
+     * Return this requests submitted data as a sanitized object
+     * 
+     * @return object
+     */
+    public function get_request_data_object() {
+        $data = new \stdClass();
+        
+        $data->user = $this->form->user;
+        $data->course = $this->course;
+        $data->subject = $this->subject;
+        $data->additional_emails = $this->additional_emails;
+        $data->message = $this->message;
+        $data->signature_id = $this->signature_id;
+        $data->output_channel = $this->output_channel;
+        $data->receipt = $this->receipt;
+
+        return $data;
+    }
+
+    /**
      * Returns the message subject
      * 
      * @return string
      */
-    private function subject($form_data = null) {
+    public function subject($form_data = null) {
         return ! empty($form_data) ? (string) $this->form->get_data()->subject : '';
-    }
-
-    /**
-     * Returns the no-reply email address which the message will be sent from
-     * 
-     * @return string
-     */
-    private function noreply_email($form_data = null) {
-        return ! empty($form_data) ? (string) $this->form->get_data()->noreply : '';
     }
 
     /**
@@ -129,8 +142,12 @@ class compose_message_request extends \block_quickmail_request {
      * 
      * @return array
      */
-    private function additional_emails($form_data = null) {
-        return ! empty($form_data) ? array_unique(explode(',', $this->form->get_data()->additional_emails)) : [];
+    public function additional_emails($form_data = null) {
+        $emails = ! empty($form_data) ? array_unique(explode(',', $this->form->get_data()->additional_emails)) : [];
+
+        return array_filter($emails, function($email) {
+            return strlen($email) > 0;
+        });
     }
 
     /**
@@ -138,7 +155,7 @@ class compose_message_request extends \block_quickmail_request {
      * 
      * @return string
      */
-    private function message($form_data = null) {
+    public function message($form_data = null) {
         // just FYI, available: text, format, itemid
         return ! empty($form_data) ? (string) $this->form->get_data()->message_editor['text'] : '';
     }
@@ -148,8 +165,17 @@ class compose_message_request extends \block_quickmail_request {
      * 
      * @return int
      */
-    private function signature_id($form_data = null) {
+    public function signature_id($form_data = null) {
         return ! empty($form_data) ? (int) $this->form->get_data()->signature_id : 0;
+    }
+
+    /**
+     * Returns the selected/configured output channel
+     * 
+     * @return string
+     */
+    public function output_channel($form_data = null) {
+        return ! empty($form_data) ? (string) $this->form->get_data()->output_channel : block_quickmail_plugin::_c('default_output_channel');
     }
 
     /**
@@ -157,7 +183,7 @@ class compose_message_request extends \block_quickmail_request {
      * 
      * @return bool
      */
-    private function receipt($form_data = null) {
+    public function receipt($form_data = null) {
         return ! empty($form_data) ? (bool) $this->form->get_data()->receipt : false;
     }
 

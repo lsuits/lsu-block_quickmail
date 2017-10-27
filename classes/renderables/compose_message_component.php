@@ -30,21 +30,12 @@ class compose_message_component extends renderable_component implements \rendera
 
     public $compose_form;
     
-    public $heading;
-
     public function __construct($params = []) {
         parent::__construct($params);
 
         $this->compose_form = $this->get_param('compose_form');
-        $this->heading = $this->get_form_heading();
-    }
 
-    private function get_form_heading() {
-        return \block_quickmail_plugin::_s('compose_heading', (object) [
-            // @TODO: make this happen... (dynamic heading content based on context Admin/Course)
-            'scope' => '',
-            'output_channel' => ucfirst(\block_quickmail_plugin::get_output_channel())
-        ]);
+        $this->heading = '';
     }
 
 }

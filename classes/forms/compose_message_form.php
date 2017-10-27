@@ -26,6 +26,8 @@ namespace block_quickmail\forms;
 
 require_once $CFG->libdir . '/formslib.php';
 
+use block_quickmail_plugin;
+
 class compose_message_form extends \moodleform {
 
     public $context;
@@ -34,7 +36,13 @@ class compose_message_form extends \moodleform {
 
     public $course;
 
+    public $user_alternate_email_array;
+
     public $user_signature_array;
+
+    public $course_config_array;
+
+    public $draft_message;
 
     public function definition() {
 
@@ -49,8 +57,28 @@ class compose_message_form extends \moodleform {
         // set the context
         $this->context = $this->_customdata['context'];
 
+        // set this user's alternate emails
+        $this->user_alternate_email_array = $this->_customdata['user_alternate_email_array'];
+
         // set this user's signatures
         $this->user_signature_array = $this->_customdata['user_signature_array'];
+
+        // set this course's config
+        $this->course_config_array = $this->_customdata['course_config_array'];
+
+        // set the draft_message
+        $this->draft_message = $this->_customdata['draft_message'];
+
+        ////////////////////////////////////////////////////////////
+        ///  from / alternate email (select)
+        ////////////////////////////////////////////////////////////
+        if ($this->should_show_alternate_email_selection()) {
+            $mform->addElement('select', 'alternate_email_id', $this->get_plugin_string('from'), $this->user_alternate_email_array);
+            $mform->addHelpButton('alternate_email_id', 'from', 'block_quickmail');
+        } else {
+            $mform->addElement('static', 'from_email_text', $this->get_plugin_string('from'), $this->user_alternate_email_array[0]);
+            $mform->addHelpButton('from_email_text', 'from', 'block_quickmail');
+        }
 
         ////////////////////////////////////////////////////////////
         ///  subject (text)
@@ -59,14 +87,6 @@ class compose_message_form extends \moodleform {
         $mform->setType('subject', PARAM_TEXT);
         // $mform->addRule('subject', null, 'required', 'client'); // disabling because of draft-saving
         
-        ////////////////////////////////////////////////////////////
-        ///  noreply (text)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement('static', 'noreply', $this->get_plugin_string('noreply'));
-        $mform->setType('noreply', PARAM_EMAIL);
-        $mform->setDefault('noreply', $this->get_noreply_email_address());
-        // $mform->addRule('noreply', null, 'required', 'client');
-
         ////////////////////////////////////////////////////////////
         ///  additional_emails (text)
         ////////////////////////////////////////////////////////////
@@ -94,24 +114,33 @@ class compose_message_form extends \moodleform {
         }
 
         ////////////////////////////////////////////////////////////
+        ///  output_channel (select)
+        ////////////////////////////////////////////////////////////
+        if ($this->should_show_output_channel_selection()) {
+            $mform->addElement('select', 'output_channel', $this->get_plugin_string('select_output_channel'), $this->get_output_channel_options());
+            $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
+        } else {
+            $mform->addElement('hidden', 'output_channel');
+            $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
+        }
+
+        ////////////////////////////////////////////////////////////
         ///  receipt (radio) - receive a copy or not?
         ////////////////////////////////////////////////////////////
-        if ($this->should_show_receipt_option()) {
-            $receipt_options = array(
-                $mform->createElement('radio', 'receipt', '', get_string('yes'), 1),
-                $mform->createElement('radio', 'receipt', '', get_string('no'), 0)
-            );
+        $receipt_options = array(
+            $mform->createElement('radio', 'receipt', '', get_string('yes'), 1),
+            $mform->createElement('radio', 'receipt', '', get_string('no'), 0)
+        );
 
-            $mform->addGroup($receipt_options, 'receipt_action', $this->get_plugin_string('receipt'), array(' '), false);
-            $mform->addHelpButton('receipt_action', 'receipt', 'block_quickmail');
-            $mform->setDefault('receipt', ! empty($this->get_plugin_config('receipt')));
-        }
-        
+        $mform->addGroup($receipt_options, 'receipt_action', $this->get_plugin_string('receipt'), array(' '), false);
+        $mform->addHelpButton('receipt_action', 'receipt', 'block_quickmail');
+        $mform->setDefault('receipt', ! empty($this->course_config_array['receipt']));
+
         ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('submit', 'send', $this->get_send_button_text()),
+            $mform->createElement('submit', 'send', $this->get_plugin_string('send_message')),
             $mform->createElement('submit', 'save', $this->get_plugin_string('save_draft')),
             $mform->createElement('cancel', 'cancel', $this->get_plugin_string('cancel'))
         ];
@@ -140,28 +169,7 @@ class compose_message_form extends \moodleform {
      * @return array
      */
     private function get_editor_options() {
-        return \block_quickmail_plugin::get_editor_options($this->context);
-    }
-
-    private function get_send_button_text() {
-        $output_channel = block_quickmail_plugin::get_output_channel();
-
-        return $this->get_plugin_string('send_message', ucfirst($output_channel));
-    }
-
-    private function get_noreply_email_address() {
-        global $CFG;
-
-        return $CFG->noreplyaddress;
-    }
-
-    /**
-     * Reports whether or not this form should display the "receive a copy" input
-     * 
-     * @return bool
-     */
-    private function should_show_receipt_option() {
-        return $this->get_plugin_config('receipt') != -1;
+        return block_quickmail_plugin::get_editor_options($this->context);
     }
 
     /**
@@ -170,7 +178,16 @@ class compose_message_form extends \moodleform {
      * @return bool
      */
     private function should_show_additional_email_input() {
-        return $this->get_plugin_config('allow_external_emails');
+        return (bool) $this->course_config_array['additionalemail'];
+    }
+
+    /**
+     * Reports whether or not this form should display the alternate email selection input
+     * 
+     * @return bool
+     */
+    private function should_show_alternate_email_selection() {
+        return count($this->user_alternate_email_array) > 1;
     }
 
     /**
@@ -183,6 +200,15 @@ class compose_message_form extends \moodleform {
     }
 
     /**
+     * Reports whether or not this form should display the output channel selection input
+     * 
+     * @return bool
+     */
+    private function should_show_output_channel_selection() {
+        return (bool) $this->course_config_array['output_channels_available'] == 'all';
+    }
+
+    /**
      * Returns the current user's signatures for selection, plus a "none" option
      * 
      * @return array
@@ -191,12 +217,24 @@ class compose_message_form extends \moodleform {
         return [0 => 'None'] + $this->user_signature_array;
     }
 
+    /**
+     * Returns the options for output channel selection
+     * 
+     * @return array
+     */
+    private function get_output_channel_options() {
+        return [
+            'message' => block_quickmail_plugin::_s('output_channel_message'),
+            'email' => block_quickmail_plugin::_s('output_channel_email')
+        ];
+    }
+
     private function get_create_signature_url() {
         return '/blocks/quickmail/signature.php?courseid=' . $this->course->id;
     }
 
     public function get_plugin_string($key, $a = null) {
-        return \block_quickmail_plugin::_s($key, $a);
+        return block_quickmail_plugin::_s($key, $a);
     }
 
     private function get_plugin_config($key) {

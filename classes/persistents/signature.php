@@ -194,11 +194,11 @@ class signature extends persistent {
     /**
      * Fetches a signature by id which must belong to the given user id
      * 
-     * @param  integer $user_id
      * @param  integer $signature_id
+     * @param  integer $user_id
      * @return signature|null
      */
-    public static function find_user_signature_or_null($user_id = 0, $signature_id = 0)
+    public static function find_user_signature_or_null($signature_id = 0, $user_id = 0)
     {
         // first, try to find the signature by id, returning null by default
         if ( ! $signature = self::find_or_null($signature_id)) {
@@ -206,7 +206,7 @@ class signature extends persistent {
         }
 
         // if this signature does not belong to this user, return null
-        if ($signature->get('user_id') !== $user_id) {
+        if ( ! $signature->is_owned_by_user($user_id)) {
             return null;
         }
 

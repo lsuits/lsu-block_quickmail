@@ -32,7 +32,7 @@ class block_quickmail extends block_list {
         // $this->version = $this->get_version();
         $this->set_course();
         $this->set_user();
-        $this->context = block_quickmail_plugin::resolve_context($this->course->id);
+        $this->set_context();
     }
 
     public function get_title() {
@@ -49,6 +49,19 @@ class block_quickmail extends block_list {
         global $USER;
 
         $this->user = $USER;
+    }
+
+    public function set_context() {
+        // if no course, or is "site" course, return system context
+        if (empty($this->course) || $this->course->id == 1) {
+            $context = block_quickmail_plugin::resolve_context('system');
+
+        // otherwise, get the course's context
+        } else {
+            list($context, $course) = block_quickmail_plugin::resolve_context('course', $this->course->id);
+        }
+
+        $this->context = $context;
     }
 
     /**

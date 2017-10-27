@@ -27,6 +27,7 @@ namespace block_quickmail\forms;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\persistents\signature;
+use block_quickmail_plugin;
 
 class manage_signatures_form extends \moodleform {
 
@@ -105,7 +106,7 @@ class manage_signatures_form extends \moodleform {
      * @return array
      */
     private function get_editor_options() {
-        return \block_quickmail_plugin::get_editor_options($this->context);
+        return block_quickmail_plugin::get_editor_options($this->context);
     }
 
     /**
@@ -122,7 +123,7 @@ class manage_signatures_form extends \moodleform {
     }
 
     public function get_plugin_string($key, $a = null) {
-        return \block_quickmail_plugin::_s($key, $a);
+        return block_quickmail_plugin::_s($key, $a);
     }
 
 }

@@ -24,13 +24,10 @@
 
 use \block_quickmail\exceptions\critical_exception;
 use \block_quickmail\exceptions\authorization_exception;
-// use \block_quickmail\exceptions\validation_exception;
 
 class block_quickmail_plugin {
 
     public static $name = 'block_quickmail';
-    
-    public static $supported_output_channels = ['message', 'email'];
 
     /**
      * Constructor
@@ -166,16 +163,48 @@ class block_quickmail_plugin {
     }
 
     /**
-     * Returns quickmail's block course config as array, or optionally a specific setting, if any, overriding with global block config options
+     * Returns a config array for the given course, and specific key if given
      * 
-     * @return array|bool
+     * @return array|mixed
      */
     private static function get_course_config($course_id, $key = '') {
-        $block_config = self::get_block_config();
-
+        // get this course's config, if any
         $course_config = self::get_db()->get_records_menu('block_quickmail_config', ['coursesid' => $course_id], '', 'name,value');
 
-        $config = array_merge($block_config, $course_config);
+        // get the master block config
+        $block_config = self::get_block_config();
+        
+        // determine allowstudents for this course
+        if ($block_config['allowstudents'] < 0) {
+            $course_allow_students = 0;
+        } else {
+            $course_allow_students = array_key_exists('allowstudents', $course_config) ? 
+                $course_config['allowstudents'] : 
+                $block_config['allowstudents'];
+        }
+
+        // determine default output_channel, if any, for this course
+        // NOTE: block-level "all" will default to course-level "message"
+        if ($block_config['output_channels_available'] == 'all') {
+            $course_default_output_channel = array_key_exists('default_output_channel', $course_config) ? 
+                $course_config['default_output_channel'] : 
+                'message';
+        } else {
+            $course_default_output_channel = $block_config['output_channels_available'];
+        }
+
+        $config = [
+            'allowstudents'             => (int) $course_allow_students,
+            'roleselection'             => array_key_exists('roleselection', $course_config) ? $course_config['roleselection'] : $block_config['roleselection'],
+            'receipt'                   => array_key_exists('receipt', $course_config) ? $course_config['receipt'] : $block_config['receipt'],
+            'prepend_class'             => array_key_exists('prepend_class', $course_config) ? $course_config['prepend_class'] : $block_config['prepend_class'],
+            'ferpa'                     => $block_config['ferpa'],
+            'downloads'                 => $block_config['downloads'],
+            'additionalemail'           => $block_config['additionalemail'],
+            'output_channels_available' => $block_config['output_channels_available'],
+            'default_output_channel'    => $course_default_output_channel,
+            'allowed_user_fields'       => $block_config['allowed_user_fields']
+        ];
 
         return $key ? $config[$key] : $config;
     }
@@ -184,18 +213,22 @@ class block_quickmail_plugin {
      * Returns quickmail's block config as array, or optionally a specific setting
      * 
      * @param  string $key
-     * @return mixed
+     * @return array|mixed
      */
     private static function get_block_config($key = '') {
+        $default_output_channel = get_config('moodle', 'block_quickmail_output_channels_available');
+
         $config = [
-            // Convert Never (-1) to No (0) in case site config is changed.
-            'allowstudents' => get_config('moodle', 'block_quickmail_allowstudents') !== -1 ?: 0,
-            'roleselection' => get_config('moodle', 'block_quickmail_roleselection'),
-            'prepend_class' => get_config('moodle', 'block_quickmail_prepend_class'),
-            'receipt' => get_config('moodle', 'block_quickmail_receipt'),
-            'ferpa' => get_config('moodle', 'block_quickmail_ferpa'),
-            'allow_external_emails' => get_config('moodle', 'block_quickmail_addionalemail'),
-            'output_channel' => get_config('moodle', 'block_quickmail_output_channel')
+            'allowstudents'             => (int) get_config('moodle', 'block_quickmail_allowstudents'),
+            'roleselection'             => get_config('moodle', 'block_quickmail_roleselection'),
+            'receipt'                   => (int) get_config('moodle', 'block_quickmail_receipt'),
+            'prepend_class'             => get_config('moodle', 'block_quickmail_prepend_class'),
+            'ferpa'                     => get_config('moodle', 'block_quickmail_ferpa'),
+            'downloads'                 => (int) get_config('moodle', 'block_quickmail_downloads'),
+            'additionalemail'           => (int) get_config('moodle', 'block_quickmail_additionalemail'),
+            'output_channels_available' => $default_output_channel,
+            'default_output_channel'    => $default_output_channel == 'all' ? 'message' : $default_output_channel,
+            'allowed_user_fields'       => explode(',', get_config('moodle', 'block_quickmail_allowed_user_fields'))
         ];
 
         return $key ? $config[$key] : $config;
@@ -280,21 +313,27 @@ class block_quickmail_plugin {
         return get_string($key, self::$name, $a);
     }
 
-    ///////////////////////////////////////////
+    ////////////////////////////////////////////////////
     ///
-    ///  MESSAGING
-    /// 
-    ///////////////////////////////////////////
-    
-    /**
-     * Returns the configured message output channel, defaults to "message"
-     *
-     * @return string
-     */
-    public static function get_output_channel() {
-        $configured_channel = self::_c('output_channel');
+    ///  LOCALIZATION
+    ///  
+    ////////////////////////////////////////////////////
 
-        return in_array($configured_channel, self::$supported_output_channels) ? $configured_channel : 'message';
+    /**
+     * Returns the user table field names that may be configured to be injected dynamically into messages
+     * 
+     * @return array
+     */
+    public static function get_supported_user_fields() {
+        return [
+            'firstname',
+            'lastname',
+            'email',
+            'lastnamephonetic',
+            'firstnamephonetic',
+            'middlename',
+            'alternatename',
+        ];
     }
 
 }

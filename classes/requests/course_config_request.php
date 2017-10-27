@@ -26,6 +26,9 @@ namespace block_quickmail\requests;
 
 // require_once('../../lib/weblib.php');
 
+use block_quickmail\forms\course_config_form;
+use block_quickmail_plugin;
+
 class course_config_request extends \block_quickmail_request {
 
     public $form;
@@ -40,6 +43,7 @@ class course_config_request extends \block_quickmail_request {
         'roleselection',
         'prepend_class',
         'receipt',
+        'default_output_channel'
     ];
 
     /**
@@ -47,7 +51,7 @@ class course_config_request extends \block_quickmail_request {
      * 
      * @param course_config_form  $course_config_form  (extends moodleform)
      */
-    public function __construct(\course_config_form $course_config_form) {
+    public function __construct(course_config_form $course_config_form) {
         $this->form = $course_config_form;
         $this->form_data = ! empty($this->form) ? $this->form->get_data() : null;
         $this->course = $this->get_request_course();
@@ -69,7 +73,7 @@ class course_config_request extends \block_quickmail_request {
      * @param  \course_config_form   $course_config_form
      * @return \course_config_request
      */
-    public static function make(\course_config_form $course_config_form) {
+    public static function make(course_config_form $course_config_form) {
         // instantiate "course config" request
         $request = new self($course_config_form);
 
@@ -118,6 +122,7 @@ class course_config_request extends \block_quickmail_request {
         $data->roleselection = $this->roleselection;
         $data->prepend_class = $this->prepend_class;
         $data->receipt = $this->receipt;
+        $data->default_output_channel = $this->default_output_channel;
 
         return $data;
     }
@@ -158,6 +163,15 @@ class course_config_request extends \block_quickmail_request {
         return ! empty($form_data) ? (int) $this->form_data->receipt : 0;
     }
 
+    /**
+     * Returns the "default output channel" config setting
+     * 
+     * @return string     message|email
+     */
+    public function default_output_channel($form_data = null) {
+        return ! empty($form_data) ? (string) $this->form_data->default_output_channel : 'message';
+    }
+
     /////////////////////////////////////////////////////////////
     ///
     ///  REDIRECTS
@@ -170,7 +184,7 @@ class course_config_request extends \block_quickmail_request {
      * @return (http redirect header)
      */
     public function redirect_back() {
-        $this->redirect_as_type('info', \block_quickmail_plugin::_s('cancel_and_redirect_to_course', $this->course->fullname), '/course/view.php', ['id' => $this->course->id], 2);
+        $this->redirect_as_type('info', block_quickmail_plugin::_s('cancel_and_redirect_to_course', $this->course->fullname), '/course/view.php', ['id' => $this->course->id], 2);
     }
 
     /**

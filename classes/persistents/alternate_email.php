@@ -4,6 +4,7 @@ namespace block_quickmail\persistents;
 
 use core\persistent;
 use core_user;
+use core\ip_utils;
 use lang_string;
 use html_writer;
 use moodle_url;
@@ -283,6 +284,29 @@ class alternate_email extends persistent {
     ///////////////////////////////////////////////
 
     /**
+     * Reports whether or not this alternate email is in the "allowed email domain" list
+     * 
+     * @return bool
+     */
+    public function is_in_allowed_sending_domains()
+    {
+        global $CFG;
+        
+        // if no config set, not allowed!!
+        if ( ! isset($CFG->allowedemaildomains) || empty(trim($CFG->allowedemaildomains))) {
+            return false;
+        }
+
+        // get the allowed domain array
+        $alloweddomains = array_map('trim', explode("\n", $CFG->allowedemaildomains));
+        
+        // get this alternate email
+        $email = $this->get('email');
+
+        return ip_utils::is_domain_in_allowed_list(substr($email, strpos($email, '@') + 1), $alloweddomains);
+    }
+
+    /**
      * Sends a confirmation email to this alternate email's user given a specific "landing" course id
      * 
      * @param  int  $course_id
@@ -392,6 +416,40 @@ class alternate_email extends persistent {
         $DB->delete_records('user_private_key', ['id' => $key->id]);
 
         return $alternate_email;
+    }
+
+    /**
+     * Returns an array of alternate emails available to the given course/user combination
+     * 
+     * @param  int        $course_id
+     * @param  mdl_user   $user
+     * @return array   (alternate_email id => alternate_email title)
+     */
+    public static function get_flat_array_for_course_user($course_id, $user)
+    {
+        // get all validated alternates available to this user
+        $user_alternate_emails = self::get_records(['user_id' => $user->id, 'is_validated' => 1, 'timedeleted' => 0]);
+
+        $user_alternates = array_reduce($user_alternate_emails, function ($carry, $alternate_email) {
+            $value = $alternate_email->get('email');
+
+            $carry[$alternate_email->get('id')] = $value;
+            
+            return $carry;
+        }, [0 => $user->email]);
+
+        // get all validated alternates available to this course
+        $course_alternate_emails = self::get_records(['course_id' => $course_id, 'user_id' => 0, 'is_validated' => 1, 'timedeleted' => 0]);
+
+        $result = array_reduce($course_alternate_emails, function ($carry, $alternate_email) {
+            $value = $alternate_email->get('email');
+
+            $carry[$alternate_email->get('id')] = $value;
+            
+            return $carry;
+        }, $user_alternates);
+
+        return $result;
     }
  
 }

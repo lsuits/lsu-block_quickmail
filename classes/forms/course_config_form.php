@@ -26,6 +26,8 @@ namespace block_quickmail\forms;
 
 require_once $CFG->libdir . '/formslib.php';
 
+use block_quickmail_plugin;
+
 class course_config_form extends \moodleform {
 
     public $context;
@@ -58,11 +60,15 @@ class course_config_form extends \moodleform {
         $mform->setDefault('restore_flag', 0);
 
         ////////////////////////////////////////////////////////////
-        ///  allow students (select)
+        ///  allow students (select, based on global setting)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_allow_students()) {
-            $mform->addElement('select', 'allowstudents', block_quickmail_plugin::_s('allowstudents'), $this->get_allow_student_options());
+            $mform->addElement('select', 'allowstudents', block_quickmail_plugin::_s('allowstudents'), $this->get_yes_or_no_options());
             $mform->setDefault('allowstudents', $this->course_config['allowstudents']);
+        } else {
+            $mform->addElement('hidden', 'allowstudents');
+            $mform->setType('allowstudents', PARAM_INT);
+            $mform->setDefault('allowstudents', 0);
         }
 
         ////////////////////////////////////////////////////////////
@@ -81,8 +87,18 @@ class course_config_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         ///  receipt (select)
         ////////////////////////////////////////////////////////////
-        $mform->addElement('select', 'receipt', block_quickmail_plugin::_s('receipt'), $this->get_receipt_options());
+        $mform->addElement('select', 'receipt', block_quickmail_plugin::_s('receipt'), $this->get_yes_or_no_options());
         $mform->setDefault('receipt', $this->course_config['receipt']);
+
+        ////////////////////////////////////////////////////////////
+        ///  default output channel (based on global setting)
+        ////////////////////////////////////////////////////////////
+        if ($this->should_show_default_output_channel()) {
+            $mform->addElement('select', 'default_output_channel', block_quickmail_plugin::_s('default_output_channel'), $this->get_default_output_channel_options());
+            $mform->setDefault('default_output_channel', $this->course_config['default_output_channel']);
+        } else {
+            $mform->addElement('static', 'default_output_channel', block_quickmail_plugin::_s('default_output_channel'), $this->display_default_output_channel());
+        }
 
         ////////////////////////////////////////////////////////////
         ///  buttons
@@ -103,15 +119,25 @@ class course_config_form extends \moodleform {
      */
     private function should_show_allow_students()
     {
-        return block_quickmail_plugin::_c('allowstudents') == 1;
+        return block_quickmail_plugin::_c('allowstudents') !== -1;
     }
 
     /**
-     * Returns the options for the course "allow students" setting
+     * Reports whether or not the course configuration form should display "default output channel" option (based on global configuration)
+     * 
+     * @return bool
+     */
+    private function should_show_default_output_channel()
+    {
+        return block_quickmail_plugin::_c('output_channels_available') == 'all';
+    }
+
+    /**
+     * Returns a yes/no option selection array
      * 
      * @return array
      */
-    private function get_allow_student_options()
+    private function get_yes_or_no_options()
     {
         return [
             0 => get_string('no'), 
@@ -140,6 +166,19 @@ class course_config_form extends \moodleform {
     }
 
     /**
+     * Returns the options for "default output channel" setting
+     * 
+     * @return array
+     */
+    private function get_default_output_channel_options()
+    {
+        return [
+            'message' => block_quickmail_plugin::_s('output_channel_message'),
+            'email' => block_quickmail_plugin::_s('output_channel_email')
+        ];
+    }
+
+    /**
      * Returns the options for "prepend class" setting
      * 
      * @return array
@@ -154,16 +193,16 @@ class course_config_form extends \moodleform {
     }
 
     /**
-     * Returns the options for the course "receipt" setting
+     * Returns the string for current forced output channel
      * 
-     * @return array
+     * @return string
      */
-    private function get_receipt_options()
+    private function display_default_output_channel()
     {
-        return [
-            0 => get_string('no'), 
-            1 => get_string('yes')
-        ];
+        $key = block_quickmail_plugin::_c('output_channels_available');
+
+        return block_quickmail_plugin::_s('output_channel_' . $key);
     }
+
 
 }

@@ -6,12 +6,14 @@ use \core\persistent;
 use \lang_string;
 use \dml_missing_record_exception;
 use block_quickmail\persistents\concerns\enhanced_persistent;
+use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
  
 class message extends persistent {
  
     use enhanced_persistent,
+        belongs_to_a_course,
         belongs_to_a_user,
         can_be_soft_deleted;
 
@@ -71,14 +73,7 @@ class message extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    /**
-     * Returns the course object of the message.
-     *
-     * @return stdClass
-     */
-    public function get_course() {
-        return get_course($this->get('course_id'));
-    }
+    //
 
     ///////////////////////////////////////////////
     ///
@@ -86,20 +81,7 @@ class message extends persistent {
     /// 
     ///////////////////////////////////////////////
     
-    /**
-     * Convenience method to set the course ID.
-     *
-     * @param object|int $idorobject The course ID, or a course object.
-     */
-    protected function set_course_id($idorobject) {
-        $course_id = $idorobject;
-        
-        if (is_object($idorobject)) {
-            $course_id = $idorobject->id;
-        }
-        
-        $this->raw_set('course_id', $course_id);
-    }
+    //
 
     ///////////////////////////////////////////////
     ///
@@ -107,20 +89,22 @@ class message extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    /**
-     * Validate the course ID.
-     *
-     * @param int $value The value.
-     * @return true|lang_string
-     */
-    protected function validate_course_id($value) {
-        try {
-            $course = get_course($value);
-        } catch (dml_exception $e) {
-            return new lang_string('invalidcourseid', 'error');
-        }
+    //
 
-        return true;
+    ///////////////////////////////////////////////
+    ///
+    ///  CUSTOM METHODS
+    /// 
+    ///////////////////////////////////////////////
+    
+    /**
+     * Reports whether or not this message is a draft
+     * 
+     * @return bool
+     */
+    public function is_message_draft()
+    {
+        return (bool) $this->get('is_draft');
     }
 
     ///////////////////////////////////////////////
@@ -129,6 +113,53 @@ class message extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    //
+    /**
+     * Fetches a draft message by id, or returns null
+     * 
+     * @param  int  $message_id
+     * @return message|null
+     */
+    public static function find_draft_or_null($message_id)
+    {
+        // first, try to find the message by id, returning null by default
+        if ( ! $message = self::find_or_null($message_id)) {
+            return null;
+        }
+
+        // if this message is NOT a draft, return null
+        if ( ! $message->is_message_draft()) {
+            return null;
+        }
+
+        return $message;
+    }
+
+    /**
+     * Fetches a message by id which must belong to the given user id, or returns null
+     * 
+     * @param  integer $message_id
+     * @param  integer $user_id
+     * @param  integer $course_id
+     * @return message|null
+     */
+    public static function find_user_course_draft_or_null($message_id = 0, $user_id = 0, $course_id = 0)
+    {
+        // first, try to find the message by id, returning null by default
+        if ( ! $message = self::find_draft_or_null($message_id)) {
+            return null;
+        }
+
+        // if this message does not belong to this course, return null
+        if ( ! $message->is_owned_by_course($course_id)) {
+            return null;
+        }
+
+        // if this message does not belong to this user, return null
+        if ( ! $message->is_owned_by_user($user_id)) {
+            return null;
+        }
+
+        return $message;
+    }
  
 }

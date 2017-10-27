@@ -2,9 +2,9 @@ define(['jquery', 'core/log', 'core/notification'], function($, log, notificatio
  
     return {
         init: function() {
-            notification.alert('Hello', 'Welcome to my site!', 'Continue');
+            // notification.alert('Hello', 'Welcome to my site!', 'Continue');
 
-            log.debug('Quickmail initializing');
+            // log.debug('Quickmail initializing');
 
             // $('.create-signature-btn').click(function(e) {
             //     e.preventDefault();

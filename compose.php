@@ -1,31 +1,8 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * @package    block_quickmail
- * @copyright  2008-2017 Louisiana State University
- * @copyright  2008-2017 Adam Zapletal, Chad Mazilly, Philip Cali, Robert Russo
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 require_once('../../config.php');
 // require_once('../../enrol/externallib.php');
 // require_once('../../lib/weblib.php');
-
 
 $page_url = '/blocks/quickmail/compose.php';
 
@@ -58,10 +35,28 @@ $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
 $PAGE->navbar->add(block_quickmail_plugin::_s('compose'));
 $PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
 // $PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
-$PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseid' => $page_params['courseid']]);
+// $PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseid' => $page_params['courseid']]);
 // $PAGE->requires->js('/blocks/quickmail/js/selection.js'); // Get rid of this
 
-// TODO: get draft here, if any
+// if a draft id was passed
+if ($page_params['draftid']) {
+    // attempt to fetch the draft which must belong to this course and user
+    if ( ! $draft_message = block_quickmail\persistents\message::find_user_course_draft_or_null($page_params['draftid'], $USER->id, $page_params['courseid'])) {
+        // if draft message could not be found, reset the passed param to 0
+        $page_params['draftid'] = 0;
+    }
+} else {
+    $draft_message = null;
+}
+
+// NEED THESE TO BUILD THE SELECTION FORM?!?
+
+// 'selected' => $selected,
+// 'users' => $users,
+// 'roles' => $roles,
+// 'groups' => $groups,
+// 'users_to_roles' => $users_to_roles,
+// 'users_to_groups' => $users_to_groups,
 
 ////////////////////////////////////////
 /// INSTANTIATE PAGE RENDERER
@@ -74,8 +69,8 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 $compose_form = block_quickmail_form::make_compose_message_form(
     $page_context, 
     $USER, 
-    $course
-    // $draft_message,
+    $course,
+    $draft_message
 );
 
 ////////////////////////////////////////
@@ -83,29 +78,33 @@ $compose_form = block_quickmail_form::make_compose_message_form(
 ////////////////////////////////////////
 
 // instantiate "compose message" request
-$compose_request = \block_quickmail\requests\compose_message_request::make_compose_request($compose_form);
+$compose_message_request = \block_quickmail\requests\compose_message_request::make_compose_request($compose_form);
 
 // if cancelling form
-if ($compose_request->was_cancelled()) {
+if ($compose_message_request->was_cancelled()) {
     
     // redirect back to course
-    $compose_request->redirect_back_to_course();
+    $compose_message_request->redirect_back_to_course();
 
 // if sending message
-} else if ($compose_request->to_send_message()) {
-
-    dd(\block_quickmail_plugin::get_output_channel());
+} else if ($compose_message_request->to_send_message()) {
 
     // instantiate sender here, and do the thing
 
     // validate request and send messages
-    $sender_response = block_quickmail_sender::send_composed($compose_request);
-    dd($sender_response);
+
+    try {
+        $messenger_response = \block_quickmail\messenger\messenger::send_by_request($compose_message_request);
+    } catch (\block_quickmail\messenger\exceptions\messenger_validation_exception $e) {
+        render_messenger_validation_nofitications($e);
+    }
+
+    // dd($messenger_response);
     
     // after send redirect to history
 
 // if saving draft
-} else if ($compose_request->to_save_draft()) {
+} else if ($compose_message_request->to_save_draft()) {
     dd('save draft!');
 }
 
@@ -124,6 +123,21 @@ echo $rendered_compose_form;
 
 echo $OUTPUT->footer();
 
+function render_messenger_validation_nofitications($exception) {
+    if (count($exception->errors)) {
+        $html = '<ul>';
+        
+        foreach ($exception->errors as $error) {
+            $html .= '<li>' . $error . '</li>';
+        }
+
+        $html .= '</ul>';
+        
+        \core\notification::error($html);
+    }
+}
+
+////////////////////////////////////////////////////////////
 function dd($thing) {
     var_dump($thing);die;
 }

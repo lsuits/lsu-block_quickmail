@@ -29,7 +29,7 @@ $PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css
 $PAGE->requires->js_call_amd('block_quickmail/manage-signatures', 'init', ['courseid' => $page_params['courseid']]);
 
 // find the requested signature, if any, which must belong to the auth user
-if ( ! $signature = block_quickmail\persistents\signature::find_user_signature_or_null($USER->id, $page_params['id'])) {
+if ( ! $signature = block_quickmail\persistents\signature::find_user_signature_or_null($page_params['id'], $USER->id)) {
     // if signature could not be found for user, reset the given signature param for the page
     $page_params['id'] = 0;
 }

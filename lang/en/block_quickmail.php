@@ -14,7 +14,7 @@ $string['save_signature'] = 'Save Signature';
 $string['delete_signature'] = 'Delete Signature';
 $string['user_signature_deleted'] = 'Your signature has been deleted.';
 $string['alternate_deleted'] = 'Your alternate sending email has been deleted.';
-$string['send_message'] = 'Send {$a}';
+$string['send_message'] = 'Send Message';
 $string['additional_emails'] = 'Additional Recipient Emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
 
@@ -54,12 +54,25 @@ $string['courseferpa'] = 'Respect Course Mode';
 $string['noferpa'] = 'No Group Respect';
 $string['downloads'] = 'Require login for attachments';
 $string['downloads_desc'] = 'This setting determines if attachments are available only to logged in Moodle users';
-$string['addionalemail'] = 'Allow emails to external email addresses';
-$string['addionalemail_desc'] = 'If this option is enabled quickmail emails are also sent so external email adresses the user entered within the form.';
+$string['additionalemail'] = 'Allow emails to external email addresses';
+$string['additionalemail_desc'] = 'If this option is enabled, the sender will have the ability to send messages to additional emails outside of Moodle';
+
 $string['output_channel'] = 'Send Quickmail messages as';
-$string['output_channel_desc'] = 'Allows Quickmail messages to be sent as a Moodle Message, or just as email.';
-$string['output_as_message'] = 'Moodle Message';
-$string['output_as_email'] = 'Email Only';
+$string['select_output_channel'] = 'Send message as';
+$string['output_channel_desc'] = 'Allows Quickmail messages to be sent as a Moodle message, traditional email, or sender preference.';
+
+$string['output_channel_message'] = 'Moodle Message';
+$string['output_channel_email'] = 'Email';
+
+$string['default_output_channel'] = 'Preferred message sending method';
+$string['default_output_channel_desc'] = 'Send your messages as Moodle Messages or traditional email.';
+
+$string['output_channels_available'] = 'Message output channel restrictions';
+$string['output_channels_available_desc'] = 'Restrict Quickmail messages to be sent as Moodle Messages, traditional emails, or sender preference.';
+$string['output_channel_available_all'] = 'No restrictions, sender preference';
+$string['output_channel_available_message'] = 'Restrict to Moodle messages only';
+$string['output_channel_available_email'] = 'Restrict to traditional email only';
+
 $string['save_configuration'] = 'Save Settings';
 $string['reset'] = 'Restore System Defaults';
 $string['reset_success_message'] = 'Quickmail default settings have been restored!';
@@ -71,8 +84,7 @@ $string['validation_error'] = 'Validation error';
 $string['authorization_error'] = 'Authorization error';
 $string['some_additional_emails_invalid'] = 'Some of the additional emails you are sending to are invalid, please fix and then resend.';
 
-$string['messageprovider:quickmail_email'] = 'A Quickmail email';
-$string['messageprovider:quickmail_message'] = 'A Quickmail message';
+$string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // block rendering
 $string['compose'] = 'Compose Message';
@@ -82,7 +94,8 @@ $string['signature'] = 'Signature';
 $string['signatures'] = 'Signatures';
 $string['drafts'] = 'View Drafts';
 $string['history'] = 'View History';
-$string['alternate'] = 'Alternate Emails';
+$string['alternate'] = 'Alternate Email';
+$string['alternates'] = 'Alternate Emails';
 $string['config'] = 'Configuration';
 $string['sendadmin'] = 'Admin Email';
 
@@ -104,6 +117,7 @@ $string['email'] = 'Email';
 
 $string['log'] = 'View History';
 $string['from'] = 'From';
+$string['from_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
 $string['selected'] = 'Selected Recipients';
 $string['add_button'] = 'Add';
 $string['remove_button'] = 'Remove';
@@ -214,7 +228,6 @@ $string['draftssuccess'] = "Draft";
 //admin
 $string['email_error'] = 'Could not email: {$a->firstname} {$a->lastname} ({$a->email})';
 $string['email_error_field'] = 'Can not have an empty: {$a}';
-$string['messageprovider:broadcast'] = 'Send broadcast messages using Admin Email.';
 
 $string['message_sent_to'] = 'Message sent to ';
 $string['warnings'] = 'Warnings';
@@ -231,3 +244,6 @@ $string['redirect_back_to_dashboard_from_signature'] = 'Any changes have been ca
 
 $string['back_to_course'] = 'Back to course';
 $string['manage_signatures'] = 'Manage Signatures';
+
+$string['select_allowed_user_fields'] = 'Supported user data fields';
+$string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make email content dynamic and specific to the recipient. Ex: "<_firstname_>"';

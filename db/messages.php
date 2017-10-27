@@ -26,14 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = array (
     
-    'email' => array (
-        'defaults' => array(
-            'email' => MESSAGE_FORCED,
-            'anyotheroutput' => MESSAGE_DISALLOWED
-        ),
-    ),
-
-    'message' => array (
+    'quickmessage' => array (
         'defaults' => array(
             'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
             'anyotheroutput' => MESSAGE_PERMITTED,
