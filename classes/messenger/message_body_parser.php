@@ -28,6 +28,7 @@ class message_body_parser {
 
     public $message_body;
     public $supported_keys;
+    public $selected_keys;
     public $user_fields_keys;
 
     /**
@@ -35,10 +36,12 @@ class message_body_parser {
      * 
      * @param string  $message_body     the message content body
      * @param array   $supported_keys   custom user data keys supported by the site config
+     * @param array   $selected_keys    custom user data keys that need to be parsed
      */
-    public function __construct($message_body, $supported_keys = []) {
+    public function __construct($message_body, $supported_keys = [], $selected_keys = []) {
         $this->message_body = $message_body;
         $this->supported_keys = $supported_keys;
+        $this->selected_keys = $selected_keys;
         $this->user_fields_keys = [];
     }
 
@@ -109,6 +112,23 @@ class message_body_parser {
         $success = count(array_diff($this->user_fields_keys, $this->supported_keys)) ? false : true;
 
         return [$success, $this->user_fields_keys];
+    }
+
+    /**
+     * Returns a parsed, user-data-injected message body for a specific user
+     * 
+     * @param  core_user  $user
+     * @return string
+     */
+    public function inject_user_data($user)
+    {
+        $message_body = $this->message_body;
+
+        foreach ($this->selected_keys as $field) {
+            $message_body = str_replace($this->get_first_delimiter() . $field . $this->get_last_delimiter(), $user->$field, $message_body);
+        }
+
+        return $message_body;
     }
 
 }

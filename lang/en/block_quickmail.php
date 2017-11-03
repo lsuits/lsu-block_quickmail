@@ -247,4 +247,4 @@ $string['back_to_course'] = 'Back to course';
 $string['manage_signatures'] = 'Manage Signatures';
 
 $string['select_allowed_user_fields'] = 'Supported user data fields';
-$string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make email content dynamic and specific to the recipient. Ex: "<_firstname_>"';
+$string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make email content dynamic and specific to the recipient. Ex: "[:firstname:]"';

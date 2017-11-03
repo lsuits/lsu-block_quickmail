@@ -89,17 +89,18 @@ if ($compose_message_request->was_cancelled()) {
 // if sending message
 } else if ($compose_message_request->to_send_message()) {
 
-    // instantiate sender here, and do the thing
-
-    // validate request and send messages
-
+    // attempt to send, handle exceptions
     try {
         $messenger_response = \block_quickmail\messenger\messenger::send_by_request($compose_message_request);
+    } catch (\block_quickmail\messenger\exceptions\messenger_authentication_exception $e) {
+        print_error('no_permission', 'block_quickmail');
     } catch (\block_quickmail\messenger\exceptions\messenger_validation_exception $e) {
         render_messenger_validation_nofitications($e);
+    } catch (\block_quickmail\messenger\exceptions\messenger_critical_exception $e) {
+        print_error('critical_error', 'block_quickmail');
     }
 
-    // dd($messenger_response);
+    dd($messenger_response);
     
     // after send redirect to history
 
@@ -123,6 +124,12 @@ echo $rendered_compose_form;
 
 echo $OUTPUT->footer();
 
+/**
+ * Instantiates a core moodle error notification with list-style error messages from the given exception
+ * 
+ * @param  \Exception $exception
+ * @return void
+ */
 function render_messenger_validation_nofitications($exception) {
     if (count($exception->errors)) {
         $html = '<ul>';

@@ -135,6 +135,17 @@ class alternate_email extends persistent {
         }
     }
 
+    /**
+     * Returns the domain of this email
+     * 
+     * @return string
+     */
+    public function get_domain() {
+        $email = $this->get('email');
+
+        return substr($email, strpos($email, '@') + 1);
+    }
+
     ///////////////////////////////////////////////
     ///
     ///  SETTERS

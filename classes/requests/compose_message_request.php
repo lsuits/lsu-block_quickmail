@@ -42,7 +42,8 @@ class compose_message_request extends \block_quickmail_request {
         'message',
         'signature_id',
         'output_channel',
-        'receipt'
+        'receipt',
+        'alternate_email_id'
     ];
 
     /**
@@ -124,6 +125,7 @@ class compose_message_request extends \block_quickmail_request {
         $data->signature_id = $this->signature_id;
         $data->output_channel = $this->output_channel;
         $data->receipt = $this->receipt;
+        $data->alternate_email_id = $this->alternate_email_id;
 
         return $data;
     }
@@ -185,6 +187,19 @@ class compose_message_request extends \block_quickmail_request {
      */
     public function receipt($form_data = null) {
         return ! empty($form_data) ? (bool) $this->form->get_data()->receipt : false;
+    }
+
+    /**
+     * Returns the user's alternate_email_id selection
+     * 
+     * @return int
+     */
+    public function alternate_email_id($form_data = null) {
+        if (empty($form_data)) {
+            return 0;
+        }
+
+        return (int) $this->form->get_data()->alternate_email_id;
     }
 
     /////////////////////////////////////////////////////////////
