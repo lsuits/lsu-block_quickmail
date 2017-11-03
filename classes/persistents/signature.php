@@ -67,6 +67,15 @@ class signature extends persistent {
     ///////////////////////////////////////////////
 
     protected function validate_title($value) {
+        // if this is a new signature attempting to be created, check to make sure this title is unique
+        if ( ! $this->get('id') && self::count_records([
+            'title' => $value,
+            'user_id' => $this->get('user_id'),
+            'timedeleted' => 0
+        ])) {
+            return new lang_string('signature_title_must_be_unique', 'block_quickmail');
+        }
+
         if (empty($value)) {
             return new lang_string('signature_title_required', 'block_quickmail');
         }

@@ -30,6 +30,7 @@ $string['alternate_confirmation_email_resent'] = 'The confirmation email has bee
 
 $string['fullname'] ='Full name';
 $string['signature_title_required'] = 'A signature title is required.';
+$string['signature_title_must_be_unique'] = 'The signature title must be unique.';
 $string['signature_signature_required'] = 'A signature is required.';
 $string['sig'] ='Signature';
 $string['select_signature_for_edit'] ='Select Signature To Edit';
