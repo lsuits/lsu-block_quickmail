@@ -91,7 +91,7 @@ if ($compose_message_request->was_cancelled()) {
 
     // attempt to send, handle exceptions
     try {
-        $messenger_response = \block_quickmail\messenger\messenger::send_by_request($compose_message_request);
+        $messenger_response = \block_quickmail\messenger\messenger::send_by_compose_request($compose_message_request);
     } catch (\block_quickmail\messenger\exceptions\messenger_authentication_exception $e) {
         print_error('no_permission', 'block_quickmail');
     } catch (\block_quickmail\messenger\exceptions\messenger_validation_exception $e) {
@@ -100,7 +100,8 @@ if ($compose_message_request->was_cancelled()) {
         print_error('critical_error', 'block_quickmail');
     }
 
-    dd($messenger_response);
+    // $messenger_response
+    dd('all sent!');
     
     // after send redirect to history
 

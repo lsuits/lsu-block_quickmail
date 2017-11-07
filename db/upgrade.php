@@ -452,5 +452,40 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         }
     }
 
+    // add moodle message id to the messages table
+    if ($oldversion < 2017110700) {
+        // Define table block_quickmail_sched_sends to be created.
+        $table = new xmldb_table('block_quickmail_sched_sends');
+
+        // Adding fields to table block_quickmail_sched_sends.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('send_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table block_quickmail_sched_sends.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('message_id', XMLDB_KEY_FOREIGN, array('message_id'), 'block_quickmail_messages', array('id'));
+        $table->add_key('user_id', XMLDB_KEY_FOREIGN, array('user_id'), 'user', array('id'));
+
+        // Conditionally launch create table for block_quickmail_sched_sends.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+    }
+
+    // add moodle message id to the messages table
+    if ($oldversion < 2017110701) {
+        // get the table
+        $table = new xmldb_table('block_quickmail_messages');
+
+        // define the fields
+        $mdl_msg_field = new xmldb_field('moodle_message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        if (!$dbman->field_exists($table, $mdl_msg_field)) {
+            $dbman->add_field($table, $mdl_msg_field);
+        }
+    }
+
     return $result;
 }

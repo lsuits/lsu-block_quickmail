@@ -32,17 +32,18 @@ class message_message_factory extends message_factory implements message_factory
     /**
      * Sends a message to the given user
      * 
-     * @param  core_user  $user
+     * @param  core_user  $recipient_user
      * @return int  (the mdl_message id)
      */
-    public function send_message($user) {
+    public function send_message($recipient_user) {
         // assign the recipient user
-        $this->message_object->userto = $user;
+        $this->message_object->userto = $recipient_user;
         
         // parse the message bodies
         // TODO: do we need to do both of these? fix this!!
-        $this->message_object->fullmessagehtml = $this->message_body_parser->inject_user_data($user);
-        $this->message_object->fullmessage = $this->message_body_parser->inject_user_data($user);
+        $parsed_message_body = $this->message_body_parser->inject_user_data($recipient_user);
+        $this->message_object->fullmessagehtml = $parsed_message_body;
+        $this->message_object->fullmessage = $parsed_message_body;
 
         return message_send($this->message_object);
     }

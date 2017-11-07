@@ -125,7 +125,11 @@ class message_body_parser {
         $message_body = $this->message_body;
 
         foreach ($this->selected_keys as $field) {
-            $message_body = str_replace($this->get_first_delimiter() . $field . $this->get_last_delimiter(), $user->$field, $message_body);
+            // make sure there is actually user data for this field, otherwise just use the field name in parentheses
+            $user_data = empty($user->$field) || ! property_exists($user, $field) ? '(' . $field . ')' : $user->$field;
+
+            // find and replace the field instance(s)
+            $message_body = str_replace($this->get_first_delimiter() . $field . $this->get_last_delimiter(), $user_data, $message_body);
         }
 
         return $message_body;

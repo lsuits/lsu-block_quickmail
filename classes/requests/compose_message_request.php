@@ -37,6 +37,7 @@ class compose_message_request extends \block_quickmail_request {
     public $data;
     
     protected static $public_attributes = [
+        'mailto_ids',
         'subject',
         'additional_emails',
         'message',
@@ -120,6 +121,7 @@ class compose_message_request extends \block_quickmail_request {
         $data->user = $this->form->user;
         $data->course = $this->course;
         $data->subject = $this->subject;
+        $data->mailto_ids = $this->mailto_ids;
         $data->additional_emails = $this->additional_emails;
         $data->message = $this->message;
         $data->signature_id = $this->signature_id;
@@ -137,6 +139,15 @@ class compose_message_request extends \block_quickmail_request {
      */
     public function subject($form_data = null) {
         return ! empty($form_data) ? (string) $this->form->get_data()->subject : '';
+    }
+
+    /**
+     * Returns the message recipient user ids
+     * 
+     * @return array
+     */
+    public function mailto_ids($form_data = null) {
+        return ! empty($form_data) ? explode(',', rtrim($this->form->get_data()->mailto_ids, ',')) : [];
     }
 
     /**

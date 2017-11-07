@@ -13,6 +13,7 @@ class message_factory {
     public $signature;
     public $custom_user_data_keys;
     public $validated_replyto;
+    public $validated_replyto_name;
     public $message_body_parser;
 
     public function __construct($params = []) {
@@ -22,12 +23,13 @@ class message_factory {
         $this->alternate_email = $params['alternate_email'];
         $this->signature = $params['signature'];
         $this->custom_user_data_keys = $params['custom_user_data_keys'];
-        $this->set_validated_replyto();
+        $this->set_validated_replyto_data();
         $this->set_message_body_parser();
     }
     
-    private function set_validated_replyto() {
+    private function set_validated_replyto_data() {
         $this->validated_replyto = $this->get_validated_replyto();
+        $this->validated_replyto_name = $this->get_validated_replyto_name();
     }
 
     private function set_message_body_parser() {
@@ -52,6 +54,20 @@ class message_factory {
         return in_array($this->alternate_email->get_domain(), $allowed_domains)
             ? $this->alternate_email->get('email')
             : $this->userfrom->email;
+    }
+
+    /**
+     * Returns a validated reply-to user name for this message
+     * 
+     * @return string
+     */
+    private function get_validated_replyto_name() {
+        // if a valid alternate email was passed, use it's name
+        if ( ! empty($this->alternate_email)) {
+            return $this->alternate_email->get_fullname();
+        } else {
+            return fullname($this->userfrom);
+        }
     }
 
     /**

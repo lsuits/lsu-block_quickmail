@@ -60,13 +60,17 @@ class message extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => false,
             ],
+            'moodle_message_id' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+            ],
             'timedeleted' => [
                 'type' => PARAM_INT,
                 'default' => 0,
             ],
         ];
     }
- 
+
     ///////////////////////////////////////////////
     ///
     ///  RELATIONSHIPS
@@ -82,6 +86,24 @@ class message extends persistent {
     ///////////////////////////////////////////////
     
     //
+
+    ///////////////////////////////////////////////
+    ///
+    ///  GETTERS
+    /// 
+    ///////////////////////////////////////////////
+    
+    /**
+     * Returns the status of this alternates approval (approved or waiting)
+     * 
+     * @return string
+     */
+    public function get_status() {
+        
+        //
+
+    }
+    
 
     ///////////////////////////////////////////////
     ///

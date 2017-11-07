@@ -327,11 +327,9 @@ class block_quickmail_plugin {
     public static function get_supported_user_fields() {
         return [
             'firstname',
+            'middlename',
             'lastname',
             'email',
-            'lastnamephonetic',
-            'firstnamephonetic',
-            'middlename',
             'alternatename',
         ];
     }

@@ -81,6 +81,13 @@ class compose_message_form extends \moodleform {
         }
 
         ////////////////////////////////////////////////////////////
+        ///  mailto_ids (text)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement('hidden', 'mailto_ids', '');
+        $mform->setType('mailto_ids', PARAM_TEXT);
+        $mform->setDefault('mailto_ids', '123,684,116,677,264,744,');  // <--------------- this is for testing!!!!
+
+        ////////////////////////////////////////////////////////////
         ///  subject (text)
         ////////////////////////////////////////////////////////////
         $mform->addElement('text', 'subject', $this->get_plugin_string('subject'));

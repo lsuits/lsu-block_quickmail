@@ -112,6 +112,8 @@ class messenger {
 
     /**
      * Sends a message given a request and returns a response
+     *
+     * Note: this could either be a fresh new message OR a loaded draft
      * 
      * @param  compose_message_request  $compose_message_request
      * @return object
@@ -119,10 +121,8 @@ class messenger {
      * @throws messenger_validation_exception
      * @throws messenger_critical_exception
      */
-    public static function send_by_request(compose_message_request $compose_message_request)
+    public static function send_by_compose_request(compose_message_request $compose_message_request)
     {
-        // here we need to discern whether or not this is a "draft" message and take appropriate action...
-
         // for now we'll just send a "fresh one"
         $messenger = new self(
             $compose_message_request->form->context,
@@ -131,16 +131,19 @@ class messenger {
             $compose_message_request->form->course,
             $compose_message_request->form->draft_message
         );
-        
-        // $data->user = \core_user::get_user(2);
-        // $data->course = get_course(3);
-        // $data->subject = 'Oh my stars';
-        // $data->additional_emails = ['chad@chad.chad', 'robert@robert.rob', 'linda@linda.lin'];
-        // $data->message = 'This is the meat of it!!!';
-        // $data->signature_id = 1;
-        // $data->output_channel = 'mail';
-        // $data->receipt = 1;
-        // $data->alternate_email_id = 1;
+
+        // if this is a draft and has already been sent, throw exception
+        if ($messenger->is_draft_send() && empty($messenger->draft_message->get('sent_at'))) {
+            $messenger->throw_validation_exception('This message has already been sent.');
+        }
+
+        // reconcile recipients
+        $recipient_user_ids = $messenger->message_data->mailto_ids;
+
+        // get all recip user ids from form
+
+        // 
+
 
         $messenger_response = $messenger->send();
 
@@ -167,20 +170,32 @@ class messenger {
             $this->throw_validation_exception();
         }
 
-        // get recipient user ids (test)
-        $recipient_user_ids = $this->get_test_user_ids_for_send();
+        // $this->is_draft_send()
 
+        // $this->
+
+        // // get recipient user ids
+        // $recipient_user_ids = $this->message_data->mailto_ids;
+
+        // construct an appropriate message factory based on the output channel
         $message_factory = $this->make_message_factory();
 
+        // iterate through each recipient by user_id
         foreach ($recipient_user_ids as $user_id) {
-            // note this returns the mdl_message->id
+            
             // TODO: do something with this!
             if ( ! $user = core_user::get_user($user_id)) {
+                // not an active or real user...
                 // log this somehow
                 continue;
             }
 
-            $message_factory->send_message($user);
+            // send the customized message to the user by appropriate channel
+            // note (if channel='message') this returns the mdl_message->id
+            $factory_response = $message_factory->send_message($user);
+
+            // convert response into an int 
+            $m_id = $this->convert_factory_response_to_id($factory_response);
         }
 
         return $this;
@@ -223,15 +238,17 @@ class messenger {
             : $this->message_data->subject;
     }
 
-    public function get_test_user_ids_for_send() {
-        return [
-            123,
-            684,
-            116,
-            677,
-            264,
-            744
-        ];
+    
+    /**
+     * Converts the given response into an integer
+     *
+     * Note: for "message" output, this will be mdl_message->id, for "email" output this will always be zero
+     * 
+     * @param  mixed  $factory_response   response from sending a moodle message or an email
+     * @return int
+     */
+    private function convert_factory_response_to_id($factory_response) {
+        return is_bool($factory_response) === false ? $factory_response : 0;
     }
 
     /**
@@ -263,6 +280,15 @@ class messenger {
 
         // return success status boolean
         return count($this->validation_errors) ? false : true;
+    }
+
+    /**
+     * Reports whether or not this message is a draft that is being sent
+     * 
+     * @return bool
+     */
+    private function is_draft_send() {
+        return ! empty($this->draft_message);
     }
 
     /**
