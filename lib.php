@@ -33,7 +33,7 @@ abstract class quickmail {
     }
 
     static function format_time($time) {
-        return userdate($time, '%A, %d %B %Y, %I:%M %P');
+        return userdate($time, '%m-%d-%Y, %I:%M %p');
     }
 
     static function cleanup($table, $contextid, $itemid) {
