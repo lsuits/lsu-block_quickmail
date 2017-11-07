@@ -21,8 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2017110300;
+$plugin->version = 2017110700;
 $plugin->requires = 2013051400;
-$plugin->release = "v1.7.3";
+$plugin->release = "v1.7.4";
 $plugin->maturity = MATURITY_STABLE; 
 $plugin->component = 'block_quickmail';
