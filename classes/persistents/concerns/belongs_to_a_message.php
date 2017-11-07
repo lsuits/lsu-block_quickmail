@@ -62,7 +62,7 @@ trait belongs_to_a_message {
         // merge the message id into the creation parameters
         $params = array_merge(['message_id' => $message->get('id')], $params);
 
-        return self::create_new($params);
+        return self::create_new((object) $params);
     }
 
 }

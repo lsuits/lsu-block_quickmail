@@ -30,8 +30,10 @@ use block_quickmail\messenger\validators\send_validator;
 use block_quickmail\messenger\exceptions\messenger_authentication_exception;
 use block_quickmail\messenger\exceptions\messenger_validation_exception;
 use block_quickmail\messenger\exceptions\messenger_critical_exception;
+use block_quickmail\persistents\message;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
+use block_quickmail\persistents\message_recipient;
 use core_user;
 
 class messenger {
@@ -47,6 +49,7 @@ class messenger {
     public $config;
     public $validation_errors;
     public $custom_user_data_keys;
+    public $message;
     
     // message_data
         // public $subject;
@@ -74,6 +77,7 @@ class messenger {
         $this->draft_message = $draft_message;
         $this->validation_errors = [];
         $this->custom_user_data_keys = [];
+        $this->message = null;
         $this->set_message_scope();
         $this->set_config();
         $this->set_signature();
@@ -132,33 +136,70 @@ class messenger {
             $compose_message_request->form->draft_message
         );
 
-        // if this is a draft and has already been sent, throw exception
-        if ($messenger->is_draft_send() && empty($messenger->draft_message->get('sent_at'))) {
-            $messenger->throw_validation_exception('This message has already been sent.');
+        // get select posted attributes
+        $alternate_email_id = ! empty($messenger->alternate_email) ? $messenger->alternate_email->id : 0;
+        $signature_id = ! empty($messenger->signature) ? $messenger->signature->id : 0;
+        $subject = $messenger->message_data->subject;
+        $body = $messenger->message_data->message;
+
+        // if this is a draft message being sent, make sure it has not been sent and is updated with the latest data
+        if ($messenger->is_draft_send()) {
+            // if the draft has already been sent, throw an exception
+            if (empty($messenger->draft_message->get('sent_at'))) {
+                $messenger->throw_validation_exception('This message has already been sent.');
+
+            // otherwise, update and set the draft message
+            } else {
+                // grab the draft message instance
+                $draft = $messenger->draft_message;
+
+                // update attributes that may have changed from compose page
+                $draft->set('alternate_email_id', $alternate_email_id);
+                $draft->set('signature_id', $signature_id);
+                $draft->set('subject', $subject);
+                $draft->set('body', $body);
+                $draft->set('is_draft', 0);
+                $draft->update();
+                
+                // set the draft as the message to be sent
+                $messenger->message = $draft->read();
+            }
+        } else {
+            // instantiate a message
+            $message = new message(0, (object) [
+                'course_id' => $messenger->course->id,
+                'user_id' => $messenger->user->id,
+                'alternate_email_id' => $alternate_email_id,
+                'signature_id' => $signature_id,
+                'subject' => $subject,
+                'body' => $body,
+            ]);
+
+            // save the message
+            $message->create();
+
+            // set this new message as the message to be sent
+            $messenger->message = $message;
         }
 
-        // reconcile recipients
-        $recipient_user_ids = $messenger->message_data->mailto_ids;
+        // clear any existing recipients, and add those that have been recently posted
+        $messenger->message->sync_recipients($messenger->message_data->mailto_ids);
 
-        // get all recip user ids from form
-
-        // 
-
-
-        $messenger_response = $messenger->send();
+        // attempt to send the set message to all recipients
+        $messenger_response = $messenger->send_composed();
 
         return $messenger_response;
     }
 
     /**
-     * Attempts to validate, authorize and send the message
+     * Attempts to validate, authorize and send a composed (non-sent) message
      * 
      * @return [type] [description]
      * @throws messenger_authentication_exception
      * @throws messenger_validation_exception
      * @throws messenger_critical_exception
      */
-    private function send() {
+    private function send_composed() {
 
         // first, make sure this user can send within this context
         if ( ! $this->authorize_send()) {
@@ -170,18 +211,11 @@ class messenger {
             $this->throw_validation_exception();
         }
 
-        // $this->is_draft_send()
-
-        // $this->
-
-        // // get recipient user ids
-        // $recipient_user_ids = $this->message_data->mailto_ids;
-
         // construct an appropriate message factory based on the output channel
         $message_factory = $this->make_message_factory();
 
         // iterate through each recipient by user_id
-        foreach ($recipient_user_ids as $user_id) {
+        foreach ($this->message_data->mailto_ids as $user_id) {
             
             // TODO: do something with this!
             if ( ! $user = core_user::get_user($user_id)) {
@@ -194,8 +228,14 @@ class messenger {
             // note (if channel='message') this returns the mdl_message->id
             $factory_response = $message_factory->send_message($user);
 
-            // convert response into an int 
-            $m_id = $this->convert_factory_response_to_id($factory_response);
+            // if successful response, mark this user as being sent to
+            if ($factory_response) {
+                message_recipient::mark_as_sent($this->message, $user);
+            }
+
+            // set the moodle message
+            $this->message->set('moodle_message_id', $this->convert_factory_response_to_id($factory_response));
+            $this->message->update();
         }
 
         return $this;

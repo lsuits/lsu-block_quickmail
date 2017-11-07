@@ -59,6 +59,37 @@ class message_recipient extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    //
+    /**
+     * Deletes all recipients for this message
+     * 
+     * @param  message $message
+     * @return void
+     */
+    public static function clear_all_for_message(message $message)
+    {
+        global $DB;
+
+        // delete all recipients belonging to this message
+        $DB->delete_records('block_quickmail_msg_recips', ['message_id' => $message->get('id')]);
+    }
+
+    /**
+     * Update the recipient belonging to the given message and user as have been sent to right now
+     * 
+     * @param  message    $message
+     * @param  core_user  $user
+     * @return void
+     */
+    public static function mark_as_sent(message $message, $user)
+    {
+        $recipient = self::get_record([
+            'message_id' => $message->get('id'), 
+            'user_id' => $user->id
+        ]);
+
+        $recipient->set('sent_at', time());
+        
+        $recipient->update();
+    }
  
 }

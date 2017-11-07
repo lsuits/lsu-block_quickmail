@@ -9,6 +9,7 @@ use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
+use block_quickmail\persistents\message_recipient;
  
 class message extends persistent {
  
@@ -34,6 +35,10 @@ class message extends persistent {
                 'type' => PARAM_INT,
             ],
             'alternate_email_id' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+            ],
+            'signature_id' => [
                 'type' => PARAM_INT,
                 'default' => 0,
             ],
@@ -127,6 +132,23 @@ class message extends persistent {
     public function is_message_draft()
     {
         return (bool) $this->get('is_draft');
+    }
+
+    /**
+     * Replaces all recipients for this message with the given array of user ids
+     * 
+     * @param  array  $recipient_user_ids
+     * @return void
+     */
+    public function sync_recipients($recipient_user_ids = [])
+    {
+        // clear all current recipients
+        message_recipient::clear_all_for_message($this);
+
+        // add all new recipients
+        foreach ($recipient_user_ids as $user_id) {
+            message_recipient::create_for_message($this, ['user_id' => $user_id]);
+        }
     }
 
     ///////////////////////////////////////////////

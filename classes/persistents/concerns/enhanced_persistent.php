@@ -45,7 +45,7 @@ trait enhanced_persistent {
     }
 
     /**
-     * Creates a new persistent record with the given array of attributes
+     * Creates a new persistent record with the given object
      * 
      * @param  object  $data
      * @return object (persistent)

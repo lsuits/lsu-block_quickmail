@@ -78,6 +78,8 @@ class compose_message_form extends \moodleform {
         } else {
             $mform->addElement('static', 'from_email_text', $this->get_plugin_string('from'), $this->user_alternate_email_array[0]);
             $mform->addHelpButton('from_email_text', 'from', 'block_quickmail');
+            $mform->addElement('hidden', 'alternate_email_id', 0);
+            $mform->setType('alternate_email_id', PARAM_INT);
         }
 
         ////////////////////////////////////////////////////////////
@@ -118,6 +120,8 @@ class compose_message_form extends \moodleform {
             $mform->addElement('select', 'signature_id', $this->get_plugin_string('signature'), $this->get_user_signature_options());
         } else {
             $mform->addElement('static', 'add_signature_text', $this->get_plugin_string('sig'), $this->get_plugin_string('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . $this->get_plugin_string('create_one_now') . '</a>'));
+            $mform->addElement('hidden', 'signature_id', 0);
+            $mform->setType('signature_id', PARAM_INT);
         }
 
         ////////////////////////////////////////////////////////////
