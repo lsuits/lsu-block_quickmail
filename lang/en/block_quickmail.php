@@ -239,7 +239,8 @@ $string['admin_email_send_receipt'] = 'Admin Email Send Receipt';
 $string['something_broke'] = 'It looks like you either have email sending disabled or things are very broken';
 $string['time_elapsed'] = 'Time Elapsed: ';
 
-$string['redirect_back_to_course_from_message'] = 'Your message has been cancelled and you are now being redirected back to your course, {$a}';
+$string['redirect_back_to_course_from_message_after_cancel'] = 'Your message has been cancelled and you are now being redirected back to your course, {$a}';
+$string['redirect_back_to_course_from_message_after_send'] = 'Your message has been successfully sent!';
 $string['cancel_and_redirect_to_course'] = 'Any changes have been cancelled and you are now being redirected back to your course, {$a}';
 $string['redirect_back_to_dashboard_from_signature'] = 'Any changes have been cancelled and you are now being redirected back to your dashboard.';
 

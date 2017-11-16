@@ -39,11 +39,11 @@ class message_message_factory extends message_factory implements message_factory
         // assign the recipient user
         $this->message_object->userto = $recipient_user;
         
-        // parse the message bodies
-        // TODO: do we need to do both of these? fix this!!
-        $parsed_message_body = $this->message_body_parser->inject_user_data($recipient_user);
-        $this->message_object->fullmessagehtml = $parsed_message_body;
-        $this->message_object->fullmessage = $parsed_message_body;
+        // inject user data, append signature
+        $message_body = $this->get_formatted_message_body_for_user($recipient_user);
+
+        $this->message_object->fullmessagehtml = $message_body;
+        $this->message_object->fullmessage = $message_body;
 
         return message_send($this->message_object);
     }

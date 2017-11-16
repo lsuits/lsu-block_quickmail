@@ -194,6 +194,18 @@ class signature extends persistent {
         return (bool) $this->get('default_flag');
     }
 
+    /**
+     * Returns a message body with this signature appended
+     * 
+     * @param  string  $message_body
+     * @return string
+     */
+    public function get_message_body_with_signature_appended($message_body = '') {
+        $message_body .= '<br><br>' . $this->get('signature');
+
+        return $message_body;
+    }
+
     ///////////////////////////////////////////////
     ///
     ///  CUSTOM STATIC METHODS

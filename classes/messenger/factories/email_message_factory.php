@@ -28,16 +28,17 @@ class email_message_factory extends message_factory implements message_factory_i
      * @return bool
      */
     public function send_message($recipient_user) {
-        // get the parsed message body
-        $parsed_message_body = $this->message_body_parser->inject_user_data($recipient_user);
+
+        // inject user data, append signature
+        $message_body = $this->get_formatted_message_body_for_user($recipient_user);
 
         // send the email
         $success = email_to_user(
             $recipient_user, 
             $this->userfrom, 
             $this->subject, 
-            $parsed_message_body, // messagetext
-            $parsed_message_body, // messagehtml
+            $message_body, // messagetext
+            $message_body, // messagehtml
             '', // $attachment
             '', // $attachname
             true, // $usetrueaddress

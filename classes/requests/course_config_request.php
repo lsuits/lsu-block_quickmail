@@ -148,7 +148,7 @@ class course_config_request extends \block_quickmail_request {
     /**
      * Returns the "prepend class" config setting
      * 
-     * @return string   idnumber|shortname
+     * @return string   idnumber|shortname|fullname
      */
     public function prepend_class($form_data = null) {
         return ! empty($form_data) ? (string) $this->form_data->prepend_class : '';

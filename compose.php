@@ -84,7 +84,7 @@ $compose_message_request = \block_quickmail\requests\compose_message_request::ma
 if ($compose_message_request->was_cancelled()) {
     
     // redirect back to course
-    $compose_message_request->redirect_back_to_course();
+    $compose_message_request->redirect_back_to_course_after_cancel();
 
 // if sending message
 } else if ($compose_message_request->to_send_message()) {
@@ -101,7 +101,7 @@ if ($compose_message_request->was_cancelled()) {
     }
 
     // $messenger_response
-    dd('all sent!');
+    $compose_message_request->redirect_back_to_course_after_send();
     
     // after send redirect to history
 

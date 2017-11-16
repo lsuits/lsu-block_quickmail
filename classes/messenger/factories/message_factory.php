@@ -37,6 +37,39 @@ class message_factory {
     }
 
     /**
+     * Returns a formatted message for the given user by injecting custom data, and appending signature
+     * 
+     * @param  core_user  $user
+     * @return string
+     */
+    public function get_formatted_message_body_for_user($user) {
+        // get the parsed message body
+        $message_body = $this->message_body_parser->inject_user_data($user);
+
+        // add signature if necessary
+        // @TODO - we can move this elsewhere to only execute it once!!
+        $message_body = $this->append_signature($message_body);
+
+        return $message_body;
+    }
+
+    /**
+     * Returns a message body with signature content appended, if necessary
+     * 
+     * @param  string  $message_body
+     * @return string
+     */
+    private function append_signature($message_body) {
+        // append the selected signature, if any
+        if ( ! empty($this->signature)) {
+            return $this->signature->get_message_body_with_signature_appended($message_body);
+        }
+
+        // otherwise, just return back the original body
+        return $message_body;
+    }
+
+    /**
      * Returns a validated reply-to email address for this message
      * 
      * @return string

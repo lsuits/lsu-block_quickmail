@@ -137,11 +137,11 @@ class messenger {
         );
 
         // get select posted attributes
-        $alternate_email_id = ! empty($messenger->alternate_email) ? $messenger->alternate_email->id : 0;
-        $signature_id = ! empty($messenger->signature) ? $messenger->signature->id : 0;
+        $alternate_email_id = ! empty($messenger->alternate_email) ? $messenger->alternate_email->get('id') : 0;
+        $signature_id = ! empty($messenger->signature) ? $messenger->signature->get('id') : 0;
         $subject = $messenger->message_data->subject;
         $body = $messenger->message_data->message;
-
+        
         // if this is a draft message being sent, make sure it has not been sent and is updated with the latest data
         if ($messenger->is_draft_send()) {
             // if the draft has already been sent, throw an exception
@@ -152,6 +152,8 @@ class messenger {
             } else {
                 // grab the draft message instance
                 $draft = $messenger->draft_message;
+
+                // @TODO - here we also need to reconcile the "additional emails!!!"
 
                 // update attributes that may have changed from compose page
                 $draft->set('alternate_email_id', $alternate_email_id);
@@ -184,6 +186,9 @@ class messenger {
 
         // clear any existing recipients, and add those that have been recently posted
         $messenger->message->sync_recipients($messenger->message_data->mailto_ids);
+
+        // clear any existing additional emails, and add those that have been recently posted
+        $messenger->message->sync_additional_emails($messenger->message_data->additional_emails);
 
         // attempt to send the set message to all recipients
         $messenger_response = $messenger->send_composed();
@@ -230,15 +235,104 @@ class messenger {
 
             // if successful response, mark this user as being sent to
             if ($factory_response) {
-                message_recipient::mark_as_sent($this->message, $user);
+                message_recipient::mark_as_sent($this->message, $user, $this->convert_factory_response_to_id($factory_response));
             }
 
-            // set the moodle message
-            $this->message->set('moodle_message_id', $this->convert_factory_response_to_id($factory_response));
+            // update the message as being sent
+            $this->message->set('sent_at', time());
             $this->message->update();
         }
 
+        // attempt to send to additional emails, if necessary
+        $this->send_to_additional_emails($this->message->get_additional_emails());
+
+        // if this sender has requested a receipt, send one
+        if ($this->message_data->receipt) {
+            $this->send_receipt_email();
+        }
+
         return $this;
+    }
+
+    /**
+     * Attempt to send a copy of the message to the given additional emails
+     * 
+     * @param  array  $additional_emails  (a collection of message_additional_email)
+     * @return void
+     */
+    private function send_to_additional_emails($additional_emails = []) {
+        $i = 99999800;
+
+        foreach($additional_emails as $additional_email) {
+            // format the message body by appending the signature
+            // @TODO - find some way to clean out any custom data fields for this fake user (??)
+            $message_body = ! empty($this->signature) 
+                ? $this->signature->get_message_body_with_signature_appended($this->message_data->message) 
+                : $this->message_data->message;
+
+            // attempt to send the email
+            if ($additional_email_success = $this->send_email($this->format_message_subject(), $message_body, $message_body, null, $additional_email->get('email'), $i)) {
+                $additional_email->mark_as_sent();
+            }
+            
+            $i++;
+        }
+    }
+
+    private function send_receipt_email() {
+        // format the message body by appending the signature
+        // @TODO - find some way to clean out any custom data fields for this fake user (??)
+        $message_body = ! empty($this->signature) 
+            ? $this->signature->get_message_body_with_signature_appended($this->message_data->message) 
+            : $this->message_data->message;
+
+        $success = $this->send_email('Receipt: ' . $this->format_message_subject(), $message_body, $message_body, $this->user);
+
+        return $success;
+    }
+
+    /**
+     * Attempts to send an email from this message's user using the given parameters
+     * 
+     * @param  string          $subject            subject of the email
+     * @param  string          $message_body_text  plain text body content
+     * @param  string          $message_body_html  html body content
+     * @param  core_user|null  $to_user            a real moodle user to receive the email (optional)
+     * @param  string          $fake_user_email    the email address to send to if no real user was given
+     * @param  string          $fake_user_id       a fake user id needed for sending purposes
+     * @return bool
+     */
+    private function send_email($subject, $message_body_text, $message_body_html, $to_user = null, $fake_user_email = '', $fake_user_id = null) {
+        
+        // if no recipient user was given, make a fake user
+        if ( ! $to_user) {
+            // if no fake user id was given, generate one
+            $id = ! empty($fake_user_id) ? $fake_user_id : mt_rand(99999800, 99999999);
+
+            // get the constructed fake user
+            $to_user = $this->make_fake_user($fake_user_email, $id);
+        }
+
+        $success = email_to_user($to_user, $this->user, $subject, $message_body_text, $message_body_html);
+
+        return (bool) $success;
+    }
+
+    /**
+     * Construct and return a "fake" user for direct emailing purposes
+     * 
+     * @param  string  $fake_user_email
+     * @param  int     $fake_user_id
+     * @return object
+     */
+    private function make_fake_user($fake_user_email, $fake_user_id) {
+        $fakeuser = new \stdClass();
+        $fakeuser->id = $fake_user_id;
+        $fakeuser->email = $fake_user_email;
+        $fakeuser->username = $fake_user_email;
+        $fakeuser->mailformat = 1; // @TODO - make this configurable??
+
+        return $fakeuser;
     }
 
     private function make_message_factory() {

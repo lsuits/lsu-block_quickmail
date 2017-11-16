@@ -158,6 +158,12 @@ class compose_message_request extends \block_quickmail_request {
     public function additional_emails($form_data = null) {
         $emails = ! empty($form_data) ? array_unique(explode(',', $this->form->get_data()->additional_emails)) : [];
 
+        // eliminate any white space
+        $emails = array_map(function($email) {
+            return trim($email);
+        }, $emails);
+
+        // return all valid emails
         return array_filter($emails, function($email) {
             return strlen($email) > 0;
         });
@@ -224,10 +230,16 @@ class compose_message_request extends \block_quickmail_request {
      * 
      * @return (http redirect header)
      */
-    public function redirect_back_to_course() {
+    public function redirect_back_to_course_after_cancel() {
         $url = new moodle_url('/course/view.php', ['id' => $this->course->id]);
 
-        redirect($url, block_quickmail_plugin::_s('redirect_back_to_course_from_message', $this->course->fullname), 2);
+        redirect($url, block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $this->course->fullname), 2);
+    }
+
+    public function redirect_back_to_course_after_send() {
+        $url = new moodle_url('/course/view.php', ['id' => $this->course->id]);
+
+        redirect($url, block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send'), 2);
     }
 
 }

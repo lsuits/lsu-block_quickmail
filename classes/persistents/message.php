@@ -10,6 +10,7 @@ use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\message_recipient;
+use block_quickmail\persistents\message_additional_email;
  
 class message extends persistent {
  
@@ -65,10 +66,6 @@ class message extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => false,
             ],
-            'moodle_message_id' => [
-                'type' => PARAM_INT,
-                'default' => 0,
-            ],
             'timedeleted' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -82,7 +79,16 @@ class message extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    //
+    /**
+     * Returns the additional emails that are associated with this message
+     *
+     * @return array
+     */
+    public function get_additional_emails() {
+        $messageId = $this->get('id');
+
+        return message_additional_email::get_records(['message_id' => $messageId]);
+    }
 
     ///////////////////////////////////////////////
     ///
@@ -148,6 +154,23 @@ class message extends persistent {
         // add all new recipients
         foreach ($recipient_user_ids as $user_id) {
             message_recipient::create_for_message($this, ['user_id' => $user_id]);
+        }
+    }
+
+    /**
+     * Replaces all additional emails for this message with the given array of emails
+     * 
+     * @param  array  $additional_emails
+     * @return void
+     */
+    public function sync_additional_emails($additional_emails = [])
+    {
+        // clear all current recipients
+        message_additional_email::clear_all_for_message($this);
+
+        // add all new recipients
+        foreach ($additional_emails as $email) {
+            message_additional_email::create_for_message($this, ['email' => $email]);
         }
     }
 

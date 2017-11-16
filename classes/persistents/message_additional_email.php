@@ -7,6 +7,7 @@ use core_user;
 use lang_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
+use block_quickmail\persistents\message;
  
 class message_additional_email extends persistent {
  
@@ -55,10 +56,38 @@ class message_additional_email extends persistent {
 
     ///////////////////////////////////////////////
     ///
+    ///  CUSTOM METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Mark this additional email as have being sent to successfully
+     * 
+     * @return void
+     */
+    public function mark_as_sent() {
+        $this->set('sent_at', time());
+        $this->update();
+    }
+
+    ///////////////////////////////////////////////
+    ///
     ///  CUSTOM STATIC METHODS
     /// 
     ///////////////////////////////////////////////
 
-    //
+    /**
+     * Deletes all additional emails for this message
+     * 
+     * @param  message $message
+     * @return void
+     */
+    public static function clear_all_for_message(message $message)
+    {
+        global $DB;
+
+        // delete all recipients belonging to this message
+        $DB->delete_records('block_quickmail_msg_ad_email', ['message_id' => $message->get('id')]);
+    }
  
 }

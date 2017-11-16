@@ -188,7 +188,8 @@ class course_config_form extends \moodleform {
         return [
             0 => get_string('none'),
             'idnumber' => get_string('idnumber'),
-            'shortname' => get_string('shortname')
+            'shortname' => get_string('shortname'),
+            'fullname' => get_string ('fullname')
         ];
     }
 
@@ -203,6 +204,5 @@ class course_config_form extends \moodleform {
 
         return block_quickmail_plugin::_s('output_channel_' . $key);
     }
-
 
 }

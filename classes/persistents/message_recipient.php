@@ -6,6 +6,7 @@ use core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
+use block_quickmail\persistents\message;
  
 class message_recipient extends persistent {
  
@@ -28,6 +29,10 @@ class message_recipient extends persistent {
             ],
             'user_id' => [
                 'type' => PARAM_INT,
+            ],
+            'moodle_message_id' => [
+                'type' => PARAM_INT,
+                'default' => 0
             ],
             'sent_at' => [
                 'type' => PARAM_INT,
@@ -78,9 +83,10 @@ class message_recipient extends persistent {
      * 
      * @param  message    $message
      * @param  core_user  $user
+     * @param  int        $moodle_message_id
      * @return void
      */
-    public static function mark_as_sent(message $message, $user)
+    public static function mark_as_sent(message $message, $user, $moodle_message_id = 0)
     {
         $recipient = self::get_record([
             'message_id' => $message->get('id'), 
@@ -88,6 +94,7 @@ class message_recipient extends persistent {
         ]);
 
         $recipient->set('sent_at', time());
+        $recipient->set('moodle_message_id', (int) $moodle_message_id);
         
         $recipient->update();
     }
