@@ -242,4 +242,10 @@ class compose_message_request extends \block_quickmail_request {
         redirect($url, block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send'), 2);
     }
 
+    public function redirect_back_to_course_after_save() {
+        $url = new moodle_url('/course/view.php', ['id' => $this->course->id]);
+
+        redirect($url, block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save'), 2);
+    }
+
 }

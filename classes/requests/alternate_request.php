@@ -50,7 +50,7 @@ class alternate_request extends \block_quickmail_request {
     ];
 
     /**
-     * Construct the message submission request
+     * Construct the alternate submission request
      * 
      * @param manage_alternates_form  $manage_alternates_form  (extends moodleform)
      * @param array                   $page_params

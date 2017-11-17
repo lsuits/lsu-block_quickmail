@@ -238,6 +238,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('output_channel', XMLDB_TYPE_CHAR, '8', null, XMLDB_NOTNULL, null, null);
         $table->add_field('alternate_email_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('signature_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('subject', XMLDB_TYPE_TEXT, null, null, null, null, null);

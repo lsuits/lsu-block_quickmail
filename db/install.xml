@@ -4,27 +4,6 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <!-- <TABLE NAME="block_quickmail_log" COMMENT="Stores the email history for the quickmail block">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="alternateid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="mailto" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="attachment" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="failuserids" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="additional_emails" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for block_quickmail_log"/>
-        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
-        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE> -->
     <TABLE NAME="block_quickmail_signatures" COMMENT="Stores signatures for users">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -42,24 +21,6 @@
         <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <!-- <TABLE NAME="block_quickmail_drafts" COMMENT="Stores drafts for users">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="alternateid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="mailto" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="message" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="attachment" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="additional_emails" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE> -->
     <TABLE NAME="block_quickmail_config" COMMENT="Stores config info for teachers, per instance basis.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -71,22 +32,12 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <!-- <TABLE NAME="block_quickmail_alternate" COMMENT="Stores alternate email sources for users.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="address" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="valid" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE> -->
     <TABLE NAME="block_quickmail_messages" COMMENT="All message batches including saved drafts and sent messages">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course id that this message was sent from"/>
         <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user id that composed this message"/>
+        <FIELD NAME="output_channel" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="The selected output channel of this message."/>
         <FIELD NAME="alternate_email_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional alternate email id that this message was sent from"/>
         <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject line"/>
         <FIELD NAME="body" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The body of the message"/>

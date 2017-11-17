@@ -23,6 +23,7 @@
  */
 
 use block_quickmail\forms\compose_message_form;
+use block_quickmail\forms\view_drafts_form;
 use block_quickmail\forms\manage_signatures_form;
 use block_quickmail\forms\course_config_form;
 use block_quickmail\forms\manage_alternates_form;
@@ -73,7 +74,7 @@ class block_quickmail_form {
      * @param  object        $user                   auth user
      * @param  persistent    $signature              optional, defaults to null
      * @param  int           $course_id              optional, course id
-     * @return manage_signature_form
+     * @return manage_signatures_form
      */
     public static function make_manage_signatures_form($context, $user, $signature = null, $course_id = 0)
     {

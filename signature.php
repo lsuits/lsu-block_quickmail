@@ -25,7 +25,7 @@ $PAGE->set_url(new moodle_url($page_url, $page_params));
 $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
 $PAGE->navbar->add(block_quickmail_plugin::_s('signatures'));
 $PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('manage_signatures'));
-$PAGE->requires->css(new moodle_url($CFG->wwwroot . "/blocks/quickmail/style.css"));
+$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/manage-signatures', 'init', ['courseid' => $page_params['courseid']]);
 
 // find the requested signature, if any, which must belong to the auth user

@@ -12,7 +12,7 @@ class send_validator {
     public $custom_user_data_keys;
     
     /**
-     * Construct the messenger service
+     * Construct the validation service
      * 
      * @param block_quickmail\messenger\messenger  $messenger
      */

@@ -235,6 +235,21 @@ class block_quickmail_plugin {
     }
 
     /**
+     * Returns the user table field names that may be configured to be injected dynamically into messages
+     * 
+     * @return array
+     */
+    public static function get_supported_user_fields() {
+        return [
+            'firstname',
+            'middlename',
+            'lastname',
+            'email',
+            'alternatename',
+        ];
+    }
+
+    /**
      * Returns an array of editor options with a given context
      * 
      * @param  object $context
@@ -315,23 +330,33 @@ class block_quickmail_plugin {
 
     ////////////////////////////////////////////////////
     ///
-    ///  LOCALIZATION
+    ///  HELPERS
     ///  
     ////////////////////////////////////////////////////
 
     /**
-     * Returns the user table field names that may be configured to be injected dynamically into messages
+     * Returns a trimmed, shortened, "preview" string with appendage and default if no content
      * 
-     * @return array
+     * @param  string  $string     the string to be previewed
+     * @param  int     $length     number of characters to be displayed
+     * @param  string  $appendage  a string to be appended if string is cut off
+     * @param  string  $default    default string to be returned is no string is given
+     * @return string
      */
-    public static function get_supported_user_fields() {
-        return [
-            'firstname',
-            'middlename',
-            'lastname',
-            'email',
-            'alternatename',
-        ];
+    public static function render_preview_string($string, $length, $appendage = '...', $default = '--') {
+        $string = trim($string);
+
+        if ( ! $string) {
+            return $default;
+        }
+
+        if (strlen($string) > $length) {
+            $string = wordwrap($string, $length);
+            $string = explode("\n", $string, 2);
+            $string = $string[0] . $appendage;
+        }
+
+        return $string;
     }
 
 }

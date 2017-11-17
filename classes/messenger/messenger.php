@@ -141,6 +141,7 @@ class messenger {
         $signature_id = ! empty($messenger->signature) ? $messenger->signature->get('id') : 0;
         $subject = $messenger->message_data->subject;
         $body = $messenger->message_data->message;
+        $output_channel = $messenger->message_data->output_channel;
         
         // if this is a draft message being sent, make sure it has not been sent and is updated with the latest data
         if ($messenger->is_draft_send()) {
@@ -153,9 +154,8 @@ class messenger {
                 // grab the draft message instance
                 $draft = $messenger->draft_message;
 
-                // @TODO - here we also need to reconcile the "additional emails!!!"
-
                 // update attributes that may have changed from compose page
+                $draft->set('output_channel', $output_channel);
                 $draft->set('alternate_email_id', $alternate_email_id);
                 $draft->set('signature_id', $signature_id);
                 $draft->set('subject', $subject);
@@ -171,6 +171,7 @@ class messenger {
             $message = new message(0, (object) [
                 'course_id' => $messenger->course->id,
                 'user_id' => $messenger->user->id,
+                'output_channel' => $output_channel,
                 'alternate_email_id' => $alternate_email_id,
                 'signature_id' => $signature_id,
                 'subject' => $subject,
@@ -335,6 +336,11 @@ class messenger {
         return $fakeuser;
     }
 
+    /**
+     * Instantiates a message factory class based on the selected output channel
+     * 
+     * @return message_messenger_interface
+     */
     private function make_message_factory() {
         $factory_class = $this->get_message_factory_class_name();
 
@@ -349,7 +355,7 @@ class messenger {
     }
 
     /**
-     * Instantiates a message factory class based on the selected output channel
+     * Returns this message's factory class name based on the selected output channel
      * 
      * @return message_messenger_interface
      */

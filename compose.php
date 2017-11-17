@@ -95,7 +95,7 @@ if ($compose_message_request->was_cancelled()) {
     } catch (\block_quickmail\messenger\exceptions\messenger_authentication_exception $e) {
         print_error('no_permission', 'block_quickmail');
     } catch (\block_quickmail\messenger\exceptions\messenger_validation_exception $e) {
-        render_messenger_validation_nofitications($e);
+        render_validation_nofitications($e);
     } catch (\block_quickmail\messenger\exceptions\messenger_critical_exception $e) {
         print_error('critical_error', 'block_quickmail');
     }
@@ -103,11 +103,25 @@ if ($compose_message_request->was_cancelled()) {
     // $messenger_response
     $compose_message_request->redirect_back_to_course_after_send();
     
-    // after send redirect to history
+    // @TODO - after send redirect to history
 
 // if saving draft
 } else if ($compose_message_request->to_save_draft()) {
-    dd('save draft!');
+    // attempt to save draft, handle exceptions
+    try {
+        $draft_message = \block_quickmail\drafter\drafter::save_by_compose_request($compose_message_request);
+    } catch (\block_quickmail\drafter\exceptions\drafter_authentication_exception $e) {
+        print_error('no_permission', 'block_quickmail');
+    } catch (\block_quickmail\drafter\exceptions\drafter_validation_exception $e) {
+        render_validation_nofitications($e);
+    } catch (\block_quickmail\drafter\exceptions\drafter_critical_exception $e) {
+        print_error('critical_error', 'block_quickmail');
+    }
+
+    // $draft_message
+    $compose_message_request->redirect_back_to_course_after_save();
+
+    // @TODO - after send redirect to compose
 }
 
 // get the rendered form
@@ -131,7 +145,7 @@ echo $OUTPUT->footer();
  * @param  \Exception $exception
  * @return void
  */
-function render_messenger_validation_nofitications($exception) {
+function render_validation_nofitications($exception) {
     if (count($exception->errors)) {
         $html = '<ul>';
         

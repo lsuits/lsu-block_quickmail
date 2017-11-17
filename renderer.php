@@ -27,6 +27,7 @@ require_once 'classes/forms/manage_signatures_form.php';
 require_once 'classes/forms/course_config_form.php';
 
 use block_quickmail\renderables\compose_message_component;
+use block_quickmail\renderables\draft_message_index_component;
 use block_quickmail\renderables\manage_signatures_component;
 use block_quickmail\renderables\course_config_component;
 use block_quickmail\renderables\alternate_index_component;
@@ -54,6 +55,22 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $compose_message_component->compose_form->render();
 
         return $this->output->container($out, 'compose_message_component');
+    }
+
+    ////////////////////////////////////////
+    /// DRAFT MESSAGE INDEX
+    ////////////////////////////////////////
+    
+    public function draft_message_index_component($params = []) {
+        $draft_message_index_component = new draft_message_index_component($params);
+        
+        return $this->render($draft_message_index_component);
+    }
+
+    protected function render_draft_message_index_component(draft_message_index_component $draft_message_index_component) {
+        $data = $draft_message_index_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/draft_message_index', $data);
     }
 
     ////////////////////////////////////////

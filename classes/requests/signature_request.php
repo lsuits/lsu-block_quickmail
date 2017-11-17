@@ -44,7 +44,7 @@ class signature_request extends \block_quickmail_request {
     ];
 
     /**
-     * Construct the message submission request
+     * Construct the signature submission request
      * 
      * @param manage_signatures_form  $manage_signatures_form  (extends moodleform)
      */

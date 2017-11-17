@@ -127,24 +127,24 @@ class block_quickmail extends block_list {
                     'icon_key' => 't/email',
                     'page' => 'compose',
                 ],
+                // manage drafts
+                [
+                    'lang_key' => 'drafts',
+                    'icon_key' => 'i/open',
+                    'page' => 'drafts',
+                ],
                 // manage signatures
                 [
                     'lang_key' => 'manage_signatures',
                     'icon_key' => 'i/edit',
                     'page' => 'signature',
                 ],
-                // manage drafts
-                // [
-                //     'lang_key' => 'drafts',
-                //     'icon_key' => 'i/settings',
-                //     'page' => 'emaillog',
-                //     'extra_link_params' => ['type' => 'drafts'],
-                // ],
                 // view send history
                 // [
                 //     'lang_key' => 'history',
                 //     'icon_key' => 'i/settings',
                 //     'page' => 'emaillog',
+                //     'extra_link_params' => ['type' => 'drafts'],
                 // ],
             ];
 

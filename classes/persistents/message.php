@@ -2,6 +2,7 @@
 
 namespace block_quickmail\persistents;
 
+use block_quickmail_plugin;
 use \core\persistent;
 use \lang_string;
 use \dml_missing_record_exception;
@@ -34,6 +35,9 @@ class message extends persistent {
             ],
             'user_id' => [
                 'type' => PARAM_INT,
+            ],
+            'output_channel' => [
+                'type' => PARAM_TEXT,
             ],
             'alternate_email_id' => [
                 'type' => PARAM_INT,
@@ -113,6 +117,18 @@ class message extends persistent {
         
         //
 
+    }
+
+    public function get_subject_preview($length = 20) {
+        return block_quickmail_plugin::render_preview_string($this->get('subject'), $length, '...', '(No subject)');
+    }
+
+    public function get_body_preview($length = 40) {
+        return block_quickmail_plugin::render_preview_string(strip_tags($this->get('body')), $length, '...', '(No content)');
+    }
+
+    public function get_readable_last_modified() {
+        return date('Y-m-d H:i:s', $this->get('timemodified'));
     }
     
 
@@ -227,6 +243,31 @@ class message extends persistent {
         }
 
         return $message;
+    }
+
+    /**
+     * Returns all unsent, non-deleted, draft messages belonging to the given user id
+     *
+     * Optionally, can be scoped to a specific course if given a course_id
+     * 
+     * @param  int     $user_id
+     * @param  int     $course_id   optional, defaults to 0 (all)
+     * @return array
+     */
+    public static function get_all_unsent_drafts_for_user($user_id, $course_id = 0)
+    {
+        $params = [
+            'user_id' => $user_id, 
+            'is_draft' => 1, 
+            'sent_at' => null, 
+            'timedeleted' => 0
+        ];
+
+        if ($course_id) {
+            $params['course_id'] = $course_id;
+        }
+
+        return self::get_records($params);
     }
  
 }

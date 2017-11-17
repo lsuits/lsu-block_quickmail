@@ -47,7 +47,7 @@ class course_config_request extends \block_quickmail_request {
     ];
 
     /**
-     * Construct the message submission request
+     * Construct the config submission request
      * 
      * @param course_config_form  $course_config_form  (extends moodleform)
      */

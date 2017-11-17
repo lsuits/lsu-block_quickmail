@@ -44,8 +44,8 @@ $string['send_email'] = 'Send Email'; // <---- deprecate
 $string['allowstudents'] = 'Allow students to use Quickmail';
 $string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
 $string['select_roles'] = 'Roles to filter by';
-$string['receipt'] = 'Receive a copy';
-$string['receipt_help'] = 'Receive a copy of the email being sent';
+$string['receipt'] = 'Receive a send report';
+$string['receipt_help'] = 'Receive an emailed report with the details of this message send';
 $string['prepend_class'] = 'Prepend Course name';
 $string['prepend_class_desc'] = 'Prepend the course shortname to the subject of the email.';
 $string['ferpa'] = 'FERPA Mode';
@@ -240,7 +240,8 @@ $string['something_broke'] = 'It looks like you either have email sending disabl
 $string['time_elapsed'] = 'Time Elapsed: ';
 
 $string['redirect_back_to_course_from_message_after_cancel'] = 'Your message has been cancelled and you are now being redirected back to your course, {$a}';
-$string['redirect_back_to_course_from_message_after_send'] = 'Your message has been successfully sent!';
+$string['redirect_back_to_course_from_message_after_send'] = 'Your message has been successfully sent.';
+$string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['cancel_and_redirect_to_course'] = 'Any changes have been cancelled and you are now being redirected back to your course, {$a}';
 $string['redirect_back_to_dashboard_from_signature'] = 'Any changes have been cancelled and you are now being redirected back to your dashboard.';
 
