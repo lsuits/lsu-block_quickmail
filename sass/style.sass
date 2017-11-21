@@ -1,19 +1,20 @@
-// signatures page
+#page-block-quickmail
+    label
+        font-weight: 500
+        color: dimgray
 
-label
-    font-weight: 500
-    color: dimgray
+    label[for=id_select_signature_id]
+        display: block!important
 
-label[for=id_select_signature_id]
-    display: block!important
+    #create-alternative-modal-container
+        .form-control.has-error
+            border: 1px solid rgba(255, 0, 0, 1.0)
 
-    img.spinner-img
-        margin-left: 30px
-        display: none
+    div.compose_message_component
+        .mform input
+            width: 100% 
 
-#delete_confirmation_confirm
-    margin-right: 20px
-
-#create-alternative-modal-container
-    .form-control.has-error
-        border: 1px solid rgba(255, 0, 0, 1.0)
+    div.manage_signatures_component
+        img.spinner-img
+            margin-left: 30px
+            display: none

@@ -46,6 +46,7 @@ class block_quickmail_form {
         // build target URL
         $target = '?' . http_build_query([
             'courseid' => $course->id,
+            'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
         ], '', '&');
 
         // get the auth user's available alternate emails for this course

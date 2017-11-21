@@ -44,6 +44,7 @@
         <FIELD NAME="editor_format" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The editor format id"/>
         <FIELD NAME="sent_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for when this message was sent"/>
         <FIELD NAME="is_draft" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this is a message draft"/>
+        <FIELD NAME="send_receipt" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message sender should receive a receipt message."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>

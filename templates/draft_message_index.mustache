@@ -1,4 +1,12 @@
 <div class="block_quickmail_draft_message_index">
+    <select id="select_course_filter_draft">
+        <option value="0">All Courses</option>
+        {{# userCourseArray }}
+            <option value="{{ courseId }}">{{ courseName }}</option>
+            <!-- TODO: need to fix this!! make selected when appropriate -->
+        {{/ userCourseArray }}
+    </select>
+
     <table class="table table-hover">
         <thead>
             <tr>
@@ -16,7 +24,7 @@
                     <td>{{ messagePreview }}</td>
                     <td>{{ lastModified }}</td>
                     <td>
-                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} compose, block_quickmail {{/ str }}</button>
+                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</button>
                     </td>
                 </tr>
             {{/ tableRows }}

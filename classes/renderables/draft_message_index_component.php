@@ -43,7 +43,7 @@ class draft_message_index_component extends renderable_component implements \ren
         $this->draft_messages = $this->get_param('draft_messages');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
-        $this->user_course_array = $this->get_param('user_course_array');
+        $this->user_course_array = $this->get_user_course_array($this->draft_messages, $this->course_id);
     }
 
     /**
@@ -54,6 +54,8 @@ class draft_message_index_component extends renderable_component implements \ren
     public function export_for_template($output) {
         $data = (object)[];
 
+        $data->userCourseArray = $this->transform_course_array($this->user_course_array);
+
         $data->courseId = $this->course_id;
 
         $data->tableHeadings = [
@@ -61,11 +63,6 @@ class draft_message_index_component extends renderable_component implements \ren
             'Subject Preview',
             'Message Preview',
             'Last Modified'
-            // get_string('email'),
-            // get_string('fullname'),
-            // block_quickmail_plugin::_s('alternate_availability'),
-            // block_quickmail_plugin::_s('valid'),
-            // get_string('action')
         ];
 
         $data->tableRows = [];
@@ -99,6 +96,64 @@ class draft_message_index_component extends renderable_component implements \ren
             : 'Back to My page'; // TODO - make this a lang string
 
         return $data;
+    }
+
+    /**
+     * Returns an array given an array of draft messages
+     * This will include the currently selected course, even if that course does not have any pending drafts
+     * 
+     * @param  array  $all_draft_messages
+     * @param  int    $selected_course_id
+     * @return array  [course id => course short name]
+     */
+    private function get_user_course_array($all_draft_messages, $selected_course_id = 0) {
+        global $DB;
+        
+        // first, get all course ids from the given drafts
+        $course_ids = array_reduce($all_draft_messages, function($carry, $draft) {
+            $carry[] = (int) $draft->get('course_id');
+
+            return $carry;
+        }, []);
+
+        // if a selected course id was given, be sure to include this course in the results
+        if ($selected_course_id) {
+            $course_ids[] = $selected_course_id;
+        }
+
+        // make sure we have unique values
+        $course_ids = array_unique($course_ids, SORT_NUMERIC);
+
+        // get course data for the given list of course ids
+        $course_data = $DB->get_records_sql('SELECT id, shortname FROM {course} WHERE id in (' . implode(',', $course_ids) . ')');
+
+        $results = [];
+
+        // add an entry for each course to the results array
+        foreach ($course_data as $course) {
+            $results[(int) $course->id] = $course->shortname;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Returns a transformed array for template given a flat array of course id => course name
+     * 
+     * @param  array  $course_array
+     * @return array
+     */
+    private function transform_course_array($course_array) {
+        $results = [];
+
+        foreach ($course_array as $id => $shortname) {
+            $results[] = [
+                'courseId' => (string) $id, 
+                'courseName' => $shortname,
+            ];
+        }
+
+        return $results;
     }
 
 }

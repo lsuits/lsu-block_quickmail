@@ -70,6 +70,10 @@ class message extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => false,
             ],
+            'send_receipt' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
             'timedeleted' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -86,12 +90,51 @@ class message extends persistent {
     /**
      * Returns the additional emails that are associated with this message
      *
+     * Optionally, returns an array of emails
+     *
      * @return array
      */
-    public function get_additional_emails() {
+    public function get_additional_emails($as_email_array = false) {
         $messageId = $this->get('id');
 
-        return message_additional_email::get_records(['message_id' => $messageId]);
+        $additionals = message_additional_email::get_records(['message_id' => $messageId]);
+
+        if ( ! $as_email_array) {
+            return $additionals;
+        }
+
+        $emails = array_reduce($additionals, function ($carry, $additional) {
+            $carry[] = $additional->get('email');
+            
+            return $carry;
+        }, []);
+
+        return $emails;
+    }
+
+    /**
+     * Returns the message recipients that are associated with this message
+     *
+     * Optionally, returns as an array of user ids
+     *
+     * @return array
+     */
+    public function get_message_recipients($as_user_id_array = false) {
+        $messageId = $this->get('id');
+
+        $recipients =  message_recipient::get_records(['message_id' => $messageId]);
+
+        if ( ! $as_user_id_array) {
+            return $recipients;
+        }
+
+        $recipient_ids = array_reduce($recipients, function ($carry, $recipient) {
+            $carry[] = $recipient->get('user_id');
+            
+            return $carry;
+        }, []);
+
+        return $recipient_ids;
     }
 
     ///////////////////////////////////////////////

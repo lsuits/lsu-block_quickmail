@@ -75,9 +75,15 @@ class compose_message_form extends \moodleform {
         if ($this->should_show_alternate_email_selection()) {
             $mform->addElement('select', 'alternate_email_id', $this->get_plugin_string('from'), $this->user_alternate_email_array);
             $mform->addHelpButton('alternate_email_id', 'from', 'block_quickmail');
+
+            // inject default if draft mesage
+            if ($this->is_draft_message()) {
+                $mform->setDefault('alternate_email_id', $this->draft_message->get('alternate_email_id'));
+            }
         } else {
             $mform->addElement('static', 'from_email_text', $this->get_plugin_string('from'), $this->user_alternate_email_array[0]);
             $mform->addHelpButton('from_email_text', 'from', 'block_quickmail');
+            
             $mform->addElement('hidden', 'alternate_email_id', 0);
             $mform->setType('alternate_email_id', PARAM_INT);
         }
@@ -87,14 +93,24 @@ class compose_message_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         $mform->addElement('hidden', 'mailto_ids', '');
         $mform->setType('mailto_ids', PARAM_TEXT);
-        $mform->setDefault('mailto_ids', '123,684,116,677,264,744,');  // <--------------- this is for testing!!!!
+
+        // inject default if draft mesage
+        if ($this->is_draft_message()) {
+            $mform->setDefault('mailto_ids', implode(',', $this->draft_message->get_message_recipients(true)));
+        } else {
+            $mform->setDefault('mailto_ids', '123,684,116,677,264,744,');  // <--------------- this is for testing!!!!
+        }
 
         ////////////////////////////////////////////////////////////
         ///  subject (text)
         ////////////////////////////////////////////////////////////
         $mform->addElement('text', 'subject', $this->get_plugin_string('subject'));
         $mform->setType('subject', PARAM_TEXT);
-        // $mform->addRule('subject', null, 'required', 'client'); // disabling because of draft-saving
+        
+        // inject default if draft mesage
+        if ($this->is_draft_message()) {
+            $mform->setDefault('subject', $this->draft_message->get('subject'));
+        }
         
         ////////////////////////////////////////////////////////////
         ///  additional_emails (text)
@@ -104,20 +120,34 @@ class compose_message_form extends \moodleform {
             $mform->setType('additional_emails', PARAM_TEXT);
             // $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'block_quickmail_mycallback', 'client');
             $mform->addHelpButton('additional_emails', 'additional_emails', 'block_quickmail');
+
+            // inject default if draft mesage
+            if ($this->is_draft_message()) {
+                $mform->setDefault('additional_emails', implode(', ', $this->draft_message->get_additional_emails(true)));
+            }
         }
 
         ////////////////////////////////////////////////////////////
         ///  message_editor (textarea)
         ////////////////////////////////////////////////////////////
-        $mform->addElement('editor', 'message_editor',  $this->get_plugin_string('body'), null, $this->get_editor_options());
+        
+        // inject default if draft mesage
+        $default_text = $this->is_draft_message() ? $this->draft_message->get('body') : '';
+        
+        $mform->addElement('editor', 'message_editor',  $this->get_plugin_string('body'), 'bdfsdgsdg', $this->get_editor_options())
+            ->setValue(['text' => $default_text]);
         $mform->setType('message_editor', PARAM_RAW);
-        // $mform->addRule('message_editor', null, 'required'); // disabling because of draft-saving
 
         ////////////////////////////////////////////////////////////
         ///  signatures (select)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_signature_selection()) {
             $mform->addElement('select', 'signature_id', $this->get_plugin_string('signature'), $this->get_user_signature_options());
+
+            // inject default if draft mesage
+            if ($this->is_draft_message()) {
+                $mform->setDefault('signature_id', $this->draft_message->get('signature_id'));
+            }
         } else {
             $mform->addElement('static', 'add_signature_text', $this->get_plugin_string('sig'), $this->get_plugin_string('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . $this->get_plugin_string('create_one_now') . '</a>'));
             $mform->addElement('hidden', 'signature_id', 0);
@@ -129,7 +159,13 @@ class compose_message_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         if ($this->should_show_output_channel_selection()) {
             $mform->addElement('select', 'output_channel', $this->get_plugin_string('select_output_channel'), $this->get_output_channel_options());
-            $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
+            
+            // inject default if draft mesage
+            if ($this->is_draft_message()) {
+                $mform->setDefault('output_channel', $this->draft_message->get('output_channel'));
+            } else {
+                $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
+            }
         } else {
             $mform->addElement('hidden', 'output_channel');
             $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
@@ -145,7 +181,14 @@ class compose_message_form extends \moodleform {
 
         $mform->addGroup($receipt_options, 'receipt_action', $this->get_plugin_string('receipt'), array(' '), false);
         $mform->addHelpButton('receipt_action', 'receipt', 'block_quickmail');
-        $mform->setDefault('receipt', ! empty($this->course_config_array['receipt']));
+
+        if ($this->is_draft_message()) {
+            // inject default if draft mesage
+            $mform->setDefault('receipt', $this->draft_message->get('send_receipt'));
+        } else {
+            // otherwise, go with this course's config
+            $mform->setDefault('receipt', ! empty($this->course_config_array['receipt']));
+        }
 
         ////////////////////////////////////////////////////////////
         ///  buttons
@@ -172,6 +215,15 @@ class compose_message_form extends \moodleform {
         }
 
         return $errors;
+    }
+
+    /**
+     * Reports whether or not this is a draft message
+     * 
+     * @return bool
+     */
+    private function is_draft_message() {
+        return ! empty($this->draft_message);
     }
 
     /**

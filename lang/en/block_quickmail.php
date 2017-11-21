@@ -89,6 +89,7 @@ $string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // block rendering
 $string['compose'] = 'Compose Message';
+$string['open'] = 'Open';
 $string['composenew'] = 'Compose New Email';
 $string['manage_signatures'] = 'My Signatures';
 $string['signature'] = 'Signature';
@@ -130,6 +131,7 @@ $string['potential_users'] = 'Potential Recipients';
 $string['potential_sections'] = 'Potential Groups';
 $string['no_section'] = 'Not in a group';
 $string['all_sections'] = 'All Groups';
+$string['all_courses'] = 'All Courses';
 $string['attachment'] = 'Attachment(s)';
 $string['message'] = 'Message';
 $string['actions'] = 'Actions';

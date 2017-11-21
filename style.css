@@ -1,17 +1,14 @@
-label {
+#page-block-quickmail label {
   font-weight: 500;
   color: dimgray; }
-
-label[for=id_select_signature_id] {
+#page-block-quickmail label[for=id_select_signature_id] {
   display: block !important; }
-  label[for=id_select_signature_id] img.spinner-img {
-    margin-left: 30px;
-    display: none; }
-
-#delete_confirmation_confirm {
-  margin-right: 20px; }
-
-#create-alternative-modal-container .form-control.has-error {
+#page-block-quickmail #create-alternative-modal-container .form-control.has-error {
   border: 1px solid red; }
+#page-block-quickmail div.compose_message_component .mform input {
+  width: 100%; }
+#page-block-quickmail div.manage_signatures_component img.spinner-img {
+  margin-left: 30px;
+  display: none; }
 
 /*# sourceMappingURL=style.css.map */

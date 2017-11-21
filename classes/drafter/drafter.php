@@ -141,11 +141,12 @@ class drafter {
         $subject = $drafter->message_data->subject;
         $body = $drafter->message_data->message;
         $output_channel = $drafter->message_data->output_channel;
+        $send_receipt = (int) $drafter->message_data->receipt;
         
         // if this is a draft message being saved, make sure it has not been sent and is updated with the latest data
         if ($drafter->is_draft_message()) {
             // if the draft has already been sent, throw an exception
-            if (empty($drafter->draft_message->get('sent_at'))) {
+            if ( ! empty($drafter->draft_message->get('sent_at'))) {
                 $drafter->throw_validation_exception('This message has already been sent.');
 
             // otherwise, update and set the draft message
@@ -160,6 +161,7 @@ class drafter {
                 $draft->set('subject', $subject);
                 $draft->set('body', $body);
                 $draft->set('is_draft', 1);
+                $draft->set('send_receipt', $send_receipt);
                 $draft->update();
                 
                 // set the draft as the message
@@ -176,6 +178,7 @@ class drafter {
                 'subject' => $subject,
                 'body' => $body,
                 'is_draft' => 1,
+                'send_receipt' => $send_receipt
             ]);
 
             // save the draft message

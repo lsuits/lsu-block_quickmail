@@ -142,15 +142,17 @@ class messenger {
         $subject = $messenger->message_data->subject;
         $body = $messenger->message_data->message;
         $output_channel = $messenger->message_data->output_channel;
+        $send_receipt = (int) $messenger->message_data->receipt;
         
         // if this is a draft message being sent, make sure it has not been sent and is updated with the latest data
         if ($messenger->is_draft_send()) {
             // if the draft has already been sent, throw an exception
-            if (empty($messenger->draft_message->get('sent_at'))) {
+            if ( ! empty($messenger->draft_message->get('sent_at'))) {
                 $messenger->throw_validation_exception('This message has already been sent.');
 
             // otherwise, update and set the draft message
             } else {
+
                 // grab the draft message instance
                 $draft = $messenger->draft_message;
 
@@ -161,6 +163,7 @@ class messenger {
                 $draft->set('subject', $subject);
                 $draft->set('body', $body);
                 $draft->set('is_draft', 0);
+                $draft->set('send_receipt', $send_receipt);
                 $draft->update();
                 
                 // set the draft as the message to be sent
@@ -176,6 +179,7 @@ class messenger {
                 'signature_id' => $signature_id,
                 'subject' => $subject,
                 'body' => $body,
+                'send_receipt' => $send_receipt
             ]);
 
             // save the message
