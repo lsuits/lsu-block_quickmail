@@ -133,19 +133,19 @@ class block_quickmail extends block_list {
                     'icon_key' => 'i/open',
                     'page' => 'drafts',
                 ],
+                // view send history
+                [
+                    'lang_key' => 'history',
+                    'icon_key' => 'i/duration',
+                    'page' => 'history',
+                    // 'extra_link_params' => ['type' => 'drafts'],
+                ],
                 // manage signatures
                 [
                     'lang_key' => 'manage_signatures',
                     'icon_key' => 'i/edit',
                     'page' => 'signature',
                 ],
-                // view send history
-                // [
-                //     'lang_key' => 'history',
-                //     'icon_key' => 'i/settings',
-                //     'page' => 'emaillog',
-                //     'extra_link_params' => ['type' => 'drafts'],
-                // ],
             ];
 
             // TODO: add in items only available in course context
@@ -154,7 +154,7 @@ class block_quickmail extends block_list {
             if (block_quickmail_plugin::user_has_permission_in_context('allowalternate', $this->context)) {
                 $content_list_items[] = [
                         'lang_key' => 'alternate',
-                        'icon_key' => 'i/edit',
+                        'icon_key' => 't/addcontact',
                         'page' => 'alternate',
                     ];
             }

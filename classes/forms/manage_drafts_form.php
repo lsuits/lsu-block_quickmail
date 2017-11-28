@@ -26,13 +26,13 @@ namespace block_quickmail\forms;
 
 require_once $CFG->libdir . '/formslib.php';
 
-class manage_alternates_form extends \moodleform {
+class manage_drafts_form extends \moodleform {
 
     public $context;
 
     public $user;
 
-    public $course;
+    public $course_id;
 
     public function definition() {
 
@@ -44,37 +44,12 @@ class manage_alternates_form extends \moodleform {
         // set the user
         $this->user = $this->_customdata['user'];
 
-        // set the course
-        $this->course = $this->_customdata['course'];
+        // set the course_id
+        $this->course_id = $this->_customdata['course_id'];
 
         // delete id
-        $mform->addElement('hidden', 'delete_alternate_id');
-        $mform->setType('delete_alternate_id', PARAM_INT);
-        
-        // create flag
-        $mform->addElement('hidden', 'create_flag');
-        $mform->setType('create_flag', PARAM_INT);
-        $mform->setDefault('create_flag', 0);
-
-        // firstname
-        $mform->addElement('hidden', 'firstname');
-        $mform->setType('firstname', PARAM_TEXT);
-        $mform->setDefault('firstname', '');
-
-        // lastname
-        $mform->addElement('hidden', 'lastname');
-        $mform->setType('lastname', PARAM_TEXT);
-        $mform->setDefault('lastname', '');
-
-        // email
-        $mform->addElement('hidden', 'email');
-        $mform->setType('email', PARAM_TEXT);
-        $mform->setDefault('email', '');
-
-        // availability
-        $mform->addElement('hidden', 'availability');
-        $mform->setType('availability', PARAM_TEXT);
-        $mform->setDefault('availability', '');
+        $mform->addElement('hidden', 'delete_draft_id');
+        $mform->setType('delete_draft_id', PARAM_INT);
     }
 
 }

@@ -2,17 +2,18 @@
     <select id="select_course_filter_draft">
         <option value="0">All Courses</option>
         {{# userCourseArray }}
-            <option value="{{ courseId }}">{{ courseName }}</option>
-            <!-- TODO: need to fix this!! make selected when appropriate -->
+            <option value="{{ userCourseId }}" {{ selectedAttr }}>{{ userCourseName }}</option>
         {{/ userCourseArray }}
     </select>
 
     <table class="table table-hover">
         <thead>
             <tr>
-                {{# tableHeadings }}
-                <th>{{.}}</th>
-                {{/ tableHeadings }}
+                <th>Course</th>
+                <th>Subject Preview</th>
+                <th>Message Preview</th>
+                <th>Created</th>
+                <th>Last Modified</th>
                 <th></th>
             </tr>
         </thead>
@@ -22,9 +23,12 @@
                     <td>{{ courseName }}</td>
                     <td>{{ subjectPreview }}</td>
                     <td>{{ messagePreview }}</td>
-                    <td>{{ lastModified }}</td>
+                    <td>{{ createdAt }}</td>
+                    <td>{{ lastModifiedAt }}</td>
                     <td>
-                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</button>
+                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</a>
+                        <a href="{{ duplicateUrl }}" class="btn btn-primary btn-sm">Duplicate</a>
+                        <button role="button" class="btn btn-danger btn-sm btn-delete-draft" data-draft-id="{{ id }}">{{# str }} delete {{/ str }}</button>
                     </td>
                 </tr>
             {{/ tableRows }}

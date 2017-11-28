@@ -74,4 +74,8 @@ trait enhanced_persistent {
         return in_array(can_be_soft_deleted::class, $traits);
     }
 
+    private function get_readable_date($field) {
+        return date('Y-m-d H:i:s', $this->get($field));
+    }
+
 }

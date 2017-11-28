@@ -23,10 +23,10 @@
  */
 
 use block_quickmail\forms\compose_message_form;
-use block_quickmail\forms\view_drafts_form;
 use block_quickmail\forms\manage_signatures_form;
 use block_quickmail\forms\course_config_form;
 use block_quickmail\forms\manage_alternates_form;
+use block_quickmail\forms\manage_drafts_form;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
 
@@ -130,6 +130,20 @@ class block_quickmail_form {
             'user' => $user,
             'course' => $course,
         ], 'post', '', ['id' => 'mform-manage-alternates']);
+    }
+
+    public static function make_manage_drafts_form($context, $user, $course_id = 0)
+    {
+        // build target URL
+        $target = '?' . http_build_query([
+            'courseid' => $course_id,
+        ], '', '&');
+
+        return new manage_drafts_form($target, [
+            'context' => $context,
+            'user' => $user,
+            'course_id' => $course_id,
+        ], 'post', '', ['id' => 'mform-manage-drafts']);
     }
 
 }

@@ -36,6 +36,8 @@ class draft_message_index_component extends renderable_component implements \ren
     
     public $course_id;
     
+    public $course_draft_messages;
+
     public $user_course_array;
 
     public function __construct($params = []) {
@@ -43,6 +45,7 @@ class draft_message_index_component extends renderable_component implements \ren
         $this->draft_messages = $this->get_param('draft_messages');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
+        $this->course_draft_messages = $this->filter_drafts_for_course_selection($this->draft_messages, $this->course_id);
         $this->user_course_array = $this->get_user_course_array($this->draft_messages, $this->course_id);
     }
 
@@ -54,36 +57,28 @@ class draft_message_index_component extends renderable_component implements \ren
     public function export_for_template($output) {
         $data = (object)[];
 
-        $data->userCourseArray = $this->transform_course_array($this->user_course_array);
+        $data->userCourseArray = $this->transform_course_array($this->user_course_array, $this->course_id);
 
         $data->courseId = $this->course_id;
 
-        $data->tableHeadings = [
-            'Course',
-            'Subject Preview',
-            'Message Preview',
-            'Last Modified'
-        ];
-
         $data->tableRows = [];
         
-        foreach ($this->draft_messages as $message) {
+        foreach ($this->course_draft_messages as $message) {
             $data->tableRows[] = [
+                'id' => $message->get('id'),
                 'courseName' => $this->user_course_array[$message->get('course_id')],
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
-                'lastModified' => $message->get_readable_last_modified(),
+                'createdAt' => $message->get_readable_created_at(),
+                'lastModifiedAt' => $message->get_readable_last_modified_at(),
                 'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')
                 ], '', '&'),
-                
-                // 'email' => $message->get('email'),
-                // 'fullname' => $message->get_fullname(),
-                // 'status' => $message->get_status(),
-                // 'scope' => $message->get_scope(),
-                // 'isValidated' => $message->get('is_validated'),
-                // 'action' => $output->pix_icon('i/invalid', get_string('delete'))
+                'duplicateUrl' => '/blocks/quickmail/drafts.php?' . http_build_query([
+                    'courseid' => $this->course_id,
+                    'duplicateid' => $message->get('id')
+                ], '', '&')
             ];
         }
 
@@ -96,6 +91,27 @@ class draft_message_index_component extends renderable_component implements \ren
             : 'Back to My page'; // TODO - make this a lang string
 
         return $data;
+    }
+
+    /**
+     * Returns an array of draft messages for a specific course given an array and course id
+     * 
+     * @param  array  $all_draft_messages
+     * @param  int    $course_id
+     * @return array
+     */
+    private function filter_drafts_for_course_selection($all_draft_messages, $course_id) {
+        if ($course_id) {
+            // if a course is selected, filter out any non-selected-course drafts
+            $course_draft_messages = array_filter($all_draft_messages, function($draft) use ($course_id) {
+                return $draft->get('course_id') == $course_id;
+            });
+        } else {
+            // otherwise, include all draft messages
+            $course_draft_messages = $all_draft_messages;
+        }
+
+        return $course_draft_messages;
     }
 
     /**
@@ -141,15 +157,17 @@ class draft_message_index_component extends renderable_component implements \ren
      * Returns a transformed array for template given a flat array of course id => course name
      * 
      * @param  array  $course_array
+     * @param  int    $selected_course_id
      * @return array
      */
-    private function transform_course_array($course_array) {
+    private function transform_course_array($course_array, $selected_course_id = 0) {
         $results = [];
 
         foreach ($course_array as $id => $shortname) {
             $results[] = [
-                'courseId' => (string) $id, 
-                'courseName' => $shortname,
+                'userCourseId' => (string) $id, 
+                'userCourseName' => $shortname,
+                'selectedAttr' => $selected_course_id == $id ? 'selected' : ''
             ];
         }
 

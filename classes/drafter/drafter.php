@@ -34,7 +34,7 @@ use block_quickmail\persistents\message;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\persistents\message_recipient;
-use core_user;
+use block_quickmail\persistents\message_additional_email;
 
 class drafter {
 
@@ -195,6 +195,69 @@ class drafter {
         $drafter->message->sync_additional_emails($drafter->message_data->additional_emails);
 
         return $drafter->message;
+    }
+
+    /**
+     * Duplicates a given draft id for the given user id, and returns the new message draft record
+     *
+     * Note: the given user must own the given draft or an exception will be thrown
+     * 
+     * @param  int  $draft_id
+     * @param  int  $user_id
+     * @return message
+     * @throws drafter_authentication_exception
+     * @throws drafter_critical_exception
+     */
+    public static function duplicate_draft_for_user_id($draft_id, $user_id)
+    {
+        // get the draft to be duplicated
+        if ( ! $original_draft = new message($draft_id)) {
+            throw new drafter_critical_exception('Could not duplicate this draft. Please try again.');
+        }
+
+        // check that the draft belongs to the given user id
+        if ($original_draft->get('user_id') !== $user_id) {
+            throw new drafter_authentication_exception('Sorry, that draft does not belong to you and cannot be duplicated.');
+        }
+
+        // instantiate a new draft message
+        $new_draft = new message(0, (object) [
+            'course_id' => $original_draft->get('course_id'),
+            'user_id' => $original_draft->get('user_id'),
+            'output_channel' => $original_draft->get('output_channel'),
+            'alternate_email_id' => $original_draft->get('alternate_email_id'),
+            'signature_id' => $original_draft->get('signature_id'),
+            'subject' => $original_draft->get('subject'),
+            'body' => $original_draft->get('body'),
+            'editor_format' => $original_draft->get('editor_format'),
+            'is_draft' => 1,
+            'send_receipt' => $original_draft->get('send_receipt')
+        ]);
+
+        // save the new draft
+        $new_draft->create();
+
+        // duplicate the message recipients
+        foreach ($original_draft->get_message_recipients() as $recipient) {
+            $new_recipient = new message_recipient(0, (object) [
+                'message_id' => $new_draft->get('id'),
+                'user_id' => $recipient->get('user_id'),
+            ]);
+
+            $new_recipient->create();
+        }
+
+        // duplicate the message additional emails
+        foreach ($original_draft->get_additional_emails() as $additional_email) {
+            $new_additional_email = new message_additional_email(0, (object) [
+                'message_id' => $new_draft->get('id'),
+                'email' => $additional_email->get('email'),
+            ]);
+
+            $new_additional_email->create();
+        }
+
+        return $new_draft;
     }
 
     /**

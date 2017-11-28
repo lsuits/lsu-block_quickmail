@@ -32,6 +32,7 @@ use block_quickmail\renderables\manage_signatures_component;
 use block_quickmail\renderables\course_config_component;
 use block_quickmail\renderables\alternate_index_component;
 use block_quickmail\renderables\manage_alternates_component;
+use block_quickmail\renderables\manage_drafts_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
 
@@ -149,27 +150,23 @@ class block_quickmail_renderer extends plugin_renderer_base {
         return $this->output->container($out, 'manage_alternates_component');
     }
 
+    ////////////////////////////////////////
+    /// MANAGE DRAFTS FORM
+    ////////////////////////////////////////
+    
+    public function manage_drafts_component($params = []) {
+        $component = new manage_drafts_component($params);
+        
+        return $this->render($component);
+    }
+
+    protected function render_manage_drafts_component(manage_drafts_component $component) {
+        $out = '';
+        
+        // render form
+        $out .= $component->form->render();
+
+        return $this->output->container($out, 'manage_drafts_component');
+    }
+
 }
-
-// $links = array();
-// $gen_url = function($type) use ($COURSE) {
-//     $email_param = array('courseid' => $COURSE->id, 'type' => $type);
-//     return new moodle_url('emaillog.php', $email_param);
-// };
-
-// $draft_link = html_writer::link ($gen_url('drafts'), quickmail::_s('drafts'));
-// $links[] =& $mform->createElement('static', 'draft_link', '', $draft_link);
-
-// $context = context_course::instance($COURSE->id);
-
-// $config = quickmail::load_config($COURSE->id);
-
-// $can_send = (
-//     has_capability('block/quickmail:cansend', $context) or
-//     !empty($config['allowstudents'])
-// );
-
-// if ($can_send) {
-//     $history_link = html_writer::link($gen_url('log'), quickmail::_s('history'));
-//     $links[] =& $mform->createElement('static', 'history_link', '', $history_link);
-// }

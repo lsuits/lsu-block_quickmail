@@ -157,9 +157,7 @@ class message extends persistent {
      * @return string
      */
     public function get_status() {
-        
         //
-
     }
 
     public function get_subject_preview($length = 20) {
@@ -170,10 +168,13 @@ class message extends persistent {
         return block_quickmail_plugin::render_preview_string(strip_tags($this->get('body')), $length, '...', '(No content)');
     }
 
-    public function get_readable_last_modified() {
-        return date('Y-m-d H:i:s', $this->get('timemodified'));
+    public function get_readable_created_at() {
+        return $this->get_readable_date('timecreated');
     }
-    
+
+    public function get_readable_last_modified_at() {
+        return $this->get_readable_date('timemodified');
+    }
 
     ///////////////////////////////////////////////
     ///
@@ -265,23 +266,40 @@ class message extends persistent {
      * 
      * @param  integer $message_id
      * @param  integer $user_id
-     * @param  integer $course_id
      * @return message|null
      */
-    public static function find_user_course_draft_or_null($message_id = 0, $user_id = 0, $course_id = 0)
+    public static function find_user_draft_or_null($message_id = 0, $user_id = 0)
     {
         // first, try to find the message by id, returning null by default
         if ( ! $message = self::find_draft_or_null($message_id)) {
             return null;
         }
 
-        // if this message does not belong to this course, return null
-        if ( ! $message->is_owned_by_course($course_id)) {
+        // if this message does not belong to this user, return null
+        if ( ! $message->is_owned_by_user($user_id)) {
             return null;
         }
 
-        // if this message does not belong to this user, return null
-        if ( ! $message->is_owned_by_user($user_id)) {
+        return $message;
+    }
+
+    /**
+     * Fetches a message by id which must belong to the given user id, or returns null
+     * 
+     * @param  integer $message_id
+     * @param  integer $user_id
+     * @param  integer $course_id
+     * @return message|null
+     */
+    public static function find_user_course_draft_or_null($message_id = 0, $user_id = 0, $course_id = 0)
+    {
+        // first, try to find the message by id, returning null by default
+        if ( ! $message = self::find_user_draft_or_null($message_id)) {
+            return null;
+        }
+
+        // if this message does not belong to this course, return null
+        if ( ! $message->is_owned_by_course($course_id)) {
             return null;
         }
 
