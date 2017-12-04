@@ -63,8 +63,11 @@ class message extends persistent {
             ],
             'sent_at' => [
                 'type' => PARAM_INT,
-                'default' => null,
-                'null' => NULL_ALLOWED,
+                'default' => 0,
+            ],
+            'to_send_at' => [
+                'type' => PARAM_INT,
+                'default' => 0,
             ],
             'is_draft' => [
                 'type' => PARAM_BOOL,
@@ -152,12 +155,24 @@ class message extends persistent {
     ///////////////////////////////////////////////
     
     /**
-     * Returns the status of this alternates approval (approved or waiting)
+     * Returns the status of this message
      * 
-     * @return string
+     * @return string  deleted|drafted|queued|sent
      */
     public function get_status() {
-        //
+        if ($this->is_deleted()) {
+            return 'deleted';
+        }
+
+        if ($this->is_message_draft()) {
+            return 'drafted';
+        }
+
+        if ($this->is_queued_message()) {
+            return 'queued';
+        }
+        
+        return 'sent';
     }
 
     public function get_subject_preview($length = 20) {
@@ -174,6 +189,14 @@ class message extends persistent {
 
     public function get_readable_last_modified_at() {
         return $this->get_readable_date('timemodified');
+    }
+
+    public function get_readable_sent_at() {
+        return $this->get_readable_date('sent_at');
+    }
+
+    public function get_readable_to_send_at() {
+        return $this->get_readable_date('to_send_at');
     }
 
     ///////////////////////////////////////////////
@@ -198,6 +221,26 @@ class message extends persistent {
     public function is_message_draft()
     {
         return (bool) $this->get('is_draft');
+    }
+
+    /**
+     * Reports whether or not this message is queued to be sent
+     * 
+     * @return bool
+     */
+    public function is_queued_message()
+    {
+        return (bool) $this->get('to_send_at') !== 0 && ! $this->is_sent_message();
+    }
+
+    /**
+     * Reports whether or not this message is marked as sent
+     * 
+     * @return bool
+     */
+    public function is_sent_message()
+    {
+        return (bool) $this->get('sent_at');
     }
 
     /**
@@ -294,7 +337,7 @@ class message extends persistent {
     public static function find_user_course_draft_or_null($message_id = 0, $user_id = 0, $course_id = 0)
     {
         // first, try to find the message by id, returning null by default
-        if ( ! $message = self::find_user_draft_or_null($message_id)) {
+        if ( ! $message = self::find_user_draft_or_null($message_id, $user_id)) {
             return null;
         }
 
@@ -320,7 +363,7 @@ class message extends persistent {
         $params = [
             'user_id' => $user_id, 
             'is_draft' => 1, 
-            'sent_at' => null, 
+            'sent_at' => 0, 
             'timedeleted' => 0
         ];
 
@@ -329,6 +372,39 @@ class message extends persistent {
         }
 
         return self::get_records($params);
+    }
+
+    /**
+     * Returns all sent or queued, non-deleted, messages belonging to the given user id
+     *
+     * @param  int     $user_id
+     * @return array
+     */
+    public static function get_all_historical_for_user($user_id)
+    {
+        global $DB;
+ 
+        $sql = 'SELECT DISTINCT m.*
+                  FROM {' . static::TABLE . '} m
+                  WHERE m.user_id = :user_id
+                  AND m.is_draft = 0
+                  AND m.timedeleted = 0
+                  AND m.sent_at > 0
+                  OR m.user_id = :user_id2
+                  AND m.is_draft = 0
+                  AND m.timedeleted = 0
+                  AND m.sent_at = 0
+                  AND m.to_send_at > 0';
+     
+        $persistents = [];
+     
+        $recordset = $DB->get_recordset_sql($sql, ['user_id' => $user_id, 'user_id2' => $user_id]);
+        foreach ($recordset as $record) {
+            $persistents[] = new static(0, $record);
+        }
+        $recordset->close();
+     
+        return $persistents;
     }
  
 }

@@ -36,8 +36,7 @@ class message_recipient extends persistent {
             ],
             'sent_at' => [
                 'type' => PARAM_INT,
-                'default' => null,
-                'null' => NULL_ALLOWED,
+                'default' => 0
             ],
         ];
     }

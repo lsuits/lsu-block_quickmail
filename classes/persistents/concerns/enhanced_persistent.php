@@ -74,6 +74,16 @@ trait enhanced_persistent {
         return in_array(can_be_soft_deleted::class, $traits);
     }
 
+    /**
+     * Reports whether or not this persistent has been soft deleted
+     * 
+     * @return bool
+     */
+    public function is_deleted()
+    {
+        return (bool) $this->get('timedeleted');
+    }
+
     private function get_readable_date($field) {
         return date('Y-m-d H:i:s', $this->get($field));
     }

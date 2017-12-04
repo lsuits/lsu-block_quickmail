@@ -28,25 +28,25 @@ use block_quickmail\renderables\renderable_component;
 use block_quickmail_plugin;
 use moodle_url;
 
-class draft_message_index_component extends renderable_component implements \renderable {
+class historical_message_index_component extends renderable_component implements \renderable {
 
-    public $draft_messages;
+    public $historical_messages;
 
     public $user;
     
     public $course_id;
     
-    public $course_draft_messages;
+    public $course_historical_messages;
 
     public $user_course_array;
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->draft_messages = $this->get_param('draft_messages');
+        $this->historical_messages = $this->get_param('historical_messages');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
-        $this->course_draft_messages = $this->filter_messages_by_course($this->draft_messages, $this->course_id);
-        $this->user_course_array = $this->get_user_course_array($this->draft_messages, $this->course_id);
+        $this->course_historical_messages = $this->filter_messages_by_course($this->historical_messages, $this->course_id);
+        $this->user_course_array = $this->get_user_course_array($this->historical_messages, $this->course_id);
     }
 
     /**
@@ -63,21 +63,16 @@ class draft_message_index_component extends renderable_component implements \ren
 
         $data->tableRows = [];
         
-        foreach ($this->course_draft_messages as $message) {
+        foreach ($this->course_historical_messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
                 'courseName' => $this->user_course_array[$message->get('course_id')],
                 'subjectPreview' => $message->get_subject_preview(24),
-                'messagePreview' => $message->get_body_preview(),
-                'createdAt' => $message->get_readable_created_at(),
-                'lastModifiedAt' => $message->get_readable_last_modified_at(),
+                'status' => ucfirst($message->get_status()),
+                'sentScheduledDate' => $message->is_queued_message() ? $message->get_readable_to_send_at() : $message->get_readable_sent_at(),
                 'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')
-                ], '', '&'),
-                'duplicateUrl' => '/blocks/quickmail/drafts.php?' . http_build_query([
-                    'courseid' => $this->course_id,
-                    'duplicateid' => $message->get('id')
                 ], '', '&')
             ];
         }

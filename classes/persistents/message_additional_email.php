@@ -32,8 +32,7 @@ class message_additional_email extends persistent {
             ],
             'sent_at' => [
                 'type' => PARAM_INT,
-                'default' => null,
-                'null' => NULL_ALLOWED,
+                'default' => 0
             ],
         ];
     }

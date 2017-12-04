@@ -1,0 +1,42 @@
+<div class="block_quickmail_historical_message_index">
+    <select id="select_course_filter_historical">
+        <option value="0">All Courses</option>
+        {{# userCourseArray }}
+            <option value="{{ userCourseId }}" {{ selectedAttr }}>{{ userCourseName }}</option>
+        {{/ userCourseArray }}
+    </select>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Subject Preview</th>
+                <th>Status</th>
+                <th>Sent At / Scheduled For</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ courseName }}</td>
+                    <td>{{ subjectPreview }}</td>
+                    <td>{{ status }}</td>
+                    <td>{{ sentScheduledDate }}</td>
+                    <td>
+                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</a>
+                        <button role="button" class="btn btn-danger btn-sm btn-delete-historical" data-historical-id="{{ id }}">{{# str }} delete {{/ str }}</button>
+                    </td>
+                </tr>
+            {{/ tableRows }}
+
+            {{^ tableRows }}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} no_historicals, block_quickmail {{/ str }}</td>
+                </tr>
+            {{/ tableRows }}
+        </tbody>
+    </table>
+    
+    <a href="{{ urlBack }}" class="btn btn-info">{{ urlBackLabel }}</a>
+</div>

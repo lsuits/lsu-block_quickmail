@@ -7,7 +7,7 @@ require_once('../../config.php');
 $page_url = '/blocks/quickmail/drafts.php';
 
 $page_params = [
-    'courseid' => optional_param('courseid', 0, PARAM_INT), // course id, if any, for initial filtering
+    'courseid' => optional_param('courseid', 0, PARAM_INT), // course id, if any, for filtering
     'duplicateid' => optional_param('duplicateid', 0, PARAM_INT),
 ];
 
