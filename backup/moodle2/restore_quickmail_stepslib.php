@@ -49,18 +49,18 @@ class restore_quickmail_log_structure_step extends restore_structure_step {
         if ($restore and isset($data->emaillogs['log'])) {
             global $DB;
 
-            $current = context_course::instance($this->get_courseid());
+            $current_context = context_course::instance($this->get_courseid());
 
             $params = array(
                 'backupid' => $this->get_restoreid(),
                 'itemname' => 'context',
-                'newitemid' => $context->id
+                'newitemid' => $current_context->id
             );
 
             $id = $DB->get_record('backup_ids_temp', $params)->itemid;
 
             foreach ($data->emaillogs['log'] as $log) {
-                $this->process_log($log, $id, $context);
+                $this->process_log($log, $id, $current_context);
             }
         }
 
