@@ -1,32 +1,5 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * @package    block_quickmail
- * @copyright  2008-2017 Louisiana State University
- * @copyright  2008-2017 Adam Zapletal, Chad Mazilly, Philip Cali, Robert Russo
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use block_quickmail\forms\compose_message_form;
-use block_quickmail\forms\manage_signatures_form;
-use block_quickmail\forms\course_config_form;
-use block_quickmail\forms\manage_alternates_form;
-use block_quickmail\forms\manage_drafts_form;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
 
@@ -39,7 +12,7 @@ class block_quickmail_form {
      * @param  object    $user           auth user
      * @param  object    $course         moodle course
      * @param  message   $draft_message
-     * @return compose_message_form
+     * @return \block_quickmail\forms\compose_message_form
      */
     public static function make_compose_message_form($context, $user, $course, $draft_message = null)
     {
@@ -55,9 +28,10 @@ class block_quickmail_form {
         // get the auth user's current signatures as array (id => title)
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
+        // get config variables for this course, defaulting to block level
         $course_config_array = block_quickmail_plugin::_c('', $course->id);
 
-        return new compose_message_form($target, [
+        return new \block_quickmail\forms\compose_message_form($target, [
             'context' => $context,
             'user' => $user,
             'course' => $course,
@@ -68,6 +42,10 @@ class block_quickmail_form {
         ], 'post', '', ['id' => 'mform-compose']);
     }
 
+
+
+
+
     /**
      * Instantiates and returns a signature management form
      * 
@@ -75,7 +53,7 @@ class block_quickmail_form {
      * @param  object        $user                   auth user
      * @param  persistent    $signature              optional, defaults to null
      * @param  int           $course_id              optional, course id
-     * @return manage_signatures_form
+     * @return \block_quickmail\forms\manage_signatures_form
      */
     public static function make_manage_signatures_form($context, $user, $signature = null, $course_id = 0)
     {
@@ -95,7 +73,7 @@ class block_quickmail_form {
         // get the auth user's current signatures as array (id => title)
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
-        return new manage_signatures_form($target, [
+        return new \block_quickmail\forms\manage_signatures_form($target, [
             'context' => $context,
             'user' => $user,
             'signature' => $signature,
@@ -104,6 +82,14 @@ class block_quickmail_form {
         ], 'post', '', ['id' => 'mform-manage-signatures']);
     }
 
+    /**
+     * Instantiates and returns a course configuration management form
+     * 
+     * @param  object    $context
+     * @param  object    $user           auth user
+     * @param  object    $course         moodle course
+     * @return \block_quickmail\forms\course_config_form
+     */
     public static function make_course_config_form($context, $user, $course)
     {
         // build target URL
@@ -111,13 +97,21 @@ class block_quickmail_form {
             'courseid' => $course->id,
         ], '', '&');
 
-        return new course_config_form($target, [
+        return new \block_quickmail\forms\course_config_form($target, [
             'context' => $context,
             'user' => $user,
             'course' => $course,
         ], 'post', '', ['id' => 'mform-course-config']);
     }
 
+    /**
+     * Instantiates and returns a course alternate email management management form
+     * 
+     * @param  object    $context
+     * @param  object    $user           auth user
+     * @param  object    $course         moodle course
+     * @return \block_quickmail\forms\manage_alternates_form
+     */
     public static function make_manage_alternates_form($context, $user, $course)
     {
         // build target URL
@@ -125,13 +119,21 @@ class block_quickmail_form {
             'courseid' => $course->id,
         ], '', '&');
 
-        return new manage_alternates_form($target, [
+        return new \block_quickmail\forms\manage_alternates_form($target, [
             'context' => $context,
             'user' => $user,
             'course' => $course,
         ], 'post', '', ['id' => 'mform-manage-alternates']);
     }
 
+    /**
+     * Instantiates and returns a course message draft management form
+     * 
+     * @param  object        $context
+     * @param  object        $user                   auth user
+     * @param  int           $course_id              optional, course id
+     * @return \block_quickmail\forms\manage_drafts_form
+     */
     public static function make_manage_drafts_form($context, $user, $course_id = 0)
     {
         // build target URL
@@ -139,7 +141,7 @@ class block_quickmail_form {
             'courseid' => $course_id,
         ], '', '&');
 
-        return new manage_drafts_form($target, [
+        return new \block_quickmail\forms\manage_drafts_form($target, [
             'context' => $context,
             'user' => $user,
             'course_id' => $course_id,

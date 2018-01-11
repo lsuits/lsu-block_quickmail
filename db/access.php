@@ -47,6 +47,7 @@ $capabilities = array(
     ),
 
     'block/quickmail:cansend' => array(
+        'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -56,6 +57,9 @@ $capabilities = array(
             'teacher' => CAP_ALLOW
         )
     ),
+
+
+    //////////////////////////
 
     'block/quickmail:allowalternate' => array(
         'captype' => 'write',

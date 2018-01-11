@@ -67,7 +67,7 @@ $PAGE->requires->js_call_amd('block_quickmail/alternate-index', 'init');
 $renderer = $PAGE->get_renderer('block_quickmail');
 
 ////////////////////////////////////////
-/// INSTANTIATE MANAGE ALTERNATES FORM
+/// INSTANTIATE FORM
 ////////////////////////////////////////
 $manage_alternates_form = block_quickmail_form::make_manage_alternates_form(
     $page_context, 

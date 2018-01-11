@@ -1,8 +1,7 @@
 <?php
 
 require_once('../../config.php');
-// require_once('../../enrol/externallib.php');
-// require_once('../../lib/weblib.php');
+require_once 'lib.php';
 
 $page_url = '/blocks/quickmail/compose.php';
 
@@ -11,61 +10,71 @@ $page_params = [
     'draftid' => optional_param('draftid', 0, PARAM_INT),
 ];
 
-require_login($page_params['courseid']);
+$course = get_course($page_params['courseid']);
 
-try {
-    // get page context and course
-    list($page_context, $course) = block_quickmail_plugin::resolve_context('course', $page_params['courseid']);
-} catch (Exception $e) {
-    print_error('no_course', 'block_quickmail', '', $page_params['courseid']);
-}
+////////////////////////////////////////
+/// AUTHENTICATION
+////////////////////////////////////////
 
-block_quickmail_plugin::check_user_permission('cansend', $page_context);
+$page_context = context_course::instance($course->id);
+$PAGE->set_context($page_context);
+$PAGE->set_url(new moodle_url($page_url, $page_params));
+
+require_course_login($course, false);
+require_capability('block/quickmail:cansend', $page_context);
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
 ////////////////////////////////////////
 
-$PAGE->set_context($page_context);
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
-$PAGE->set_url(new moodle_url($page_url, $page_params));
 $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
 $PAGE->navbar->add(block_quickmail_plugin::_s('compose'));
 $PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-// $PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseid' => $page_params['courseid']]);
+// $PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseid' => $course->id]);
 // $PAGE->requires->js('/blocks/quickmail/js/selection.js'); // Get rid of this
+
+$renderer = $PAGE->get_renderer('block_quickmail');
 
 // if a draft id was passed
 if ($page_params['draftid']) {
+    
     // attempt to fetch the draft which must belong to this course and user
-    if ( ! $draft_message = block_quickmail\persistents\message::find_user_course_draft_or_null($page_params['draftid'], $USER->id, $page_params['courseid'])) {
-        // if draft message could not be found, reset the passed param to 0
+    $draft_message = $draft_message = block_quickmail\persistents\message::find_user_course_draft_or_null($page_params['draftid'], $USER->id, $course->id);
+
+    if (empty($draft_message)) {
         $page_params['draftid'] = 0;
+    } else {
+        // make sure this draft message has not already been sent
+        if ($draft_message->is_sent_message()) {
+            // reset the passed param to 0
+            // @TODO - notify user that message was already sent??
+            $draft_message = null;
+            $page_params['draftid'] = 0;
+        }
     }
+
 } else {
     $draft_message = null;
 }
 
-// NEED THESE TO BUILD THE SELECTION FORM?!?
-
-// 'selected' => $selected,
-// 'users' => $users,
-// 'roles' => $roles,
-// 'groups' => $groups,
-// 'users_to_roles' => $users_to_roles,
-// 'users_to_groups' => $users_to_groups,
-
 ////////////////////////////////////////
-/// INSTANTIATE PAGE RENDERER
+/// FILE ATTACHMENT HANDLING
 ////////////////////////////////////////
-$renderer = $PAGE->get_renderer('block_quickmail');
+
+// get the attachments draft area id
+$attachments_draftitem_id = file_get_submitted_draft_itemid('attachments');
+
+// prepare the draft area with any existing, relevant files
+file_prepare_draft_area($attachments_draftitem_id, $page_context->id, 'block_quickmail', 'attachments', $page_params['draftid'] ?: null, block_quickmail_plugin::get_filemanager_options());
 
 ////////////////////////////////////////
-/// INSTANTIATE COMPOSE FORM
+/// INSTANTIATE FORM
 ////////////////////////////////////////
+
 $compose_form = block_quickmail_form::make_compose_message_form(
     $page_context, 
     $USER, 
@@ -74,57 +83,64 @@ $compose_form = block_quickmail_form::make_compose_message_form(
 );
 
 ////////////////////////////////////////
-/// HANDLE COMPOSE FORM SUBMISSION (if any)
+/// HANDLE REQUEST
 ////////////////////////////////////////
 
-// instantiate "compose message" request
-$compose_message_request = \block_quickmail\requests\compose_message_request::make_compose_request($compose_form);
+$request = block_quickmail_request::for_route('compose')->with_form($compose_form);
 
-// if cancelling form
-if ($compose_message_request->was_cancelled()) {
+if ($request->is_form_cancellation()) {
     
-    // redirect back to course
-    $compose_message_request->redirect_back_to_course_after_cancel();
+    // redirect back to course page
+    $request->redirect_to_url(
+        new moodle_url('/course/view.php', ['id' => $course->id]),
+        block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname)
+    );
 
-// if sending message
-} else if ($compose_message_request->to_send_message()) {
+} else if ($request->to_send_message()) {
 
     // attempt to send, handle exceptions
     try {
-        $messenger_response = \block_quickmail\messenger\messenger::send_by_compose_request($compose_message_request);
-    } catch (\block_quickmail\messenger\exceptions\messenger_authentication_exception $e) {
-        print_error('no_permission', 'block_quickmail');
-    } catch (\block_quickmail\messenger\exceptions\messenger_validation_exception $e) {
-        render_validation_nofitications($e);
-    } catch (\block_quickmail\messenger\exceptions\messenger_critical_exception $e) {
+        \block_quickmail\messenger\messenger::send_composed_course_message($USER, $course, $compose_form->get_data(), $draft_message);
+        // \block_quickmail\messenger\messenger::send_by_compose_request($compose_message_request);
+
+        // redirect back to course page
+        // @TODO - after send redirect to history (?)
+        $request->redirect_to_url(
+            new moodle_url('/course/view.php', ['id' => $course->id]),
+            block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname)
+        );
+    } catch (\block_quickmail\exceptions\validation_exception $e) {
+        render_validation_notifications($e);
+    } catch (\block_quickmail\exceptions\critical_exception $e) {
         print_error('critical_error', 'block_quickmail');
     }
 
-    // $messenger_response
-    $compose_message_request->redirect_back_to_course_after_send();
-    
-    // @TODO - after send redirect to history
+} else if ($request->to_save_draft()) {
 
-// if saving draft
-} else if ($compose_message_request->to_save_draft()) {
     // attempt to save draft, handle exceptions
     try {
         $draft_message = \block_quickmail\drafter\drafter::save_by_compose_request($compose_message_request);
     } catch (\block_quickmail\drafter\exceptions\drafter_authentication_exception $e) {
         print_error('no_permission', 'block_quickmail');
     } catch (\block_quickmail\drafter\exceptions\drafter_validation_exception $e) {
-        render_validation_nofitications($e);
+        render_validation_notifications($e);
     } catch (\block_quickmail\drafter\exceptions\drafter_critical_exception $e) {
         print_error('critical_error', 'block_quickmail');
     }
 
-    // $draft_message
-    $compose_message_request->redirect_back_to_course_after_save();
+    // redirect back to course page
+    // @TODO - after send redirect to compose (?)
+    $request->redirect_to_url(
+        new moodle_url('/course/view.php', ['id' => $course->id]),
+        block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save', $course->fullname)
+    );
 
-    // @TODO - after send redirect to compose
 }
 
-// get the rendered form
+////////////////////////////////////////
+/// RENDER PAGE
+////////////////////////////////////////
+
 $rendered_compose_form = $renderer->compose_message_component([
     'context' => $page_context,
     'user' => $USER,
@@ -133,11 +149,9 @@ $rendered_compose_form = $renderer->compose_message_component([
 ]);
 
 echo $OUTPUT->header();
-
-// display the compose form
 echo $rendered_compose_form;
-
 echo $OUTPUT->footer();
+
 
 /**
  * Instantiates a core moodle error notification with list-style error messages from the given exception
@@ -145,7 +159,7 @@ echo $OUTPUT->footer();
  * @param  \Exception $exception
  * @return void
  */
-function render_validation_nofitications($exception) {
+function render_validation_notifications($exception) {
     if (count($exception->errors)) {
         $html = '<ul>';
         

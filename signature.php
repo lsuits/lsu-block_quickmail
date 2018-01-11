@@ -40,7 +40,7 @@ if ( ! $signature = block_quickmail\persistents\signature::find_user_signature_o
 $renderer = $PAGE->get_renderer('block_quickmail');
 
 ////////////////////////////////////////
-/// INSTANTIATE SIGNATURE FORM
+/// INSTANTIATE FORM
 ////////////////////////////////////////
 $manage_signatures_form = block_quickmail_form::make_manage_signatures_form(
     $page_context, 
@@ -50,19 +50,21 @@ $manage_signatures_form = block_quickmail_form::make_manage_signatures_form(
 );
 
 ////////////////////////////////////////
-/// HANDLE SIGNATURE FORM SUBMISSION (if any)
+/// INSTANTIATE REQUEST
 ////////////////////////////////////////
-
-// instantiate "signature" request
 $signature_request = \block_quickmail\requests\signature_request::make($manage_signatures_form);
 
-// if cancelling form
+////////////////////////////////////////
+/// HANDLE CANCEL REQUEST
+////////////////////////////////////////
 if ($signature_request->was_cancelled()) {
     
     // redirect back to appropriate page
     $signature_request->redirect_back();
 
-// if requesting to delete a signature
+////////////////////////////////////////
+/// HANDLE DELETE REQUEST
+////////////////////////////////////////
 } else if ($signature_request->to_delete_signature()) {
 
     // soft delete the signature, flagging a new default if necessary
@@ -71,7 +73,9 @@ if ($signature_request->was_cancelled()) {
     // redirect back to the user's edit default signature (if any) page
     $signature_request->redirect_to_edit_users_default_signature('warning', $USER, \block_quickmail_plugin::_s('user_signature_deleted'));
 
-// if saving signature
+////////////////////////////////////////
+/// HANDLE SAVE REQUEST
+////////////////////////////////////////
 } else if ($signature_request->to_save_signature()) {
 
     try {

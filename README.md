@@ -21,6 +21,10 @@ Visit [Quickmail's Github page][quickmail_github] to either download a package o
 
 Quickmail should be installed like any other block. See [the Moodle Docs page on block installation][block_doc].
 
+## Tests
+
+To run unit tests: vendor/bin/phpunit -c blocks/quickmail
+
 ## Contributions
 
 Contributions of any form are welcome. Github pull requests are preferred.

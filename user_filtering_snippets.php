@@ -90,3 +90,93 @@ if(!empty($display_users)) {
     }, $display_users);
     echo html_writer::table($table);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// BEGIN: TESTING USER SELECTION
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// NEED THESE TO BUILD THE SELECTION FORM?!?
+
+// 'selected' => $selected,
+// 'users' => $users,
+// 'roles' => $roles,
+// 'groups' => $groups,
+// 'users_to_roles' => $users_to_roles,
+// 'users_to_groups' => $users_to_groups,
+
+// // get roles in this course
+// $course_roles = get_roles_used_in_context($page_context);
+
+// // get configured roles that quickmail accepts
+// // $filter_roles => $quickmail_accepted_roles
+// $quickmail_accepted_roles = $DB->get_records_select('role', sprintf('id IN (%s)', block_quickmail_plugin::_c('roleselection', $course->id)));
+
+// // get the common roles between configuration and this course data
+// $roles = array_uintersect($course_roles, $quickmail_accepted_roles, function($a, $b) {
+//     return strcmp($a->shortname, $b->shortname);
+// });
+
+// // get all groups on this course
+// // $allgroups => $course_groups
+// $course_groups = groups_get_all_groups($course->id);
+
+// // initialize master capability status to true
+// $mastercap = true;
+// $groups = $allgroups;
+
+// dd($course_groups);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// END: TESTING USER SELECTION
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// dd($compose_message_request->form_data);
+
+// dd($compose_message_request->form->draft_message);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// BEGIN TRYING TO DEAL WITH ATTACHMENTS / MESSAGE FILES
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// // dd(file_get_submitted_draft_itemid('message_editor'));
+
+// // get the user context for file uploads
+// $usercontext = context_user::instance($USER->id);
+
+// $attachments_item_id = file_get_submitted_draft_itemid('attachments');
+
+// $thing = file_prepare_draft_area(
+//     $attachments_item_id, 
+//     $usercontext->id, 
+//     'block_quickmail', 
+//     'message_attachments', /////
+//     $draft_message ? $draft_message->get('id') : null, 
+//     block_quickmail_plugin::get_filemanager_options()
+// );
+
+// // dd($thing);
+
+// // get a file storage instance
+// $fs = get_file_storage();
+
+// // get the uploaded file objects (only)
+// $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $compose_message_request->attachments_item_id, 'id');
+
+// // filter out any directory references
+// $files = array_filter($files, function($file) {
+//     return ! $file->is_directory() and $file->get_filename() != '.';
+// });
+
+// $full_filepaths = array_map(function ($file) { 
+//     return $file->get_filepath() . $file->get_filename(); 
+// }, $files);
+
+// // dd($full_filepaths);
+
+// // dd(implode(',', $full_filepaths));
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// END: TRYING TO DEAL WITH ATTACHMENTS / MESSAGE FILES
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -77,6 +77,10 @@ class message extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => false,
             ],
+            'is_sending' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
             'timedeleted' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -175,6 +179,10 @@ class message extends persistent {
         return 'sent';
     }
 
+    public function get_to_send_in_future() {
+        return $this->get('to_send_at') > time();
+    }
+
     public function get_subject_preview($length = 20) {
         return block_quickmail_plugin::render_preview_string($this->get('subject'), $length, '...', '(No subject)');
     }
@@ -199,20 +207,6 @@ class message extends persistent {
         return $this->get_readable_date('to_send_at');
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
-    //
-
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM METHODS
-    /// 
-    ///////////////////////////////////////////////
-    
     /**
      * Reports whether or not this message is a draft
      * 
@@ -234,6 +228,16 @@ class message extends persistent {
     }
 
     /**
+     * Reports whether or not this message is marked as being sent at the moment
+     * 
+     * @return bool
+     */
+    public function is_being_sent()
+    {
+        return (bool) $this->get('is_sending');
+    }
+
+    /**
      * Reports whether or not this message is marked as sent
      * 
      * @return bool
@@ -242,6 +246,20 @@ class message extends persistent {
     {
         return (bool) $this->get('sent_at');
     }
+
+    ///////////////////////////////////////////////
+    ///
+    ///  VALIDATORS
+    /// 
+    ///////////////////////////////////////////////
+
+    //
+
+    ///////////////////////////////////////////////
+    ///
+    ///  DATA-SYNCING METHODS
+    /// 
+    ///////////////////////////////////////////////
 
     /**
      * Replaces all recipients for this message with the given array of user ids
@@ -279,7 +297,7 @@ class message extends persistent {
 
     ///////////////////////////////////////////////
     ///
-    ///  CUSTOM STATIC METHODS
+    ///  DATA-FETCHING STATIC METHODS
     /// 
     ///////////////////////////////////////////////
 

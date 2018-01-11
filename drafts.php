@@ -51,7 +51,7 @@ if ($page_params['duplicateid']) {
 $renderer = $PAGE->get_renderer('block_quickmail');
 
 ////////////////////////////////////////
-/// INSTANTIATE MANAGE DRAFTS FORM
+/// INSTANTIATE FORM
 ////////////////////////////////////////
 $manage_drafts_form = block_quickmail_form::make_manage_drafts_form(
     $page_context, 

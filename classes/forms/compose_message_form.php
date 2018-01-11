@@ -31,99 +31,143 @@ use block_quickmail_plugin;
 class compose_message_form extends \moodleform {
 
     public $context;
-    
     public $user;
-
     public $course;
-
     public $user_alternate_email_array;
-
     public $user_signature_array;
-
     public $course_config_array;
-
     public $draft_message;
 
+    /*
+     * Moodle form definition
+     */
     public function definition() {
 
         $mform =& $this->_form;
 
-        // set the user
-        $this->user = $this->_customdata['user'];
-
-        // set the course
-        $this->course = $this->_customdata['course'];
-        
-        // set the context
         $this->context = $this->_customdata['context'];
-
-        // set this user's alternate emails
+        $this->user = $this->_customdata['user'];
+        $this->course = $this->_customdata['course'];
         $this->user_alternate_email_array = $this->_customdata['user_alternate_email_array'];
-
-        // set this user's signatures
         $this->user_signature_array = $this->_customdata['user_signature_array'];
-
-        // set this course's config
         $this->course_config_array = $this->_customdata['course_config_array'];
-
-        // set the draft_message
         $this->draft_message = $this->_customdata['draft_message'];
 
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_alternate_email_selection()) {
-            $mform->addElement('select', 'alternate_email_id', $this->get_plugin_string('from'), $this->user_alternate_email_array);
-            $mform->addHelpButton('alternate_email_id', 'from', 'block_quickmail');
+            $mform->addElement(
+                'select', 
+                'alternate_email_id', 
+                block_quickmail_plugin::_s('from'), 
+                $this->user_alternate_email_array
+            );
+            $mform->addHelpButton(
+                'alternate_email_id', 
+                'from', 
+                'block_quickmail'
+            );
 
             // inject default if draft mesage
             if ($this->is_draft_message()) {
-                $mform->setDefault('alternate_email_id', $this->draft_message->get('alternate_email_id'));
+                $mform->setDefault(
+                    'alternate_email_id', 
+                    $this->draft_message->get('alternate_email_id')
+                );
             }
         } else {
-            $mform->addElement('static', 'from_email_text', $this->get_plugin_string('from'), $this->user_alternate_email_array[0]);
-            $mform->addHelpButton('from_email_text', 'from', 'block_quickmail');
+            $mform->addElement(
+                'static', 
+                'from_email_text', 
+                block_quickmail_plugin::_s('from'), 
+                $this->user_alternate_email_array[0]
+            );
+            $mform->addHelpButton(
+                'from_email_text', 
+                'from', 
+                'block_quickmail'
+            );
             
-            $mform->addElement('hidden', 'alternate_email_id', 0);
-            $mform->setType('alternate_email_id', PARAM_INT);
+            $mform->addElement(
+                'hidden', 
+                'alternate_email_id', 
+                0
+            );
+            $mform->setType(
+                'alternate_email_id', 
+                PARAM_INT
+            );
         }
 
         ////////////////////////////////////////////////////////////
         ///  mailto_ids (text)
         ////////////////////////////////////////////////////////////
-        $mform->addElement('hidden', 'mailto_ids', '');
-        $mform->setType('mailto_ids', PARAM_TEXT);
+        $mform->addElement(
+            'hidden', 
+            'mailto_ids', 
+            ''
+        );
+        $mform->setType(
+            'mailto_ids', 
+            PARAM_TEXT
+        );
 
         // inject default if draft mesage
-        if ($this->is_draft_message()) {
-            $mform->setDefault('mailto_ids', implode(',', $this->draft_message->get_message_recipients(true)));
-        } else {
-            $mform->setDefault('mailto_ids', '123,684,116,677,264,744,');  // <--------------- this is for testing!!!!
-        }
+        $mform->setDefault(
+            'mailto_ids', 
+            $this->is_draft_message() 
+                ? implode(',', $this->draft_message->get_message_recipients(true))
+                : '123,684,116,677,264,744,'   // <--------------- this is for testing!!!!
+        );
 
         ////////////////////////////////////////////////////////////
         ///  subject (text)
         ////////////////////////////////////////////////////////////
-        $mform->addElement('text', 'subject', $this->get_plugin_string('subject'));
-        $mform->setType('subject', PARAM_TEXT);
+        $mform->addElement(
+            'text', 
+            'subject', 
+            block_quickmail_plugin::_s('subject')
+        );
+        $mform->setType(
+            'subject', 
+            PARAM_TEXT
+        );
         
         // inject default if draft mesage
         if ($this->is_draft_message()) {
-            $mform->setDefault('subject', $this->draft_message->get('subject'));
+            $mform->setDefault(
+                'subject', 
+                $this->draft_message->get('subject')
+            );
         }
         
         ////////////////////////////////////////////////////////////
         ///  additional_emails (text)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_additional_email_input()) {
-            $mform->addElement('text', 'additional_emails', $this->get_plugin_string('additional_emails'));
-            $mform->setType('additional_emails', PARAM_TEXT);
+            $mform->addElement(
+                'text', 
+                'additional_emails', 
+                block_quickmail_plugin::_s('additional_emails')
+            );
+            $mform->setType(
+                'additional_emails', 
+                PARAM_TEXT
+            );
             // $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'block_quickmail_mycallback', 'client');
-            $mform->addHelpButton('additional_emails', 'additional_emails', 'block_quickmail');
+            $mform->addHelpButton(
+                'additional_emails', 
+                'additional_emails', 
+                'block_quickmail'
+            );
 
             // inject default if draft mesage
             if ($this->is_draft_message()) {
-                $mform->setDefault('additional_emails', implode(', ', $this->draft_message->get_additional_emails(true)));
+                $mform->setDefault(
+                    'additional_emails', 
+                    implode(', ', $this->draft_message->get_additional_emails(true))
+                );
             }
         }
 
@@ -132,76 +176,163 @@ class compose_message_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         
         // inject default if draft mesage
-        $default_text = $this->is_draft_message() ? $this->draft_message->get('body') : '';
+        $default_text = $this->is_draft_message() 
+            ? $this->draft_message->get('body') 
+            : '';
         
-        $mform->addElement('editor', 'message_editor',  $this->get_plugin_string('body'), 'bdfsdgsdg', $this->get_editor_options())
-            ->setValue(['text' => $default_text]);
-        $mform->setType('message_editor', PARAM_RAW);
+        $mform->addElement(
+            'editor', 
+            'message_editor',  
+            block_quickmail_plugin::_s('body'), 
+            'bdfsdgsdg', 
+            $this->get_editor_options()
+        )->setValue([
+            'text' => $default_text
+        ]);
+        $mform->setType(
+            'message_editor', 
+            PARAM_RAW
+        );
+
+        ////////////////////////////////////////////////////////////
+        ///  attachments (filemanager)
+        ////////////////////////////////////////////////////////////
+
+        $mform->addElement(
+            'filemanager', 
+            'attachments', 
+            block_quickmail_plugin::_s('attachment'), 
+            null,
+            block_quickmail_plugin::get_filemanager_options()
+        );
+        // $mform->setDefault('attachments', file_get_submitted_draft_itemid('attachments'));
 
         ////////////////////////////////////////////////////////////
         ///  signatures (select)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_signature_selection()) {
-            $mform->addElement('select', 'signature_id', $this->get_plugin_string('signature'), $this->get_user_signature_options());
+            $mform->addElement(
+                'select', 
+                'signature_id', 
+                block_quickmail_plugin::_s('signature'), 
+                $this->get_user_signature_options()
+            );
 
             // inject default if draft mesage
             if ($this->is_draft_message()) {
-                $mform->setDefault('signature_id', $this->draft_message->get('signature_id'));
+                $mform->setDefault(
+                    'signature_id', 
+                    $this->draft_message->get('signature_id')
+                );
             }
         } else {
-            $mform->addElement('static', 'add_signature_text', $this->get_plugin_string('sig'), $this->get_plugin_string('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . $this->get_plugin_string('create_one_now') . '</a>'));
-            $mform->addElement('hidden', 'signature_id', 0);
-            $mform->setType('signature_id', PARAM_INT);
+            $mform->addElement(
+                'static', 
+                'add_signature_text', 
+                block_quickmail_plugin::_s('sig'), 
+                block_quickmail_plugin::_s('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . block_quickmail_plugin::_s('create_one_now') . '</a>')
+            );
+            $mform->addElement(
+                'hidden', 
+                'signature_id', 
+                0
+            );
+            $mform->setType(
+                'signature_id', 
+                PARAM_INT
+            );
         }
 
         ////////////////////////////////////////////////////////////
         ///  output_channel (select)
         ////////////////////////////////////////////////////////////
         if ($this->should_show_output_channel_selection()) {
-            $mform->addElement('select', 'output_channel', $this->get_plugin_string('select_output_channel'), $this->get_output_channel_options());
+            $mform->addElement(
+                'select', 
+                'output_channel', 
+                block_quickmail_plugin::_s('select_output_channel'), 
+                $this->get_output_channel_options()
+            );
             
             // inject default if draft mesage
-            if ($this->is_draft_message()) {
-                $mform->setDefault('output_channel', $this->draft_message->get('output_channel'));
-            } else {
-                $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
-            }
+            $mform->setDefault(
+                'output_channel', 
+                $this->is_draft_message()
+                    ? $this->draft_message->get('output_channel')
+                    : $this->course_config_array['default_output_channel']
+            );
         } else {
-            $mform->addElement('hidden', 'output_channel');
-            $mform->setDefault('output_channel', $this->course_config_array['default_output_channel']);
+            $mform->addElement(
+                'hidden', 
+                'output_channel'
+            );
+            $mform->setDefault(
+                'output_channel', 
+                $this->course_config_array['default_output_channel']
+            );
+        }
+
+        ////////////////////////////////////////////////////////////
+        ///  to_send_at (date/time)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'date_time_selector', 
+            'to_send_at', 
+            block_quickmail_plugin::_s('send_at'),
+            $this->get_to_send_at_options()
+        );
+
+        // inject default if draft mesage AND time to send is in the future
+        if ($this->should_set_default_time()) {
+            $mform->setDefault(
+                'to_send_at',
+                $this->get_draft_default_send_time()
+            );
         }
 
         ////////////////////////////////////////////////////////////
         ///  receipt (radio) - receive a copy or not?
         ////////////////////////////////////////////////////////////
-        $receipt_options = array(
+        $receipt_options = [
             $mform->createElement('radio', 'receipt', '', get_string('yes'), 1),
             $mform->createElement('radio', 'receipt', '', get_string('no'), 0)
+        ];
+
+        $mform->addGroup(
+            $receipt_options, 
+            'receipt_action', 
+            block_quickmail_plugin::_s('receipt'), 
+            [' '], 
+            false
+        );
+        $mform->addHelpButton(
+            'receipt_action', 
+            'receipt', 
+            'block_quickmail'
         );
 
-        $mform->addGroup($receipt_options, 'receipt_action', $this->get_plugin_string('receipt'), array(' '), false);
-        $mform->addHelpButton('receipt_action', 'receipt', 'block_quickmail');
-
-        if ($this->is_draft_message()) {
-            // inject default if draft mesage
-            $mform->setDefault('receipt', $this->draft_message->get('send_receipt'));
-        } else {
-            // otherwise, go with this course's config
-            $mform->setDefault('receipt', ! empty($this->course_config_array['receipt']));
-        }
+        $mform->setDefault(
+            'receipt', 
+            $this->is_draft_message() 
+            ? $this->draft_message->get('send_receipt') // inject default if draft mesage
+            : ! empty($this->course_config_array['receipt']) // otherwise, go with this course's config
+        );
 
         ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('submit', 'send', $this->get_plugin_string('send_message')),
-            $mform->createElement('submit', 'save', $this->get_plugin_string('save_draft')),
-            $mform->createElement('cancel', 'cancel', $this->get_plugin_string('cancel'))
+            $mform->createElement('submit', 'send', block_quickmail_plugin::_s('send_message')),
+            $mform->createElement('submit', 'save', block_quickmail_plugin::_s('save_draft')),
+            $mform->createElement('cancel', 'cancel', block_quickmail_plugin::_s('cancel'))
         ];
         
-        $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
+        $mform->addGroup($buttons, 'actions', '&nbsp;', [' '], false);
     }
 
+    /*
+     * Moodle form validation
+     */
     public function validation($data, $files) {
         $errors = [];
 
@@ -292,16 +423,66 @@ class compose_message_form extends \moodleform {
         ];
     }
 
+    /**
+     * Returns the options for the "send at" time selection
+     * 
+     * @return array
+     */
+    private function get_to_send_at_options() {
+        $current_year = date("Y");
+
+        if ( ! $this->is_draft_message()) {
+            $is_optional = true;
+        } else {
+            $is_optional = ! $this->draft_message->get_to_send_in_future();
+        }
+
+        return [
+            'startyear' => $current_year,
+            'stopyear' => $current_year + 1,
+            'timezone' => 99,
+            'step' => 15,
+            'optional' => $is_optional
+        ];
+    }
+
+    /**
+     * Returns a URL for signature creation
+     * @return [type] [description]
+     */
     private function get_create_signature_url() {
         return '/blocks/quickmail/signature.php?courseid=' . $this->course->id;
     }
 
-    public function get_plugin_string($key, $a = null) {
-        return block_quickmail_plugin::_s($key, $a);
+    /**
+     * Report whether or not a default time should be set
+     * 
+     * @return bool
+     */
+    private function should_set_default_time() {
+        if ( ! $this->is_draft_message()) {
+            return false;
+        }
+
+        return $this->draft_message->get_to_send_in_future();
     }
 
-    private function get_plugin_config($key) {
-        return block_quickmail_plugin::_c($key, $this->course->id);
+    /**
+     * Returns the default timestamp for this message
+     * 
+     * @return int
+     */
+    private function get_draft_default_send_time() {
+        $to_send_at = $this->draft_message->get('to_send_at');
+
+        return make_timestamp(
+            date("Y", $to_send_at), 
+            date("n", $to_send_at), 
+            date("j", $to_send_at), 
+            date("G", $to_send_at), 
+            date("i", $to_send_at), 
+            date("s", $to_send_at)
+        );
     }
 
 }

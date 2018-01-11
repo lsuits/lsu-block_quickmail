@@ -47,7 +47,17 @@ class message_recipient extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    //
+    /**
+     * Returns this message recipient's parent message
+     * 
+     * @return message
+     */
+    public function get_message()
+    {
+        $message_id = $this->get('message_id');
+
+        return new message($message_id);
+    }
 
     ///////////////////////////////////////////////
     ///
@@ -56,6 +66,80 @@ class message_recipient extends persistent {
     ///////////////////////////////////////////////
     
     //
+
+    ///////////////////////////////////////////////
+    ///
+    ///  HELPER METHODS
+    /// 
+    ///////////////////////////////////////////////
+    
+    /**
+     * Reports whether or not this recipient should be the first to receive this message
+     * 
+     * @return bool
+     */
+    public function should_be_first_to_receive_message()
+    {
+        // get all unsent recipients of this message
+        $recipients = $this->get_all_recipients_for_message(true);
+
+        if ( ! count($recipients)) {
+            return false;
+        }
+
+        $first = $recipients[0]->get('id');
+
+        unset($recipients);
+
+        return $first == $this->get('id');
+    }
+
+    /**
+     * Reports whether or not this recipient should be the last to receive this message
+     * 
+     * @return bool
+     */
+    public function should_be_last_to_receive_message()
+    {
+        // get all unsent recipients of this message
+        $recipients = $this->get_all_recipients_for_message(true);
+
+        if ( ! count($recipients)) {
+            return false;
+        }
+
+        $reversed = array_reverse($recipients);
+
+        $last = $reversed[0]->get('id');
+
+        unset($recipients);
+        unset($reversed);
+
+        return $last == $this->get('id');
+    }
+
+    /**
+     * Return an array of all recipients of this recipient's parent message
+     * 
+     * @param  bool  $unsent_only
+     * @return array
+     */
+    public function get_all_recipients_for_message($unsent_only = false)
+    {
+        // get parent message
+        $message = $this->get_message();
+
+        $params = ['message_id' => $message->get('id')];
+
+        if ($unsent_only) {
+            $params['sent_at'] = 0;
+        }
+
+        // get all recipients of this message
+        $recipients = self::get_records($params);
+
+        return $recipients;
+    }
 
     ///////////////////////////////////////////////
     ///

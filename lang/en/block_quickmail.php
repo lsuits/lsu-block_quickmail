@@ -14,6 +14,7 @@ $string['save_signature'] = 'Save Signature';
 $string['delete_signature'] = 'Delete Signature';
 $string['user_signature_deleted'] = 'Your signature has been deleted.';
 $string['alternate_deleted'] = 'Your alternate sending email has been deleted.';
+$string['send_at'] = 'Send at';
 $string['send_message'] = 'Send Message';
 $string['additional_emails'] = 'Additional Recipient Emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:

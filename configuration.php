@@ -63,7 +63,7 @@ $PAGE->requires->js_call_amd('block_quickmail/course-config', 'init', ['courseid
 $renderer = $PAGE->get_renderer('block_quickmail');
 
 ////////////////////////////////////////
-/// INSTANTIATE CONFIGURATION FORM
+/// INSTANTIATE FORM
 ////////////////////////////////////////
 $course_config_form = block_quickmail_form::make_course_config_form(
     $page_context, 
@@ -72,19 +72,21 @@ $course_config_form = block_quickmail_form::make_course_config_form(
 );
 
 ////////////////////////////////////////
-/// HANDLE SIGNATURE FORM SUBMISSION (if any)
+/// INSTANTIATE REQUEST
 ////////////////////////////////////////
-
-// instantiate "course configuration" request
 $course_config_request = \block_quickmail\requests\course_config_request::make($course_config_form);
 
-// if cancelling form
+////////////////////////////////////////
+/// HANDLE CANCEL REQUEST
+////////////////////////////////////////
 if ($course_config_request->was_cancelled()) {
     
     // redirect back to appropriate page
     $course_config_request->redirect_back();
 
-// if requesting to restore defaults
+////////////////////////////////////////
+/// HANDLE RESTORE DEFAULT REQUEST
+////////////////////////////////////////
 } else if ($course_config_request->to_restore_defaults()) {
     
     // delete this course's config settings
@@ -93,7 +95,9 @@ if ($course_config_request->was_cancelled()) {
     // redirect to this signature edit page, notifying user of update
     $course_config_request->redirect_to_course_config_page('success', $course->id, get_string('changessaved'));
 
-// if saving signature
+////////////////////////////////////////
+/// HANDLE SAVE REQUEST
+////////////////////////////////////////
 } else if ($course_config_request->to_save_configuration()) {
 
     // replace this course's config settings with those that were submitted
