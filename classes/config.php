@@ -145,7 +145,7 @@ class block_quickmail_config {
      * 
      * @return array
      */
-    public static function get_supported_user_fields() {
+    public static function get_supported_data_injection_fields() {
         return [
             'firstname',
             'middlename',

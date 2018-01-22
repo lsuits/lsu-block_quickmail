@@ -48,8 +48,8 @@ class message_body_parser {
         // make a copy of the message body for manipulation
         $message = '_' . trim($this->message_body);
 
-        $first_delimiter = $this->get_first_delimiter();
-        $last_delimiter = $this->get_last_delimiter();
+        $first_delimiter = self::get_first_delimiter();
+        $last_delimiter = self::get_last_delimiter();
 
         $message_keys = [];
 
@@ -90,12 +90,17 @@ class message_body_parser {
         }
     }
 
+    public static function get_delimited_key_stamp($value)
+    {
+        return self::get_first_delimiter() . $value . self::get_last_delimiter();
+    }
+
     /**
      * Returns the delimiter that should be typed in front of the custom user data key
      * 
      * @return string
      */
-    public function get_first_delimiter()
+    public static function get_first_delimiter()
     {
         return '[:';
     }
@@ -105,7 +110,7 @@ class message_body_parser {
      * 
      * @return string
      */
-    public function get_last_delimiter()
+    public static function get_last_delimiter()
     {
         return ':]';
     }

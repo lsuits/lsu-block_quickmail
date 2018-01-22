@@ -31,7 +31,7 @@ trait unit_testcase_has_general_helpers {
 
         $default_default_output_channel = $default_output_channel == 'all' ? 'message' : $default_output_channel;
 
-        $supported_user_fields_string = implode(',', block_quickmail_config::get_supported_user_fields());
+        $supported_user_fields_string = implode(',', block_quickmail_config::get_supported_data_injection_fields());
 
         $params = [];
 

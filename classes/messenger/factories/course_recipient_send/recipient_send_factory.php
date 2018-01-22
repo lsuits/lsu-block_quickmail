@@ -2,7 +2,8 @@
 
 namespace block_quickmail\messenger\factories\course_recipient_send;
 
-// use block_quickmail\messenger\message_body_parser;
+use block_quickmail\messenger\message_subject_prepender;
+use block_quickmail\messenger\message_user_course_data_injector;
 
 class recipient_send_factory {
 
@@ -15,8 +16,8 @@ class recipient_send_factory {
         $this->recipient = $recipient;
         $this->message_params = (object) [];
         $this->set_global_params();
-        $this->set_factory_params();
         $this->set_global_computed_params();
+        $this->set_factory_params();
         $this->set_factory_computed_params();
     }
 
@@ -46,17 +47,29 @@ class recipient_send_factory {
 
     private function set_global_computed_params()
     {
+        $course = $this->message->get_course();
+
         // optional message prepend + message subject
         // very short one-line subject
-        $this->message_params->subject = $this->message->get('subject');
+        $this->message_params->subject = message_subject_prepender::format_course_subject(
+            $course, 
+            $this->message->get('subject')
+        );
         
+        // format the message body to include any injected user/course data
+        $formatted_body = message_user_course_data_injector::get_message_body(
+            $this->message_params->userto, 
+            $course, 
+            $this->message->get('body')
+        );
+
         // course/user formatted message (string format)
         // raw text
-        $this->message_params->fullmessage = $this->message->get('body');
-        
+        $this->message_params->fullmessage = $formatted_body;
+
         // course/user formatted message (html format)
         // full version (the message processor will choose with one to use)
-        $this->message_params->fullmessagehtml = $this->message->get('body');
+        $this->message_params->fullmessagehtml = $formatted_body;
     }
 
 }

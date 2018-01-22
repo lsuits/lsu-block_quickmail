@@ -145,15 +145,15 @@ class block_quickmail_course_recipient_recipient_send_factory_testcase extends a
         $this->assertEquals('This is the subject', $factory->message_params->subject);
     }
 
-    public function test_recipient_send_factory_sets_subject_with_prepended_idnumber_correctly()
+    public function test_recipient_send_factory_sets_prepended_subject_correctly()
     {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
  
+        $this->update_system_config_value('block_quickmail_prepend_class', 'shortname');
+
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-
-        $this->dd($course);
 
         $message = $this->create_course_message($course, $user_teacher, [], [
             'subject' => 'This is the subject',
@@ -166,11 +166,53 @@ class block_quickmail_course_recipient_recipient_send_factory_testcase extends a
 
         $factory = recipient_send_factory::make($message, $recipient);
 
-        $this->assertEquals('This is the subject', $factory->message_params->subject);
+        $this->assertEquals('[' . $course->shortname . '] This is the subject', $factory->message_params->subject);
     }
 
-    // idnumber
-    // shortname
-    // fullname
+    public function test_recipient_send_factory_formats_fullmessage_with_data()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $message = $this->create_course_message($course, $user_teacher, [], [
+            'body' => 'Hey there [:firstname:] [:middlename:] [:lastname:], your email address is [:email:]!',
+        ]);
+
+        $first_student = $user_students[0];
+
+        $recipient = $this->create_message_recipient_from_user($message, $first_student);
+
+        $factory = recipient_send_factory::make($message, $recipient);
+
+        $expected_body = 'Hey there ' . $first_student->firstname . ' ' . $first_student->middlename . ' ' . $first_student->lastname . ', your email address is ' . $first_student->email . '!';
+
+        $this->assertEquals($expected_body, $factory->message_params->fullmessage);
+    }
+
+    public function test_recipient_send_factory_formats_fullmessagehtml_with_data()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $message = $this->create_course_message($course, $user_teacher, [], [
+            'body' => 'Hey there [:firstname:] [:middlename:] [:lastname:], your email address is [:email:]!',
+        ]);
+
+        $first_student = $user_students[0];
+
+        $recipient = $this->create_message_recipient_from_user($message, $first_student);
+
+        $factory = recipient_send_factory::make($message, $recipient);
+
+        $expected_body = 'Hey there ' . $first_student->firstname . ' ' . $first_student->middlename . ' ' . $first_student->lastname . ', your email address is ' . $first_student->email . '!';
+
+        $this->assertEquals($expected_body, $factory->message_params->fullmessagehtml);
+    }
 
 }

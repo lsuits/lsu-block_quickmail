@@ -211,7 +211,7 @@ if($ADMIN->fulltree) {
 
     // get all supported user fields (currently hard-coded)
     // TODO: change to allow for more fields?
-    $supported_user_fields = block_quickmail_config::get_supported_user_fields();
+    $supported_user_fields = block_quickmail_config::get_supported_data_injection_fields();
 
     $settings->add(
         new admin_setting_configmultiselect(
