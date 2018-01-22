@@ -90,7 +90,7 @@ if ($course_config_request->was_cancelled()) {
 } else if ($course_config_request->to_restore_defaults()) {
     
     // delete this course's config settings
-    block_quickmail_plugin::delete_course_config($course->id);
+    block_quickmail_config::delete_course_config($course->id);
 
     // redirect to this signature edit page, notifying user of update
     $course_config_request->redirect_to_course_config_page('success', $course->id, get_string('changessaved'));
@@ -101,7 +101,7 @@ if ($course_config_request->was_cancelled()) {
 } else if ($course_config_request->to_save_configuration()) {
 
     // replace this course's config settings with those that were submitted
-    block_quickmail_plugin::update_course_config($course->id, $course_config_request->get_request_data_object());
+    block_quickmail_config::update_course_config($course->id, $course_config_request->get_request_data_object());
 
     // redirect to this signature edit page, notifying user of update
     $course_config_request->redirect_to_course_config_page('success', $course->id, get_string('changessaved'));

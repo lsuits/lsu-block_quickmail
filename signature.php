@@ -134,7 +134,7 @@ function handle_post_signature_save_or_update($context, $signature, $signature_r
     file_postupdate_standard_editor(
         $record,
         'signature', 
-        \block_quickmail_plugin::get_editor_options($context),
+        \block_quickmail_config::get_editor_options($context),
         $context, 
         \block_quickmail_plugin::$name, 
         'signature_editor',

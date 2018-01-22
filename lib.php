@@ -13,7 +13,7 @@
  * @return void|false
  */
 function block_quickmail_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ( ! empty(block_quickmail_plugin::_c('downloads'))) {
+    if ( ! empty(block_quickmail_config::_c('downloads'))) {
         require_course_login($course, true, $cm);
     }
 

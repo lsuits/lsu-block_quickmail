@@ -106,7 +106,7 @@ class manage_signatures_form extends \moodleform {
      * @return array
      */
     private function get_editor_options() {
-        return block_quickmail_plugin::get_editor_options($this->context);
+        return block_quickmail_config::get_editor_options($this->context);
     }
 
     /**

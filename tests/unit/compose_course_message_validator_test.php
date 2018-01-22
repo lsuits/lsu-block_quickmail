@@ -1,6 +1,6 @@
 <?php
  
-require_once(dirname(__FILE__) . '../../unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
 
 class block_quickmail_compose_message_form_validator_testcase extends advanced_testcase {
     
@@ -21,9 +21,9 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'subject' => ''
         ]);
 
-        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
-        ]);
+        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
+        $validator->for_course($course);
+        $validator->validate();
 
         $this->assertTrue($validator->has_errors());
         $this->assertEquals('Missing subject line.', $validator->errors[0]);
@@ -42,9 +42,9 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'body' => ''
         ]);
 
-        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
-        ]);
+        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
+        $validator->for_course($course);
+        $validator->validate();
 
         $this->assertTrue($validator->has_errors());
         $this->assertEquals('Missing message body.', $validator->errors[0]);
@@ -63,9 +63,9 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'additional_emails' => 'test@email.com, another@email.com'
         ]);
 
-        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
-        ]);
+        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
+        $validator->for_course($course);
+        $validator->validate();
 
         $this->assertFalse($validator->has_errors());
     }
@@ -83,9 +83,9 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'additional_emails' => 'invalid@email, another@email.com'
         ]);
 
-        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
-        ]);
+        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
+        $validator->for_course($course);
+        $validator->validate();
 
         $this->assertTrue($validator->has_errors());
         $this->assertEquals('The additional email "invalid@email" you entered is invalid', $validator->errors[0]);
@@ -102,9 +102,9 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         // get a compose form submission
         $compose_form_data = $this->get_compose_message_form_submission($user_students, 'invalid', 0);
 
-        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
-        ]);
+        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
+        $validator->for_course($course);
+        $validator->validate();
 
         $this->assertTrue($validator->has_errors());
         $this->assertEquals('That send method is not allowed.', $validator->errors[0]);
@@ -118,16 +118,14 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $this->assign_configuration_to_course($course, [
-            'output_channels_available' => 'email'
-        ]);
+        $this->update_system_config_value('block_quickmail_output_channels_available', 'email');
 
         // get a compose form submission
         $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message', 0);
 
-        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
-        ]);
+        $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
+        $validator->for_course($course);
+        $validator->validate();
 
         $this->assertTrue($validator->has_errors());
         $this->assertEquals('That send method is not allowed.', $validator->errors[0]);

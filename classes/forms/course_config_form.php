@@ -52,7 +52,7 @@ class course_config_form extends \moodleform {
         $this->course = $this->_customdata['course'];
 
         // set this course config values
-        $this->course_config = block_quickmail_plugin::_c('', $this->course->id);
+        $this->course_config = block_quickmail_config::_c('', $this->course);
 
         // restore flag
         $mform->addElement('hidden', 'restore_flag');
@@ -119,7 +119,7 @@ class course_config_form extends \moodleform {
      */
     private function should_show_allow_students()
     {
-        return block_quickmail_plugin::_c('allowstudents') !== -1;
+        return block_quickmail_config::_c('allowstudents') !== -1;
     }
 
     /**
@@ -129,7 +129,7 @@ class course_config_form extends \moodleform {
      */
     private function should_show_default_output_channel()
     {
-        return block_quickmail_plugin::_c('output_channels_available') == 'all';
+        return block_quickmail_config::_c('output_channels_available') == 'all';
     }
 
     /**
@@ -200,7 +200,7 @@ class course_config_form extends \moodleform {
      */
     private function display_default_output_channel()
     {
-        $key = block_quickmail_plugin::_c('output_channels_available');
+        $key = block_quickmail_config::_c('output_channels_available');
 
         return block_quickmail_plugin::_s('output_channel_' . $key);
     }

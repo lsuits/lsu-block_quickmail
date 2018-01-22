@@ -9,11 +9,11 @@ use block_quickmail\requests\compose as compose_request;
 class compose_message_form_validator extends validator {
 
     /**
-     * Performs validation against the validator's set form data
+     * Defines this specific validator's validation rules
      * 
      * @return void
      */
-    public function validate()
+    public function validator_rules()
     {
         $this->validate_subject();
 
@@ -45,8 +45,6 @@ class compose_message_form_validator extends validator {
      */
     private function validate_message_body()
     {
-        $course_config = $this->get_extra_data('course_config');
-
         $body = compose_request::get_transformed_message_body($this->form_data);
 
         // first, check that there is a message body which is required
@@ -54,19 +52,12 @@ class compose_message_form_validator extends validator {
             $this->add_error('Missing message body.');
         }
 
-        $parser = new message_body_parser($body, $course_config['allowed_user_fields']);
+        $parser = new message_body_parser($body);
 
-        try {
-            // attempt to check that any custom fields in the body are allowed, and fetch the keys in the process (for later use)
-            list($success, $user_data_keys_in_message) = $parser->validate_supported_fields();
-
-            $this->custom_user_data_keys = $user_data_keys_in_message;
-
-            if ( ! $success) {
-                $this->add_error('The message body contains custom user data that is not supported, please remove those references.');
+        if ($parser->has_errors()) {
+            foreach($parser->errors as $parse_error) {
+                $this->add_error($parse_error);
             }
-        } catch (\Exception $e) {
-            $this->add_error($e->getMessage());
         }
     }
 
@@ -95,13 +86,11 @@ class compose_message_form_validator extends validator {
      */
     private function validate_output_channel()
     {
-        $course_config = $this->get_extra_data('course_config');
-
-        if ( ! in_array($this->form_data->output_channel, \block_quickmail_plugin::get_supported_output_channels())) {
+        if ( ! in_array($this->form_data->output_channel, \block_quickmail_config::get_supported_output_channels())) {
             $this->errors[] = 'That send method is not allowed.';
         }
 
-        $supported_option = $course_config['output_channels_available'];
+        $supported_option = $this->get_config('output_channels_available');
 
         if ($supported_option == 'all') {
             return;

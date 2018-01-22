@@ -69,7 +69,7 @@ if ($page_params['draftid']) {
 $attachments_draftitem_id = file_get_submitted_draft_itemid('attachments');
 
 // prepare the draft area with any existing, relevant files
-file_prepare_draft_area($attachments_draftitem_id, $page_context->id, 'block_quickmail', 'attachments', $page_params['draftid'] ?: null, block_quickmail_plugin::get_filemanager_options());
+file_prepare_draft_area($attachments_draftitem_id, $page_context->id, 'block_quickmail', 'attachments', $page_params['draftid'] ?: null, block_quickmail_config::get_filemanager_options());
 
 ////////////////////////////////////////
 /// INSTANTIATE FORM

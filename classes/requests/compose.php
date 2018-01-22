@@ -115,7 +115,7 @@ class compose extends \block_quickmail_request {
      */
     public static function get_transformed_output_channel($form_data)
     {
-        return ! empty($form_data->output_channel) ? (string) $form_data->output_channel : block_quickmail_plugin::_c('default_output_channel');
+        return ! empty($form_data->output_channel) ? (string) $form_data->output_channel : block_quickmail_config::_c('default_output_channel');
     }
 
     /**

@@ -109,7 +109,7 @@ if(!empty($display_users)) {
 
 // // get configured roles that quickmail accepts
 // // $filter_roles => $quickmail_accepted_roles
-// $quickmail_accepted_roles = $DB->get_records_select('role', sprintf('id IN (%s)', block_quickmail_plugin::_c('roleselection', $course->id)));
+// $quickmail_accepted_roles = $DB->get_records_select('role', sprintf('id IN (%s)', block_quickmail_config::_c('roleselection', $course)));
 
 // // get the common roles between configuration and this course data
 // $roles = array_uintersect($course_roles, $quickmail_accepted_roles, function($a, $b) {
@@ -153,7 +153,7 @@ if(!empty($display_users)) {
 //     'block_quickmail', 
 //     'message_attachments', /////
 //     $draft_message ? $draft_message->get('id') : null, 
-//     block_quickmail_plugin::get_filemanager_options()
+//     block_quickmail_config::get_filemanager_options()
 // );
 
 // // dd($thing);

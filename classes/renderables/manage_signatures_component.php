@@ -69,7 +69,7 @@ class manage_signatures_component extends renderable_component implements \rende
         $prepared_signature_data = file_prepare_standard_editor(
             $signature_record, 
             'signature', 
-            \block_quickmail_plugin::get_editor_options($this->get_param('context')), 
+            \block_quickmail_config::get_editor_options($this->get_param('context')), 
             $this->get_param('context'), 
             \block_quickmail_plugin::$name, 
             'signature',

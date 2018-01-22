@@ -203,7 +203,7 @@ class compose_message_form extends \moodleform {
             'attachments', 
             block_quickmail_plugin::_s('attachment'), 
             null,
-            block_quickmail_plugin::get_filemanager_options()
+            block_quickmail_config::get_filemanager_options()
         );
         // $mform->setDefault('attachments', file_get_submitted_draft_itemid('attachments'));
 
@@ -363,7 +363,7 @@ class compose_message_form extends \moodleform {
      * @return array
      */
     private function get_editor_options() {
-        return block_quickmail_plugin::get_editor_options($this->context);
+        return block_quickmail_config::get_editor_options($this->context);
     }
 
     /**

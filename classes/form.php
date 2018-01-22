@@ -29,7 +29,7 @@ class block_quickmail_form {
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
         // get config variables for this course, defaulting to block level
-        $course_config_array = block_quickmail_plugin::_c('', $course->id);
+        $course_config_array = block_quickmail_config::_c('', $course);
 
         return new \block_quickmail\forms\compose_message_form($target, [
             'context' => $context,

@@ -7,6 +7,7 @@ use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\requests\compose as compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\exceptions\critical_exception;
+use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 
 class messenger {
 
@@ -29,7 +30,7 @@ class messenger {
     {
         // validate form data
         $validator = new compose_message_form_validator($form_data, [
-            'course_config' => \block_quickmail_plugin::_c('', $course->id)
+            'course_config' => \block_quickmail_config::_c('', $course)
         ]);
 
         if ($validator->has_errors()) {
@@ -104,13 +105,11 @@ class messenger {
             self::handle_message_pre_send($message);
         }
 
-        // $send_factory = new send_factory($message, $recipient);
+        // instantiate recipient_send_factory
+        $recipient_send_factory = recipient_send_factory::make($message, $recipient);
 
-        // instantiate course_send_factory
-            // message
-            // recipient
-
-        // send course_send_factory
+        // send recipient_send_factory
+        $recipient_send_factory->send();
 
         // if we're handling pre/post send actions (likely, is queued send) AND this recipient should be last to receive message
         if ($event_handling && $recipient->should_be_last_to_receive_message()) {

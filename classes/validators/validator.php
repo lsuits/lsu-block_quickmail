@@ -5,17 +5,34 @@ namespace block_quickmail\validators;
 class validator {
 
     public $form_data;
-    public $message;
     public $errors;
-    public $extra_data;
+    public $course;
 
-    public function __construct($form_data, $extra_data = []) {
+    public function __construct($form_data) {
         $this->form_data = $form_data;
-        $this->extra_data = $extra_data;
-        $this->message = 'Validation error!';
         $this->errors = [];
+        $this->course = null;
+    }
 
-        $this->validate();
+    /**
+     * Sets the given course on the validator object
+     * 
+     * @param  object  $course  moodle course
+     * @return void
+     */
+    public function for_course($course)
+    {
+        $this->course = $course;
+    }
+
+    /**
+     * Performs validation against the validator's set form data
+     * 
+     * @return void
+     */
+    public function validate()
+    {
+        $this->validator_rules();
     }
 
     /**
@@ -38,17 +55,6 @@ class validator {
     {
         return (bool) count($this->errors);
     }
-
-    /**
-     * Returns a value of extra data with the given key
-     * 
-     * @param  string  $key
-     * @return mixed
-     */
-    public function get_extra_data($key)
-    {
-        return $this->extra_data[$key];
-    }
     
     /**
      * Reports whether or not the given form data key has any value or not
@@ -59,6 +65,19 @@ class validator {
     public function is_missing($key)
     {
         return empty($this->form_data->$key);
+    }
+
+    /**
+     * Returns the configuration array or value with respect to the set course (if any)
+     * 
+     * @param  string  $key
+     * @return mixed
+     */
+    public function get_config($key = '')
+    {
+        $course_id = empty($this->course) ? 0 : $this->course->id;
+
+        return \block_quickmail_config::_c($key, $course_id);
     }
 
 }

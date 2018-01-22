@@ -16,6 +16,7 @@
         printerClass="Hint_ResultPrinter"
         testSuiteLoaderClass="phpunit_autoloader"
         colors="true"
+        verbose="true"
         >
 
     <php>
@@ -31,10 +32,13 @@
 
     <testsuites>
         <testsuite name="block_quickmail_testsuite">
-            <!-- <directory suffix="_test.php">tests/unit/messenger</directory> -->
-            <directory suffix="_test.php">tests/unit/validators</directory>
+            <directory suffix="_test.php">tests/unit</directory>
+            <!-- <exclude>tests/unit/configuration_test.php</exclude> -->
+            <exclude>tests/unit/compose_course_message_validator_test.php</exclude>
+            <exclude>tests/unit/message_body_parser_test.php</exclude>
+            <exclude>tests/unit/compose_message_test.php</exclude>
+            <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
         </testsuite>
-
     </testsuites>
 
 </phpunit>
