@@ -58,8 +58,6 @@ class block_quickmail_compose_course_message_testcase extends advanced_testcase 
 
         \phpunit_util::run_all_adhoc_tasks();
 
-        $this->dd('agag');
-
         $messages = $sink->get_messages();
         $this->assertEquals(4, count($messages));
         $this->close_email_sink($sink);

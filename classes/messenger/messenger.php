@@ -30,7 +30,25 @@ class messenger {
     // receipt
     // no_reply
 
-    public static function send_composed_course_message($user, $course, $form_data, $draft_message = null)
+    /**
+     * Creates a message from the given user within the given course using the given form data
+     * 
+     * Depending on the given form data, this message may be sent now or at some point in the future.
+     * By default, the message delivery will be handled as individual adhoc tasks which are
+     * picked up by a scheduled task.
+     *
+     * Optionally, a draft message may be passed which will use and update the draft information
+     *
+     * @param  object   $user            moodle user sending the message
+     * @param  object   $course          course in which this message is being sent
+     * @param  array    $form_data       message parameters which will be validated
+     * @param  message  $draft_message   a draft message (optional, defaults to null)
+     * @param  bool     $queue_send      if true, the message will be sent immediately
+     * @return bool
+     * @throws validation_exception
+     * @throws critical_exception
+     */
+    public static function send_composed_course_message($user, $course, $form_data, $draft_message = null, $queue_send = true)
     {
         // validate form data
         $validator = new compose_message_form_validator($form_data, [
@@ -67,13 +85,23 @@ class messenger {
 
         // if sending immediately, send!
         if ( ! $message->get_to_send_in_future()) {
-            self::execute_course_message($message, false);
+            self::execute_course_message($message, $queue_send);
         }
         
         // if no exceptions, send positive response
         return true;
     }
 
+    /**
+     * Performs the delivery of the given message to all of its recipients
+     *
+     * By default, the message to recipient transactions will be sent immediately,
+     * however, may also be queued to send as adhoc tasks
+     * 
+     * @param  message  $message     message to be sent
+     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task
+     * @return void
+     */
     public static function execute_course_message(message $message, $queue_send = false)
     {
         // is message is currently being sent, bail out
@@ -88,21 +116,20 @@ class messenger {
 
         // iterate through all message recipients
         foreach($message->get_message_recipients() as $recipient) {
-            $task = new send_course_message_to_recipient_adhoc_task();
+            if ( ! $queue_send) {
+                // send now
+                self::send_course_message_to_recipient($message, $recipient, false);
+            } else {
+                // queue send
+                $task = new send_course_message_to_recipient_adhoc_task();
 
-            $task->set_custom_data([
-                'message_id' => $message->get('id'),
-                'recipient_id' => $recipient->get('id'),
-            ]);
+                $task->set_custom_data([
+                    'message_id' => $message->get('id'),
+                    'recipient_id' => $recipient->get('id'),
+                ]);
 
-            task_manager::queue_adhoc_task($task);
-
-            // if ( ! $queue_send) {
-                // self::send_course_message_to_recipient($message, $recipient, false);
-            // } else {
-                // var_dump('here!!');die;
-                // fire adhoc task send_course_message_to_recipient_adhoc_task(message_id, recipient_id)
-            // }
+                task_manager::queue_adhoc_task($task);
+            }
         }
         
         // if sending now, handle post-send actions
@@ -111,6 +138,14 @@ class messenger {
         }
     }
 
+    /**
+     * Delivers the given message to the given recipient
+     * 
+     * @param  message            $message         message to be sent
+     * @param  message_recipient  $recipient       message recipient to recieve the message
+     * @param  bool               $event_handling  if true, pre-send and post-send actions will be fired
+     * @return void
+     */
     public static function send_course_message_to_recipient($message, $recipient, $event_handling = false)
     {
         // if we're handling pre/post send actions (likely, is queued send) AND this recipient should be first to receive message
@@ -130,12 +165,24 @@ class messenger {
         }
     }
 
+    /**
+     * Performs pre-send actions for the given message
+     * 
+     * @param  message  $message
+     * @return void
+     */
     public static function handle_message_pre_send($message)
     {
         $message->set('is_sending', 1);
         $message->update();
     }
 
+    /**
+     * Performs post-send actions for the given message
+     * 
+     * @param  message  $message
+     * @return void
+     */
     public static function handle_message_post_send($message)
     {
         // send to any additional emails (if any)
@@ -178,7 +225,7 @@ class messenger {
     }
 
     /**
-     * Created a new message from the given form data
+     * Creates a new message from the given form data
      * 
      * @param  object  $form_data
      * @param  object  $user  moodle user

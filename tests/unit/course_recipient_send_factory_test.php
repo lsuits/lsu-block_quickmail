@@ -264,8 +264,6 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $factory = recipient_send_factory::make($message, $recipient);
 
-        // $this->dd($factory->message_params->replyto);
-
         $this->assertTrue($factory->message_params->usetrueaddress);
         $this->assertEquals($user_teacher->email, $factory->message_params->replyto);
         $this->assertEquals(fullname($user_teacher), $factory->message_params->replytoname);
