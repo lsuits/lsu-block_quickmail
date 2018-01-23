@@ -3,7 +3,7 @@
 namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
-use block_quickmail\messenger\message_body_parser;
+use block_quickmail\messenger\body_parser;
 use block_quickmail\requests\compose as compose_request;
 
 class compose_message_form_validator extends validator {
@@ -52,7 +52,7 @@ class compose_message_form_validator extends validator {
             $this->add_error('Missing message body.');
         }
 
-        $parser = new message_body_parser($body);
+        $parser = new body_parser($body);
 
         if ($parser->has_errors()) {
             foreach($parser->errors as $parse_error) {

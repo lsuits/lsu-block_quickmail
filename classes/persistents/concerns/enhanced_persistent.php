@@ -14,6 +14,22 @@ trait enhanced_persistent {
     ///////////////////////////////////////////////
 
     /**
+     * Creates a new persistent record with the given array
+     * 
+     * @param  array  $data
+     * @return object (persistent)
+     * @throws dml_missing_record_exception
+     */
+    public static function create_new($data = [])
+    {
+        $model = new self(0, (object) $data);
+
+        $model->create();
+
+        return $model;
+    }
+
+    /**
      * Finds this persistent's record by id number or returns null
      * 
      * @param  int  $id
@@ -45,19 +61,39 @@ trait enhanced_persistent {
     }
 
     /**
-     * Creates a new persistent record with the given object
+     * Returns a human readable date for the given model attribute
      * 
-     * @param  object  $data
-     * @return object (persistent)
-     * @throws dml_missing_record_exception
+     * @param  string  $attr  (must be a date attribute)
+     * @return string
      */
-    public static function create_new($data)
+    public function get_readable_date($attr)
     {
-        $model = new self(0, $data);
+        return date('Y-m-d H:i:s', $this->get($attr));
+    }
 
-        $model->create();
+    /**
+     * Returns a trimmed, shortened, "preview" string with appendage and default if no content
+     * 
+     * @param  string  $attr     the model attribute to be previewed
+     * @param  int     $length     number of characters to be displayed
+     * @param  string  $appendage  a string to be appended if string is cut off
+     * @param  string  $default    default string to be returned is no string is given
+     * @return string
+     */
+    public function render_preview_string($attr, $length, $appendage = '...', $default = '--') {
+        $string = trim($this->get($attr));
 
-        return $model;
+        if ( ! $string) {
+            return $default;
+        }
+
+        if (strlen($string) > $length) {
+            $string = wordwrap($string, $length);
+            $string = explode("\n", $string, 2);
+            $string = $string[0] . $appendage;
+        }
+
+        return $string;
     }
 
     /**
@@ -79,13 +115,9 @@ trait enhanced_persistent {
      * 
      * @return bool
      */
-    public function is_deleted()
+    public function is_soft_deleted()
     {
         return (bool) $this->get('timedeleted');
-    }
-
-    private function get_readable_date($field) {
-        return date('Y-m-d H:i:s', $this->get($field));
     }
 
 }

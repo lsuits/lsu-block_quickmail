@@ -25,6 +25,7 @@ class message_recipient_send_factory extends recipient_send_factory implements r
     {
         $moodlemessage = new moodle_message();
 
+        $moodlemessage->courseid = $this->message->get_course()->id;
         $moodlemessage->component = $this->message_params->component;
         $moodlemessage->name = $this->message_params->name;
         $moodlemessage->userto = $this->message_params->userto;

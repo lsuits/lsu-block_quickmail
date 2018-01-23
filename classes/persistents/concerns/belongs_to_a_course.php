@@ -77,7 +77,7 @@ trait belongs_to_a_course {
      * @param object|int $idorobject The course ID, or a course object.
      * @return bool
      */
-    protected function is_owned_by_course($idorobject) {
+    public function is_owned_by_course($idorobject) {
         $course_id = $idorobject;
         
         if (is_object($idorobject)) {

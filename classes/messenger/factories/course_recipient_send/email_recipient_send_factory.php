@@ -20,6 +20,7 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
         $this->message_params->usetrueaddress = $this->should_use_true_address();
         $this->message_params->replyto = $this->get_replyto_email();
         $this->message_params->replytoname = $this->get_replyto_name();
+        $this->alternate_email = alternate_email::find_or_null($this->message->get('alternate_email_id'));
     }
 
     public function send()
@@ -57,9 +58,10 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
         }
 
         // if this message has an alternate email assigned
-        if ($alternate_email = new alternate_email($this->message->get('alternate_email_id'))) {
+        if ($this->alternate_email) {
+
             // return the alternate's email address
-            return $alternate_email->get('email');
+            return $this->alternate_email->get('email');
         }
 
         // otherwise, return the moodle user's email
@@ -75,13 +77,13 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
         }
 
         // if this message has an alternate email assigned
-        if ($alternate_email = new alternate_email($this->message->get('alternate_email_id'))) {
+        if ($this->alternate_email) {
             // return the alternate's full name
-            return $alternate_email->get_fullname();
+            return $this->alternate_email->get_fullname();
         }
 
         // otherwise, return the moodle user's full name
-        return $this->message_params->userfrom->firstname . ' ' . $this->message_params->userfrom->lastname;
+        return fullname($this->message_params->userfrom);
     }
 
 

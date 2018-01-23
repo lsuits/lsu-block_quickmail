@@ -27,7 +27,7 @@ trait can_be_soft_deleted {
     public function soft_delete() {
         global $DB;
 
-        if ($this->raw_get('id') <= 0) {
+        if (empty($this->raw_get('id'))) {
             throw new coding_exception('id is required to delete');
         }
 
@@ -44,10 +44,8 @@ trait can_be_soft_deleted {
         // Hook after delete.
         $this->after_delete($result);
 
-        // Reset the ID to avoid any confusion, this also invalidates the model's data.
-        if ($result) {
-            $this->raw_set('id', 0);
-        }
+        // refresh the model to reflect changes
+        $this->read();
 
         return $result;
     }

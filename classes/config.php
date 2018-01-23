@@ -152,6 +152,12 @@ class block_quickmail_config {
             'lastname',
             'email',
             'alternatename',
+            'coursefullname',
+            'courseshortname',
+            'courseidnumber',
+            'coursesummary',
+            'coursestartdate',
+            'courseenddate',
         ];
     }
 

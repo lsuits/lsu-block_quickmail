@@ -2,11 +2,11 @@
  
 require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
 
-class block_quickmail_compose_message_form_validator_testcase extends advanced_testcase {
+class block_quickmail_compose_course_message_validator_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers;
-    use unit_testcase_sets_up_courses;
-    use unit_testcase_submits_compose_message_form;
+    use unit_testcase_has_general_helpers,
+        unit_testcase_sets_up_courses,
+        unit_testcase_submits_compose_message_form;
 
     public function test_validate_subject_is_missing()
     {
@@ -17,7 +17,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', 0, [
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
             'subject' => ''
         ]);
 
@@ -38,7 +38,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', 0, [
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
             'body' => ''
         ]);
 
@@ -59,7 +59,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', 0, [
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
             'additional_emails' => 'test@email.com, another@email.com'
         ]);
 
@@ -79,7 +79,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', 0, [
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
             'additional_emails' => 'invalid@email, another@email.com'
         ]);
 
@@ -100,7 +100,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'invalid', 0);
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'invalid');
 
         $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
         $validator->for_course($course);
@@ -121,7 +121,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         $this->update_system_config_value('block_quickmail_output_channels_available', 'email');
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message', 0);
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message');
 
         $validator = new \block_quickmail\validators\compose_message_form_validator($compose_form_data);
         $validator->for_course($course);

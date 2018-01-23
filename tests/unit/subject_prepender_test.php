@@ -2,10 +2,12 @@
  
 require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
 
-class block_quickmail_message_subject_prepender_testcase extends advanced_testcase {
+use block_quickmail\messenger\subject_prepender;
+
+class block_quickmail_subject_prepender_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers;
-    use unit_testcase_sets_up_courses;
+    use unit_testcase_has_general_helpers,
+        unit_testcase_sets_up_courses;
 
     public function test_format_course_subject_with_no_setting()
     {
@@ -15,7 +17,7 @@ class block_quickmail_message_subject_prepender_testcase extends advanced_testca
 
         $subject = 'Hello world!';
 
-        $formatted_subject = \block_quickmail\messenger\message_subject_prepender::format_course_subject($course, $subject);
+        $formatted_subject = subject_prepender::format_course_subject($course, $subject);
 
         $this->assertEquals('Hello world!', $formatted_subject);
     }
@@ -30,7 +32,7 @@ class block_quickmail_message_subject_prepender_testcase extends advanced_testca
 
         $this->update_system_config_value('block_quickmail_prepend_class', 'idnumber');
         
-        $formatted_subject = \block_quickmail\messenger\message_subject_prepender::format_course_subject($course, $subject);
+        $formatted_subject = subject_prepender::format_course_subject($course, $subject);
 
         $this->assertEquals('[' . $course->idnumber . '] Hello world!', $formatted_subject);
     }
@@ -45,7 +47,7 @@ class block_quickmail_message_subject_prepender_testcase extends advanced_testca
 
         $this->update_system_config_value('block_quickmail_prepend_class', 'shortname');
         
-        $formatted_subject = \block_quickmail\messenger\message_subject_prepender::format_course_subject($course, $subject);
+        $formatted_subject = subject_prepender::format_course_subject($course, $subject);
 
         $this->assertEquals('[' . $course->shortname . '] Hello world!', $formatted_subject);
     }
@@ -60,7 +62,7 @@ class block_quickmail_message_subject_prepender_testcase extends advanced_testca
 
         $this->update_system_config_value('block_quickmail_prepend_class', 'fullname');
         
-        $formatted_subject = \block_quickmail\messenger\message_subject_prepender::format_course_subject($course, $subject);
+        $formatted_subject = subject_prepender::format_course_subject($course, $subject);
 
         $this->assertEquals('[' . $course->fullname . '] Hello world!', $formatted_subject);
     }

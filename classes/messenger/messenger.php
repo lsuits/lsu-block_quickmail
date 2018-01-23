@@ -8,6 +8,8 @@ use block_quickmail\requests\compose as compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\exceptions\critical_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
+use block_quickmail\tasks\send_course_message_to_recipient_adhoc_task;
+use core\task\manager as task_manager;
 
 class messenger {
 
@@ -24,7 +26,9 @@ class messenger {
     // attachments
     // signature_id
     // output_channel
+    // to_send_at
     // receipt
+    // no_reply
 
     public static function send_composed_course_message($user, $course, $form_data, $draft_message = null)
     {
@@ -60,9 +64,11 @@ class messenger {
         $message->sync_additional_emails(compose_request::get_transformed_additional_emails($form_data));
 
         // @TODO: sync posted attachments to message record
-        
-        // if sending immediately, (for right now lets send immediately)
+
+        // if sending immediately, send!
+        if ( ! $message->get_to_send_in_future()) {
             self::execute_course_message($message, false);
+        }
         
         // if no exceptions, send positive response
         return true;
@@ -82,20 +88,27 @@ class messenger {
 
         // iterate through all message recipients
         foreach($message->get_message_recipients() as $recipient) {
-            if ( ! $queue_send) {
-                self::send_course_message_to_recipient($message, $recipient, false);
-            } else {
-                var_dump('here!!');die;
-                // fire adhoc task send_course_message_to_recipient_task(message_id, recipient_id)
-            }
+            $task = new send_course_message_to_recipient_adhoc_task();
+
+            $task->set_custom_data([
+                'message_id' => $message->get('id'),
+                'recipient_id' => $recipient->get('id'),
+            ]);
+
+            task_manager::queue_adhoc_task($task);
+
+            // if ( ! $queue_send) {
+                // self::send_course_message_to_recipient($message, $recipient, false);
+            // } else {
+                // var_dump('here!!');die;
+                // fire adhoc task send_course_message_to_recipient_adhoc_task(message_id, recipient_id)
+            // }
         }
         
         // if sending now, handle post-send actions
         if ( ! $queue_send) {
             self::handle_message_post_send($message);
         }
-
-        var_dump('star');die;
     }
 
     public static function send_course_message_to_recipient($message, $recipient, $event_handling = false)

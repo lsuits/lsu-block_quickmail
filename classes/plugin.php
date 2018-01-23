@@ -36,37 +36,6 @@ class block_quickmail_plugin {
 
     ////////////////////////////////////////////////////
     ///
-    ///  HELPERS
-    ///  
-    ////////////////////////////////////////////////////
-
-    /**
-     * Returns a trimmed, shortened, "preview" string with appendage and default if no content
-     * 
-     * @param  string  $string     the string to be previewed
-     * @param  int     $length     number of characters to be displayed
-     * @param  string  $appendage  a string to be appended if string is cut off
-     * @param  string  $default    default string to be returned is no string is given
-     * @return string
-     */
-    public static function render_preview_string($string, $length, $appendage = '...', $default = '--') {
-        $string = trim($string);
-
-        if ( ! $string) {
-            return $default;
-        }
-
-        if (strlen($string) > $length) {
-            $string = wordwrap($string, $length);
-            $string = explode("\n", $string, 2);
-            $string = $string[0] . $appendage;
-        }
-
-        return $string;
-    }
-
-    ////////////////////////////////////////////////////
-    ///
     ///  FILE ATTACHMENTS
     ///  
     ////////////////////////////////////////////////////

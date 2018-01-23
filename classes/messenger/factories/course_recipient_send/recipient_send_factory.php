@@ -2,19 +2,25 @@
 
 namespace block_quickmail\messenger\factories\course_recipient_send;
 
-use block_quickmail\messenger\message_subject_prepender;
-use block_quickmail\messenger\message_user_course_data_injector;
+use block_quickmail\messenger\subject_prepender;
+use block_quickmail\messenger\user_course_data_injector;
 
-class recipient_send_factory {
+/**
+ * This class is a base class to be extended by all types of "output channels" (ex: email, message)
+ * It accepts a message and message recipient, and then sends the message approriately
+ */
+abstract class recipient_send_factory {
 
     public $message;
     public $recipient;
     public $message_params;
+    public $alternate_email;
 
     public function __construct($message, $recipient) {
         $this->message = $message;
         $this->recipient = $recipient;
         $this->message_params = (object) [];
+        $this->alternate_email = null;
         $this->set_global_params();
         $this->set_global_computed_params();
         $this->set_factory_params();
@@ -51,13 +57,13 @@ class recipient_send_factory {
 
         // optional message prepend + message subject
         // very short one-line subject
-        $this->message_params->subject = message_subject_prepender::format_course_subject(
+        $this->message_params->subject = subject_prepender::format_course_subject(
             $course, 
             $this->message->get('subject')
         );
         
         // format the message body to include any injected user/course data
-        $formatted_body = message_user_course_data_injector::get_message_body(
+        $formatted_body = user_course_data_injector::get_message_body(
             $this->message_params->userto, 
             $course, 
             $this->message->get('body')
@@ -65,11 +71,11 @@ class recipient_send_factory {
 
         // course/user formatted message (string format)
         // raw text
-        $this->message_params->fullmessage = $formatted_body;
+        $this->message_params->fullmessage = format_text_email($formatted_body, 1); // <--- hard coded for now, change?
 
         // course/user formatted message (html format)
         // full version (the message processor will choose with one to use)
-        $this->message_params->fullmessagehtml = $formatted_body;
+        $this->message_params->fullmessagehtml = purify_html($formatted_body);
     }
 
 }

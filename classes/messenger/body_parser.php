@@ -2,7 +2,7 @@
 
 namespace block_quickmail\messenger;
 
-class message_body_parser {
+class body_parser {
 
     public $errors;
     public $message_body;

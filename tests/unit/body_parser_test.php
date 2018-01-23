@@ -2,7 +2,9 @@
  
 require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
 
-class block_quickmail_message_body_parser_testcase extends advanced_testcase {
+use block_quickmail\messenger\body_parser;
+
+class block_quickmail_body_parser_testcase extends advanced_testcase {
     
     use unit_testcase_has_general_helpers;
 
@@ -12,7 +14,7 @@ class block_quickmail_message_body_parser_testcase extends advanced_testcase {
  
         $body = 'Hello world!';
 
-        $parser = new \block_quickmail\messenger\message_body_parser($body);
+        $parser = new body_parser($body);
 
         $this->assertCount(0, $parser->message_keys);
     }
@@ -23,7 +25,7 @@ class block_quickmail_message_body_parser_testcase extends advanced_testcase {
  
         $body = 'Hello world! Here is [:something:] and an additional [:something_else:]! I hope you enjoyed these keys.';
 
-        $parser = new \block_quickmail\messenger\message_body_parser($body);
+        $parser = new body_parser($body);
 
         $this->assertCount(2, $parser->message_keys);
         $this->assertContains('something', $parser->message_keys);
@@ -36,7 +38,7 @@ class block_quickmail_message_body_parser_testcase extends advanced_testcase {
         
         $body = 'Hello world! This one [:here:] is just not [:right would you believe that?';
 
-        $parser = new \block_quickmail\messenger\message_body_parser($body);
+        $parser = new body_parser($body);
 
         $this->assertTrue($parser->has_errors());
         $this->assertEquals($parser->errors[0], 'Custom data delimiters not formatted properly.');
@@ -50,7 +52,7 @@ class block_quickmail_message_body_parser_testcase extends advanced_testcase {
 
         $body = 'Hello world! Here is [:this:], [:that:], and the [:other:]!';
 
-        $parser = new \block_quickmail\messenger\message_body_parser($body);
+        $parser = new body_parser($body);
 
         $this->assertTrue($parser->has_errors());
         $this->assertEquals($parser->errors[0], 'Custom data key "other" is not allowed.');

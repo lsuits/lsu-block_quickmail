@@ -81,6 +81,10 @@ class message extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => false,
             ],
+            'no_reply' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+            ],
             'timedeleted' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -161,10 +165,14 @@ class message extends persistent {
     /**
      * Returns the status of this message
      * 
-     * @return string  deleted|drafted|queued|sent
+     * @return string  deleted|drafted|queued|sending|sent
      */
     public function get_status() {
-        if ($this->is_deleted()) {
+        if ($this->is_being_sent()) {
+            return 'sending';
+        }
+
+        if ($this->is_soft_deleted()) {
             return 'deleted';
         }
 
@@ -184,11 +192,11 @@ class message extends persistent {
     }
 
     public function get_subject_preview($length = 20) {
-        return block_quickmail_plugin::render_preview_string($this->get('subject'), $length, '...', '(No subject)');
+        return $this->render_preview_string('subject', $length, '...', '(No subject)');
     }
 
     public function get_body_preview($length = 40) {
-        return block_quickmail_plugin::render_preview_string(strip_tags($this->get('body')), $length, '...', '(No content)');
+        return $this->render_preview_string(strip_tags('body'), $length, '...', '(No content)');
     }
 
     public function get_readable_created_at() {

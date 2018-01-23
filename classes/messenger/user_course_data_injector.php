@@ -2,10 +2,10 @@
 
 namespace block_quickmail\messenger;
 
-use block_quickmail\messenger\message_body_parser;
+use block_quickmail\messenger\body_parser;
 use block_quickmail_config;
 
-class message_user_course_data_injector {
+class user_course_data_injector {
 
     public $user;
     public $course;
@@ -14,7 +14,7 @@ class message_user_course_data_injector {
     public $message_keys;
 
     /**
-     * Construct the message_user_course_data_injector
+     * Construct the user_course_data_injector
      * 
      * @param object  $user          the moodle user
      * @param object  $course        the moodle course
@@ -24,7 +24,7 @@ class message_user_course_data_injector {
         $this->user = $user;
         $this->course = $course;
         $this->message_body = $message_body;
-        $this->parser = new message_body_parser($this->message_body);
+        $this->parser = new body_parser($this->message_body);
         $this->keys = $this->parser->get_keys_from_message_body();
 
     }
@@ -52,7 +52,7 @@ class message_user_course_data_injector {
                 continue;
             }
 
-            $key_stamp = message_body_parser::get_delimited_key_stamp($key);
+            $key_stamp = body_parser::get_delimited_key_stamp($key);
 
             $this->message_body = str_replace($key_stamp, $this->get_mapped_data($key), $this->message_body);
         }
@@ -88,6 +88,36 @@ class message_user_course_data_injector {
     public function get_data_alternatename()
     {
         return $this->user->alternatename;
+    }
+
+    public function get_data_coursefullname()
+    {
+        return $this->course->fullname;
+    }
+
+    public function get_data_courseshortname()
+    {
+        return $this->course->shortname;
+    }
+
+    public function get_data_courseidnumber()
+    {
+        return $this->course->idnumber;
+    }
+
+    public function get_data_coursesummary()
+    {
+        return $this->course->summary;
+    }
+
+    public function get_data_coursestartdate()
+    {
+        return date('F j, Y', $this->course->startdate);
+    }
+
+    public function get_data_courseenddate()
+    {
+        return date('F j, Y', $this->course->enddate);
     }
 
 }

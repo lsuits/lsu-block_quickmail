@@ -4,7 +4,7 @@ namespace block_quickmail\messenger;
 
 use block_quickmail_config;
 
-class message_subject_prepender {
+class subject_prepender {
 
     public $subject;
 

@@ -36,6 +36,7 @@ class compose extends \block_quickmail_request {
         $transformed_post->alternate_email_id = self::get_transformed_alternate_email_id($form_data);
         $transformed_post->to_send_at = self::get_transformed_to_send_at($form_data);
         $transformed_post->attachments_draftitem_id = self::get_transformed_attachments_draftitem_id($form_data);
+        $transformed_post->no_reply = self::get_transformed_no_reply($form_data);
 
         return $transformed_post;
     }
@@ -149,6 +150,17 @@ class compose extends \block_quickmail_request {
     public static function get_transformed_to_send_at($form_data)
     {
         return ! $form_data->to_send_at ? 0 : (int) $form_data->to_send_at;
+    }
+
+    /**
+     * Returns a sanitized no_reply value from the given form post data
+     * 
+     * @param  array  $form_data
+     * @return bool
+     */
+    public static function get_transformed_no_reply($form_data)
+    {
+        return (bool) $form_data->no_reply;
     }
 
     /**

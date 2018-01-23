@@ -57,12 +57,12 @@ trait belongs_to_a_message {
      * @return object (persistent)
      * @throws dml_missing_record_exception
      */
-    public static function create_for_message(message $message, array $params)
+    public static function create_for_message(message $message, $params = [])
     {
         // merge the message id into the creation parameters
         $params = array_merge(['message_id' => $message->get('id')], $params);
 
-        return self::create_new((object) $params);
+        return self::create_new($params);
     }
 
 }

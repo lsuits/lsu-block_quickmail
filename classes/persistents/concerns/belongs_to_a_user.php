@@ -75,7 +75,7 @@ trait belongs_to_a_user {
      * @param object|int $idorobject The user ID, or a user object.
      * @return bool
      */
-    protected function is_owned_by_user($idorobject) {
+    public function is_owned_by_user($idorobject) {
         $user_id = $idorobject;
         
         if (is_object($idorobject)) {
