@@ -52,14 +52,13 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     private function get_replyto_email()
     {
         // message is marked as "no reply"
-        if ($this->message->get('no_reply')) {
+        if ((bool) $this->message->get('no_reply')) {
             // return the default no reply address
             return get_config('moodle', 'noreplyaddress');
         }
 
         // if this message has an alternate email assigned
         if ($this->alternate_email) {
-
             // return the alternate's email address
             return $this->alternate_email->get('email');
         }
@@ -71,7 +70,7 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     private function get_replyto_name()
     {
         // message is marked as "no reply"
-        if ($this->message->get('no_reply')) {
+        if ((bool) $this->message->get('no_reply')) {
             // return the default no reply address
             return get_config('moodle', 'noreplyaddress');
         }

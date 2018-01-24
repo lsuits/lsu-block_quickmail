@@ -1,6 +1,6 @@
 <?php
  
-require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\messenger\factories\course_recipient_send\email_recipient_send_factory;
@@ -8,9 +8,9 @@ use block_quickmail\messenger\factories\course_recipient_send\message_recipient_
 
 class block_quickmail_course_recipient_send_factory_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers,
-        unit_testcase_sets_up_courses,
-        unit_testcase_creates_message_records;
+    use has_general_helpers,
+        sets_up_courses,
+        creates_message_records;
 
     public function test_makes_email_recipient_send_factory()
     {

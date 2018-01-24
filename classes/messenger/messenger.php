@@ -72,7 +72,7 @@ class messenger {
             // create a new message from form data
             $message = self::create_message_from_course_compose_post($form_data, $user, $course);
         }
-        
+
         // @TODO: handle posted file attachments (moodle)
 
         // clear any existing recipients, and add those that have been recently submitted
@@ -247,7 +247,8 @@ class messenger {
             'subject' => $posted->subject,
             'body' => $posted->message,
             'send_receipt' => $posted->receipt,
-            'to_send_at' => $posted->to_send_at
+            'to_send_at' => $posted->to_send_at,
+            'no_reply' => $posted->no_reply
         ]);
 
         // save the message

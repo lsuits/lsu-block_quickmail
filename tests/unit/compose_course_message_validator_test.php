@@ -1,12 +1,12 @@
 <?php
  
-require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 class block_quickmail_compose_course_message_validator_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers,
-        unit_testcase_sets_up_courses,
-        unit_testcase_submits_compose_message_form;
+    use has_general_helpers,
+        sets_up_courses,
+        submits_compose_message_form;
 
     public function test_validate_subject_is_missing()
     {

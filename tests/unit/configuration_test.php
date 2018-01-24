@@ -1,10 +1,10 @@
 <?php
  
-require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 class block_quickmail_configuration_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers;
+    use has_general_helpers;
 
     public function test_fetches_block_config_as_array()
     {

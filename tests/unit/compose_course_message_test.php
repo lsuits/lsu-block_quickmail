@@ -1,24 +1,74 @@
 <?php
  
-require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\messenger;
 
 class block_quickmail_compose_course_message_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers,
-        unit_testcase_sets_up_courses,
-        unit_testcase_submits_compose_message_form,
-        unit_testcase_sends_emails,
-        unit_testcase_sends_messages;
-
-    // test message with alternate id posted is sent from that alternate email
+    use has_general_helpers, 
+        sets_up_courses, 
+        submits_compose_message_form, 
+        sends_emails, 
+        sends_messages;
     
-    // test message with alternate id of 0 posted is sent from the user's email
-    
-    // test message with alterndate id of -1 posted is sent from no reply
+    // public function test_message_with_alternate_id_posted_is_sent_from_that_alternate_email()
 
-    public function test_send_composed_course_email_message_later()
+    public function test_sends_composed_course_email_message_now()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+        ]);
+
+        // send a message from the teacher to the students now
+        messenger::send_composed_course_message($user_teacher, $course, $compose_form_data);
+
+        \phpunit_util::run_all_adhoc_tasks();
+
+        $this->assertEquals(4, $this->email_sink_email_count($sink));
+        $this->assertEquals('Hello world', $this->email_in_sink_attr($sink, 1, 'subject'));
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is one fine body.'));
+        // $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 1, 'from'));  <--- this would be nice
+        $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 1, 'from'));
+        $this->assertEquals($user_students[0]->email, $this->email_in_sink_attr($sink, 1, 'to'));
+
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_sends_composed_course_message_message_now()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_message_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message', []);
+
+        // send a message from the teacher to the students now
+        messenger::send_composed_course_message($user_teacher, $course, $compose_form_data);
+
+        \phpunit_util::run_all_adhoc_tasks();
+
+        $this->assertEquals(4, $this->message_sink_message_count($sink));
+        $this->close_message_sink($sink);
+    }
+
+    public function test_sends_composed_course_email_message_later()
     {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
@@ -41,55 +91,8 @@ class block_quickmail_compose_course_message_testcase extends advanced_testcase 
 
         \phpunit_util::run_all_adhoc_tasks();
 
-        $emails = $sink->get_messages();
-        $this->assertEquals(0, count($emails));
+        $this->assertEquals(0, $this->email_sink_email_count($sink));
         $this->close_email_sink($sink);
-    }
-
-    public function test_send_composed_course_email_message_now()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
-        
-        $sink = $this->open_email_sink();
- 
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-
-        // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', []);
-
-        // send a message from the teacher to the students now
-        messenger::send_composed_course_message($user_teacher, $course, $compose_form_data);
-
-        \phpunit_util::run_all_adhoc_tasks();
-
-        $messages = $sink->get_messages();
-        $this->assertEquals(4, count($messages));
-        $this->close_email_sink($sink);
-    }
-
-    public function test_send_composed_course_message_message_now()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
-        
-        $sink = $this->open_message_sink();
- 
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-
-        // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message', []);
-
-        // send a message from the teacher to the students now
-        messenger::send_composed_course_message($user_teacher, $course, $compose_form_data);
-
-        \phpunit_util::run_all_adhoc_tasks();
-
-        $messages = $sink->get_messages();
-        $this->assertEquals(4, count($messages));
-        $this->close_message_sink($sink);
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
  
-require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_recipient;
@@ -8,8 +8,8 @@ use block_quickmail\persistents\message_additional_email;
 
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers,
-        unit_testcase_sets_up_courses;
+    use has_general_helpers,
+        sets_up_courses;
 
     private function create_message()
     {

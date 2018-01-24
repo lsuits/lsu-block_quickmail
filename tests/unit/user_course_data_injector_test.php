@@ -1,13 +1,13 @@
 <?php
  
-require_once(dirname(__FILE__) . '/unit_testcase_traits.php');
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\user_course_data_injector;
 
 class block_quickmail_user_course_data_injector_testcase extends advanced_testcase {
     
-    use unit_testcase_has_general_helpers,
-        unit_testcase_sets_up_courses;
+    use has_general_helpers,
+        sets_up_courses;
 
     public function test_formats_body_with_no_keys()
     {
