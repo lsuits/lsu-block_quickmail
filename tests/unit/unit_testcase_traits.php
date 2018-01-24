@@ -27,9 +27,9 @@ trait unit_testcase_has_general_helpers {
 
     public function get_course_config_params(array $override_params = [])
     {
-        $default_output_channel = get_config('moodle', 'block_quickmail_output_channels_available');
+        $default_message_type = get_config('moodle', 'block_quickmail_message_types_available');
 
-        $default_default_output_channel = $default_output_channel == 'all' ? 'message' : $default_output_channel;
+        $default_default_message_type = $default_message_type == 'all' ? 'message' : $default_message_type;
 
         $supported_user_fields_string = implode(',', block_quickmail_config::get_supported_data_injection_fields());
 
@@ -42,8 +42,8 @@ trait unit_testcase_has_general_helpers {
         $params['ferpa'] = array_key_exists('ferpa', $override_params) ? $override_params['ferpa'] : get_config('moodle', 'block_quickmail_ferpa');
         $params['downloads'] = array_key_exists('downloads', $override_params) ? $override_params['downloads'] : (int) get_config('moodle', 'block_quickmail_downloads');
         $params['additionalemail'] = array_key_exists('additionalemail', $override_params) ? $override_params['additionalemail'] : (int) get_config('moodle', 'block_quickmail_additionalemail');
-        $params['output_channels_available'] = array_key_exists('output_channels_available', $override_params) ? $override_params['output_channels_available'] : $default_output_channel;
-        $params['default_output_channel'] = array_key_exists('default_output_channel', $override_params) ? $override_params['default_output_channel'] : $default_default_output_channel;
+        $params['message_types_available'] = array_key_exists('message_types_available', $override_params) ? $override_params['message_types_available'] : $default_message_type;
+        $params['default_message_type'] = array_key_exists('default_message_type', $override_params) ? $override_params['default_message_type'] : $default_default_message_type;
         $params['allowed_user_fields'] = array_key_exists('allowed_user_fields', $override_params) ? $override_params['allowed_user_fields'] : $supported_user_fields_string;
 
         return $params;
@@ -172,9 +172,8 @@ trait unit_testcase_sets_up_courses {
 
 trait unit_testcase_submits_compose_message_form {
 
-    // @TODO : make send_at_timestamp work properly!
     // @TODO : convert additional_emails override to an array of emails
-    public function get_compose_message_form_submission(array $to_users, $output_channel = 'email', array $override_params = [])
+    public function get_compose_message_form_submission(array $to_users, $message_type = 'email', array $override_params = [])
     {
         $params = $this->get_compose_message_form_submission_params($override_params);
 
@@ -191,7 +190,7 @@ trait unit_testcase_submits_compose_message_form {
         ];
         $form_data->attachments = 0;
         $form_data->signature_id = $params['signature_id']; // default: '0'
-        $form_data->output_channel = $output_channel;
+        $form_data->message_type = $message_type;
         $form_data->to_send_at = $params['to_send_at']; // default: 0
         $form_data->receipt = $params['receipt']; // default: '0'
         $form_data->no_reply = $params['no_reply']; // default: 0
@@ -234,7 +233,7 @@ trait unit_testcase_creates_message_records {
         $data = new stdClass();
         $data->course_id = $course->id;
         $data->user_id = $sending_user->id;
-        $data->output_channel = $params['output_channel'];
+        $data->message_type = $params['message_type'];
         $data->alternate_email_id = $params['alternate_email_id'];
         $data->signature_id = $params['signature_id'];
         $data->subject = $params['subject'];
@@ -271,7 +270,7 @@ trait unit_testcase_creates_message_records {
     {
         $params = [];
 
-        $params['output_channel'] = array_key_exists('output_channel', $override_params) ? $override_params['output_channel'] : 'email';
+        $params['message_type'] = array_key_exists('message_type', $override_params) ? $override_params['message_type'] : 'email';
         $params['alternate_email_id'] = array_key_exists('alternate_email_id', $override_params) ? $override_params['alternate_email_id'] : '0';
         $params['signature_id'] = array_key_exists('signature_id', $override_params) ? $override_params['signature_id'] : '0';
         $params['subject'] = array_key_exists('subject', $override_params) ? $override_params['subject'] : 'this is the subject';

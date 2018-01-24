@@ -31,7 +31,7 @@ class compose extends \block_quickmail_request {
         $transformed_post->mailto_ids = self::get_transformed_mailto_ids($form_data);
         $transformed_post->additional_emails = self::get_transformed_additional_emails($form_data);
         $transformed_post->signature_id = self::get_transformed_signature_id($form_data);
-        $transformed_post->output_channel = self::get_transformed_output_channel($form_data);
+        $transformed_post->message_type = self::get_transformed_message_type($form_data);
         $transformed_post->receipt = self::get_transformed_receipt($form_data);
         $transformed_post->alternate_email_id = self::get_transformed_alternate_email_id($form_data);
         $transformed_post->to_send_at = self::get_transformed_to_send_at($form_data);
@@ -109,14 +109,14 @@ class compose extends \block_quickmail_request {
     }
 
     /**
-     * Returns a sanitized output channel from the given form post data
+     * Returns a sanitized message type from the given form post data
      * 
      * @param  array  $form_data
      * @return string
      */
-    public static function get_transformed_output_channel($form_data)
+    public static function get_transformed_message_type($form_data)
     {
-        return ! empty($form_data->output_channel) ? (string) $form_data->output_channel : block_quickmail_config::_c('default_output_channel');
+        return ! empty($form_data->message_type) ? (string) $form_data->message_type : block_quickmail_config::_c('default_message_type');
     }
 
     /**

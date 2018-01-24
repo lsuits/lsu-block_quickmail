@@ -37,7 +37,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The course id that this message was sent from"/>
         <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user id that composed this message"/>
-        <FIELD NAME="output_channel" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="The selected output channel of this message."/>
+        <FIELD NAME="message_type" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="The selected message type of this message."/>
         <FIELD NAME="alternate_email_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional alternate email id that this message was sent from"/>
         <FIELD NAME="signature_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The optional signature id that will be appended to this message"/>
         <FIELD NAME="subject" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message subject line"/>

@@ -25,7 +25,7 @@ class messenger {
     // message
     // attachments
     // signature_id
-    // output_channel
+    // message_type
     // to_send_at
     // receipt
     // no_reply
@@ -213,7 +213,7 @@ class messenger {
         $draft_message->set('alternate_email_id', $posted->alternate_email_id);
         $draft_message->set('subject', $posted->subject);
         $draft_message->set('body', $posted->message);
-        $draft_message->set('output_channel', $posted->output_channel);
+        $draft_message->set('message_type', $posted->message_type);
         $draft_message->set('signature_id', $posted->signature_id);
         $draft_message->set('send_receipt', $posted->receipt);
         $draft_message->set('to_send_at', $posted->to_send_at);
@@ -241,7 +241,7 @@ class messenger {
         $message = new message(0, (object) [
             'course_id' => $course->id,
             'user_id' => $user->id,
-            'output_channel' => $posted->output_channel,
+            'message_type' => $posted->message_type,
             'alternate_email_id' => $posted->alternate_email_id,
             'signature_id' => $posted->signature_id,
             'subject' => $posted->subject,

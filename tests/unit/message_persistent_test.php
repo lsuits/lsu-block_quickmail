@@ -16,7 +16,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         return message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
         ]);
     }
 
@@ -41,7 +41,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'subject' => 'Id dolore irure nostrud dolor eu elit et laborum',
             'body' => 'Id dolore irure nostrud dolor eu elit et laborum sit ullamco laboris cillum consectetur irure quis esse occaecat in amet culpa nulla duis id velit in ut officia.',
         ]);
@@ -128,7 +128,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'is_draft' => true
         ]);
 
@@ -143,7 +143,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'to_send_at' => time()
         ]);
 
@@ -158,7 +158,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'is_sending' => true
         ]);
 
@@ -173,7 +173,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'sent_at' => time()
         ]);
 
@@ -191,14 +191,14 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message_now = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'to_send_at' => $now
         ]);
 
         $message_future = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
             'to_send_at' => $nextWeek
         ]);
 

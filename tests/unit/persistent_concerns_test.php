@@ -15,7 +15,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         return message::create_new([
             'course_id' => 1,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
         ]);
     }
 
@@ -42,7 +42,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals(1, $message->get('course_id'));
         $this->assertEquals(1, $message->get('user_id'));
-        $this->assertEquals('email', $message->get('output_channel'));
+        $this->assertEquals('email', $message->get('message_type'));
     }
 
     public function test_find_or_null()
@@ -115,7 +115,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => $course->id,
             'user_id' => 1,
-            'output_channel' => 'email',
+            'message_type' => 'email',
         ]);
 
         $message_course = $message->get_course();
@@ -154,7 +154,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $message = message::create_new([
             'course_id' => 1,
             'user_id' => $user->id,
-            'output_channel' => 'email',
+            'message_type' => 'email',
         ]);
 
         $message_user = $message->get_user();

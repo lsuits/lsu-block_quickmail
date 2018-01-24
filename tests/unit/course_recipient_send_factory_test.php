@@ -21,7 +21,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         $message = $this->create_course_message($course, $user_teacher, [], [
-            'output_channel' => 'email'
+            'message_type' => 'email'
         ]);
 
         $first_student = $user_students[0];
@@ -42,7 +42,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         $message = $this->create_course_message($course, $user_teacher, [], [
-            'output_channel' => 'message'
+            'message_type' => 'message'
         ]);
 
         $first_student = $user_students[0];
@@ -63,7 +63,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         $message = $this->create_course_message($course, $user_teacher, [], [
-            'output_channel' => 'email'
+            'message_type' => 'email'
         ]);
 
         $first_student = $user_students[0];
@@ -87,7 +87,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         $message = $this->create_course_message($course, $user_teacher, [], [
-            'output_channel' => 'email'
+            'message_type' => 'email'
         ]);
 
         $first_student = $user_students[0];
@@ -108,7 +108,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         $message = $this->create_course_message($course, $user_teacher, [], [
-            'output_channel' => 'message'
+            'message_type' => 'message'
         ]);
 
         $first_student = $user_students[0];

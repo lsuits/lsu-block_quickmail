@@ -91,7 +91,7 @@ class block_quickmail_compose_course_message_validator_testcase extends advanced
         $this->assertEquals('The additional email "invalid@email" you entered is invalid', $validator->errors[0]);
     }
 
-    public function test_validate_invalid_output_channel_is_invalid()
+    public function test_validate_invalid_message_type_is_invalid()
     {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
@@ -110,7 +110,7 @@ class block_quickmail_compose_course_message_validator_testcase extends advanced
         $this->assertEquals('That send method is not allowed.', $validator->errors[0]);
     }
 
-    public function test_validate_unsupported_output_channel_is_invalid()
+    public function test_validate_unsupported_message_type_is_invalid()
     {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
@@ -118,7 +118,7 @@ class block_quickmail_compose_course_message_validator_testcase extends advanced
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $this->update_system_config_value('block_quickmail_output_channels_available', 'email');
+        $this->update_system_config_value('block_quickmail_message_types_available', 'email');
 
         // get a compose form submission
         $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message');

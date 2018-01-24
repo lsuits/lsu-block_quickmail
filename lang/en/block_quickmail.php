@@ -4,7 +4,7 @@
 $string['pluginname'] = 'Quickmail';
 
 // compose message form text
-$string['compose_heading'] = 'Send {$a->scope} {$a->output_channel}';
+$string['compose_heading'] = 'Send {$a->scope} {$a->message_type}';
 $string['subject'] = 'Subject';
 $string['noreply'] = 'No-Reply';
 $string['body'] = 'Body';
@@ -61,21 +61,21 @@ $string['downloads_desc'] = 'This setting determines if attachments are availabl
 $string['additionalemail'] = 'Allow emails to external email addresses';
 $string['additionalemail_desc'] = 'If this option is enabled, the sender will have the ability to send messages to additional emails outside of Moodle';
 
-$string['output_channel'] = 'Send Quickmail messages as';
-$string['select_output_channel'] = 'Send message as';
-$string['output_channel_desc'] = 'Allows Quickmail messages to be sent as a Moodle message, traditional email, or sender preference.';
+$string['message_type'] = 'Send Quickmail messages as';
+$string['select_message_type'] = 'Send message as';
+$string['message_type_desc'] = 'Allows Quickmail messages to be sent as a Moodle message, traditional email, or sender preference.';
 
-$string['output_channel_message'] = 'Moodle Message';
-$string['output_channel_email'] = 'Email';
+$string['message_type_message'] = 'Moodle Message';
+$string['message_type_email'] = 'Email';
 
-$string['default_output_channel'] = 'Preferred message sending method';
-$string['default_output_channel_desc'] = 'Send your messages as Moodle Messages or traditional email.';
+$string['default_message_type'] = 'Preferred message sending method';
+$string['default_message_type_desc'] = 'Send your messages as Moodle Messages or traditional email.';
 
-$string['output_channels_available'] = 'Message output channel restrictions';
-$string['output_channels_available_desc'] = 'Restrict Quickmail messages to be sent as Moodle Messages, traditional emails, or sender preference.';
-$string['output_channel_available_all'] = 'No restrictions, sender preference';
-$string['output_channel_available_message'] = 'Restrict to Moodle messages only';
-$string['output_channel_available_email'] = 'Restrict to traditional email only';
+$string['message_types_available'] = 'Message message type restrictions';
+$string['message_types_available_desc'] = 'Restrict Quickmail messages to be sent as Moodle Messages, traditional emails, or sender preference.';
+$string['message_type_available_all'] = 'No restrictions, sender preference';
+$string['message_type_available_message'] = 'Restrict to Moodle messages only';
+$string['message_type_available_email'] = 'Restrict to traditional email only';
 
 $string['save_configuration'] = 'Save Settings';
 $string['reset'] = 'Restore System Defaults';

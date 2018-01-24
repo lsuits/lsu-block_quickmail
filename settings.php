@@ -187,19 +187,19 @@ if($ADMIN->fulltree) {
     ///  
     ///////////////////////////////////////////////////////////
 
-    $block_quickmail_output_channels_available_options = [
-        'all' => block_quickmail_plugin::_s('output_channel_available_all'),
-        'message' => block_quickmail_plugin::_s('output_channel_available_message'),
-        'email' => block_quickmail_plugin::_s('output_channel_available_email')
+    $block_quickmail_message_types_available_options = [
+        'all' => block_quickmail_plugin::_s('message_type_available_all'),
+        'message' => block_quickmail_plugin::_s('message_type_available_message'),
+        'email' => block_quickmail_plugin::_s('message_type_available_email')
     ];
 
     $settings->add(
         new admin_setting_configselect(
-            'block_quickmail_output_channels_available', 
-            block_quickmail_plugin::_s('output_channels_available'), 
-            block_quickmail_plugin::_s('output_channels_available_desc'),
+            'block_quickmail_message_types_available', 
+            block_quickmail_plugin::_s('message_types_available'), 
+            block_quickmail_plugin::_s('message_types_available_desc'),
             'all',  // <-- default
-            $block_quickmail_output_channels_available_options
+            $block_quickmail_message_types_available_options
         )
     );
 

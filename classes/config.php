@@ -26,7 +26,7 @@ class block_quickmail_config {
      */
     public static function block($key = '', $transformed = true)
     {
-        $default_output_channel = get_config('moodle', 'block_quickmail_output_channels_available');
+        $default_message_type = get_config('moodle', 'block_quickmail_message_types_available');
 
         $block_config_array = [
             'allowstudents'             => get_config('moodle', 'block_quickmail_allowstudents'),
@@ -36,10 +36,10 @@ class block_quickmail_config {
             'ferpa'                     => get_config('moodle', 'block_quickmail_ferpa'),
             'downloads'                 => get_config('moodle', 'block_quickmail_downloads'),
             'additionalemail'           => get_config('moodle', 'block_quickmail_additionalemail'),
-            'output_channels_available' => $default_output_channel,
-            'default_output_channel'    => $default_output_channel == 'all' 
+            'message_types_available' => $default_message_type,
+            'default_message_type'    => $default_message_type == 'all' 
                 ? 'message' 
-                : $default_output_channel,
+                : $default_message_type,
             'allowed_user_fields'       => get_config('moodle', 'block_quickmail_allowed_user_fields')
         ];
 
@@ -79,14 +79,14 @@ class block_quickmail_config {
                 $block_config['allowstudents'];
         }
 
-        // determine default output_channel, if any, for this course
+        // determine default message_type, if any, for this course
         // NOTE: block-level "all" will default to course-level "message"
-        if ($block_config['output_channels_available'] == 'all') {
-            $course_default_output_channel = array_key_exists('default_output_channel', $course_config) ? 
-                $course_config['default_output_channel'] : 
+        if ($block_config['message_types_available'] == 'all') {
+            $course_default_message_type = array_key_exists('default_message_type', $course_config) ? 
+                $course_config['default_message_type'] : 
                 'message';
         } else {
-            $course_default_output_channel = $block_config['output_channels_available'];
+            $course_default_message_type = $block_config['message_types_available'];
         }
 
         $course_config_array = [
@@ -103,8 +103,8 @@ class block_quickmail_config {
             'ferpa'                     => $block_config['ferpa'],
             'downloads'                 => $block_config['downloads'],
             'additionalemail'           => $block_config['additionalemail'],
-            'output_channels_available' => $block_config['output_channels_available'],
-            'default_output_channel'    => $course_default_output_channel,
+            'message_types_available' => $block_config['message_types_available'],
+            'default_message_type'    => $course_default_message_type,
             'allowed_user_fields'       => $block_config['allowed_user_fields']
         ];
 
@@ -132,8 +132,8 @@ class block_quickmail_config {
             'ferpa'                     => (int) $params['ferpa'],
             'downloads'                 => (int) $params['downloads'],
             'additionalemail'           => (int) $params['additionalemail'],
-            'output_channels_available' => (string) $params['output_channels_available'],
-            'default_output_channel'    => (string) $params['default_output_channel'],
+            'message_types_available' => (string) $params['message_types_available'],
+            'default_message_type'    => (string) $params['default_message_type'],
             'allowed_user_fields'       => explode(',', $params['allowed_user_fields'])
         ];
 
@@ -162,11 +162,11 @@ class block_quickmail_config {
     }
 
     /**
-     * Returns the supported output channels
+     * Returns the supported message types
      * 
      * @return array
      */
-    public static function get_supported_output_channels() {
+    public static function get_supported_message_types() {
         return [
             'all',
             'message',

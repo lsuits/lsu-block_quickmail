@@ -91,13 +91,13 @@ class course_config_form extends \moodleform {
         $mform->setDefault('receipt', $this->course_config['receipt']);
 
         ////////////////////////////////////////////////////////////
-        ///  default output channel (based on global setting)
+        ///  default message type (based on global setting)
         ////////////////////////////////////////////////////////////
-        if ($this->should_show_default_output_channel()) {
-            $mform->addElement('select', 'default_output_channel', block_quickmail_plugin::_s('default_output_channel'), $this->get_default_output_channel_options());
-            $mform->setDefault('default_output_channel', $this->course_config['default_output_channel']);
+        if ($this->should_show_default_message_type()) {
+            $mform->addElement('select', 'default_message_type', block_quickmail_plugin::_s('default_message_type'), $this->get_default_message_type_options());
+            $mform->setDefault('default_message_type', $this->course_config['default_message_type']);
         } else {
-            $mform->addElement('static', 'default_output_channel', block_quickmail_plugin::_s('default_output_channel'), $this->display_default_output_channel());
+            $mform->addElement('static', 'default_message_type', block_quickmail_plugin::_s('default_message_type'), $this->display_default_message_type());
         }
 
         ////////////////////////////////////////////////////////////
@@ -123,13 +123,13 @@ class course_config_form extends \moodleform {
     }
 
     /**
-     * Reports whether or not the course configuration form should display "default output channel" option (based on global configuration)
+     * Reports whether or not the course configuration form should display "default message type" option (based on global configuration)
      * 
      * @return bool
      */
-    private function should_show_default_output_channel()
+    private function should_show_default_message_type()
     {
-        return block_quickmail_config::_c('output_channels_available') == 'all';
+        return block_quickmail_config::_c('message_types_available') == 'all';
     }
 
     /**
@@ -166,15 +166,15 @@ class course_config_form extends \moodleform {
     }
 
     /**
-     * Returns the options for "default output channel" setting
+     * Returns the options for "default message type" setting
      * 
      * @return array
      */
-    private function get_default_output_channel_options()
+    private function get_default_message_type_options()
     {
         return [
-            'message' => block_quickmail_plugin::_s('output_channel_message'),
-            'email' => block_quickmail_plugin::_s('output_channel_email')
+            'message' => block_quickmail_plugin::_s('message_type_message'),
+            'email' => block_quickmail_plugin::_s('message_type_email')
         ];
     }
 
@@ -194,15 +194,15 @@ class course_config_form extends \moodleform {
     }
 
     /**
-     * Returns the string for current forced output channel
+     * Returns the string for current forced message type
      * 
      * @return string
      */
-    private function display_default_output_channel()
+    private function display_default_message_type()
     {
-        $key = block_quickmail_config::_c('output_channels_available');
+        $key = block_quickmail_config::_c('message_types_available');
 
-        return block_quickmail_plugin::_s('output_channel_' . $key);
+        return block_quickmail_plugin::_s('message_type_' . $key);
     }
 
 }

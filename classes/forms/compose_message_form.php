@@ -244,31 +244,31 @@ class compose_message_form extends \moodleform {
         }
 
         ////////////////////////////////////////////////////////////
-        ///  output_channel (select)
+        ///  message_type (select)
         ////////////////////////////////////////////////////////////
-        if ($this->should_show_output_channel_selection()) {
+        if ($this->should_show_message_type_selection()) {
             $mform->addElement(
                 'select', 
-                'output_channel', 
-                block_quickmail_plugin::_s('select_output_channel'), 
-                $this->get_output_channel_options()
+                'message_type', 
+                block_quickmail_plugin::_s('select_message_type'), 
+                $this->get_message_type_options()
             );
             
             // inject default if draft mesage
             $mform->setDefault(
-                'output_channel', 
+                'message_type', 
                 $this->is_draft_message()
-                    ? $this->draft_message->get('output_channel')
-                    : $this->course_config_array['default_output_channel']
+                    ? $this->draft_message->get('message_type')
+                    : $this->course_config_array['default_message_type']
             );
         } else {
             $mform->addElement(
                 'hidden', 
-                'output_channel'
+                'message_type'
             );
             $mform->setDefault(
-                'output_channel', 
-                $this->course_config_array['default_output_channel']
+                'message_type', 
+                $this->course_config_array['default_message_type']
             );
         }
 
@@ -394,12 +394,12 @@ class compose_message_form extends \moodleform {
     }
 
     /**
-     * Reports whether or not this form should display the output channel selection input
+     * Reports whether or not this form should display the message type selection input
      * 
      * @return bool
      */
-    private function should_show_output_channel_selection() {
-        return (bool) $this->course_config_array['output_channels_available'] == 'all';
+    private function should_show_message_type_selection() {
+        return (bool) $this->course_config_array['message_types_available'] == 'all';
     }
 
     /**
@@ -412,14 +412,14 @@ class compose_message_form extends \moodleform {
     }
 
     /**
-     * Returns the options for output channel selection
+     * Returns the options for message type selection
      * 
      * @return array
      */
-    private function get_output_channel_options() {
+    private function get_message_type_options() {
         return [
-            'message' => block_quickmail_plugin::_s('output_channel_message'),
-            'email' => block_quickmail_plugin::_s('output_channel_email')
+            'message' => block_quickmail_plugin::_s('message_type_message'),
+            'email' => block_quickmail_plugin::_s('message_type_email')
         ];
     }
 

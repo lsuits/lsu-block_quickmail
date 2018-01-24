@@ -6,7 +6,7 @@ use block_quickmail\messenger\subject_prepender;
 use block_quickmail\messenger\user_course_data_injector;
 
 /**
- * This class is a base class to be extended by all types of "output channels" (ex: email, message)
+ * This class is a base class to be extended by all types of "message types" (ex: email, message)
  * It accepts a message and message recipient, and then sends the message approriately
  */
 abstract class recipient_send_factory {
@@ -30,7 +30,7 @@ abstract class recipient_send_factory {
     // return email_recipient_send_factory OR message_recipient_send_factory
     public static function make($message, $recipient)
     {
-        // get the factory class name to return (based on message output_channel)
+        // get the factory class name to return (based on message message_type)
         $message_factory_class = self::get_message_factory_class_name($message);
 
         // return the constructed factory
@@ -40,7 +40,7 @@ abstract class recipient_send_factory {
 
     private static function get_message_factory_class_name($message)
     {
-        $class_name = $message->get('output_channel') . '_recipient_send_factory';
+        $class_name = $message->get('message_type') . '_recipient_send_factory';
 
         return 'block_quickmail\messenger\factories\course_recipient_send\\' . $class_name;
     }

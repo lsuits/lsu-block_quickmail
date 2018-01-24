@@ -21,7 +21,7 @@ class compose_message_form_validator extends validator {
 
         $this->validate_additional_emails();
 
-        $this->validate_output_channel();
+        $this->validate_message_type();
 
         $this->validate_to_send_at();
     }
@@ -80,23 +80,23 @@ class compose_message_form_validator extends validator {
     }
 
     /**
-     * Checks that the selected "output channel" is allowed per site config, adding any errors to the stack
+     * Checks that the selected "message type" is allowed per site config, adding any errors to the stack
      * 
      * @return void
      */
-    private function validate_output_channel()
+    private function validate_message_type()
     {
-        if ( ! in_array($this->form_data->output_channel, \block_quickmail_config::get_supported_output_channels())) {
+        if ( ! in_array($this->form_data->message_type, \block_quickmail_config::get_supported_message_types())) {
             $this->errors[] = 'That send method is not allowed.';
         }
 
-        $supported_option = $this->get_config('output_channels_available');
+        $supported_option = $this->get_config('message_types_available');
 
         if ($supported_option == 'all') {
             return;
         }
 
-        if ($supported_option !== $this->form_data->output_channel) {
+        if ($supported_option !== $this->form_data->message_type) {
             $this->errors[] = 'That send method is not allowed.';
         }
     }

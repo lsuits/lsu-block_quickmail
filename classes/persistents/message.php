@@ -36,7 +36,7 @@ class message extends persistent {
             'user_id' => [
                 'type' => PARAM_INT,
             ],
-            'output_channel' => [
+            'message_type' => [
                 'type' => PARAM_TEXT,
             ],
             'alternate_email_id' => [
