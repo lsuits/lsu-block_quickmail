@@ -42,7 +42,6 @@ class block_quickmail_compose_course_message_testcase extends advanced_testcase 
         $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 1, 'from'));
         $this->assertEquals($user_students[0]->email, $this->email_in_sink_attr($sink, 1, 'to'));
 
-
         $this->close_email_sink($sink);
     }
 
@@ -92,6 +91,33 @@ class block_quickmail_compose_course_message_testcase extends advanced_testcase 
         \phpunit_util::run_all_adhoc_tasks();
 
         $this->assertEquals(0, $this->email_sink_email_count($sink));
+        $this->close_email_sink($sink);
+    }
+
+    public function test_skips_invalid_user_ids_when_sending()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+            'mailto_ids' => '12,24,36,48,' . $user_students[0]->id
+        ]);
+
+        // send a message from the teacher to the students now
+        messenger::send_composed_course_message($user_teacher, $course, $compose_form_data);
+
+        \phpunit_util::run_all_adhoc_tasks();
+
+        $this->assertEquals(1, $this->email_sink_email_count($sink));
+
         $this->close_email_sink($sink);
     }
 

@@ -116,19 +116,24 @@ class messenger {
 
         // iterate through all message recipients
         foreach($message->get_message_recipients() as $recipient) {
-            if ( ! $queue_send) {
-                // send now
-                self::send_course_message_to_recipient($message, $recipient, false);
-            } else {
-                // queue send
-                $task = new send_course_message_to_recipient_adhoc_task();
+            // if any exceptions are thrown, gracefully move to the next recipient
+            try {
+                if ( ! $queue_send) {
+                    // send now
+                    self::send_course_message_to_recipient($message, $recipient, false);
+                } else {
+                    // queue send
+                    $task = new send_course_message_to_recipient_adhoc_task();
 
-                $task->set_custom_data([
-                    'message_id' => $message->get('id'),
-                    'recipient_id' => $recipient->get('id'),
-                ]);
+                    $task->set_custom_data([
+                        'message_id' => $message->get('id'),
+                        'recipient_id' => $recipient->get('id'),
+                    ]);
 
-                task_manager::queue_adhoc_task($task);
+                    task_manager::queue_adhoc_task($task);
+                }
+            } catch (\Exception $e) {
+                continue;
             }
         }
         

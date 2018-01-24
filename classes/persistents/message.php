@@ -282,7 +282,12 @@ class message extends persistent {
 
         // add all new recipients
         foreach ($recipient_user_ids as $user_id) {
-            message_recipient::create_for_message($this, ['user_id' => $user_id]);
+            // if the user_id is invalid, proceed gracefully to the next
+            try {
+                message_recipient::create_for_message($this, ['user_id' => $user_id]);
+            } catch (\Exception $e) {
+                continue;
+            }
         }
     }
 
@@ -299,7 +304,12 @@ class message extends persistent {
 
         // add all new recipients
         foreach ($additional_emails as $email) {
-            message_additional_email::create_for_message($this, ['email' => $email]);
+            // if the email is invalid, proceed gracefully to the next
+            try {
+                message_additional_email::create_for_message($this, ['email' => $email]);
+            } catch (\Exception $e) {
+                continue;
+            }
         }
     }
 
