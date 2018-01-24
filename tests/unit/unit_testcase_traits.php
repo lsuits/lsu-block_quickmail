@@ -179,7 +179,7 @@ trait unit_testcase_submits_compose_message_form {
 
         $form_data = (object)[];
 
-        $form_data->alternate_email_id = $params['alternate_email_id']; // default: '0'
+        $form_data->from_email_id = $params['from_email_id']; // default: '0' (user email), '-1' (system no reply), else alt id
         $form_data->mailto_ids = $this->get_user_ids_from_user_array($to_users, true);
         $form_data->subject = $params['subject']; // default: 'this is the subject'
         $form_data->additional_emails = $params['additional_emails']; // default: ''
@@ -193,7 +193,6 @@ trait unit_testcase_submits_compose_message_form {
         $form_data->message_type = $message_type;
         $form_data->to_send_at = $params['to_send_at']; // default: 0
         $form_data->receipt = $params['receipt']; // default: '0'
-        $form_data->no_reply = $params['no_reply']; // default: 0
         $form_data->send = 'Send Message';
 
         return $form_data;
@@ -203,14 +202,13 @@ trait unit_testcase_submits_compose_message_form {
     {
         $params = [];
 
-        $params['alternate_email_id'] = array_key_exists('alternate_email_id', $override_params) ? $override_params['alternate_email_id'] : '0';
+        $params['from_email_id'] = array_key_exists('from_email_id', $override_params) ? $override_params['from_email_id'] : '0';
         $params['additional_emails'] = array_key_exists('additional_emails', $override_params) ? $override_params['additional_emails'] : '';
         $params['subject'] = array_key_exists('subject', $override_params) ? $override_params['subject'] : 'this is the subject';
         $params['body'] = array_key_exists('body', $override_params) ? $override_params['body'] : 'this is a very important message body';
         $params['signature_id'] = array_key_exists('signature_id', $override_params) ? $override_params['signature_id'] : '0';
         $params['to_send_at'] = array_key_exists('to_send_at', $override_params) ? $override_params['to_send_at'] : 0;
         $params['receipt'] = array_key_exists('receipt', $override_params) ? $override_params['receipt'] : '0';
-        $params['no_reply'] = array_key_exists('no_reply', $override_params) ? $override_params['no_reply'] : 0;
 
         return $params;
     }

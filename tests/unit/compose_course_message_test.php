@@ -12,6 +12,12 @@ class block_quickmail_compose_course_message_testcase extends advanced_testcase 
         unit_testcase_sends_emails,
         unit_testcase_sends_messages;
 
+    // test message with alternate id posted is sent from that alternate email
+    
+    // test message with alternate id of 0 posted is sent from the user's email
+    
+    // test message with alterndate id of -1 posted is sent from no reply
+
     public function test_send_composed_course_email_message_later()
     {
         // reset all changes automatically after this test

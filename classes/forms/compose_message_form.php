@@ -27,6 +27,7 @@ namespace block_quickmail\forms;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail_plugin;
+use block_quickmail_config;
 
 class compose_message_form extends \moodleform {
 
@@ -56,47 +57,23 @@ class compose_message_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
         ////////////////////////////////////////////////////////////
-        if ($this->should_show_alternate_email_selection()) {
-            $mform->addElement(
-                'select', 
-                'alternate_email_id', 
-                block_quickmail_plugin::_s('from'), 
-                $this->user_alternate_email_array
-            );
-            $mform->addHelpButton(
-                'alternate_email_id', 
-                'from', 
-                'block_quickmail'
-            );
+        $mform->addElement(
+            'select', 
+            'from_email_id', 
+            block_quickmail_plugin::_s('from'), 
+            $this->get_from_email_values()
+        );
+        $mform->addHelpButton(
+            'from_email_id', 
+            'from', 
+            'block_quickmail'
+        );
 
-            // inject default if draft mesage
-            if ($this->is_draft_message()) {
-                $mform->setDefault(
-                    'alternate_email_id', 
-                    $this->draft_message->get('alternate_email_id')
-                );
-            }
-        } else {
-            $mform->addElement(
-                'static', 
-                'from_email_text', 
-                block_quickmail_plugin::_s('from'), 
-                $this->user_alternate_email_array[0]
-            );
-            $mform->addHelpButton(
-                'from_email_text', 
-                'from', 
-                'block_quickmail'
-            );
-            
-            $mform->addElement(
-                'hidden', 
-                'alternate_email_id', 
-                0
-            );
-            $mform->setType(
-                'alternate_email_id', 
-                PARAM_INT
+        // inject default if draft mesage
+        if ($this->is_draft_message()) {
+            $mform->setDefault(
+                'from_email_id', 
+                $this->draft_message->get('alternate_email_id')
             );
         }
 
@@ -118,7 +95,7 @@ class compose_message_form extends \moodleform {
             'mailto_ids', 
             $this->is_draft_message() 
                 ? implode(',', $this->draft_message->get_message_recipients(true))
-                : '123,684,116,677,264,744,'   // <--------------- this is for testing!!!!
+                : '70,72,77,86,'   // <--------------- this is for testing!!!!
         );
 
         ////////////////////////////////////////////////////////////
@@ -376,12 +353,18 @@ class compose_message_form extends \moodleform {
     }
 
     /**
-     * Reports whether or not this form should display the alternate email selection input
+     * Returns an array of available sending email options
      * 
-     * @return bool
+     * @return array
      */
-    private function should_show_alternate_email_selection() {
-        return count($this->user_alternate_email_array) > 1;
+    private function get_from_email_values() {
+        $values = ['-1' => get_config('moodle', 'noreplyaddress')];
+
+        foreach ($this->user_alternate_email_array as $key => $value) {
+            $values[(string) $key] = $value;
+        }
+
+        return $values;
     }
 
     /**

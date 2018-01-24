@@ -138,7 +138,9 @@ class compose extends \block_quickmail_request {
      */
     public static function get_transformed_alternate_email_id($form_data)
     {
-        return ! $form_data->alternate_email_id ? 0 : (int) $form_data->alternate_email_id;
+        return (int) $form_data->from_email_id > 0
+            ? $form_data->from_email_id
+            : 0;
     }
 
     /**
@@ -160,11 +162,13 @@ class compose extends \block_quickmail_request {
      */
     public static function get_transformed_no_reply($form_data)
     {
-        return (bool) $form_data->no_reply;
+        return $form_data->from_email_id == -1
+            ? true
+            : false;
     }
 
     /**
-     * Returns a sanitized alternate email id from the given form post data
+     * Returns ...
      * 
      * @param  array  $form_data
      * @return int
