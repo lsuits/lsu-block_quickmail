@@ -13,7 +13,7 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         sends_messages;
     
     // public function test_message_with_alternate_id_posted_is_sent_from_that_alternate_email()
-    
+
     public function test_messenger_sends_composed_email_now()
     {
         // reset all changes automatically after this test
@@ -142,6 +142,35 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         $this->assertTrue($this->email_in_sink_body_contains($sink, 7, 'This is one fine body.'));
         $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 7, 'from'));
         $this->assertEquals('additional@three.com', $this->email_in_sink_attr($sink, 7, 'to'));
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_messenger_sends_a_receipt_if_asked()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+            'receipt' => '1'
+        ]);
+
+        // send an email from the teacher to the students now (not as queued adhoc tasks)
+        messenger::compose($user_teacher, $course, $compose_form_data, null, false);
+
+        $this->assertEquals(5, $this->email_sink_email_count($sink));
+        $this->assertEquals('Hello world', $this->email_in_sink_attr($sink, 5, 'subject'));
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 5, 'This is one fine body.'));
+        $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 5, 'from'));
+        $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 5, 'to'));
 
         $this->close_email_sink($sink);
     }

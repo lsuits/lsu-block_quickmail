@@ -202,7 +202,9 @@ class messenger {
         $this->send_message_additional_emails();
 
         // send receipt message (if applicable)
-        // $this->send_message_reciept();
+        if ($this->message->get('send_receipt')) {
+            $this->send_message_reciept();
+        }
         
         // update message as having been sent
         $this->message->set('is_sending', 0);
@@ -256,9 +258,33 @@ class messenger {
         }
     }
 
+    /**
+     * Sends an email receipt to the sending user, if necessary
+     * 
+     * @return void
+     */
     private function send_message_reciept()
     {
-        //
+        $fromuser = $this->message->get_user();
+
+        $subject = subject_prepender::format_course_subject(
+            $this->message->get_course(), 
+            $this->message->get('subject')
+        );
+
+        $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
+        
+        // instantiate an emailer
+        $emailer = new block_quickmail_emailer($fromuser, $subject, $body);
+        $emailer->to_email($fromuser->email);
+
+        // determine reply to parameters based off of message settings
+        if ( ! (bool) $this->message->get('no_reply')) {
+            $emailer->reply_to($fromuser->email, fullname($fromuser));
+        }
+
+        // attempt to send the email
+        $emailer->send();
     }
 
 }
