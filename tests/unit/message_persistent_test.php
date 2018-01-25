@@ -206,6 +206,16 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertTrue($message_future->get_to_send_in_future());
     }
 
+    public function create_composed()
+    {
+        //
+    }
+    
+    public function update_and_pull_draft()
+    {
+        //
+    }
+
     public function sync_recipients()
     {
         //

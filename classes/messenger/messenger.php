@@ -2,33 +2,23 @@
 
 namespace block_quickmail\messenger;
 
+use block_quickmail_config;
 use block_quickmail\persistents\message;
 use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\requests\compose as compose_request;
 use block_quickmail\exceptions\validation_exception;
-use block_quickmail\exceptions\critical_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\tasks\send_course_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
 
 class messenger {
 
-    public function __construct()
-    {
-        //
-    }
+    public $message;
 
-    // alternate_email_id
-    // mailto_ids
-    // subject
-    // additional_emails
-    // message
-    // attachments
-    // signature_id
-    // message_type
-    // to_send_at
-    // receipt
-    // no_reply
+    public function __construct(message $message)
+    {
+        $this->message = $message;
+    }
 
     /**
      * Creates a message from the given user within the given course using the given form data
@@ -43,93 +33,106 @@ class messenger {
      * @param  object   $course          course in which this message is being sent
      * @param  array    $form_data       message parameters which will be validated
      * @param  message  $draft_message   a draft message (optional, defaults to null)
-     * @param  bool     $queue_send      if true, the message will be sent immediately
+     * @param  bool     $send_as_tasks   if false, the message will be sent immediately
      * @return bool
      * @throws validation_exception
      * @throws critical_exception
      */
-    public static function send_composed_course_message($user, $course, $form_data, $draft_message = null, $queue_send = true)
+    public static function compose($user, $course, $form_data, $draft_message = null, $send_as_tasks = true)
     {
         // validate form data
         $validator = new compose_message_form_validator($form_data, [
-            'course_config' => \block_quickmail_config::_c('', $course)
+            'course_config' => block_quickmail_config::_c('', $course)
         ]);
 
+        // if errors, throw exception
         if ($validator->has_errors()) {
             throw new validation_exception('Validation exception!', $validator->errors);
         }
 
-        // if draft message is passed,
+        // get transformed (valid) post data
+        $transformed_data = compose_request::get_transformed_post_data($form_data);
+
+        // if draft message was passed
         if ( ! empty($draft_message)) {
             // if draft message was already sent (shouldn't happen)
             if ($draft_message->is_sent_message()) {
                 throw new validation_exception('Critical exception!');
             }
 
-            // update draft message record with form data
-            $message = self::update_draft_message_with_course_compose_post($draft_message, $form_data);
+            // update draft message, and remove draft status
+            $message = $draft_message->update_and_pull_draft($transformed_data);
         } else {
-            // create a new message from form data
-            $message = self::create_message_from_course_compose_post($form_data, $user, $course);
+            // create new message
+            $message = message::create_composed($user, $course, $transformed_data);
         }
 
         // @TODO: handle posted file attachments (moodle)
-
+        
         // clear any existing recipients, and add those that have been recently submitted
         $message->sync_recipients(compose_request::get_transformed_mailto_ids($form_data));
 
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails(compose_request::get_transformed_additional_emails($form_data));
-
+        
         // @TODO: sync posted attachments to message record
 
-        // if sending immediately, send!
-        if ( ! $message->get_to_send_in_future()) {
-            self::execute_course_message($message, $queue_send);
-        }
-        
-        // if no exceptions, send positive response
-        return true;
+        // if sending immediately, send, otherwise return successful response
+        return ! $message->get_to_send_in_future()
+            ? self::deliver($message, $send_as_tasks)
+            : true;
     }
 
     /**
-     * Performs the delivery of the given message to all of its recipients
-     *
-     * By default, the message to recipient transactions will be sent immediately,
-     * however, may also be queued to send as adhoc tasks
+     * Instantiates a messenger and performs the delivery of the given message to all of its recipients
+     * By default, the message to recipient transactions will be queued to send as adhoc tasks
      * 
      * @param  message  $message     message to be sent
-     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task
-     * @return void
+     * @param  bool     $queue_send  if false, the message will be sent immediately
+     * @return bool
      */
-    public static function execute_course_message(message $message, $queue_send = false)
+    public static function deliver(message $message, $queue_send = true)
     {
         // is message is currently being sent, bail out
         if ($message->is_being_sent()) {
             return false;
         }
 
+        $messenger = new self($message);
+
+        return $messenger->send($queue_send);
+    }
+    
+    /**
+     * Sends the message to all of its recipients
+     * 
+     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task
+     * @return bool
+     */
+    public function send($queue_send = true)
+    {
         // if sending now, handle pre-send actions
         if ( ! $queue_send) {
-            self::handle_message_pre_send($message);
+            $this->handle_message_pre_send();
         }
 
         // iterate through all message recipients
-        foreach($message->get_message_recipients() as $recipient) {
+        foreach($this->message->get_message_recipients() as $recipient) {
             // if any exceptions are thrown, gracefully move to the next recipient
             try {
                 if ( ! $queue_send) {
                     // send now
-                    self::send_course_message_to_recipient($message, $recipient, false);
+                    $this->send_to_recipient($recipient, false);
                 } else {
-                    // queue send
+                    // create a job
                     $task = new send_course_message_to_recipient_adhoc_task();
 
                     $task->set_custom_data([
-                        'message_id' => $message->get('id'),
+                        'message_id' => $this->message->get('id'),
                         'recipient_id' => $recipient->get('id'),
                     ]);
 
+                    // queue job
                     task_manager::queue_adhoc_task($task);
                 }
             } catch (\Exception $e) {
@@ -139,137 +142,80 @@ class messenger {
         
         // if sending now, handle post-send actions
         if ( ! $queue_send) {
-            self::handle_message_post_send($message);
+            $this->handle_message_post_send();
         }
+
+        return true;
     }
 
     /**
-     * Delivers the given message to the given recipient
+     * Sends the message to the given recipient
      * 
-     * @param  message            $message         message to be sent
      * @param  message_recipient  $recipient       message recipient to recieve the message
      * @param  bool               $event_handling  if true, pre-send and post-send actions will be fired
-     * @return void
+     * @return bool
      */
-    public static function send_course_message_to_recipient($message, $recipient, $event_handling = false)
+    public function send_to_recipient($recipient, $event_handling = false)
     {
         // if we're handling pre/post send actions (likely, is queued send) AND this recipient should be first to receive message
         if ($event_handling && $recipient->should_be_first_to_receive_message()) {
-            self::handle_message_pre_send($message);
+            $this->handle_message_pre_send();
         }
 
         // instantiate recipient_send_factory
-        $recipient_send_factory = recipient_send_factory::make($message, $recipient);
+        $recipient_send_factory = recipient_send_factory::make($this->message, $recipient);
 
         // send recipient_send_factory
         $recipient_send_factory->send();
 
         // if we're handling pre/post send actions (likely, is queued send) AND this recipient should be last to receive message
         if ($event_handling && $recipient->should_be_last_to_receive_message()) {
-            self::handle_message_post_send($message);
+            $this->handle_message_post_send();
         }
+
+        return true;
     }
 
-    /**
-     * Performs pre-send actions for the given message
-     * 
-     * @param  message  $message
-     * @return void
-     */
-    public static function handle_message_pre_send($message)
+    private function send_additional_emails_for_message()
     {
-        $message->set('is_sending', 1);
-        $message->update();
+        //
+    }
+
+    private function send_receipt_for_message()
+    {
+        //
     }
 
     /**
-     * Performs post-send actions for the given message
+     * Performs pre-send actions
      * 
-     * @param  message  $message
      * @return void
      */
-    public static function handle_message_post_send($message)
+    private function handle_message_pre_send()
+    {
+        $this->message->set('is_sending', 1);
+        $this->message->update();
+        $this->message->read(); // necessary?
+    }
+
+    /**
+     * Performs post-send actions
+     * 
+     * @return void
+     */
+    private function handle_message_post_send()
     {
         // send to any additional emails (if any)
-        // self::send_additional_emails_for_message($message);
+        // $this->send_additional_emails_for_message($message);
 
         // send receipt message (if applicable)
-        // self::send_receipt_for_message($message);
+        // $this->send_receipt_for_message($message);
         
         // update message as having been sent
-        $message->set('is_sending', 0);
-        $message->set('sent_at', time());
-        $message->update();
-    }
-
-    /**
-     * Updates the given draft message with the given form data
-     * 
-     * @param  message  $draft_message
-     * @param  object  $form_data
-     * @return message
-     */
-    private static function update_draft_message_with_course_compose_post($draft_message, $form_data)
-    {
-        // transform the form post data
-        $posted = compose_request::get_transformed_post_data($form_data);
-
-        // update attributes that may have changed from compose page
-        $draft_message->set('alternate_email_id', $posted->alternate_email_id);
-        $draft_message->set('subject', $posted->subject);
-        $draft_message->set('body', $posted->message);
-        $draft_message->set('message_type', $posted->message_type);
-        $draft_message->set('signature_id', $posted->signature_id);
-        $draft_message->set('send_receipt', $posted->receipt);
-        $draft_message->set('to_send_at', $posted->to_send_at);
-        $draft_message->set('is_draft', 0);
-        $draft_message->update();
-        
-        // return a refreshed message record
-        return $draft_message->read();
-    }
-
-    /**
-     * Creates a new message from the given form data
-     * 
-     * @param  object  $form_data
-     * @param  object  $user  moodle user
-     * @param  object  $course  moodle course
-     * @return message
-     */
-    private static function create_message_from_course_compose_post($form_data, $user, $course)
-    {
-        // transform the form post data
-        $posted = compose_request::get_transformed_post_data($form_data);
-
-        // instantiate a message
-        $message = new message(0, (object) [
-            'course_id' => $course->id,
-            'user_id' => $user->id,
-            'message_type' => $posted->message_type,
-            'alternate_email_id' => $posted->alternate_email_id,
-            'signature_id' => $posted->signature_id,
-            'subject' => $posted->subject,
-            'body' => $posted->message,
-            'send_receipt' => $posted->receipt,
-            'to_send_at' => $posted->to_send_at,
-            'no_reply' => $posted->no_reply
-        ]);
-
-        // save the message
-        $message->create();
-
-        return $message;
-    }
-
-    private static function send_additional_emails_for_message($message)
-    {
-        //
-    }
-
-    private static function send_receipt_for_message($message)
-    {
-        //
+        $this->message->set('is_sending', 0);
+        $this->message->set('sent_at', time());
+        $this->message->update();
+        $this->message->read(); // necessary?
     }
 
 }

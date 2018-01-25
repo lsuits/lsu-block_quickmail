@@ -3,15 +3,21 @@
 namespace block_quickmail\tasks;
 
 use core\task\adhoc_task;
+use block_quickmail\messenger\messenger;
+use block_quickmail\persistents\message;
 
 class send_course_message_task extends adhoc_task {
     
-    // message_id
-    // recipient_id
+    // custom data:
+    //  - message_id
     public function execute() {
-        // get message from message_id
+        $data = $this->get_custom_data();
 
-        // execute_course_message(message $message, $send_as_tasks = true)
+        $message = message::find_or_null($data->message_id);
+
+        $messenger = new messenger($message);
+
+        $messenger->send();
     }
 
 }

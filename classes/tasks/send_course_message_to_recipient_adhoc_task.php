@@ -22,7 +22,9 @@ class send_course_message_to_recipient_adhoc_task extends adhoc_task {
 
         $recipient = message_recipient::find_or_null($data->recipient_id);
 
-        messenger::send_course_message_to_recipient($message, $recipient, true);
+        $messenger = new messenger($message);
+
+        $messenger->send_to_recipient($recipient, true);
     }
     
 }

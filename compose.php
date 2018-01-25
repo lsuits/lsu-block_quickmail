@@ -100,7 +100,7 @@ if ($request->is_form_cancellation()) {
 
     // attempt to send, handle exceptions
     try {
-        \block_quickmail\messenger\messenger::send_composed_course_message($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
+        \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
         
         // \block_quickmail\messenger\messenger::send_by_compose_request($compose_message_request);
 

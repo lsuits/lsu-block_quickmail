@@ -265,9 +265,58 @@ class message extends persistent {
 
     ///////////////////////////////////////////////
     ///
-    ///  DATA-SYNCING METHODS
+    ///  COMPOSITION METHODS
     /// 
     ///////////////////////////////////////////////
+
+    /**
+     * Creates a new message from the given sending user, course, and data
+     * 
+     * @param  object  $user  moodle user
+     * @param  object  $course  moodle course
+     * @param  object  $data  transformed compose request data
+     * @return message
+     */
+    public static function create_composed($user, $course, $data)
+    {
+        // create a new message
+        $message = self::create_new([
+            'course_id' => $course->id,
+            'user_id' => $user->id,
+            'message_type' => $data->message_type,
+            'alternate_email_id' => $data->alternate_email_id,
+            'signature_id' => $data->signature_id,
+            'subject' => $data->subject,
+            'body' => $data->message,
+            'send_receipt' => $data->receipt,
+            'to_send_at' => $data->to_send_at,
+            'no_reply' => $data->no_reply
+        ]);
+
+        return $message;
+    }
+
+    /**
+     * Updates this draft message with the given data, and removes its draft status
+     * 
+     * @param  object  $data  transformed compose request data
+     * @return message
+     */
+    public function update_and_pull_draft($data)
+    {
+        $this->set('alternate_email_id', $data->alternate_email_id);
+        $this->set('subject', $data->subject);
+        $this->set('body', $data->message);
+        $this->set('message_type', $data->message_type);
+        $this->set('signature_id', $data->signature_id);
+        $this->set('send_receipt', $data->receipt);
+        $this->set('to_send_at', $data->to_send_at);
+        $this->set('is_draft', 0);
+        $this->update();
+        
+        // return a refreshed message record
+        return $this->read();
+    }
 
     /**
      * Replaces all recipients for this message with the given array of user ids
@@ -282,13 +331,18 @@ class message extends persistent {
 
         // add all new recipients
         foreach ($recipient_user_ids as $user_id) {
-            // if the user_id is invalid, proceed gracefully to the next
+            // if any exceptions, proceed gracefully to the next
             try {
                 message_recipient::create_for_message($this, ['user_id' => $user_id]);
             } catch (\Exception $e) {
+                // most likely invalid user, exception thrown due to validation error
+                // log this?
                 continue;
             }
         }
+
+        // refresh record (necessary?)
+        $this->read();
     }
 
     /**
@@ -299,18 +353,23 @@ class message extends persistent {
      */
     public function sync_additional_emails($additional_emails = [])
     {
-        // clear all current recipients
+        // clear all current additional emails
         message_additional_email::clear_all_for_message($this);
 
-        // add all new recipients
+        // add all new additional emails
         foreach ($additional_emails as $email) {
             // if the email is invalid, proceed gracefully to the next
             try {
                 message_additional_email::create_for_message($this, ['email' => $email]);
             } catch (\Exception $e) {
+                // most likely exception thrown due to validation error
+                // log this?
                 continue;
             }
         }
+
+        // refresh record (necessary?)
+        $this->read();
     }
 
     ///////////////////////////////////////////////
