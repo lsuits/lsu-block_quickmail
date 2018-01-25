@@ -3,7 +3,7 @@
 $tasks = [
 
     [
-        'classname' => 'block_quickmail\tasks\send_unsent_course_messages_task',
+        'classname' => 'block_quickmail\tasks\send_queued_messages_task',
 
         'blocking' => 0,
 

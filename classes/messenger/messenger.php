@@ -8,7 +8,7 @@ use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\requests\compose as compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
-use block_quickmail\tasks\send_course_message_to_recipient_adhoc_task;
+use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
 
 class messenger {
@@ -125,7 +125,7 @@ class messenger {
                     $this->send_to_recipient($recipient, false);
                 } else {
                     // create a job
-                    $task = new send_course_message_to_recipient_adhoc_task();
+                    $task = new send_message_to_recipient_adhoc_task();
 
                     $task->set_custom_data([
                         'message_id' => $this->message->get('id'),
