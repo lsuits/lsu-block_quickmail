@@ -54,37 +54,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(date('Y-m-d H:i:s', $message->get('to_send_at')), $message->get_readable_to_send_at());
     }
 
-
-    public function test_get_additional_emails()
-    {
-        $this->resetAfterTest(true);
-
-        $message = $this->create_message();
-
-        $one = message_additional_email::create_new([
-            'message_id' => $message->get('id'),
-            'email' => 'email@one.com',
-        ]);
-
-        $two = message_additional_email::create_new([
-            'message_id' => $message->get('id'),
-            'email' => 'email@two.com',
-        ]);
-
-        $three = message_additional_email::create_new([
-            'message_id' => $message->get('id'),
-            'email' => 'email@three.com',
-        ]);
-
-        $additional_emails = $message->get_additional_emails();
-        $additional_email_array = $message->get_additional_emails(true);
-
-        $this->assertCount(3, $additional_emails);
-        $this->assertInstanceOf(message_additional_email::class, $additional_emails[0]);
-        $this->assertCount(3, $additional_email_array);
-        $this->assertEquals('email@two.com', $additional_email_array[1]);
-    }
-
     public function test_get_message_recipients()
     {
         $this->resetAfterTest(true);
@@ -119,6 +88,109 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
         $this->assertCount(3, $message_recipient_array);
         $this->assertEquals($user_two->id, $message_recipient_array[1]);
+    }
+
+    public function test_get_additional_emails()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        $one = message_additional_email::create_new([
+            'message_id' => $message->get('id'),
+            'email' => 'email@one.com',
+        ]);
+
+        $two = message_additional_email::create_new([
+            'message_id' => $message->get('id'),
+            'email' => 'email@two.com',
+        ]);
+
+        $three = message_additional_email::create_new([
+            'message_id' => $message->get('id'),
+            'email' => 'email@three.com',
+        ]);
+
+        $additional_emails = $message->get_additional_emails();
+        $additional_email_array = $message->get_additional_emails(true);
+
+        $this->assertCount(3, $additional_emails);
+        $this->assertInstanceOf(message_additional_email::class, $additional_emails[0]);
+        $this->assertCount(3, $additional_email_array);
+        $this->assertEquals('email@two.com', $additional_email_array[1]);
+    }
+
+    public function test_sync_recipients()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        // create 2 original recipients
+        
+        $user_one = $this->getDataGenerator()->create_user();
+        $one = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_one->id,
+        ]);
+
+        $user_two = $this->getDataGenerator()->create_user();
+        $two = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_two->id,
+        ]);
+
+        $original_recipient_array = $message->get_message_recipients(true);
+        $this->assertCount(2, $original_recipient_array);
+
+        // create new users to become recipients
+
+        $user_three = $this->getDataGenerator()->create_user();
+        $user_four = $this->getDataGenerator()->create_user();
+        $user_five = $this->getDataGenerator()->create_user();
+
+        // sync the recipients
+
+        $message->sync_recipients([
+            $user_three->id,
+            $user_four->id,
+            $user_five->id
+        ]);
+
+        $new_recipient_array = $message->get_message_recipients(true);
+        $this->assertCount(3, $new_recipient_array);
+
+        $this->assertCount(0, array_intersect($original_recipient_array, $new_recipient_array));
+    }
+
+    public function test_sync_additional_emails()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        // create 2 original additional emails
+        
+        $one = message_additional_email::create_new([
+            'message_id' => $message->get('id'),
+            'email' => 'email@one.com',
+        ]);
+
+        $two = message_additional_email::create_new([
+            'message_id' => $message->get('id'),
+            'email' => 'email@two.com',
+        ]);
+
+        $original_email_array = $message->get_additional_emails(true);
+        $this->assertCount(2, $original_email_array);
+
+        $new_email_array = ['email@three.com', 'email@four.com', 'email@five.com'];
+
+        $message->sync_additional_emails($new_email_array);
+
+        $this->assertCount(3, $message->get_additional_emails(true));
+
+        $this->assertCount(0, array_intersect($original_email_array, $new_email_array));
     }
 
     public function test_message_draft_status()
@@ -212,16 +284,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
     }
     
     public function update_and_pull_draft()
-    {
-        //
-    }
-
-    public function sync_recipients()
-    {
-        //
-    }
-
-    public function sync_additional_emails()
     {
         //
     }

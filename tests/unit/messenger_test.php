@@ -14,10 +14,6 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
     
     // public function test_message_with_alternate_id_posted_is_sent_from_that_alternate_email()
     
-    // public function test_sync_message_recipients()
-    
-    // public function sync_message_additional_emails()
-
     public function test_messenger_sends_composed_email_now()
     {
         // reset all changes automatically after this test
