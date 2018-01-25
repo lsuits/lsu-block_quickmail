@@ -275,9 +275,10 @@ class message extends persistent {
      * @param  object  $user  moodle user
      * @param  object  $course  moodle course
      * @param  object  $data  transformed compose request data
+     * @param  bool    $is_draft  whether or not this is a draft message
      * @return message
      */
-    public static function create_composed($user, $course, $data)
+    public static function create_composed($user, $course, $data, $is_draft = false)
     {
         // create a new message
         $message = self::create_new([
@@ -290,19 +291,21 @@ class message extends persistent {
             'body' => $data->message,
             'send_receipt' => $data->receipt,
             'to_send_at' => $data->to_send_at,
-            'no_reply' => $data->no_reply
+            'no_reply' => $data->no_reply,
+            'is_draft' => (int) $is_draft
         ]);
 
         return $message;
     }
 
     /**
-     * Updates this draft message with the given data, and removes its draft status
+     * Updates this draft message with the given data
      * 
-     * @param  object  $data  transformed compose request data
+     * @param  object  $data      transformed compose request data
+     * @param  bool    $is_draft  whether or not this draft is still a draft after this update
      * @return message
      */
-    public function update_and_pull_draft($data)
+    public function update_draft($data, $is_draft)
     {
         $this->set('alternate_email_id', $data->alternate_email_id);
         $this->set('subject', $data->subject);
@@ -311,7 +314,7 @@ class message extends persistent {
         $this->set('signature_id', $data->signature_id);
         $this->set('send_receipt', $data->receipt);
         $this->set('to_send_at', $data->to_send_at);
-        $this->set('is_draft', 0);
+        $this->set('is_draft', (bool) $is_draft);
         $this->update();
         
         // return a refreshed message record

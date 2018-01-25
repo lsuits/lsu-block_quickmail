@@ -6,6 +6,7 @@ use block_quickmail_config;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\compose_message_form_validator;
+use block_quickmail\validators\save_draft_message_form_validator;
 use block_quickmail\requests\compose as compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
@@ -21,6 +22,61 @@ class messenger {
     public function __construct(message $message)
     {
         $this->message = $message;
+    }
+
+    /**
+     * Creates a draft message from the given user within the given course using the given form data
+     * 
+     * Optionally, a draft message may be passed which will be updated rather than created anew
+     *
+     * @param  object   $user            moodle user sending the message
+     * @param  object   $course          course in which this message is being sent
+     * @param  array    $form_data       message parameters which will be validated
+     * @param  message  $draft_message   a draft message (optional, defaults to null)
+     * @return message
+     * @throws validation_exception
+     * @throws critical_exception
+     */
+    public static function save_draft($user, $course, $form_data, $draft_message = null)
+    {
+        // validate form data
+        $validator = new save_draft_message_form_validator($form_data, [
+            'course_config' => block_quickmail_config::_c('', $course)
+        ]);
+
+        // if errors, throw exception
+        if ($validator->has_errors()) {
+            throw new validation_exception('Validation exception!', $validator->errors);
+        }
+
+        // get transformed (valid) post data
+        $transformed_data = compose_request::get_transformed_post_data($form_data);
+
+        // if draft message was passed
+        if ( ! empty($draft_message)) {
+            // if draft message was already sent (shouldn't happen)
+            if ($draft_message->is_sent_message()) {
+                throw new validation_exception('Critical exception!');
+            }
+
+            // update draft message, maintaining draft status
+            $message = $draft_message->update_draft($transformed_data, true);
+        } else {
+            // create new message as draft
+            $message = message::create_composed($user, $course, $transformed_data, true);
+        }
+
+        // @TODO: handle posted file attachments (moodle)
+        
+        // clear any existing recipients, and add those that have been recently submitted
+        $message->sync_recipients(compose_request::get_transformed_mailto_ids($form_data));
+
+        // clear any existing additional emails, and add those that have been recently submitted
+        $message->sync_additional_emails(compose_request::get_transformed_additional_emails($form_data));
+        
+        // @TODO: sync posted attachments to message record
+        
+        return $message;
     }
 
     /**
@@ -64,7 +120,7 @@ class messenger {
             }
 
             // update draft message, and remove draft status
-            $message = $draft_message->update_and_pull_draft($transformed_data);
+            $message = $draft_message->update_draft($transformed_data, false);
         } else {
             // create new message
             $message = message::create_composed($user, $course, $transformed_data);

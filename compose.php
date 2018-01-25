@@ -88,54 +88,45 @@ $compose_form = block_quickmail_form::make_compose_message_form(
 
 $request = block_quickmail_request::for_route('compose')->with_form($compose_form);
 
-if ($request->is_form_cancellation()) {
-    
-    // redirect back to course page
-    $request->redirect_to_url(
-        new moodle_url('/course/view.php', ['id' => $course->id]),
-        block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname)
-    );
+// if a POST was submitted, attempt to take appropriate actions
+try {
+    if ($request->is_form_cancellation()) {
+        
+        // redirect back to course page
+        $request->redirect_to_url(
+            new moodle_url('/course/view.php', ['id' => $course->id]),
+            block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname)
+        );
 
-} else if ($request->to_send_message()) {
+    } else if ($request->to_send_message()) {
 
-    // attempt to send, handle exceptions
-    try {
+        // attempt to send
         \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
         
-        // \block_quickmail\messenger\messenger::send_by_compose_request($compose_message_request);
-
         // redirect back to course page
         // @TODO - after send redirect to history (?)
         $request->redirect_to_url(
             new moodle_url('/course/view.php', ['id' => $course->id]),
             block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname)
         );
-    } catch (\block_quickmail\exceptions\validation_exception $e) {
-        render_validation_notifications($e);
-    } catch (\block_quickmail\exceptions\critical_exception $e) {
-        print_error('critical_error', 'block_quickmail');
+
+    } else if ($request->to_save_draft()) {
+
+        // attempt to save draft, handle exceptions
+        \block_quickmail\messenger\messenger::save_draft($USER, $course, $compose_form->get_data(), $draft_message);
+
+        // redirect back to course page
+        // @TODO - after send redirect to compose (?)
+        $request->redirect_to_url(
+            new moodle_url('/course/view.php', ['id' => $course->id]),
+            block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save', $course->fullname)
+        );
+
     }
-
-} else if ($request->to_save_draft()) {
-
-    // attempt to save draft, handle exceptions
-    try {
-        $draft_message = \block_quickmail\drafter\drafter::save_by_compose_request($compose_message_request);
-    } catch (\block_quickmail\drafter\exceptions\drafter_authentication_exception $e) {
-        print_error('no_permission', 'block_quickmail');
-    } catch (\block_quickmail\drafter\exceptions\drafter_validation_exception $e) {
-        render_validation_notifications($e);
-    } catch (\block_quickmail\drafter\exceptions\drafter_critical_exception $e) {
-        print_error('critical_error', 'block_quickmail');
-    }
-
-    // redirect back to course page
-    // @TODO - after send redirect to compose (?)
-    $request->redirect_to_url(
-        new moodle_url('/course/view.php', ['id' => $course->id]),
-        block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save', $course->fullname)
-    );
-
+} catch (\block_quickmail\exceptions\validation_exception $e) {
+    render_validation_notifications($e);
+} catch (\block_quickmail\exceptions\critical_exception $e) {
+    print_error('critical_error', 'block_quickmail');
 }
 
 ////////////////////////////////////////

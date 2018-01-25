@@ -283,7 +283,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         //
     }
     
-    public function update_and_pull_draft()
+    public function update_draft() // true/false
     {
         //
     }
