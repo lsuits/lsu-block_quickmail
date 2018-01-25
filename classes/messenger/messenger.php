@@ -4,12 +4,15 @@ namespace block_quickmail\messenger;
 
 use block_quickmail_config;
 use block_quickmail\persistents\message;
+use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\requests\compose as compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
+use block_quickmail\messenger\subject_prepender;
+use block_quickmail_emailer;
 
 class messenger {
 
@@ -176,16 +179,6 @@ class messenger {
         return true;
     }
 
-    private function send_additional_emails_for_message()
-    {
-        //
-    }
-
-    private function send_receipt_for_message()
-    {
-        //
-    }
-
     /**
      * Performs pre-send actions
      * 
@@ -206,16 +199,66 @@ class messenger {
     private function handle_message_post_send()
     {
         // send to any additional emails (if any)
-        // $this->send_additional_emails_for_message($message);
+        $this->send_message_additional_emails();
 
         // send receipt message (if applicable)
-        // $this->send_receipt_for_message($message);
+        // $this->send_message_reciept();
         
         // update message as having been sent
         $this->message->set('is_sending', 0);
         $this->message->set('sent_at', time());
         $this->message->update();
         $this->message->read(); // necessary?
+    }
+
+    /**
+     * Sends an email to each of this message's additional emails (if any)
+     * 
+     * @return void
+     */
+    private function send_message_additional_emails()
+    {
+        $fromuser = $this->message->get_user();
+
+        $subject = subject_prepender::format_course_subject(
+            $this->message->get_course(), 
+            $this->message->get('subject')
+        );
+
+        $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
+        
+        foreach($this->message->get_additional_emails() as $additional_email) {
+
+            // instantiate an emailer
+            $emailer = new block_quickmail_emailer($fromuser, $subject, $body);
+            $emailer->to_email($additional_email->get('email'));
+
+            // determine reply to parameters based off of message settings
+            if ( ! (bool) $this->message->get('no_reply')) {
+                // if the message has an alternate email, reply to that
+                if ($alternate_email = alternate_email::find_or_null($this->message->get('alternate_email_id'))) {
+                    $replyto_email = $alternate_email->get('email');
+                    $replyto_name = $alternate_email->get_fullname();
+                
+                // otherwise, reply to sending user
+                } else {
+                    $replyto_email = $fromuser->email;
+                    $replyto_name = fullname($fromuser);
+                }
+
+                $emailer->reply_to($replyto_email, $replyto_name);
+            }
+
+            // attempt to send the email
+            if ($emailer->send()) {
+                $additional_email->mark_as_sent();
+            }
+        }
+    }
+
+    private function send_message_reciept()
+    {
+        //
     }
 
 }

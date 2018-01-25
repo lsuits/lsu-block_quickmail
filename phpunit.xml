@@ -41,7 +41,8 @@
             <exclude>tests/unit/body_parser_test.php</exclude>
             <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
             <exclude>tests/unit/compose_course_message_validator_test.php</exclude>
-            <exclude>tests/unit/messenger_test.php</exclude>
+            <!-- <exclude>tests/unit/messenger_test.php</exclude> -->
+            <exclude>tests/unit/emailer_test.php</exclude>
             <exclude>tests/unit/messenger_tasks_test.php</exclude>
         </testsuite>
     </testsuites>
