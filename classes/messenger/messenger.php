@@ -7,7 +7,7 @@ use block_quickmail\persistents\message;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\validators\save_draft_message_form_validator;
-use block_quickmail\requests\compose as compose_request;
+use block_quickmail\requests\compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\tasks\send_message_to_recipient_adhoc_task;

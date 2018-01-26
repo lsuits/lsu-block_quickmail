@@ -23,7 +23,7 @@ class block_quickmail_request {
      */
     public static function for_route($route_name)
     {
-        $request = '\block_quickmail\requests\\' . $route_name;
+        $request = '\block_quickmail\requests\\' . $route_name . '_request';
 
         return new $request;
     }

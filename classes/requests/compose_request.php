@@ -2,7 +2,7 @@
 
 namespace block_quickmail\requests;
 
-class compose extends \block_quickmail_request {
+class compose_request extends \block_quickmail_request {
     
     /**
      * Reports whether or not this request was submitted with intent to send

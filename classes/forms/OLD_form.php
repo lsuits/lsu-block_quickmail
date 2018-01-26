@@ -3,7 +3,7 @@
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
 
-class block_quickmail_form {
+class OLD_block_quickmail_form {
 
     /**
      * Instantiates and returns a compose message form

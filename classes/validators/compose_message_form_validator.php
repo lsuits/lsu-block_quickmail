@@ -4,7 +4,7 @@ namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
 use block_quickmail\messenger\body_parser;
-use block_quickmail\requests\compose as compose_request;
+use block_quickmail\requests\compose_request;
 
 class compose_message_form_validator extends validator {
 

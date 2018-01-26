@@ -75,7 +75,7 @@ file_prepare_draft_area($attachments_draftitem_id, $page_context->id, 'block_qui
 /// INSTANTIATE FORM
 ////////////////////////////////////////
 
-$compose_form = block_quickmail_form::make_compose_message_form(
+$compose_form = \block_quickmail\forms\compose_message_form::make(
     $page_context, 
     $USER, 
     $course,

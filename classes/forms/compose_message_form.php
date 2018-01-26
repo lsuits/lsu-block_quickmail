@@ -28,6 +28,8 @@ require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail_plugin;
 use block_quickmail_config;
+use block_quickmail\persistents\signature;
+use block_quickmail\persistents\alternate_email;
 
 class compose_message_form extends \moodleform {
 
@@ -38,6 +40,43 @@ class compose_message_form extends \moodleform {
     public $user_signature_array;
     public $course_config_array;
     public $draft_message;
+
+    /**
+     * Instantiates and returns a compose message form
+     * 
+     * @param  object    $context
+     * @param  object    $user           auth user
+     * @param  object    $course         moodle course
+     * @param  message   $draft_message
+     * @return \block_quickmail\forms\compose_message_form
+     */
+    public static function make($context, $user, $course, $draft_message = null)
+    {
+        // build target URL
+        $target = '?' . http_build_query([
+            'courseid' => $course->id,
+            'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
+        ], '', '&');
+
+        // get the auth user's available alternate emails for this course
+        $user_alternate_email_array = alternate_email::get_flat_array_for_course_user($course->id, $user);
+
+        // get the auth user's current signatures as array (id => title)
+        $user_signature_array = signature::get_flat_array_for_user($user->id);
+
+        // get config variables for this course, defaulting to block level
+        $course_config_array = block_quickmail_config::_c('', $course);
+
+        return new self($target, [
+            'context' => $context,
+            'user' => $user,
+            'course' => $course,
+            'user_alternate_email_array' => $user_alternate_email_array,
+            'user_signature_array' => $user_signature_array,
+            'course_config_array' => $course_config_array,
+            'draft_message' => $draft_message,
+        ], 'post', '', ['id' => 'mform-compose']);
+    }
 
     /*
      * Moodle form definition
