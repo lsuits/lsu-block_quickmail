@@ -69,7 +69,14 @@ if ($page_params['draftid']) {
 $attachments_draftitem_id = file_get_submitted_draft_itemid('attachments');
 
 // prepare the draft area with any existing, relevant files
-file_prepare_draft_area($attachments_draftitem_id, $page_context->id, 'block_quickmail', 'attachments', $page_params['draftid'] ?: null, block_quickmail_config::get_filemanager_options());
+file_prepare_draft_area(
+    $attachments_draftitem_id, 
+    $page_context->id, 
+    'block_quickmail', 
+    'attachments', 
+    $page_params['draftid'] ?: null, 
+    block_quickmail_config::get_filemanager_options()
+);
 
 ////////////////////////////////////////
 /// INSTANTIATE FORM
@@ -101,8 +108,8 @@ try {
     } else if ($request->to_send_message()) {
 
         // attempt to send
-        \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
-        
+        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
+
         // redirect back to course page
         // @TODO - after send redirect to history (?)
         $request->redirect_to_url(
@@ -113,7 +120,7 @@ try {
     } else if ($request->to_save_draft()) {
 
         // attempt to save draft, handle exceptions
-        \block_quickmail\messenger\messenger::save_draft($USER, $course, $compose_form->get_data(), $draft_message);
+        $message = \block_quickmail\messenger\messenger::save_draft($USER, $course, $compose_form->get_data(), $draft_message);
 
         // redirect back to course page
         // @TODO - after send redirect to compose (?)

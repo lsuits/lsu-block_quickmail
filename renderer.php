@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once 'classes/forms/compose_message_form.php';
-require_once 'classes/forms/manage_signatures_form.php';
-require_once 'classes/forms/course_config_form.php';
+// require_once 'classes/forms/compose_message_form.php';
+// require_once 'classes/forms/manage_signatures_form.php';
+// require_once 'classes/forms/course_config_form.php';
 
 use block_quickmail\renderables\compose_message_component;
 use block_quickmail\renderables\draft_message_index_component;

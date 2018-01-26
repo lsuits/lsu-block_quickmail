@@ -3,6 +3,7 @@
 namespace block_quickmail\messenger;
 
 use block_quickmail_config;
+use block_quickmail_emailer;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\compose_message_form_validator;
@@ -10,10 +11,10 @@ use block_quickmail\validators\save_draft_message_form_validator;
 use block_quickmail\requests\compose_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
+use block_quickmail\filemanager\message_file_handler;
 use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
 use block_quickmail\messenger\subject_prepender;
-use block_quickmail_emailer;
 
 class messenger {
 
@@ -93,7 +94,7 @@ class messenger {
      * @param  array    $form_data       message parameters which will be validated
      * @param  message  $draft_message   a draft message (optional, defaults to null)
      * @param  bool     $send_as_tasks   if false, the message will be sent immediately
-     * @return bool
+     * @return message
      * @throws validation_exception
      * @throws critical_exception
      */
@@ -126,20 +127,21 @@ class messenger {
             $message = message::create_composed($user, $course, $transformed_data);
         }
 
-        // @TODO: handle posted file attachments (moodle)
-        
+        // handle saving and syncing of any uploaded file attachments
+        message_file_handler::handle_posted_attachments($message, $form_data, 'attachments');
+
         // clear any existing recipients, and add those that have been recently submitted
         $message->sync_recipients(compose_request::get_transformed_mailto_ids($form_data));
 
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails(compose_request::get_transformed_additional_emails($form_data));
         
-        // @TODO: sync posted attachments to message record
+        // if not scheduled for delivery later, send now
+        if ( ! $message->get_to_send_in_future()) {
+            self::deliver($message, $send_as_tasks);
+        }
 
-        // if sending immediately, send, otherwise return successful response
-        return ! $message->get_to_send_in_future()
-            ? self::deliver($message, $send_as_tasks)
-            : true;
+        return $message;
     }
 
     /**

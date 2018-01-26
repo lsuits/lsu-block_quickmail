@@ -97,6 +97,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id in which these files are attached to"/>
+        <FIELD NAME="path" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The path of the attached file"/>
         <FIELD NAME="filename" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the attached file"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
