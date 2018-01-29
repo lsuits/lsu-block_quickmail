@@ -12,6 +12,7 @@ use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
+use block_quickmail\persistents\message_attachment;
  
 class message extends persistent {
  
@@ -133,7 +134,7 @@ class message extends persistent {
     public function get_message_recipients($as_user_id_array = false) {
         $messageId = $this->get('id');
 
-        $recipients =  message_recipient::get_records(['message_id' => $messageId]);
+        $recipients = message_recipient::get_records(['message_id' => $messageId]);
 
         if ( ! $as_user_id_array) {
             return $recipients;
@@ -146,6 +147,19 @@ class message extends persistent {
         }, []);
 
         return $recipient_ids;
+    }
+
+    /**
+     * Returns the message attachments that are associated with this message
+     *
+     * @return array
+     */
+    public function get_message_attachments() {
+        $messageId = $this->get('id');
+
+        $attachments = message_attachment::get_records(['message_id' => $messageId]);
+
+        return $attachments;
     }
 
     ///////////////////////////////////////////////

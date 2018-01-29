@@ -4,6 +4,7 @@ namespace block_quickmail\messenger\factories\course_recipient_send;
 
 use block_quickmail\messenger\subject_prepender;
 use block_quickmail\messenger\user_course_data_injector;
+use block_quickmail\filemanager\attachment_appender;
 
 /**
  * This class is a base class to be extended by all types of "message types" (ex: email, message)
@@ -68,6 +69,9 @@ abstract class recipient_send_factory {
             $course, 
             $this->message->get('body')
         );
+
+        // append attachment download links to the formatted body, if any
+        $formatted_body = attachment_appender::add_download_links($this->message, $formatted_body);
 
         // course/user formatted message (string format)
         // raw text

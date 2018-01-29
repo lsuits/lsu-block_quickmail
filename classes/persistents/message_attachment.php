@@ -52,6 +52,27 @@ class message_attachment extends persistent {
 
     ///////////////////////////////////////////////
     ///
+    ///  CUSTOM METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Returns this attachment's full file path (path + filename)
+     * 
+     * @param  bool  $leading_slash  whether or not to include a leading slash
+     * @return string
+     */
+    public function get_full_filepath($leading_slash = false)
+    {
+        $path = $this->get('path') . $this->get('filename');
+
+        return ! $leading_slash
+            ? ltrim($path, '/')
+            : $path;
+    }
+
+    ///////////////////////////////////////////////
+    ///
     ///  CUSTOM STATIC METHODS
     /// 
     ///////////////////////////////////////////////

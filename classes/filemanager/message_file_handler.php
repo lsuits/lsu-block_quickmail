@@ -45,6 +45,60 @@ class message_file_handler {
     }
 
     /**
+     * Zips all of the file attachments for the given message and makes available for the given user,
+     * Returns the path in which the temp files are stored
+     * 
+     * @param  message  $message
+     * @param  object  $user      moodle user
+     * @param  string  $filename   file name to name the temp zip file
+     * @return string  path to the generated file
+     */
+    public static function zip_attachments_for_user($message, $user, $filename = 'attachments.zip') {
+        global $CFG;
+
+        $path = $CFG->tempdir . '/' . self::$plugin_name . '/' . $user->id;
+
+        if ( ! file_exists($path)) {
+            mkdir($path, $CFG->directorypermissions, true);
+        }
+
+        $zip_filename = $path . '/' . $filename;
+
+        $course = $message->get_course();
+
+        $context = context_course::instance($course->id);
+
+        $fs = get_file_storage();
+        $packer = get_file_packer();
+
+        $files = $fs->get_area_files(
+            $context->id,
+            self::$plugin_name,
+            'attachments',
+            $message->get('id'),
+            true
+        );
+
+        $stored_files = [];
+        
+        // iterate through each of the file records
+        foreach ($files as $file) {
+            // if the record is a directory, skip
+            if ($file->is_directory() and $file->get_filename() == '.') {
+                continue;
+            }
+
+            // add the file references to the stack
+            $stored_files[$file->get_filepath() . $file->get_filename()] = $file;
+        }
+
+        // zip the files
+        $packer->archive_to_pathname($stored_files, $zip_filename);
+
+        return $zip_filename;
+    }
+
+    /**
      * Stores and renames the given filearea's files from the given posted data
      * 
      * @param  object  $form_data  mform post data
