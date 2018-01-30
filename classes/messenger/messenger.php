@@ -70,10 +70,10 @@ class messenger {
         // @TODO: handle posted file attachments (moodle)
         
         // clear any existing recipients, and add those that have been recently submitted
-        $message->sync_recipients(compose_request::get_transformed_mailto_ids($form_data));
+        $message->sync_recipients($transformed_data->mailto_ids);
 
         // clear any existing additional emails, and add those that have been recently submitted
-        $message->sync_additional_emails(compose_request::get_transformed_additional_emails($form_data));
+        $message->sync_additional_emails($transformed_data->additional_emails);
         
         // @TODO: sync posted attachments to message record
         
@@ -131,10 +131,10 @@ class messenger {
         message_file_handler::handle_posted_attachments($message, $form_data, 'attachments');
 
         // clear any existing recipients, and add those that have been recently submitted
-        $message->sync_recipients(compose_request::get_transformed_mailto_ids($form_data));
+        $message->sync_recipients($transformed_data->mailto_ids);
 
         // clear any existing additional emails, and add those that have been recently submitted
-        $message->sync_additional_emails(compose_request::get_transformed_additional_emails($form_data));
+        $message->sync_additional_emails($transformed_data->additional_emails);
         
         // if not scheduled for delivery later, send now
         if ( ! $message->get_to_send_in_future()) {

@@ -14,7 +14,7 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
                 // if the value actually changed, redirect to edit the selected signature id
                 if (originalSelectValue !== this.value) {
                     $('label[for=id_select_signature_id] img.spinner-img').css('display', 'inline-block');
-                    window.location.href = 'signature.php?id=' + this.value + '&courseid=' + courseid;
+                    window.location.href = 'signatures.php?id=' + this.value + '&courseid=' + courseid;
                 }
             });
 

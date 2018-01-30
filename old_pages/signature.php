@@ -2,7 +2,7 @@
 
 require_once('../../config.php');
 
-$page_url = '/blocks/quickmail/signature.php';
+$page_url = '/blocks/quickmail/signatures.php';
 
 $page_params = [
     'id' => optional_param('id', 0, PARAM_INT), // signature id, if any
