@@ -2,7 +2,7 @@
 
 namespace block_quickmail\requests;
 
-use block_quickmail\transformers\compose_transformer;
+use block_quickmail\requests\transformers\compose_transformer;
 
 class compose_request extends \block_quickmail_request {
     

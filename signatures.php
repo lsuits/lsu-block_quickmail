@@ -65,25 +65,37 @@ $request = block_quickmail_request::for_route('signature')->with_form($manage_si
 try {
     if ($request->is_form_cancellation()) {
         
+        dd('cancel');
+
         // if no course id was provided, redirect back to "my page"
-        if (empty($page_params['courseid'])) {
-            $this->redirect_as_type('info', 'Form cancelled!!', '/my', [], 2);
+        // if (empty($page_params['courseid'])) {
+        //     $this->redirect_as_type('info', 'Form cancelled!!', '/my', [], 2);
 
-        // otherwise, redirect back to course page
+        // // otherwise, redirect back to course page
+        // } else {
+        //     $this->redirect_as_type('info', 'Form cancelled!!', '/course/view.php', ['id' => $page_params['courseid']], 2);
+        // }
+
+    } else if ($request->to_delete_signature()) {
+
+        dd('delete!');
+
+    } else if ($request->to_save_signature()) {
+        // if no id (signature) was submitted, create a new signature
+        if ( ! $page_params['id']) {
+            // create a new signature
+            $signature = block_quickmail\persistents\signature::create_new([
+                'user_id' => $USER->id,
+                'title' => $request->data->title,
+                'signature' => $request->data->signature,
+                'default_flag' => $request->data->default_flag,
+            ]);
+        // otherwise, update the signature
         } else {
-            $this->redirect_as_type('info', 'Form cancelled!!', '/course/view.php', ['id' => $page_params['courseid']], 2);
+            // update the current signature
+            $signature->from_record($request->data);
+            $signature->update();
         }
-
-
-
-    } else if ($request->to_send_message()) {
-
-        //
-
-    } else if ($request->to_save_draft()) {
-
-        //
-
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     render_validation_notifications($e);
@@ -114,18 +126,23 @@ echo $OUTPUT->footer();
  * @param  signature_request  $signature_request
  * @return void
  */
-function handle_post_signature_save_or_update($context, $signature, $signature_request) {
-    $record = $signature->to_record();
-    $record->signatureformat = (int) $signature_request->form->user->mailformat;
-    $record->signature_editor = $signature_request->form_data->signature_editor;
+// function handle_post_signature_save_or_update($context, $signature, $signature_request) {
+//     $record = $signature->to_record();
+//     $record->signatureformat = (int) $signature_request->form->user->mailformat;
+//     $record->signature_editor = $signature_request->form_data->signature_editor;
 
-    file_postupdate_standard_editor(
-        $record,
-        'signature', 
-        \block_quickmail_config::get_editor_options($context),
-        $context, 
-        \block_quickmail_plugin::$name, 
-        'signature_editor',
-        $signature->get('id')
-    );
+//     file_postupdate_standard_editor(
+//         $record,
+//         'signature', 
+//         \block_quickmail_config::get_editor_options($context),
+//         $context, 
+//         \block_quickmail_plugin::$name, 
+//         'signature_editor',
+//         $signature->get('id')
+//     );
+// }
+
+function dd($thing)
+{
+    var_dump($thing);die;
 }

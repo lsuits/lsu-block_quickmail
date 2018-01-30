@@ -1,6 +1,6 @@
 <?php
 
-namespace block_quickmail\transformers;
+namespace block_quickmail\requests\transformers;
 
 class transformer {
 
@@ -17,6 +17,13 @@ class transformer {
         $this->transformed_data = (object)[];
     }
 
+    public function if_exists($prop, $default = 0)
+    {
+        return property_exists($this->form_data, $prop)
+            ? $this->form_data->$prop
+            : $default;
+    }
+    
     public function transform()
     {
         $this->transform_form_data();
@@ -26,7 +33,7 @@ class transformer {
 
     public static function get_transformed($form_data)
     {
-        $transformer = new compose_transformer($form_data);
+        $transformer = new static($form_data);
 
         return $transformer->transform();
     }

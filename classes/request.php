@@ -3,10 +3,12 @@
 class block_quickmail_request {
 
     public $form;
+    public $data;
 
     public function __construct()
     {
         $this->form = null;
+        $this->data = (object)[];
     }
 
     ////////////////////////////////////////
@@ -37,6 +39,10 @@ class block_quickmail_request {
     public function with_form($form)
     {
         $this->form = $form;
+
+        if ($this->was_submitted()) {
+            $this->data = static::get_transformed_post_data($this->form->get_data());
+        }
 
         return $this;
     }

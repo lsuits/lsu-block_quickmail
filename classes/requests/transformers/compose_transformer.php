@@ -1,6 +1,6 @@
 <?php
 
-namespace block_quickmail\transformers;
+namespace block_quickmail\requests\transformers;
 
 use block_quickmail_config;
 
