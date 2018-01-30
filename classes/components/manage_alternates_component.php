@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\renderables;
+namespace block_quickmail\components;
 
-use block_quickmail\renderables\renderable_component;
+use block_quickmail\components\component;
 
-class manage_alternates_component extends renderable_component implements \renderable {
+class manage_alternates_component extends component implements \renderable {
 
     public $form;
 

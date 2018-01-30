@@ -22,18 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\renderables;
+namespace block_quickmail\components;
 
-use block_quickmail\renderables\renderable_component;
+use block_quickmail\components\component;
 
-class course_config_component extends renderable_component implements \renderable {
+class compose_message_component extends component implements \renderable {
 
-    public $course_config_form;
-
+    public $compose_form;
+    
     public function __construct($params = []) {
         parent::__construct($params);
 
-        $this->course_config_form = $this->get_param('course_config_form');
+        $this->compose_form = $this->get_param('compose_form');
+
+        $this->heading = '';
     }
 
 }

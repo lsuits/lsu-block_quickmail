@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\renderables;
+namespace block_quickmail\components;
 
-class renderable_component {
+class component {
 
     protected $params;
 

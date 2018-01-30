@@ -22,13 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\renderables;
+namespace block_quickmail\components;
 
-use block_quickmail\renderables\renderable_component;
+use block_quickmail\components\component;
 use block_quickmail_plugin;
 use moodle_url;
 
-class draft_message_index_component extends renderable_component implements \renderable {
+class draft_message_index_component extends component implements \renderable {
 
     public $draft_messages;
 

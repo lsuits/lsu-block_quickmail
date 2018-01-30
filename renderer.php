@@ -26,14 +26,14 @@
 // require_once 'classes/forms/manage_signatures_form.php';
 // require_once 'classes/forms/course_config_form.php';
 
-use block_quickmail\renderables\compose_message_component;
-use block_quickmail\renderables\draft_message_index_component;
-use block_quickmail\renderables\historical_message_index_component;
-use block_quickmail\renderables\manage_signatures_component;
-use block_quickmail\renderables\course_config_component;
-use block_quickmail\renderables\alternate_index_component;
-use block_quickmail\renderables\manage_alternates_component;
-use block_quickmail\renderables\manage_drafts_component;
+use block_quickmail\components\compose_message_component;
+use block_quickmail\components\draft_message_index_component;
+use block_quickmail\components\historical_message_index_component;
+use block_quickmail\components\manage_signatures_component;
+use block_quickmail\components\course_config_component;
+use block_quickmail\components\alternate_index_component;
+use block_quickmail\components\manage_alternates_component;
+use block_quickmail\components\manage_drafts_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
 
