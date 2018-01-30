@@ -26,6 +26,7 @@ class block_quickmail extends block_list {
     public $course;
     public $user;
     public $context;
+    public $content;
 
     public function init() {
         $this->title = $this->get_title();
@@ -52,16 +53,7 @@ class block_quickmail extends block_list {
     }
 
     public function set_context() {
-        // if no course, or is "site" course, return system context
-        if (empty($this->course) || $this->course->id == 1) {
-            $context = block_quickmail_plugin::resolve_context('system');
-
-        // otherwise, get the course's context
-        } else {
-            list($context, $course) = block_quickmail_plugin::resolve_context('course', $this->course->id);
-        }
-
-        $this->context = $context;
+        $this->context = context_course::instance($this->course->id);
     }
 
     /**
@@ -75,12 +67,7 @@ class block_quickmail extends block_list {
             'mod-scorm-view' => true
         ];
 
-        if (block_quickmail_plugin::user_has_permission_in_context('myaddinstance', $this->context)) {
-            return array_merge($formats, [
-                'site' => true, 
-                'my' => true, 
-            ]);
-        }
+        // allow to be added at the system level ??
 
         return array_merge($formats, [
             'site' => false, 
@@ -103,11 +90,6 @@ class block_quickmail extends block_list {
      * @return object
      */
     public function get_content() {
-        // @TODO: find a better way to deal with unauthenticated users
-        if ($this->user->id == 0) {
-            return null;
-        }
-
         // cache the content for this instance
         // @TODO: should we cache the content?
         if ( ! empty($this->content)) {
@@ -119,59 +101,53 @@ class block_quickmail extends block_list {
         // begin building content...
 
         // if this user has the ability to send quickmail messages
-        if (block_quickmail_plugin::user_has_permission_in_context('cansend', $this->context)) {
-            $content_list_items = [
-                // compose message
-                [
-                    'lang_key' => 'compose',
-                    'icon_key' => 't/email',
-                    'page' => 'compose',
-                ],
-                // manage drafts
-                [
-                    'lang_key' => 'drafts',
-                    'icon_key' => 'i/open',
-                    'page' => 'drafts',
-                ],
-                // view send history
-                [
-                    'lang_key' => 'history',
-                    'icon_key' => 'i/duration',
-                    'page' => 'history',
-                    // 'extra_link_params' => ['type' => 'drafts'],
-                ],
-                // manage signatures
-                [
-                    'lang_key' => 'manage_signatures',
-                    'icon_key' => 'i/edit',
-                    'page' => 'signature',
-                ],
-            ];
+        if (block_quickmail_plugin::user_has_permission('cansend', $this->context)) {
+            // compose message
+            $this->add_item_to_content([
+                'lang_key' => 'compose',
+                'icon_key' => 't/email',
+                'page' => 'compose',
+            ]);
 
-            // TODO: add in items only available in course context
-            
+            // manage drafts
+            // $this->add_item_to_content([
+            //     'lang_key' => 'drafts',
+            //     'icon_key' => 'i/open',
+            //     'page' => 'drafts',
+            // ]);
+
+            // view send history
+            // $this->add_item_to_content([
+            //     'lang_key' => 'history',
+            //     'icon_key' => 'i/duration',
+            //     'page' => 'history',
+            //     // 'extra_link_params' => ['type' => 'drafts'],
+            // ]);
+
+            // manage signatures
+            $this->add_item_to_content([
+                'lang_key' => 'manage_signatures',
+                'icon_key' => 'i/edit',
+                'page' => 'signatures',
+            ]);
+
             // manage alternate send-from emails
-            if (block_quickmail_plugin::user_has_permission_in_context('allowalternate', $this->context)) {
-                $content_list_items[] = [
-                        'lang_key' => 'alternate',
-                        'icon_key' => 't/addcontact',
-                        'page' => 'alternate',
-                    ];
+            if (block_quickmail_plugin::user_has_permission('allowalternate', $this->context)) {
+                // $this->add_item_to_content([
+                //     'lang_key' => 'alternate',
+                //     'icon_key' => 't/addcontact',
+                //     'page' => 'alternate',
+                // ]);
             }
 
             // manage quickmail config
-            if (block_quickmail_plugin::user_has_permission_in_context('canconfig', $this->context)) {
-                $content_list_items[] = [
-                    'lang_key' => 'config',
-                    'icon_key' => 'i/settings',
-                    'page' => 'configuration',
-                ];
+            if (block_quickmail_plugin::user_has_permission('canconfig', $this->context)) {
+                // $this->add_item_to_content([
+                //     'lang_key' => 'config',
+                //     'icon_key' => 'i/settings',
+                //     'page' => 'configuration',
+                // ]);
             }
-        }
-
-        // construct and add all of the items to the content to be output
-        foreach ($content_list_items as $item_attributes) {
-            $this->add_item_to_content($item_attributes);
         }
 
         return $this->content;

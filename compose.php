@@ -16,12 +16,11 @@ $course = get_course($page_params['courseid']);
 /// AUTHENTICATION
 ////////////////////////////////////////
 
+require_course_login($course, false);
 $page_context = context_course::instance($course->id);
 $PAGE->set_context($page_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
-
-require_course_login($course, false);
-require_capability('block/quickmail:cansend', $page_context);
+block_quickmail_plugin::require_user_capability('cansend', $page_context);
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
@@ -143,7 +142,7 @@ try {
 $rendered_compose_form = $renderer->compose_message_component([
     'context' => $page_context,
     'user' => $USER,
-    'course' => $COURSE,
+    'course' => $course,
     'compose_form' => $compose_form,
 ]);
 
@@ -170,9 +169,4 @@ function render_validation_notifications($exception) {
         
         \core\notification::error($html);
     }
-}
-
-////////////////////////////////////////////////////////////
-function dd($thing) {
-    var_dump($thing);die;
 }
