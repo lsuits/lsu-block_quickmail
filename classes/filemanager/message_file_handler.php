@@ -110,7 +110,7 @@ class message_file_handler {
         if (empty($form_data->attachments)) {
             return;
         }
-        
+
         // move the files from "user draft" to this filearea
         file_save_draft_area_files(
             $form_data->$filearea, 

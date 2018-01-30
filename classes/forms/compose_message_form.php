@@ -475,7 +475,7 @@ class compose_message_form extends \moodleform {
      * @return [type] [description]
      */
     private function get_create_signature_url() {
-        return '/blocks/quickmail/signature.php?courseid=' . $this->course->id;
+        return '/blocks/quickmail/signatures.php?courseid=' . $this->course->id;
     }
 
     /**

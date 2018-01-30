@@ -15,6 +15,8 @@ class compose_message_form_validator extends validator {
      */
     public function validator_rules()
     {
+        $this->transformed_data = compose_request::get_transformed_post_data($this->form_data);
+
         $this->validate_subject();
 
         $this->validate_message_body();
@@ -45,7 +47,7 @@ class compose_message_form_validator extends validator {
      */
     private function validate_message_body()
     {
-        $body = compose_request::get_transformed_message_body($this->form_data);
+        $body = $this->transformed_data->message;
 
         // first, check that there is a message body which is required
         if (empty($body)) {
@@ -68,11 +70,8 @@ class compose_message_form_validator extends validator {
      */
     private function validate_additional_emails()
     {
-        // get an array of cleansed emails from the post data
-        $emails = compose_request::get_transformed_additional_emails($this->form_data);
-
         //  validate each email value
-        foreach ($emails as $email) {
+        foreach ($this->transformed_data->additional_emails as $email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
                 $this->errors[] = 'The additional email "' . $email . '" you entered is invalid';
             }

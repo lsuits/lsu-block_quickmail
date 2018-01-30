@@ -5,6 +5,7 @@ namespace block_quickmail\validators;
 class validator {
 
     public $form_data;
+    public $transformed_data;
     public $errors;
     public $course;
 

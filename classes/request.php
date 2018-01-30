@@ -77,6 +77,44 @@ class block_quickmail_request {
     }
 
     /**
+     * Reports whether or not the submitted request has a given input element key
+     * 
+     * @param  string  $input_element_key
+     * @return bool
+     */
+    public function has_form_data_key($input_element_key) {
+        // get raw form data
+        $form_data = $this->form->get_data();
+
+        // if no post data, return false
+        if (empty($form_data)) {
+            return false;
+        }
+
+        // return whether the given key exists in the posted data
+        return property_exists($form_data, $input_element_key);
+    }
+
+    /**
+     * Reports whether or not the submitted request has an input element key that matches the given value
+     * 
+     * @param  string  $input_element_key
+     * @param  string  $value
+     * @return bool
+     */
+    public function has_form_data_matching($input_element_key, $value) {
+        // if the given element key does not exist in the post, return false
+        if ( ! $this->has_form_data_key($input_element_key)) {
+            return false;
+        }
+        
+        // get raw form data
+        $form_data = $this->form->get_data();
+
+        return $form_data->$input_element_key == $value;
+    }
+
+    /**
      * Reports whether or not this request is a form cancellation
      * 
      * @return bool
