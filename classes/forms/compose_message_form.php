@@ -26,12 +26,15 @@ namespace block_quickmail\forms;
 
 require_once $CFG->libdir . '/formslib.php';
 
+use block_quickmail\forms\concerns\is_quickmail_form;
 use block_quickmail_plugin;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
 
 class compose_message_form extends \moodleform {
+
+    use is_quickmail_form;
 
     public $context;
     public $user;
@@ -52,11 +55,10 @@ class compose_message_form extends \moodleform {
      */
     public static function make($context, $user, $course, $draft_message = null)
     {
-        // build target URL
-        $target = '?' . http_build_query([
+        $target_url = self::generate_target_url([
             'courseid' => $course->id,
             'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
-        ], '', '&');
+        ]);
 
         // get the auth user's available alternate emails for this course
         $user_alternate_email_array = alternate_email::get_flat_array_for_course_user($course->id, $user);
@@ -67,7 +69,7 @@ class compose_message_form extends \moodleform {
         // get config variables for this course, defaulting to block level
         $course_config_array = block_quickmail_config::_c('', $course);
 
-        return new self($target, [
+        return new self($target_url, [
             'context' => $context,
             'user' => $user,
             'course' => $course,
