@@ -53,11 +53,17 @@ trait has_general_helpers {
     {
         global $DB;
 
-        $record = $DB->get_record('config', ['name' => $config_name]);
+        if ($record = $DB->get_record('config', ['name' => $config_name])) {
+            $record->value = $new_value;
 
-        $record->value = $new_value;
+            $DB->update_record('config', $record);
+        } else {
+            $DB->insert_record('config', (object)[
+                'name' => $config_name,
+                'value' => $new_value,
+            ]);
+        }
 
-        $DB->update_record('config', $record);
     }
 
 }
