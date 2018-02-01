@@ -22,6 +22,17 @@ module.exports = function (grunt) {
         watch: {
             files: '**/*.sass',
             tasks: ['sass']
+        },
+        uglify : {
+            dev : {
+                expand: true,
+                src : 'amd/src/*.js',
+                dest : '/',
+                cwd: '.',
+                rename: function (dst, src) {
+                    return src.replace('/src', '/build').replace('.js', '.min.js');
+                }
+            }
         }
     });
     // The default task (running "grunt" in console).

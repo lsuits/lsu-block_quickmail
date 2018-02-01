@@ -1,6 +1,7 @@
 {
   "name": "moodle-block_quickmail",
   "devDependencies": {
+    "eslint": "^4.16.0",
     "grunt": "^1.0.1",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-jshint": "^1.1.0",
@@ -9,5 +10,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-load-gruntfile": "0.0.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "grunt-contrib": "^0.11.0"
+  }
 }
