@@ -35,6 +35,7 @@ class manage_signatures_form extends \moodleform {
 
     use is_quickmail_form;
 
+    public $errors;
     public $context;
     public $user;
     public $course;

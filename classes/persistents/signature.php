@@ -67,7 +67,7 @@ class signature extends persistent {
     ///////////////////////////////////////////////
 
     protected function validate_title($value) {
-        // if this is a new signature attempting to be created, check to make sure this title is unique
+        // if this is a new signature attempting to be created, check to make sure this title is unique to the user
         if ( ! $this->get('id') && self::count_records([
             'title' => $value,
             'user_id' => $this->get('user_id'),
@@ -278,6 +278,26 @@ class signature extends persistent {
         }
 
         return null;
+    }
+
+    /**
+     * Handles the persistence and display of text editor content after updating a signature
+     * 
+     * @param  object             $context
+     * @param  signature          $signature
+     * @param  request  $request
+     * @return void
+     */
+    public static function handle_post_save_or_update($context, $signature, $request) {
+        file_postupdate_standard_editor(
+            $request->form->get_data(),
+            'signature', 
+            \block_quickmail_config::get_editor_options($context),
+            $context, 
+            \block_quickmail_plugin::$name, 
+            'signature_editor',
+            $signature->get('id')
+        );
     }
  
 }

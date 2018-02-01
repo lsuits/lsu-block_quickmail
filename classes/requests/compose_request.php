@@ -24,9 +24,11 @@ class compose_request extends \block_quickmail_request {
         return $this->was_submitted('save');
     }
 
-    public static function get_transformed_post_data($form_data)
+    public static function get_transformed($form_data)
     {
-        return compose_transformer::get_transformed($form_data);
+        $transformer = new compose_transformer($form_data);
+
+        return $transformer->transform();
     }
 
 

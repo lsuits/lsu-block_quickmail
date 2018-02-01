@@ -5,7 +5,7 @@ namespace block_quickmail\requests\transformers;
 use block_quickmail_config;
 
 class compose_transformer extends transformer {
-
+    
     public function transform_form_data()
     {
         $this->transformed_data->subject = (string) $this->form_data->subject;

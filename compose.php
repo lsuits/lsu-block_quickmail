@@ -99,10 +99,7 @@ try {
     if ($request->is_form_cancellation()) {
         
         // redirect back to course page
-        $request->redirect_to_url(
-            new moodle_url('/course/view.php', ['id' => $course->id]),
-            block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname)
-        );
+        $request->redirect_as_info(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     } else if ($request->to_send_message()) {
 
@@ -111,10 +108,7 @@ try {
 
         // redirect back to course page
         // @TODO - after send redirect to history (?)
-        $request->redirect_to_url(
-            new moodle_url('/course/view.php', ['id' => $course->id]),
-            block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname)
-        );
+        $request->redirect_as_success(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     } else if ($request->to_save_draft()) {
 
@@ -123,14 +117,11 @@ try {
 
         // redirect back to course page
         // @TODO - after send redirect to compose (?)
-        $request->redirect_to_url(
-            new moodle_url('/course/view.php', ['id' => $course->id]),
-            block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save', $course->fullname)
-        );
+        $request->redirect_as_info(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
-    render_validation_notifications($e);
+    $compose_form->set_error_exception($e);
 } catch (\block_quickmail\exceptions\critical_exception $e) {
     print_error('critical_error', 'block_quickmail');
 }
@@ -147,26 +138,6 @@ $rendered_compose_form = $renderer->compose_message_component([
 ]);
 
 echo $OUTPUT->header();
+$compose_form->render_error_notification();
 echo $rendered_compose_form;
 echo $OUTPUT->footer();
-
-
-/**
- * Instantiates a core moodle error notification with list-style error messages from the given exception
- * 
- * @param  \Exception $exception
- * @return void
- */
-function render_validation_notifications($exception) {
-    if (count($exception->errors)) {
-        $html = '<ul>';
-        
-        foreach ($exception->errors as $error) {
-            $html .= '<li>' . $error . '</li>';
-        }
-
-        $html .= '</ul>';
-        
-        \core\notification::error($html);
-    }
-}

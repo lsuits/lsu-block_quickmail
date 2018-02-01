@@ -36,6 +36,7 @@ class compose_message_form extends \moodleform {
 
     use is_quickmail_form;
 
+    public $errors;
     public $context;
     public $user;
     public $course;

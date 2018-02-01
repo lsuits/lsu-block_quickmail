@@ -31,11 +31,4 @@ class transformer {
         return $this->transformed_data;
     }
 
-    public static function get_transformed($form_data)
-    {
-        $transformer = new static($form_data);
-
-        return $transformer->transform();
-    }
-
 }
