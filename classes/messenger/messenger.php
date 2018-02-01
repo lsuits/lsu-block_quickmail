@@ -44,6 +44,7 @@ class messenger {
         $validator = new save_draft_message_form_validator($form_data, [
             'course_config' => block_quickmail_config::_c('', $course)
         ]);
+        $validator->validate();
 
         // if errors, throw exception
         if ($validator->has_errors()) {
@@ -104,6 +105,7 @@ class messenger {
         $validator = new compose_message_form_validator($form_data, [
             'course_config' => block_quickmail_config::_c('', $course)
         ]);
+        $validator->validate();
 
         // if errors, throw exception
         if ($validator->has_errors()) {

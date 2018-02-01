@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\messenger;
 use block_quickmail\persistents\message;
+use block_quickmail\exceptions\validation_exception;
 
 class block_quickmail_messenger_testcase extends advanced_testcase {
     
@@ -69,6 +70,32 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 1, 'from'));  <--- this would be nice
         $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 1, 'from'));
         $this->assertEquals($user_students[0]->email, $this->email_in_sink_attr($sink, 1, 'to'));
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_messenger_does_not_send_compose_message_with_invalid_params()
+    {
+        $this->expectException(validation_exception::class);
+
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => '',
+            'body' => 'This is one fine body.',
+        ]);
+
+        // send an email from the teacher to the students now (not as queued adhoc tasks)
+        messenger::compose($user_teacher, $course, $compose_form_data, null, false);
+
+        $this->assertEquals(0, $this->email_sink_email_count($sink));
 
         $this->close_email_sink($sink);
     }
