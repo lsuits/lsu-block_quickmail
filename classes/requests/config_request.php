@@ -15,7 +15,6 @@ class config_request extends \block_quickmail_request {
 
     public static function get_transformed($form_data)
     {
-        // return block_quickmail_config::get_transformed((array) $form_data);
         return (array) $form_data;
     }
 
