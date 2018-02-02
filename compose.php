@@ -96,11 +96,13 @@ $request = block_quickmail_request::for_route('compose')->with_form($compose_for
 
 // if a POST was submitted, attempt to take appropriate actions
 try {
+    // CANCEL
     if ($request->is_form_cancellation()) {
         
         // redirect back to course page
         $request->redirect_as_info(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
+    // SEND
     } else if ($request->to_send_message()) {
 
         // attempt to send
@@ -110,6 +112,7 @@ try {
         // @TODO - after send redirect to history (?)
         $request->redirect_as_success(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
+    // SAVE DRAFT
     } else if ($request->to_save_draft()) {
 
         // attempt to save draft, handle exceptions

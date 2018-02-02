@@ -8,15 +8,6 @@ use block_quickmail\persistents\signature;
 class signature_request extends \block_quickmail_request {
     
     /**
-     * Reports whether or not the request was submitted with intent to save
-     * 
-     * @return bool
-     */
-    public function to_save_signature() {
-        return $this->was_submitted('save');
-    }
-
-    /**
      * Reports whether or not the request was submitted with intent to delete
      * 
      * @return bool

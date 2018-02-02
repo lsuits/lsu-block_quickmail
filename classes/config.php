@@ -140,6 +140,16 @@ class block_quickmail_config {
         return $key ? $transformed[$key] : $transformed;
     }
 
+    public static function roleselection_to_array(string $roleselection_value)
+    {
+        return explode(',', $roleselection_value);
+    }
+
+    public static function roleselection_to_string(array $roleselection_value)
+    {
+        return implode(',', $roleselection_value);
+    }
+
     /**
      * Returns the user table field names that may be configured to be injected dynamically into messages
      * 
@@ -207,23 +217,26 @@ class block_quickmail_config {
     /**
      * Updates a given course's settings to match the given params
      * 
-     * @param  mixed  $courseorid
+     * @param  object  $course
      * @param  array $params
      * @return void
      */
-    public static function update_course_config($courseorid, $params = [])
+    public static function update_course_config($course, $params = [])
     {
         global $DB;
 
-        $course_id = is_object($courseorid) ? $courseorid->id : $courseorid;
-
         // first, clear out old settings
-        self::delete_course_config($course_id);
+        self::delete_course_config($course);
+
+        // handle conversion of special cases...
+        if (array_key_exists('roleselection', $params)) {
+            $params['roleselection'] = self::roleselection_to_string($params['roleselection']);
+        }
 
         // next, iterate over each given param, inserting each record for this course
         foreach ($params as $name => $value) {
             $config = new \stdClass;
-            $config->coursesid = $course_id;
+            $config->coursesid = $course->id;
             $config->name = $name;
             $config->value = $value;
 
@@ -234,16 +247,14 @@ class block_quickmail_config {
     /**
      * Deletes a given course's settings
      * 
-     * @param  mixed  $courseorid
+     * @param  object  $course
      * @return void
      */
-    public static function delete_course_config($courseorid)
+    public static function delete_course_config($course)
     {
         global $DB;
 
-        $course_id = is_object($courseorid) ? $courseorid->id : $courseorid;
-
-        $DB->delete_records('block_quickmail_config', ['coursesid' => $course_id]);
+        $DB->delete_records('block_quickmail_config', ['coursesid' => $course->id]);
     }
 
 }

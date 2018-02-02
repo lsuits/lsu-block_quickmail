@@ -142,11 +142,11 @@ class block_quickmail extends block_list {
 
             // manage quickmail config
             if (block_quickmail_plugin::user_has_permission('canconfig', $this->context)) {
-                // $this->add_item_to_content([
-                //     'lang_key' => 'config',
-                //     'icon_key' => 'i/settings',
-                //     'page' => 'configuration',
-                // ]);
+                $this->add_item_to_content([
+                    'lang_key' => 'config',
+                    'icon_key' => 'i/settings',
+                    'page' => 'configuration',
+                ]);
             }
         }
 

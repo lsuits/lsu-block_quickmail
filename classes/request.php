@@ -139,6 +139,15 @@ class block_quickmail_request {
         return (bool) $this->form->is_cancelled();
     }
 
+    /**
+     * Reports whether or not the request was submitted with intent to save
+     * 
+     * @return bool
+     */
+    public function to_save() {
+        return $this->was_submitted('save');
+    }
+
     ////////////////////////////////////////
     ///
     /// REDIRECTS

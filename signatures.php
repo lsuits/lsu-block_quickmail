@@ -84,7 +84,7 @@ try {
         $request->redirect_to_user_default_signature('warning', $USER, $page_params['courseid'], \block_quickmail_plugin::_s('user_signature_deleted'));
 
     // SAVE / UPDATE
-    } else if ($request->to_save_signature()) {
+    } else if ($request->to_save()) {
         
         // if we're not focused on an existing signature
         if ( ! $page_params['id']) {
