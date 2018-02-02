@@ -16,7 +16,7 @@ $course = get_course($page_params['courseid']);
 ////////////////////////////////////////
 
 require_login();
-$page_context = context_course::instance();
+$page_context = context_course::instance($course->id);
 $PAGE->set_context($page_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
 block_quickmail_plugin::require_user_capability('canconfig', $page_context);
