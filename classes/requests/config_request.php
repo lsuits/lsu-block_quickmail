@@ -2,8 +2,6 @@
 
 namespace block_quickmail\requests;
 
-use block_quickmail_config;
-
 class config_request extends \block_quickmail_request {
     
     /**
