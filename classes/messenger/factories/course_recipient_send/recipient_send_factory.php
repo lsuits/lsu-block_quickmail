@@ -5,6 +5,7 @@ namespace block_quickmail\messenger\factories\course_recipient_send;
 use block_quickmail\messenger\subject_prepender;
 use block_quickmail\messenger\user_course_data_injector;
 use block_quickmail\filemanager\attachment_appender;
+use block_quickmail\messenger\signature_appender;
 
 /**
  * This class is a base class to be extended by all types of "message types" (ex: email, message)
@@ -68,6 +69,12 @@ abstract class recipient_send_factory {
             $this->message_params->userto, 
             $course, 
             $this->message->get('body')
+        );
+
+        $formatted_body = signature_appender::append_user_signature_to_body(
+            $formatted_body, 
+            $this->message_params->userfrom->id,
+            $this->message->get('signature_id')
         );
 
         // append attachment download links to the formatted body, if any

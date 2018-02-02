@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\messenger;
 use block_quickmail\persistents\message;
+use block_quickmail\persistents\signature;
 use block_quickmail\exceptions\validation_exception;
 
 class block_quickmail_messenger_testcase extends advanced_testcase {
@@ -228,6 +229,39 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         $this->assertTrue($this->email_in_sink_body_contains($sink, 5, 'This is one fine body.'));
         $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 5, 'from'));
         $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 5, 'to'));
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_messenger_sends_with_signature_appended()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // create a signature for the teacher
+        $signature = signature::create_new([
+            'user_id' => $user_teacher->id,
+            'title' => 'mine',
+            'signature' => '<p>This is my signature! Signed, The Teacher!</p>',
+        ]);
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+            'signature_id' => $signature->get('id')
+        ]);
+
+        // send an email from the teacher to the students now (not as queued adhoc tasks)
+        messenger::compose($user_teacher, $course, $compose_form_data, null, false);
+
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is one fine body.'));
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is my signature! Signed, The Teacher!'));
 
         $this->close_email_sink($sink);
     }
