@@ -35,6 +35,7 @@
             <directory suffix="_test.php">tests/unit</directory>
             <exclude>tests/unit/persistent_concerns_test.php</exclude>
             <exclude>tests/unit/message_persistent_test.php</exclude>
+            <!-- <exclude>tests/unit/signature_persistent_test.php</exclude> -->
             <exclude>tests/unit/configuration_test.php</exclude>
             <exclude>tests/unit/user_course_data_injector_test.php</exclude>
             <exclude>tests/unit/subject_prepender_test.php</exclude>

@@ -113,10 +113,26 @@ class signature extends persistent {
     }
 
     /**
+     * Take appropriate actions after creating a new signature, including:
+     *   
+     *   - if new signature is default, and user has an existing default signature, make the existing default NOT default
+     * 
+     * @return void
+     */
+    protected function after_create() {
+        $existing_user_default = self::get_default_signature_for_user($this->get('user_id'));
+
+        if ($this->is_default() && ! empty($existing_user_default)) {
+            $existing_user_default->set('default_flag', 0);
+            $existing_user_default->update();
+        }
+    }
+
+    /**
      * Take appropriate actions after updating a signature, including:
      *   
-     *   - if updated signature is now default, flag all others (if any), as non-default
-     *   - if updated signature is NOT default, make sure there is at least one default
+     *   - if this updated signature is now default, flag all others (if any), as non-default
+     *   - if this updated signature is NOT default, make sure there is at least one default
      * 
      * @param bool  $result  whether or not the update was successful
      * @return void
@@ -192,18 +208,6 @@ class signature extends persistent {
     public function is_default()
     {
         return (bool) $this->get('default_flag');
-    }
-
-    /**
-     * Returns a message body with this signature appended
-     * 
-     * @param  string  $message_body
-     * @return string
-     */
-    public function get_message_body_with_signature_appended($message_body = '') {
-        $message_body .= '<br><br>' . $this->get('signature');
-
-        return $message_body;
     }
 
     ///////////////////////////////////////////////
