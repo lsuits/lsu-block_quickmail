@@ -133,11 +133,11 @@ class block_quickmail extends block_list {
 
             // manage alternate send-from emails
             if (block_quickmail_plugin::user_has_permission('allowalternate', $this->context)) {
-                // $this->add_item_to_content([
-                //     'lang_key' => 'alternate',
-                //     'icon_key' => 't/addcontact',
-                //     'page' => 'alternate',
-                // ]);
+                $this->add_item_to_content([
+                    'lang_key' => 'alternate',
+                    'icon_key' => 't/addcontact',
+                    'page' => 'alternate',
+                ]);
             }
 
             // manage quickmail config

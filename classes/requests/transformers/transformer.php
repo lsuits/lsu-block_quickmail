@@ -13,7 +13,7 @@ class transformer {
      * @param object  $form_data  the submitted mform data object
      */
     public function __construct($form_data) {
-        $this->form_data = $form_data;;
+        $this->form_data = $form_data;
         $this->transformed_data = (object)[];
     }
 

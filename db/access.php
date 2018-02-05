@@ -67,11 +67,6 @@ $capabilities = array(
         )
     ),
 
-    
-
-
-    //////////////////////////
-
     'block/quickmail:allowalternate' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -82,6 +77,9 @@ $capabilities = array(
             'coursecreator' => CAP_ALLOW
         )
     ),
+
+    //////////////////////////
+
 
     'block/quickmail:canimpersonate' => array(
         'captype' => 'write',
