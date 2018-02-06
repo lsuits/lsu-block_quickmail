@@ -37,10 +37,10 @@
             <exclude>tests/unit/message_persistent_test.php</exclude>
             <exclude>tests/unit/signature_persistent_test.php</exclude>
 
-            <!-- <exclude>tests/unit/alternate_persistent_test.php</exclude> -->
-            <!-- <exclude>tests/unit/alternate_manager_test.php</exclude> -->
+            <exclude>tests/unit/alternate_persistent_test.php</exclude>
+            <exclude>tests/unit/alternate_manager_test.php</exclude>
 
-            <exclude>tests/unit/configuration_test.php</exclude>
+            <!-- <exclude>tests/unit/configuration_test.php</exclude> -->
             <exclude>tests/unit/user_course_data_injector_test.php</exclude>
             <exclude>tests/unit/subject_prepender_test.php</exclude>
             <exclude>tests/unit/signature_appender_test.php</exclude>

@@ -230,7 +230,9 @@ class block_quickmail_config {
 
         // handle conversion of special cases...
         if (array_key_exists('roleselection', $params)) {
-            $params['roleselection'] = self::roleselection_to_string($params['roleselection']);
+            if (is_array($params['roleselection'])) {
+                $params['roleselection'] = self::roleselection_to_string($params['roleselection']);
+            }
         }
 
         // next, iterate over each given param, inserting each record for this course
