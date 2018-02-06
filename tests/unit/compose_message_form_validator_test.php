@@ -4,7 +4,7 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\validators\compose_message_form_validator;
 
-class block_quickmail_compose_course_message_validator_testcase extends advanced_testcase {
+class block_quickmail_compose_message_form_validator_testcase extends advanced_testcase {
     
     use has_general_helpers,
         sets_up_courses,

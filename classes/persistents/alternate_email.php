@@ -234,57 +234,7 @@ class alternate_email extends persistent {
     /// 
     ///////////////////////////////////////////////
 
-    /**
-     * Validate the setup user ID.
-     *
-     * @param int $value The value.
-     * @return true|lang_string
-     */
-    protected function validate_setup_user_id($value) {
-        if ( ! core_user::is_real_user($value, true)) {
-            return new lang_string('invaliduserid', 'error');
-        }
- 
-        return true;
-    }
-
-    /**
-     * Validate the course ID.
-     *
-     * @param int $value The value.
-     * @return true|lang_string
-     */
-    protected function validate_course_id($value) {
-        if ( ! $value) {
-            return true;
-        }
-
-        try {
-            $course = get_course($value);
-        } catch (dml_exception $e) {
-            return new lang_string('invalidcourseid', 'error');
-        }
-
-        return true;
-    }
-
-    /**
-     * Validate the user ID.
-     *
-     * @param int $value The value.
-     * @return true|lang_string
-     */
-    protected function validate_user_id($value) {
-        if ( ! $value) {
-            return true;
-        }
-
-        if ( ! core_user::is_real_user($value, true)) {
-            return new lang_string('invaliduserid', 'error');
-        }
- 
-        return true;
-    }
+    //
 
     ///////////////////////////////////////////////
     ///

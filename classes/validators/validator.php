@@ -2,13 +2,18 @@
 
 namespace block_quickmail\validators;
 
-class validator {
+abstract class validator {
 
     public $form_data;
     public $transformed_data;
     public $errors;
     public $course;
 
+    /**
+     * Constructs a validator
+     * 
+     * @param object $form_data  post data submission object
+     */
     public function __construct($form_data) {
         $this->form_data = $form_data;
         $this->errors = [];

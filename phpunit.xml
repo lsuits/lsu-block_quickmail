@@ -36,18 +36,19 @@
             <exclude>tests/unit/persistent_concerns_test.php</exclude>
             <exclude>tests/unit/message_persistent_test.php</exclude>
             <exclude>tests/unit/signature_persistent_test.php</exclude>
-
             <exclude>tests/unit/alternate_persistent_test.php</exclude>
-            <exclude>tests/unit/alternate_manager_test.php</exclude>
 
-            <!-- <exclude>tests/unit/configuration_test.php</exclude> -->
+            <exclude>tests/unit/create_alternate_form_validator_test.php</exclude>
+            <!-- <exclude>tests/unit/alternate_manager_test.php</exclude> -->
+
+            <exclude>tests/unit/configuration_test.php</exclude>
             <exclude>tests/unit/user_course_data_injector_test.php</exclude>
             <exclude>tests/unit/subject_prepender_test.php</exclude>
             <exclude>tests/unit/signature_appender_test.php</exclude>
             <exclude>tests/unit/body_parser_test.php</exclude>
             <exclude>tests/unit/body_parser_test.php</exclude>
             <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
-            <exclude>tests/unit/compose_course_message_validator_test.php</exclude>
+            <exclude>tests/unit/compose_message_form_validator_test.php</exclude>
             <exclude>tests/unit/save_draft_message_validator_test.php</exclude>
             <exclude>tests/unit/messenger_test.php</exclude>
             <exclude>tests/unit/emailer_test.php</exclude>

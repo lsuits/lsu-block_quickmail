@@ -6,7 +6,7 @@ require_once 'lib.php';
 $page_url = '/blocks/quickmail/alternate.php';
 
 $page_params = [
-    'courseid' => required_param('courseid', PARAM_INT),
+    'courseid' => required_param('courseid', PARAM_INT), // <----------------- make this optional!!
     'confirmid' => optional_param('confirmid', 0, PARAM_INT),
     'resendid' => optional_param('resendid', 0, PARAM_INT),
     'token' => optional_param('token', '', PARAM_TEXT),

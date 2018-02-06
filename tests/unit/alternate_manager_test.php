@@ -2,15 +2,344 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
+use block_quickmail\services\alternate\alternate_manager;
+use block_quickmail\persistents\alternate_email;
+use block_quickmail\exceptions\validation_exception;
+
 class block_quickmail_alternate_manager_testcase extends advanced_testcase {
     
-    use has_general_helpers;
+    use has_general_helpers,
+        sets_up_courses,
+        sends_emails;
 
-    public function test_successfully_parses_body_with_no_keys()
+    public function test_does_not_create_alternate_if_given_invalid_data()
     {
         $this->resetAfterTest(true);
  
-        $this->assertTrue(true);
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $this->expectException(validation_exception::class);
+
+        $form_data = (object) [
+            'email' => '',
+            'firstname' => '',
+            'lastname' => '',
+            'availability' => '',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+    }
+
+    public function test_creating_with_availability_only_requires_course()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $this->expectException(validation_exception::class);
+
+        $form_data = (object) [
+            'email' => '',
+            'firstname' => '',
+            'lastname' => '',
+            'availability' => 'alternate_availability_only',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, null, $form_data);
+    }
+
+    public function test_creating_with_availability_course_requires_course()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $this->expectException(validation_exception::class);
+
+        $form_data = (object) [
+            'email' => '',
+            'firstname' => '',
+            'lastname' => '',
+            'availability' => 'alternate_availability_course',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, null, $form_data);
+    }
+
+    public function test_creates_alternate_record_with_availability_only_successfully()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $form_data = [
+            'email' => 'an@email.com',
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'availability' => 'alternate_availability_only',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+
+        $this->assertInstanceOf(alternate_email::class, $alternate);
+        $this->assertEquals('an@email.com', $alternate->get('email'));
+        $this->assertEquals('Firsty', $alternate->get('firstname'));
+        $this->assertEquals('Lasty', $alternate->get('lastname'));
+        $this->assertEquals($user_teacher->id, $alternate->get('setup_user_id'));
+        $this->assertEquals($course->id, $alternate->get('course_id'));
+        $this->assertEquals($user_teacher->id, $alternate->get('user_id'));
+        $this->assertEquals(0, $alternate->get('is_validated'));
+    }
+
+    public function test_creates_alternate_record_with_availability_course_successfully()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $form_data = [
+            'email' => 'an@email.com',
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'availability' => 'alternate_availability_course',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+
+        $this->assertInstanceOf(alternate_email::class, $alternate);
+        $this->assertEquals('an@email.com', $alternate->get('email'));
+        $this->assertEquals('Firsty', $alternate->get('firstname'));
+        $this->assertEquals('Lasty', $alternate->get('lastname'));
+        $this->assertEquals($user_teacher->id, $alternate->get('setup_user_id'));
+        $this->assertEquals($course->id, $alternate->get('course_id'));
+        $this->assertEquals(0, $alternate->get('user_id'));
+        $this->assertEquals(0, $alternate->get('is_validated'));
+    }
+
+    public function test_creates_alternate_record_with_availability_user_successfully()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $form_data = [
+            'email' => 'an@email.com',
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'availability' => 'alternate_availability_user',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, null, $form_data);
+
+        $this->assertInstanceOf(alternate_email::class, $alternate);
+        $this->assertEquals('an@email.com', $alternate->get('email'));
+        $this->assertEquals('Firsty', $alternate->get('firstname'));
+        $this->assertEquals('Lasty', $alternate->get('lastname'));
+        $this->assertEquals($user_teacher->id, $alternate->get('setup_user_id'));
+        $this->assertEquals(0, $alternate->get('course_id'));
+        $this->assertEquals($user_teacher->id, $alternate->get('user_id'));
+        $this->assertEquals(0, $alternate->get('is_validated'));
+    }
+
+    public function test_sends_confirmation_email_to_user_after_creating_alternate()
+    {
+        $this->resetAfterTest(true);
+ 
+        $sink = $this->open_email_sink();
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        $form_data = [
+            'email' => 'an@email.com',
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'availability' => 'alternate_availability_only',
+        ];
+
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+
+        $this->assertEquals(1, $this->email_sink_email_count($sink));
+        $this->assertEquals(\block_quickmail_plugin::_s('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
+        $this->assertEquals('an@email.com', $this->email_in_sink_attr($sink, 1, 'to'));
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_does_not_resend_confirmation_email_for_invalid_alternate_id()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+
+        $this->expectException(validation_exception::class);
+
+        $wrong_id = $alternate->get('id') + 1;
+
+        alternate_manager::resend_confirmation_email_for_user($wrong_id, $user_teacher);
+    }
+
+    public function test_does_not_resend_confirmation_email_to_an_invalid_user()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+
+        $this->expectException(validation_exception::class);
+
+        alternate_manager::resend_confirmation_email_for_user($alternate->get('id'), $user_students[0]);
+    }
+
+    public function test_does_not_resend_confirmation_email_for_already_confirmed()
+    {
+        $this->resetAfterTest(true);
+ 
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => true
+        ]);
+
+        $this->expectException(validation_exception::class);
+
+        alternate_manager::resend_confirmation_email_for_user($alternate->get('id'), $user_teacher);
+    }
+
+    public function test_resends_confirmation_email_to_user()
+    {
+        $this->resetAfterTest(true);
+ 
+        $sink = $this->open_email_sink();
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+
+        alternate_manager::resend_confirmation_email_for_user($alternate->get('id'), $user_teacher);
+
+        $this->assertEquals(1, $this->email_sink_email_count($sink));
+        $this->assertEquals(\block_quickmail_plugin::_s('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
+        $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 1, 'to'));
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_does_not_confirm_invalid_alternate()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+
+        $this->assertEquals(0, $alternate->get('is_validated'));
+
+        $this->expectException(validation_exception::class);
+
+        // generate, or fetch existing, token for this user and alternate instance
+        // note: this does not expire!
+        $token = get_user_key('blocks/quickmail', $user_teacher->id, $alternate->get('id'));
+
+        $wrong_id = $alternate->get('id') + 1;
+
+        $alternate = alternate_manager::confirm_alternate_for_user($wrong_id, $token, $user_teacher);
+
+        $this->assertEquals(0, $alternate->get('is_validated'));
+    }
+
+    public function test_does_not_confirm_confirmed_alternate()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => true
+        ]);
+
+        $this->expectException(validation_exception::class);
+
+        // generate, or fetch existing, token for this user and alternate instance
+        // note: this does not expire!
+        $token = get_user_key('blocks/quickmail', $user_teacher->id, $alternate->get('id'));
+
+        $alternate = alternate_manager::confirm_alternate_for_user($alternate->get('id'), $token, $user_teacher);
+
+        $this->assertEquals(0, $alternate->get('is_validated'));
+    }
+
+    public function test_confirms_unconfirmed_alternate()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+
+        $this->assertEquals(0, $alternate->get('is_validated'));
+
+        // generate, or fetch existing, token for this user and alternate instance
+        // note: this does not expire!
+        $token = get_user_key('blocks/quickmail', $user_teacher->id, $alternate->get('id'));
+
+        $alternate = alternate_manager::confirm_alternate_for_user($alternate->get('id'), $token, $user_teacher);
+
+        $this->assertEquals(1, $alternate->get('is_validated'));
     }
 
 }
