@@ -102,9 +102,7 @@ class messenger {
     public static function compose($user, $course, $form_data, $draft_message = null, $send_as_tasks = true)
     {
         // validate form data
-        $validator = new compose_message_form_validator($form_data, [
-            'course_config' => block_quickmail_config::_c('', $course)
-        ]);
+        $validator = new compose_message_form_validator($form_data);
         $validator->validate();
 
         // if errors, throw exception
