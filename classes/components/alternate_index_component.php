@@ -32,12 +32,12 @@ class alternate_index_component extends component implements \renderable {
 
     public $alternate_emails;
 
-    public $course;
+    public $course_id;
 
     public function __construct($params = []) {
         parent::__construct($params);
         $this->alternate_emails = $this->get_param('alternate_emails');
-        $this->course = $this->get_param('course');
+        $this->course_id = $this->get_param('course_id');
     }
 
     /**
@@ -48,7 +48,7 @@ class alternate_index_component extends component implements \renderable {
     public function export_for_template($output) {
         $data = (object)[];
 
-        $data->courseId = $this->course->id;
+        $data->courseId = $this->course_id;
 
         $data->tableHeadings = [
             get_string('email'),
@@ -72,9 +72,13 @@ class alternate_index_component extends component implements \renderable {
             ];
         }
 
-        $data->urlBack = new moodle_url('/course/view.php', [
-            'id' => $this->course->id,
-        ]);
+        $data->backButtonText = $this->course_id
+            ? block_quickmail_plugin::_s('back_to_course')
+            : 'Back';
+
+        $data->urlBack = $this->course_id
+            ? new moodle_url('/course/view.php', ['id' => $this->course_id])
+            : new moodle_url('/my');
 
         return $data;
     }

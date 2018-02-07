@@ -6,20 +6,18 @@ require_once 'lib.php';
 $page_url = '/blocks/quickmail/alternate.php';
 
 $page_params = [
-    'courseid' => required_param('courseid', PARAM_INT), // <----------------- make this optional!!
+    'courseid' => optional_param('courseid', 0, PARAM_INT),
     'confirmid' => optional_param('confirmid', 0, PARAM_INT),
     'resendid' => optional_param('resendid', 0, PARAM_INT),
     'token' => optional_param('token', '', PARAM_TEXT),
 ];
-
-$course = get_course($page_params['courseid']);
 
 ////////////////////////////////////////
 /// AUTHENTICATION
 ////////////////////////////////////////
 
 require_login();
-$page_context = context_course::instance($course->id);
+$page_context = context_user::instance($USER->id);
 $PAGE->set_context($page_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
 block_quickmail_plugin::require_user_capability('allowalternate', $page_context);
@@ -46,7 +44,7 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 $manage_alternates_form = \block_quickmail\forms\manage_alternates_form::make(
     $page_context, 
     $USER, 
-    $course
+    $page_params['courseid']
 );
 
 ////////////////////////////////////////
@@ -58,78 +56,48 @@ $request = block_quickmail_request::for_route('alternate')->with_form($manage_al
 // if a POST was submitted, attempt to take appropriate actions
 try {
     // CONFIRM
-    if ($request->to_confirm_alternate()) {
+    if ($page_params['confirmid'] && $page_params['token']) {
         
-        dd('confirm');
+        // attempt to confirm the alternate email for this user
+        $alternate_email = \block_quickmail\services\alternate\alternate_manager::confirm_alternate_for_user(
+            $page_params['confirmid'], 
+            $page_params['token'], 
+            $USER
+        );
 
-        try {
-            // attempt to confirm the alternate email using the page parameters
-            $alternate_email = block_quickmail\persistents\alternate_email::confirm($USER, $page_params);
-
-            // redirect and notify of success
-            $request->redirect_as_type('success', block_quickmail_plugin::_s('entry_activated', $alternate_email->get('email')), $page_url, ['courseid' => $course->id], 2);
-        } catch (\Exception $e) {
-            // redirect and notify of error
-            $request->redirect_as_type('error', $e->getMessage(), $page_url, ['courseid' => $course->id], 2);
-        }
+        $request->redirect_as_success(block_quickmail_plugin::_s('entry_activated', $alternate_email->get('email')), $page_url, ['courseid' => $page_params['courseid']]);
 
     // RESEND
-    } else if ($request->to_resend_alternate()) {
+    } else if ($page_params['resendid']) {
 
-        dd('resend');
-
-        // attempt to fetch the alternate
-        if ( ! $alternate_email = block_quickmail\persistents\alternate_email::find_or_null($request->resend_confirm_id)) {
-            // redirect and notify of error
-            $request->redirect_as_type('error', block_quickmail_plugin::_s('alternate_no_record'), $page_url, ['courseid' => $course->id], 2);
-        }
-
-        // make sure the requestor is this alternate's setup user
-        if ($USER->id !== $alternate_email->get('setup_user_id')) {
-            // redirect and notify of error
-            $request->redirect_as_type('error', block_quickmail_plugin::_s('alternate_no_record'), $page_url, ['courseid' => $course->id], 2);
-        }
-
-        // attempt to resend confirmation email
-        $alternate_email->send_confirmation_email($course->id);
+        // attempt to resend the confirmation email
+        \block_quickmail\services\alternate\alternate_manager::resend_confirmation_email_for_user($page_params['resendid'], $USER);
 
         // redirect and notify of success
-        $request->redirect_as_type('success', block_quickmail_plugin::_s('alternate_confirmation_email_resent'), $page_url, ['courseid' => $course->id], 2);
+        $request->redirect_as_success(block_quickmail_plugin::_s('alternate_confirmation_email_resent'), $page_url, ['courseid' => $page_params['courseid']]);
 
     // DELETE
     } else if ($request->to_delete_alternate()) {
 
-        dd('delete');
-
-        // attempt to fetch the alternate
-        if ( ! $alternate_email = block_quickmail\persistents\alternate_email::find_or_null($request->delete_alternate_id)) {
-            // redirect and notify of error
-            $request->redirect_as_type('error', block_quickmail_plugin::_s('alternate_no_record'), $page_url, ['courseid' => $course->id], 2);
-        }
-
-        // attempt to soft delete alternate
-        $alternate_email->soft_delete();
+        // attempt to delete the alternate email
+        \block_quickmail\services\alternate\alternate_manager::delete_alternate_email_for_user($request->data->delete_alternate_id, $USER);
 
         // redirect and notify of success
-        $request->redirect_as_type('success', block_quickmail_plugin::_s('alternate_deleted'), $page_url, ['courseid' => $course->id], 2);
+        $request->redirect_as_success(block_quickmail_plugin::_s('alternate_deleted'), $page_url, ['courseid' => $page_params['courseid']]);
 
     // CREATE
     } else if ($request->to_create_alternate()) {
         
-        dd('create');
-        
-        // create the new alternate email
-        $alternate_email = new block_quickmail\persistents\alternate_email(0, $request->get_create_request_data_object());
-        $alternate_email->create();
-
-        // refresh the persistent just in case
-        $alternate_email->read();
-
-        // generate a random token, and send confirmation email to user
-        $alternate_email->send_confirmation_email($page_params['courseid']);
+        // attempt to create the alternate and send a confirmation email
+        \block_quickmail\services\alternate\alternate_manager::create_alternate_for_user($USER, $page_params['courseid'], [
+            'availability' => $request->data->availability,
+            'firstname' => $request->data->firstname,
+            'lastname' => $request->data->lastname,
+            'email' => $request->data->email,
+        ]);
 
         // redirect and notify of success
-        $request->redirect_as_type('success', block_quickmail_plugin::_s('alternate_created'), $page_url, ['courseid' => $course->id], 2);
+        $request->redirect_as_success(block_quickmail_plugin::_s('alternate_created'), $page_url, ['courseid' => $page_params['courseid']]);
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $manage_alternates_form->set_error_exception($e);
@@ -144,14 +112,14 @@ $alternate_emails = block_quickmail\persistents\alternate_email::get_all_for_use
 $rendered_alternate_index = $renderer->alternate_index_component([
     'alternate_emails' => $alternate_emails,
     'user' => $USER,
-    'course' => $course,
+    'course_id' => $page_params['courseid'],
 ]);
 
 // get the rendered form
 $rendered_manage_alternates_form = $renderer->manage_alternates_component([
     'context' => $page_context,
     'user' => $USER,
-    'course' => $course,
+    'course_id' => $page_params['courseid'],
     'manage_alternates_form' => $manage_alternates_form,
 ]);
 
@@ -165,7 +133,3 @@ $manage_alternates_form->render_error_notification();
 echo $rendered_alternate_index;
 echo $rendered_manage_alternates_form;
 echo $OUTPUT->footer();
-
-function dd($thing) {
-    var_dump($thing);die;
-}

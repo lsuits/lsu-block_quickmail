@@ -27,7 +27,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'availability' => '',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
     }
 
     public function test_creating_with_availability_only_requires_course()
@@ -42,10 +42,10 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'email' => '',
             'firstname' => '',
             'lastname' => '',
-            'availability' => 'alternate_availability_only',
+            'availability' => 'only',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, null, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, 0, $form_data);
     }
 
     public function test_creating_with_availability_course_requires_course()
@@ -60,10 +60,10 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'email' => '',
             'firstname' => '',
             'lastname' => '',
-            'availability' => 'alternate_availability_course',
+            'availability' => 'course',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, null, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, 0, $form_data);
     }
 
     public function test_creates_alternate_record_with_availability_only_successfully()
@@ -76,10 +76,10 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'email' => 'an@email.com',
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
-            'availability' => 'alternate_availability_only',
+            'availability' => 'only',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
 
         $this->assertInstanceOf(alternate_email::class, $alternate);
         $this->assertEquals('an@email.com', $alternate->get('email'));
@@ -101,10 +101,10 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'email' => 'an@email.com',
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
-            'availability' => 'alternate_availability_course',
+            'availability' => 'course',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
 
         $this->assertInstanceOf(alternate_email::class, $alternate);
         $this->assertEquals('an@email.com', $alternate->get('email'));
@@ -126,10 +126,10 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'email' => 'an@email.com',
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
-            'availability' => 'alternate_availability_user',
+            'availability' => 'user',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, null, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, 0, $form_data);
 
         $this->assertInstanceOf(alternate_email::class, $alternate);
         $this->assertEquals('an@email.com', $alternate->get('email'));
@@ -153,10 +153,10 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'email' => 'an@email.com',
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
-            'availability' => 'alternate_availability_only',
+            'availability' => 'only',
         ];
 
-        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course, $form_data);
+        $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
 
         $this->assertEquals(1, $this->email_sink_email_count($sink));
         $this->assertEquals(\block_quickmail_plugin::_s('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
@@ -340,6 +340,49 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         $alternate = alternate_manager::confirm_alternate_for_user($alternate->get('id'), $token, $user_teacher);
 
         $this->assertEquals(1, $alternate->get('is_validated'));
+    }
+
+    public function test_does_not_delete_alternate_for_non_setup_user()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+        
+        $this->expectException(validation_exception::class);
+
+        alternate_manager::delete_alternate_email_for_user($alternate->get('id'), $user_students[0]);
+    }
+
+    public function test_deletes_alternate_for_setup_user()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = alternate_email::create_new([
+            'setup_user_id' => $user_teacher->id,
+            'firstname' => 'Firsty',
+            'lastname' => 'Lasty',
+            'course_id' => $course->id,
+            'user_id' => $user_teacher->id,
+            'email' => $user_teacher->email,
+            'is_validated' => false
+        ]);
+        
+        $result = alternate_manager::delete_alternate_email_for_user($alternate->get('id'), $user_teacher);
+
+        $this->assertTrue($result);
+        $this->assertEquals(0, $alternate->get('timedeleted'));
     }
 
 }

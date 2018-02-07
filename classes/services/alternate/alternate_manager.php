@@ -16,11 +16,11 @@ class alternate_manager {
      * Creates an alternate email for the given user with the given data
      * 
      * @param  object  $user  the creating user
-     * @param  object  $course  (optional) a course to scope this alternate to if desired
-     * @param  array  $params
+     * @param  int     $course_id  (optional) a course id to scope this alternate to if desired
+     * @param  array  $params [availability,email,firstname,lastname]
      * @return alternate_email
      */
-    public static function create_alternate_for_user($user, $course = null, $params)
+    public static function create_alternate_for_user($user, $course_id = 0, $params)
     {
         // validate form data
         $validator = new create_alternate_form_validator((object) $params);
@@ -31,25 +31,18 @@ class alternate_manager {
             throw new validation_exception('Validation exception!', $validator->errors);
         }
 
-        $course_id = 0;
-        
         // alternate_availability_only (user + course)
         // alternate_availability_user (user)
         // alternate_availability_course (course)
 
-        // if an availability requiring a scoped course is selected
-        if ($params['availability'] !== 'alternate_availability_user') {
-            // and no course was given
-            if ( ! $course) {
-                throw new validation_exception('Validation exception!', [
-                    'Course is required!'
-                ]);
-            } else {
-                $course_id = $course->id;
-            }
+        // if an availability requiring a scoped course is selected and no course was given
+        if ($params['availability'] !== 'user' && ! $course_id) {
+            throw new validation_exception('Validation exception!', [
+                'Course is required!'
+            ]);
         }
 
-        $user_id = $params['availability'] !== 'alternate_availability_course'
+        $user_id = $params['availability'] !== 'course'
             ? $user->id
             : 0;
 
@@ -136,6 +129,31 @@ class alternate_manager {
         $DB->delete_records('user_private_key', ['id' => $key->id]);
 
         return $alternate;
+    }
+
+    /**
+     * Attempts to soft delete the alternate email address for a given user
+     * 
+     * @param  int  $alternate_email_id
+     * @param  object  $user        the user attempting to delete the alternate
+     * @return bool
+     */
+    public static function delete_alternate_email_for_user($alternate_email_id, $user)
+    {
+        // attempt to fetch the alternate
+        if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
+            throw new validation_exception('Validation exception!', ['Could not find that alternate email.']);
+        }
+
+        // make sure the given user is the owner of this alternate
+        if ($alternate->get('setup_user_id') !== $user->id) {
+            throw new validation_exception('Validation exception!', ['Must be the owner to delete that alternate.']);
+        }
+
+        // attempt to soft delete alternate
+        $alternate->soft_delete();
+
+        return true;
     }
 
     /**

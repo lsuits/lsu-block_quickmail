@@ -70,9 +70,9 @@ class create_alternate_form_validator extends validator {
     private function validate_availability()
     {
         if ( ! in_array($this->form_data->availability, [
-            'alternate_availability_only',
-            'alternate_availability_user',
-            'alternate_availability_course'
+            'only',
+            'user',
+            'course'
         ])) { 
             $this->add_error('Invalid availability value.');
         }

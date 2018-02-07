@@ -20,7 +20,7 @@ trait submits_create_alternate_form {
         $form_data->email = $params['email']; // default: different@email.com
         $form_data->firstname = $params['firstname']; // default: Firsty
         $form_data->lastname = $params['lastname']; // default: Lasty
-        $form_data->availability = $params['availability']; // default: alternate_availability_only
+        $form_data->availability = $params['availability']; // default: only
 
         return $form_data;
     }
@@ -32,7 +32,7 @@ trait submits_create_alternate_form {
         $params['email'] = array_key_exists('email', $override_params) ? $override_params['email'] : 'different@email.com';
         $params['firstname'] = array_key_exists('firstname', $override_params) ? $override_params['firstname'] : 'Firsty';
         $params['lastname'] = array_key_exists('lastname', $override_params) ? $override_params['lastname'] : 'Lasty';
-        $params['availability'] = array_key_exists('availability', $override_params) ? $override_params['availability'] : 'alternate_availability_only';
+        $params['availability'] = array_key_exists('availability', $override_params) ? $override_params['availability'] : 'only';
 
         return $params;
     }

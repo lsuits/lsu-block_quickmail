@@ -35,26 +35,28 @@ class manage_alternates_form extends \moodleform {
     public $errors;
     public $context;
     public $user;
-    public $course;
+    public $course_id;
 
     /**
      * Instantiates and returns a user alternate email management form
      * 
      * @param  object        $context
      * @param  object        $user                   auth user
-     * @param  object        $course
+     * @param  int           $course_id
      * @return \block_quickmail\forms\manage_alternates_form
      */
-    public static function make($context, $user, $course)
+    public static function make($context, $user, $course_id = 0)
     {
-        $target_url = self::generate_target_url([
-            'courseid' => $course->id,
-        ]);
+        $url_params = $course_id
+            ? ['courseid' => $course_id]
+            : [];
+
+        $target_url = self::generate_target_url($url_params);
 
         return new self($target_url, [
             'context' => $context,
             'user' => $user,
-            'course' => $course,
+            'course_id' => $course_id,
         ], 'post', '', ['id' => 'mform-manage-alternates']);
     }
 
@@ -67,7 +69,7 @@ class manage_alternates_form extends \moodleform {
 
         $this->context = $this->_customdata['context'];
         $this->user = $this->_customdata['user'];
-        $this->course = $this->_customdata['course'];
+        $this->course_id = $this->_customdata['course_id'];
 
         ////////////////////////////////////////////////////////////
         ///  delete id

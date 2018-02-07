@@ -126,6 +126,24 @@ class block_quickmail_request {
     }
 
     /**
+     * Reports whether or not the submitted request has an input element key that matches the given value and is not empty
+     * 
+     * @param  string  $input_element_key
+     * @return bool
+     */
+    public function has_non_empty_form_data($input_element_key) {
+        // if the given element key does not exist in the post, return false
+        if ( ! $this->has_form_data_key($input_element_key)) {
+            return false;
+        }
+        
+        // get raw form data
+        $form_data = $this->form->get_data();
+
+        return ! empty($form_data->$input_element_key);
+    }
+
+    /**
      * Reports whether or not this request is a form cancellation
      * 
      * @return bool
