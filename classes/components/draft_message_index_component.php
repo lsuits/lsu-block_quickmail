@@ -88,7 +88,7 @@ class draft_message_index_component extends component implements \renderable {
 
         $data->urlBackLabel = $this->course_id 
             ? block_quickmail_plugin::_s('back_to_course')
-            : 'Back to My page'; // TODO - make this a lang string
+            : 'Back to My page';
 
         return $data;
     }

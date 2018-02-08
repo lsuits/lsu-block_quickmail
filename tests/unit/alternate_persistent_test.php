@@ -37,7 +37,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
         $alternate->set('is_validated', 1);
         $alternate->update();
 
-        $this->assertEquals(\block_quickmail_plugin::_s('approved'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_plugin::_s('confirmed'), $alternate->get_status());
     }
 
     public function test_get_scope()

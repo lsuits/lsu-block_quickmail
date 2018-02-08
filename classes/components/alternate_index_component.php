@@ -54,7 +54,7 @@ class alternate_index_component extends component implements \renderable {
             get_string('email'),
             get_string('fullname'),
             block_quickmail_plugin::_s('alternate_availability'),
-            block_quickmail_plugin::_s('valid'),
+            block_quickmail_plugin::_s('status'),
             get_string('action')
         ];
 
@@ -72,14 +72,14 @@ class alternate_index_component extends component implements \renderable {
             ];
         }
 
-        $data->backButtonText = $this->course_id
-            ? block_quickmail_plugin::_s('back_to_course')
-            : 'Back';
-
-        $data->urlBack = $this->course_id
+        $data->urlBack = $this->course_id 
             ? new moodle_url('/course/view.php', ['id' => $this->course_id])
             : new moodle_url('/my');
 
+        $data->urlBackLabel = $this->course_id 
+            ? block_quickmail_plugin::_s('back_to_course')
+            : 'Back to My page'; // TODO - make this a lang string
+        
         return $data;
     }
 

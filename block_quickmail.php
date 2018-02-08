@@ -30,7 +30,6 @@ class block_quickmail extends block_list {
 
     public function init() {
         $this->title = $this->get_title();
-        // $this->version = $this->get_version();
         $this->set_course();
         $this->set_user();
         $this->set_context();
@@ -110,11 +109,11 @@ class block_quickmail extends block_list {
             ]);
 
             // manage drafts
-            // $this->add_item_to_content([
-            //     'lang_key' => 'drafts',
-            //     'icon_key' => 'i/open',
-            //     'page' => 'drafts',
-            // ]);
+            $this->add_item_to_content([
+                'lang_key' => 'drafts',
+                'icon_key' => 'i/open',
+                'page' => 'drafts',
+            ]);
 
             // view send history
             // $this->add_item_to_content([

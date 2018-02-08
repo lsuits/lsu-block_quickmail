@@ -60,60 +60,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
     }
 
     ////////////////////////////////////////
-    /// DRAFT MESSAGE INDEX
-    ////////////////////////////////////////
-    
-    public function draft_message_index_component($params = []) {
-        $draft_message_index_component = new draft_message_index_component($params);
-        
-        return $this->render($draft_message_index_component);
-    }
-
-    protected function render_draft_message_index_component(draft_message_index_component $draft_message_index_component) {
-        $data = $draft_message_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/draft_message_index', $data);
-    }
-
-    ////////////////////////////////////////
-    /// HISTORICAL MESSAGE INDEX
-    ////////////////////////////////////////
-    
-    public function historical_message_index_component($params = []) {
-        $historical_message_index_component = new historical_message_index_component($params);
-        
-        return $this->render($historical_message_index_component);
-    }
-
-    protected function render_historical_message_index_component(historical_message_index_component $historical_message_index_component) {
-        $data = $historical_message_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/historical_message_index', $data);
-    }
-
-    ////////////////////////////////////////
-    /// MANAGE SIGNATURES (USER) FORM
-    ////////////////////////////////////////
-    
-    public function manage_signatures_component($params = []) {
-        $component = new manage_signatures_component($params);
-        
-        return $this->render($component);
-    }
-
-    protected function render_manage_signatures_component(manage_signatures_component $component) {
-        $out = '';
-        
-        // render heading
-        $out .= $this->output->heading(format_string($component->heading), 2);
-
-        // render form
-        $out .= $component->form->render();
-
-        return $this->output->container($out, 'manage_signatures_component');
-    }
-
-    ////////////////////////////////////////
     /// CONFIGURATION (COURSE) FORM
     ////////////////////////////////////////
     
@@ -133,7 +79,7 @@ class block_quickmail_renderer extends plugin_renderer_base {
     }
 
     ////////////////////////////////////////
-    /// ALTERNATE EMAILS INDEX
+    /// ALTERNATE EMAILS INDEX (DISPLAY)
     ////////////////////////////////////////
     
     public function alternate_index_component($params = []) {
@@ -168,6 +114,44 @@ class block_quickmail_renderer extends plugin_renderer_base {
     }
 
     ////////////////////////////////////////
+    /// MANAGE SIGNATURES (USER) FORM
+    ////////////////////////////////////////
+    
+    public function manage_signatures_component($params = []) {
+        $component = new manage_signatures_component($params);
+        
+        return $this->render($component);
+    }
+
+    protected function render_manage_signatures_component(manage_signatures_component $component) {
+        $out = '';
+        
+        // render heading
+        $out .= $this->output->heading(format_string($component->heading), 2);
+
+        // render form
+        $out .= $component->form->render();
+
+        return $this->output->container($out, 'manage_signatures_component');
+    }
+
+    ////////////////////////////////////////
+    /// DRAFT MESSAGE INDEX (DISPLAY)
+    ////////////////////////////////////////
+    
+    public function draft_message_index_component($params = []) {
+        $draft_message_index_component = new draft_message_index_component($params);
+        
+        return $this->render($draft_message_index_component);
+    }
+
+    protected function render_draft_message_index_component(draft_message_index_component $draft_message_index_component) {
+        $data = $draft_message_index_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/draft_message_index', $data);
+    }
+
+    ////////////////////////////////////////
     /// MANAGE DRAFTS FORM
     ////////////////////////////////////////
     
@@ -184,6 +168,27 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $component->form->render();
 
         return $this->output->container($out, 'manage_drafts_component');
+    }
+
+    ///////////
+
+
+
+
+    ////////////////////////////////////////
+    /// HISTORICAL MESSAGE INDEX
+    ////////////////////////////////////////
+    
+    public function historical_message_index_component($params = []) {
+        $historical_message_index_component = new historical_message_index_component($params);
+        
+        return $this->render($historical_message_index_component);
+    }
+
+    protected function render_historical_message_index_component(historical_message_index_component $historical_message_index_component) {
+        $data = $historical_message_index_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/historical_message_index', $data);
     }
 
 }

@@ -99,13 +99,13 @@ class alternate_email extends persistent {
     ///////////////////////////////////////////////
     
     /**
-     * Returns the status of this alternates approval (approved or waiting)
+     * Returns the status of this alternates approval (confirmed or waiting)
      * 
      * @return string
      */
     public function get_status() {
         return $this->get('is_validated') ?
-            \block_quickmail_plugin::_s('approved') :
+            \block_quickmail_plugin::_s('confirmed') :
             \block_quickmail_plugin::_s('waiting');
     }
 

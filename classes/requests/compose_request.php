@@ -30,10 +30,5 @@ class compose_request extends \block_quickmail_request {
 
         return $transformer->transform();
     }
-
-
-    // redirect_back_to_course_after_send
-    
-    // redirect_back_to_course_after_save
     
 }

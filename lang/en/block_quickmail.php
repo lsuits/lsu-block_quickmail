@@ -181,13 +181,12 @@ cannot be reversed.';
 
 // Alternate Email strings
 $string['alternate_new'] = 'Add Alternate Address';
-$string['alternate_availability'] = 'Availability of this alternate address';
-$string['alternate_availability_only'] = 'Available only to me for this course only';
-$string['alternate_availability_user'] = 'Available only to me';
-$string['alternate_availability_course'] = 'Available to all course senders';
+$string['alternate_availability'] = 'Who can send from this email?';
+$string['alternate_availability_only'] = 'Only to me for this course only';
+$string['alternate_availability_user'] = 'Only to me';
+$string['alternate_availability_course'] = 'All course senders';
 $string['sure'] = 'Are you sure you want to delete {$a->address}? This action cannot be undone.';
-$string['valid'] = 'Activation Status';
-$string['approved'] = 'Approved';
+$string['confirmed'] = 'Confirmed';
 $string['waiting'] = 'Waiting';
 $string['entry_activated'] = 'Alternate email {$a} can now be used!';
 $string['entry_key_not_valid'] = 'Activation link is no longer valid for {$a->address}. Continue to resend activation link.';
@@ -225,7 +224,7 @@ $string['sent_success'] = 'all messages sent successfully';
 $string['logsuccess'] = 'all messages sent successfully';
 $string['message_failure'] = 'some users did not get message';
 $string['send_again'] = 'send again';
-$string['status'] = 'status';
+$string['status'] = 'Status';
 $string['failed_to_send_to'] = 'failed to send to';
 $string['users'] = 'users';
 $string['user'] = 'user';

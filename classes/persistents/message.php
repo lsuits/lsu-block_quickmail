@@ -210,7 +210,7 @@ class message extends persistent {
     }
 
     public function get_body_preview($length = 40) {
-        return $this->render_preview_string(strip_tags('body'), $length, '...', '(No content)');
+        return strip_tags($this->render_preview_string('body', $length, '...', '(No content)'));
     }
 
     public function get_readable_created_at() {
