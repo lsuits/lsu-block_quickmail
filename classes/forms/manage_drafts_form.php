@@ -74,6 +74,12 @@ class manage_drafts_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         $mform->addElement('hidden', 'delete_draft_id');
         $mform->setType('delete_draft_id', PARAM_INT);
+
+        ////////////////////////////////////////////////////////////
+        ///  duplicate id
+        ////////////////////////////////////////////////////////////
+        $mform->addElement('hidden', 'duplicate_draft_id');
+        $mform->setType('duplicate_draft_id', PARAM_INT);
     }
 
 }

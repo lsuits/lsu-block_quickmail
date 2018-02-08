@@ -17,6 +17,75 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
     
     // public function test_message_with_alternate_id_posted_is_sent_from_that_alternate_email()
 
+    // 
+    
+    public function test_cannot_duplicate_a_draft_that_not_created_by_the_given_user()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+        ]);
+
+        // save this email message as a draft
+        $draft_message = messenger::save_draft($user_teacher, $course, $compose_form_data);
+
+        $this->expectException(validation_exception::class);
+
+        // now attempt to duplicate this draft which belongs to the teacher
+        $duplicated_draft = messenger::duplicate_draft($draft_message->get('id'), $user_students[0]);
+
+        $this->assertNotInstanceOf(message::class, $duplicated_draft);
+    }
+
+    public function test_duplicates_drafts()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+        ]);
+
+        // save this email message as a draft
+        $draft_message = messenger::save_draft($user_teacher, $course, $compose_form_data);
+
+        // now attempt to duplicate this draft
+        $duplicated_draft = messenger::duplicate_draft($draft_message->get('id'), $user_teacher);
+        $this->assertInstanceOf(message::class, $duplicated_draft);
+        $this->assertEquals($draft_message->get('course_id'), $duplicated_draft->get('course_id'));
+        $this->assertEquals($draft_message->get('user_id'), $duplicated_draft->get('user_id'));
+        $this->assertEquals($draft_message->get('message_type'), $duplicated_draft->get('message_type'));
+        $this->assertEquals($draft_message->get('alternate_email_id'), $duplicated_draft->get('alternate_email_id'));
+        $this->assertEquals($draft_message->get('signature_id'), $duplicated_draft->get('signature_id'));
+        $this->assertEquals($draft_message->get('subject'), $duplicated_draft->get('subject'));
+        $this->assertEquals($draft_message->get('body'), $duplicated_draft->get('body'));
+        $this->assertEquals($draft_message->get('editor_format'), $duplicated_draft->get('editor_format'));
+        $this->assertEquals(1, $duplicated_draft->get('is_draft'));
+        $this->assertEquals($draft_message->get('send_receipt'), $duplicated_draft->get('send_receipt'));
+        $this->assertEquals($draft_message->get('no_reply'), $duplicated_draft->get('no_reply'));
+        // $this->assertEquals($user_teacher->id, $duplicated_draft->get('usermodified'));
+
+        $draft_message_recipients = $draft_message->get_message_recipients();
+        $duplicated_draft_recipients = $duplicated_draft->get_message_recipients();
+        $this->assertEquals(count($draft_message_recipients), count($duplicated_draft_recipients));
+
+        $draft_message_additional_emails = $draft_message->get_additional_emails();
+        $duplicated_draft_additional_emails = $duplicated_draft->get_additional_emails();
+        $this->assertEquals(count($draft_message_additional_emails), count($duplicated_draft_additional_emails));
+    }
+
     public function test_messenger_saves_draft_email()
     {
         // reset all changes automatically after this test

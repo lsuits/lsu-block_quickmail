@@ -20,6 +20,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
             $(document).click(function(e) {
                 if ($(e.target).hasClass("btn-delete-draft")) {
                     deleteDraftId = $(e.target).attr("data-draft-id");
+                } else if ($(e.target).hasClass("btn-duplicate-draft")) {
+                    duplicateDraftId = $(e.target).attr("data-draft-id");
                 }
             });
 
@@ -36,6 +38,24 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
                     
                     // change value of hidden input
                     $('input[name="delete_draft_id"]').val(deleteDraftId);
+
+                    // submit the form
+                    $('#mform-manage-drafts').submit();
+                });
+            });
+            
+            var duplicateTrigger = $('.btn-duplicate-draft');
+
+            ModalFactory.create({
+                type: ModalFactory.types.CONFIRM,
+                title: 'Duplicate Message Draft',
+                body: '<p>This will make a copy of the draft, are you sure?</p>',
+            }, duplicateTrigger).done(function(modal) {
+                modal.getRoot().on(ModalEvents.yes, function(e) {
+                    e.preventDefault();
+                    
+                    // change value of hidden input
+                    $('input[name="duplicate_draft_id"]').val(duplicateDraftId);
 
                     // submit the form
                     $('#mform-manage-drafts').submit();

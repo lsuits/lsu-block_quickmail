@@ -8,6 +8,7 @@ $string['compose_heading'] = 'Send {$a->scope} {$a->message_type}';
 $string['subject'] = 'Subject';
 $string['noreply'] = 'No-Reply';
 $string['body'] = 'Body';
+$string['duplicate'] = 'Duplicate';
 $string['cancel'] = 'Cancel';
 $string['save_draft'] = 'Save Draft';
 $string['save_signature'] = 'Save Signature';

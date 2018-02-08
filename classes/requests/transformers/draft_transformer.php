@@ -7,6 +7,7 @@ class draft_transformer extends transformer {
     public function transform_form_data()
     {
         $this->transformed_data->delete_draft_id = (int) $this->form_data->delete_draft_id;
+        $this->transformed_data->duplicate_draft_id = (int) $this->form_data->duplicate_draft_id;
     }
 
 }

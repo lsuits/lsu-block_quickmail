@@ -74,10 +74,6 @@ class draft_message_index_component extends component implements \renderable {
                 'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')
-                ], '', '&'),
-                'duplicateUrl' => '/blocks/quickmail/drafts.php?' . http_build_query([
-                    'courseid' => $this->course_id,
-                    'duplicateid' => $message->get('id')
                 ], '', '&')
             ];
         }

@@ -7,7 +7,6 @@ $page_url = '/blocks/quickmail/drafts.php';
 
 $page_params = [
     'courseid' => optional_param('courseid', 0, PARAM_INT),
-    'duplicateid' => optional_param('duplicateid', 0, PARAM_INT),
 ];
 
 ////////////////////////////////////////
@@ -35,22 +34,6 @@ $PAGE->requires->js_call_amd('block_quickmail/draft-index', 'init');
 
 $renderer = $PAGE->get_renderer('block_quickmail');
 
-// handle draft duplication, if necessary
-
-// if ($page_params['duplicateid']) {
-//     try {
-//         // attempt to duplicate the draft
-//         \block_quickmail\drafter\drafter::duplicate_draft_for_user_id($page_params['duplicateid'], $USER->id);
-
-//         // redirect back to this page
-//         redirect(new \moodle_url('/blocks/quickmail/drafts.php', ['courseid' => $page_params['courseid']]), 'Your draft has been successfully duplicated.');
-//     } catch (\block_quickmail\drafter\exceptions\drafter_authentication_exception $e) {
-//         print_error('no_permission', 'block_quickmail');
-//     } catch (\block_quickmail\drafter\exceptions\drafter_critical_exception $e) {
-//         print_error('critical_error', 'block_quickmail');
-//     }
-// }
-
 ////////////////////////////////////////
 /// INSTANTIATE FORM
 ////////////////////////////////////////
@@ -68,18 +51,35 @@ $manage_drafts_form = \block_quickmail\forms\manage_drafts_form::make(
 $request = block_quickmail_request::for_route('draft')->with_form($manage_drafts_form);
 
 ////////////////////////////////////////
-/// HANDLE DELETE REQUEST
+/// HANDLE REQUEST
 ////////////////////////////////////////
-if ($request->to_delete_draft()) {
-    
-    // attempt to fetch the draft message
-    if ( ! $draft_message = block_quickmail\persistents\message::find_user_draft_or_null($request->data->delete_draft_id, $USER->id)) {
-        // redirect and notify of error
-        $request->redirect_as_error(block_quickmail_plugin::_s('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
-    }
 
-    // attempt to soft delete draft
-    $draft_message->soft_delete();
+
+try {
+    // DUPLICATE
+    if ($request->to_duplicate_draft()) {
+        // attempt to duplicate the draft
+        $draft_message = \block_quickmail\messenger\messenger::duplicate_draft($request->data->duplicate_draft_id, $USER);
+
+        // redirect back to this page
+        redirect(new \moodle_url('/blocks/quickmail/drafts.php', ['courseid' => $page_params['courseid']]), 'Your draft has been successfully duplicated.');
+    
+    // DELETE
+    } else if ($request->to_delete_draft()) {
+        
+        // attempt to fetch the draft message
+        if ( ! $draft_message = block_quickmail\persistents\message::find_user_draft_or_null($request->data->delete_draft_id, $USER->id)) {
+            // redirect and notify of error
+            $request->redirect_as_error(block_quickmail_plugin::_s('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
+        }
+
+        // attempt to soft delete draft
+        $draft_message->soft_delete();
+    }
+} catch (\block_quickmail\exceptions\validation_exception $e) {
+    $manage_drafts_form->set_error_exception($e);
+} catch (\block_quickmail\exceptions\critical_exception $e) {
+    print_error('critical_error', 'block_quickmail');
 }
 
 // get all (unsent) message drafts belonging to this user and course
@@ -96,6 +96,7 @@ $rendered_manage_drafts_form = $renderer->manage_drafts_component([
 ]);
 
 echo $OUTPUT->header();
+$manage_drafts_form->render_error_notification();
 echo $rendered_draft_message_index;
 echo $rendered_manage_drafts_form;
 echo $OUTPUT->footer();

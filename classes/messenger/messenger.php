@@ -6,6 +6,8 @@ use block_quickmail_config;
 use block_quickmail_emailer;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\alternate_email;
+use block_quickmail\persistents\message_recipient;
+use block_quickmail\persistents\message_additional_email;
 use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\validators\save_draft_message_form_validator;
 use block_quickmail\requests\compose_request;
@@ -79,6 +81,58 @@ class messenger {
         // @TODO: sync posted attachments to message record
         
         return $message;
+    }
+
+    public static function duplicate_draft($draft_id, $user)
+    {
+        // get the draft to be duplicated
+        if ( ! $original_draft = new message($draft_id)) {
+            throw new validation_exception('Could not duplicate this draft. Please try again.');
+        }
+
+        // make sure it's a draft
+        if ( ! $original_draft->is_message_draft()) {
+            throw new validation_exception('Message must be a draft to duplicate.');
+        }
+
+        // check that the draft belongs to the given user id
+        if ($original_draft->get('user_id') !== $user->id) {
+            throw new validation_exception('Sorry, that draft does not belong to you and cannot be duplicated.');
+        }
+
+        // create a new draft message from the original's data
+        $new_draft = message::create_new([
+            'course_id' => $original_draft->get('course_id'),
+            'user_id' => $original_draft->get('user_id'),
+            'message_type' => $original_draft->get('message_type'),
+            'alternate_email_id' => $original_draft->get('alternate_email_id'),
+            'signature_id' => $original_draft->get('signature_id'),
+            'subject' => $original_draft->get('subject'),
+            'body' => $original_draft->get('body'),
+            'editor_format' => $original_draft->get('editor_format'),
+            'is_draft' => 1,
+            'send_receipt' => $original_draft->get('send_receipt'),
+            'no_reply' => $original_draft->get('no_reply'),
+            'usermodified' => $user->id
+        ]);
+
+        // duplicate the message recipients
+        foreach ($original_draft->get_message_recipients() as $recipient) {
+            message_recipient::create_new([
+                'message_id' => $new_draft->get('id'),
+                'user_id' => $recipient->get('user_id'),
+            ]);
+        }
+
+        // duplicate the message additional emails
+        foreach ($original_draft->get_additional_emails() as $additional_email) {
+            message_additional_email::create_new([
+                'message_id' => $new_draft->get('id'),
+                'email' => $additional_email->get('email'),
+            ]);
+        }
+
+        return $new_draft;
     }
 
     /**
