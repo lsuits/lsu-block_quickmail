@@ -42,7 +42,7 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 if ($page_params['draftid']) {
     
     // attempt to fetch the draft which must belong to this course and user
-    $draft_message = $draft_message = block_quickmail\persistents\message::find_user_course_draft_or_null($page_params['draftid'], $USER->id, $course->id);
+    $draft_message = $draft_message = block_quickmail\repos\draft_repo::find_for_user_course_or_null($page_params['draftid'], $USER->id, $course->id);
 
     if (empty($draft_message)) {
         $page_params['draftid'] = 0;
