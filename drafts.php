@@ -7,6 +7,8 @@ $page_url = '/blocks/quickmail/drafts.php';
 
 $page_params = [
     'courseid' => optional_param('courseid', 0, PARAM_INT),
+    'sort' => optional_param('sort', '', PARAM_TEXT), // (field name)
+    'dir' => optional_param('dir', '', PARAM_TEXT), // asc|desc
 ];
 
 ////////////////////////////////////////
@@ -62,13 +64,13 @@ try {
         $draft_message = \block_quickmail\messenger\messenger::duplicate_draft($request->data->duplicate_draft_id, $USER);
 
         // redirect back to this page
-        redirect(new \moodle_url('/blocks/quickmail/drafts.php', ['courseid' => $page_params['courseid']]), 'Your draft has been successfully duplicated.');
+        $request->redirect_as_success('Your draft has been successfully duplicated.', $page_url, ['courseid' => $page_params['courseid']]);
     
     // DELETE
     } else if ($request->to_delete_draft()) {
         
         // attempt to fetch the draft message
-        if ( ! $draft_message = block_quickmail\persistents\message::find_user_draft_or_null($request->data->delete_draft_id, $USER->id)) {
+        if ( ! $draft_message = block_quickmail\repos\draft_repo::find_for_user_or_null($request->data->delete_draft_id, $USER->id)) {
             // redirect and notify of error
             $request->redirect_as_error(block_quickmail_plugin::_s('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
         }
@@ -83,12 +85,19 @@ try {
 }
 
 // get all (unsent) message drafts belonging to this user and course
-$draft_messages = block_quickmail\persistents\message::get_all_unsent_drafts_for_user($USER->id, $page_params['courseid']);
+$draft_messages = block_quickmail\repos\draft_repo::get_for_user(
+    $USER->id, 
+    $page_params['courseid'], 
+    $page_params['sort'], 
+    $page_params['dir']
+);
 
 $rendered_draft_message_index = $renderer->draft_message_index_component([
     'draft_messages' => $draft_messages,
     'user' => $USER,
     'course_id' => $page_params['courseid'],
+    'sort_by' => $page_params['sort'],
+    'sort_dir' => $page_params['dir'],
 ]);
 
 $rendered_manage_drafts_form = $renderer->manage_drafts_component([

@@ -45,6 +45,8 @@ class draft_message_index_component extends component implements \renderable {
         $this->draft_messages = $this->get_param('draft_messages');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
+        $this->sort_by = $this->get_param('sort_by');
+        $this->sort_dir = $this->get_param('sort_dir');
         $this->course_draft_messages = $this->filter_messages_by_course($this->draft_messages, $this->course_id);
         $this->user_course_array = $this->get_user_course_array($this->draft_messages, $this->course_id);
     }
@@ -58,8 +60,15 @@ class draft_message_index_component extends component implements \renderable {
         $data = (object)[];
 
         $data->userCourseArray = $this->transform_course_array($this->user_course_array, $this->course_id);
-
         $data->courseId = $this->course_id;
+        
+        $data->sortBy = $this->sort_by;
+        $data->isSortedAsc = $this->sort_dir == 'asc';
+
+        $data->courseIsSorted = $this->is_attr_sorted('course');
+        $data->subjectIsSorted = $this->is_attr_sorted('subject');
+        $data->createdIsSorted = $this->is_attr_sorted('created');
+        $data->modifiedIsSorted = $this->is_attr_sorted('modified');
 
         $data->tableRows = [];
         
@@ -69,8 +78,8 @@ class draft_message_index_component extends component implements \renderable {
                 'courseName' => $this->user_course_array[$message->get('course_id')],
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
-                'createdAt' => $message->get_readable_created_at(),
-                'lastModifiedAt' => $message->get_readable_last_modified_at(),
+                'createdAt' => $message->get('timecreated'),
+                'lastModifiedAt' => $message->get('timemodified'),
                 'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')

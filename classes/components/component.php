@@ -124,4 +124,9 @@ class component {
         return $results;
     }
 
+    public function is_attr_sorted($attr)
+    {
+        return $this->sort_by == $attr;
+    }
+
 }

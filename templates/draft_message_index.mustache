@@ -9,11 +9,60 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Course</th>
-                <th>Subject Preview</th>
+                {{#courseIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=course&dir=desc">Course</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=course&dir=asc">Course</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/courseIsSorted}}
+                {{^courseIsSorted}}
+                    <th><a href="?sort=course&dir=asc">Course</a></th>
+                {{/courseIsSorted}}
+
+                {{#subjectIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=subject&dir=desc">Subject</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=subject&dir=asc">Subject</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/subjectIsSorted}}
+                {{^subjectIsSorted}}
+                    <th><a href="?sort=subject&dir=asc">Subject</a></th>
+                {{/subjectIsSorted}}
+
                 <th>Message Preview</th>
-                <th>Created</th>
-                <th>Last Modified</th>
+                
+                {{#createdIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=created&dir=desc">Created</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=created&dir=asc">Created</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/createdIsSorted}}
+                {{^createdIsSorted}}
+                    <th><a href="?sort=created&dir=asc">Created</a></th>
+                {{/createdIsSorted}}
+
+                {{#modifiedIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?sort=modified&dir=desc">Last Updated</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?sort=modified&dir=asc">Last Updated</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/modifiedIsSorted}}
+                {{^modifiedIsSorted}}
+                    <th><a href="?sort=modified&dir=asc">Last Updated</a></th>
+                {{/modifiedIsSorted}}
+
                 <th></th>
             </tr>
         </thead>
@@ -23,8 +72,8 @@
                     <td>{{ courseName }}</td>
                     <td>{{ subjectPreview }}</td>
                     <td>{{ messagePreview }}</td>
-                    <td>{{ createdAt }}</td>
-                    <td>{{ lastModifiedAt }}</td>
+                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    <td>{{#userdate}} {{lastModifiedAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td>
                         <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</a>
                         <button role="button" class="btn btn-info btn-sm btn-duplicate-draft" data-draft-id="{{ id }}">{{# str }} duplicate {{/ str }}</button>
