@@ -238,18 +238,6 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
         ]);
     }
 
-    private function create_message_and_recipient()
-    {
-        $message = $this->create_message();
-
-        $recipient = message_recipient::create_new([
-            'message_id' => $message->get('id'),
-            'user_id' => 1,
-        ]);
-
-        return [$message, $recipient];
-    }
-
     private function create_test_drafts()
     {
         global $DB;
