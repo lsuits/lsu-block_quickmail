@@ -109,7 +109,7 @@ try {
         $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
 
         // redirect back to course page
-        // @TODO - after send redirect to history (?)
+        // @TODO - after send redirect to sent messages? (?)
         $request->redirect_as_success(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     // SAVE DRAFT

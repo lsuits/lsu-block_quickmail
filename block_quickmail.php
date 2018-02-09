@@ -115,20 +115,14 @@ class block_quickmail extends block_list {
                 'page' => 'drafts',
             ]);
 
+            // TODO: view queued messages
+
             // view sent
             $this->add_item_to_content([
                 'lang_key' => 'view_sent',
                 'icon_key' => 'e/increase_indent',
                 'page' => 'sent',
             ]);
-
-            // view send history
-            // $this->add_item_to_content([
-            //     'lang_key' => 'history',
-            //     'icon_key' => 'i/duration',
-            //     'page' => 'history',
-            //     // 'extra_link_params' => ['type' => 'drafts'],
-            // ]);
 
             // manage signatures
             $this->add_item_to_content([
