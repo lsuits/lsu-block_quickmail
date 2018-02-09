@@ -52,18 +52,20 @@ trait belongs_to_a_course {
     /**
      * Validate the course ID.
      *
+     * NOTE: turning this off for now as validation should happen externally before this method is ever called!!!
+     *
      * @param int $value The value.
      * @return true|lang_string
      */
-    protected function validate_course_id($value) {
-        try {
-            $course = get_course($value);
-        } catch (dml_exception $e) {
-            return new lang_string('invalidcourseid', 'error');
-        }
+    // protected function validate_course_id($value) {
+    //     try {
+    //         $course = get_course($value);
+    //     } catch (dml_exception $e) {
+    //         return new lang_string('invalidcourseid', 'error');
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     ///////////////////////////////////////////////
     ///

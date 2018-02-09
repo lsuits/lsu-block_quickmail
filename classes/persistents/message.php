@@ -319,8 +319,12 @@ class message extends persistent {
      * @param  bool    $is_draft  whether or not this draft is still a draft after this update
      * @return message
      */
-    public function update_draft($data, $is_draft)
+    public function update_draft($data, $is_draft = null)
     {
+        if (is_null($is_draft)) {
+            $is_draft = $this->is_message_draft();
+        }
+
         $this->set('alternate_email_id', $data->alternate_email_id);
         $this->set('subject', $data->subject);
         $this->set('body', $data->message);
@@ -328,6 +332,7 @@ class message extends persistent {
         $this->set('signature_id', $data->signature_id);
         $this->set('send_receipt', $data->receipt);
         $this->set('to_send_at', $data->to_send_at);
+        $this->set('no_reply', $data->no_reply);
         $this->set('is_draft', (bool) $is_draft);
         $this->update();
         
@@ -394,97 +399,6 @@ class message extends persistent {
     ///  DATA-FETCHING STATIC METHODS
     /// 
     ///////////////////////////////////////////////
-
-    /**
-     * Fetches a draft message by id, or returns null
-     * 
-     * @param  int  $message_id
-     * @return message|null
-     */
-    public static function find_draft_or_null($message_id)
-    {
-        // first, try to find the message by id, returning null by default
-        if ( ! $message = self::find_or_null($message_id)) {
-            return null;
-        }
-
-        // if this message is NOT a draft, return null
-        if ( ! $message->is_message_draft()) {
-            return null;
-        }
-
-        return $message;
-    }
-
-    /**
-     * Fetches a message by id which must belong to the given user id, or returns null
-     * 
-     * @param  integer $message_id
-     * @param  integer $user_id
-     * @return message|null
-     */
-    public static function find_user_draft_or_null($message_id = 0, $user_id = 0)
-    {
-        // first, try to find the message by id, returning null by default
-        if ( ! $message = self::find_draft_or_null($message_id)) {
-            return null;
-        }
-
-        // if this message does not belong to this user, return null
-        if ( ! $message->is_owned_by_user($user_id)) {
-            return null;
-        }
-
-        return $message;
-    }
-
-    /**
-     * Fetches a message by id which must belong to the given user id, or returns null
-     * 
-     * @param  integer $message_id
-     * @param  integer $user_id
-     * @param  integer $course_id
-     * @return message|null
-     */
-    public static function find_user_course_draft_or_null($message_id = 0, $user_id = 0, $course_id = 0)
-    {
-        // first, try to find the message by id, returning null by default
-        if ( ! $message = self::find_user_draft_or_null($message_id, $user_id)) {
-            return null;
-        }
-
-        // if this message does not belong to this course, return null
-        if ( ! $message->is_owned_by_course($course_id)) {
-            return null;
-        }
-
-        return $message;
-    }
-
-    /**
-     * Returns all unsent, non-deleted, draft messages belonging to the given user id
-     *
-     * Optionally, can be scoped to a specific course if given a course_id
-     * 
-     * @param  int     $user_id
-     * @param  int     $course_id   optional, defaults to 0 (all)
-     * @return array
-     */
-    public static function get_all_unsent_drafts_for_user($user_id, $course_id = 0)
-    {
-        $params = [
-            'user_id' => $user_id, 
-            'is_draft' => 1, 
-            'sent_at' => 0, 
-            'timedeleted' => 0
-        ];
-
-        if ($course_id) {
-            $params['course_id'] = $course_id;
-        }
-
-        return self::get_records($params);
-    }
 
     /**
      * Returns all sent or queued, non-deleted, messages belonging to the given user id

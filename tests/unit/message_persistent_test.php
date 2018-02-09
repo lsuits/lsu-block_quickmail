@@ -11,28 +11,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
     use has_general_helpers,
         sets_up_courses;
 
-    private function create_message()
-    {
-        return message::create_new([
-            'course_id' => 1,
-            'user_id' => 1,
-            'message_type' => 'email',
-        ]);
-    }
-
-    private function create_message_and_recipient()
-    {
-        $message = $this->create_message();
-
-        $recipient = message_recipient::create_new([
-            'message_id' => $message->get('id'),
-            'user_id' => 1,
-        ]);
-
-        return [$message, $recipient];
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////
+    // test_get_all_historical_for_user
 
     public function test_getters()
     {
@@ -278,39 +257,155 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertTrue($message_future->get_to_send_in_future());
     }
 
-    public function create_composed()
+    public function test_create_composed_as_draft()
     {
-        //
-    }
-    
-    public function update_draft() // true/false
-    {
-        //
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $params = [
+            'message_type' => 'message',
+            'alternate_email_id' => 4,
+            'signature_id' => 6,
+            'subject' => 'subject is here',
+            'message' => 'the message',
+            'receipt' => 0,
+            'to_send_at' => 0,
+            'no_reply' => 1,
+        ];
+
+        $message = message::create_composed($user_teacher, $course, (object) $params, true);
+
+        $this->assertInstanceOf(message::class, $message);
+        $this->assertEquals($course->id, $message->get('course_id'));
+        $this->assertEquals($user_teacher->id, $message->get('user_id'));
+        $this->assertEquals($params['message_type'], $message->get('message_type'));
+        $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
+        $this->assertEquals($params['signature_id'], $message->get('signature_id'));
+        $this->assertEquals($params['subject'], $message->get('subject'));
+        $this->assertEquals($params['message'], $message->get('body'));
+        $this->assertEquals($params['receipt'], $message->get('send_receipt'));
+        $this->assertEquals($params['to_send_at'], $message->get('to_send_at'));
+        $this->assertEquals($params['no_reply'], $message->get('no_reply'));
+        $this->assertEquals(1, $message->get('is_draft'));
     }
 
-    public function find_draft_or_null()
+    public function test_create_composed_not_as_draft()
     {
-        //
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $params = [
+            'message_type' => 'message',
+            'alternate_email_id' => 4,
+            'signature_id' => 6,
+            'subject' => 'subject is here',
+            'message' => 'the message',
+            'receipt' => 0,
+            'to_send_at' => 0,
+            'no_reply' => 1,
+        ];
+
+        $message = message::create_composed($user_teacher, $course, (object) $params, false);
+
+        $this->assertInstanceOf(message::class, $message);
+        $this->assertEquals(0, $message->get('is_draft'));
     }
     
-    public function find_user_draft_or_null()
+    public function test_update_draft_as_draft()
     {
-        //
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $creation_params = [
+            'message_type' => 'message',
+            'alternate_email_id' => 4,
+            'signature_id' => 6,
+            'subject' => 'subject is here',
+            'message' => 'the message',
+            'receipt' => 0,
+            'to_send_at' => 0,
+            'no_reply' => 1,
+        ];
+
+        $message = message::create_composed($user_teacher, $course, (object) $creation_params, true);
+
+        $update_params = [
+            'message_type' => 'email',
+            'alternate_email_id' => 5,
+            'signature_id' => 7,
+            'subject' => 'an updated subject is here',
+            'message' => 'the updated message',
+            'receipt' => 1,
+            'to_send_at' => 1518124011,
+            'no_reply' => 0,
+        ];
+
+        $updated_message = $message->update_draft((object) $update_params);
+
+        $this->assertInstanceOf(message::class, $updated_message);
+        $this->assertEquals($course->id, $updated_message->get('course_id'));
+        $this->assertEquals($user_teacher->id, $updated_message->get('user_id'));
+        $this->assertEquals($update_params['message_type'], $updated_message->get('message_type'));
+        $this->assertEquals($update_params['alternate_email_id'], $updated_message->get('alternate_email_id'));
+        $this->assertEquals($update_params['signature_id'], $updated_message->get('signature_id'));
+        $this->assertEquals($update_params['subject'], $updated_message->get('subject'));
+        $this->assertEquals($update_params['message'], $updated_message->get('body'));
+        $this->assertEquals($update_params['receipt'], $updated_message->get('send_receipt'));
+        $this->assertEquals($update_params['to_send_at'], $updated_message->get('to_send_at'));
+        $this->assertEquals($update_params['no_reply'], $updated_message->get('no_reply'));
+        $this->assertEquals(1, $updated_message->get('is_draft'));
+
+        $second_update_params = [
+            'message_type' => 'email',
+            'alternate_email_id' => 5,
+            'signature_id' => 7,
+            'subject' => 'an updated subject is here',
+            'message' => 'the updated message',
+            'receipt' => 1,
+            'to_send_at' => 1518124011,
+            'no_reply' => 0,
+        ];
+
+        $second_updated_message = $message->update_draft((object) $second_update_params, false);
+
+        $this->assertEquals(0, $second_updated_message->get('is_draft'));
     }
+
+    ///////////////////////////////////////////////
+    ///
+    /// HELPERS
+    /// 
+    //////////////////////////////////////////////
     
-    public function find_user_course_draft_or_null()
+    private function create_message($is_draft = false)
     {
-        //
+        return message::create_new([
+            'course_id' => 1,
+            'user_id' => 1,
+            'message_type' => 'email',
+            'is_draft' => $is_draft
+        ]);
     }
-    
-    public function get_all_unsent_drafts_for_user()
+
+    private function create_message_and_recipient()
     {
-        //
-    }
-    
-    public function get_all_historical_for_user()
-    {
-        //
+        $message = $this->create_message();
+
+        $recipient = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => 1,
+        ]);
+
+        return [$message, $recipient];
     }
 
 }

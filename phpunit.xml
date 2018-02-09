@@ -35,6 +35,7 @@
             <directory suffix="_test.php">tests/unit</directory>
             <exclude>tests/unit/persistent_concerns_test.php</exclude>
             <exclude>tests/unit/message_persistent_test.php</exclude>
+            <!-- <exclude>tests/unit/draft_repo_test.php</exclude> -->
             <exclude>tests/unit/signature_persistent_test.php</exclude>
             <exclude>tests/unit/alternate_persistent_test.php</exclude>
             <exclude>tests/unit/create_alternate_form_validator_test.php</exclude>
@@ -48,7 +49,7 @@
             <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
             <exclude>tests/unit/compose_message_form_validator_test.php</exclude>
             <exclude>tests/unit/save_draft_message_validator_test.php</exclude>
-            <!-- <exclude>tests/unit/messenger_test.php</exclude> -->
+            <exclude>tests/unit/messenger_test.php</exclude>
             <exclude>tests/unit/emailer_test.php</exclude>
             <exclude>tests/unit/messenger_tasks_test.php</exclude>
         </testsuite>
