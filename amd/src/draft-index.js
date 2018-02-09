@@ -5,10 +5,10 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
             window.onbeforeunload = null;
 
             // handle change of "select course filter"
-            var originalSelectValue = $('#select_course_filter_draft').val();
+            var originalSelectValue = $('#select_course_filter').val();
 
             // when selected course id changes
-            $('#select_course_filter_draft').change(function(e) {
+            $('#select_course_filter').change(function(e) {
                 e.preventDefault();
 
                 // if the value actually changed, redirect to the correct page

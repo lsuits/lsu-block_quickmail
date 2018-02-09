@@ -28,7 +28,7 @@
 
 use block_quickmail\components\compose_message_component;
 use block_quickmail\components\draft_message_index_component;
-use block_quickmail\components\historical_message_index_component;
+use block_quickmail\components\sent_message_index_component;
 use block_quickmail\components\manage_signatures_component;
 use block_quickmail\components\course_config_component;
 use block_quickmail\components\alternate_index_component;
@@ -170,25 +170,20 @@ class block_quickmail_renderer extends plugin_renderer_base {
         return $this->output->container($out, 'manage_drafts_component');
     }
 
-    ///////////
-
-
-
-
     ////////////////////////////////////////
-    /// HISTORICAL MESSAGE INDEX
+    /// SENT MESSAGE INDEX
     ////////////////////////////////////////
     
-    public function historical_message_index_component($params = []) {
-        $historical_message_index_component = new historical_message_index_component($params);
+    public function sent_message_index_component($params = []) {
+        $sent_message_index_component = new sent_message_index_component($params);
         
-        return $this->render($historical_message_index_component);
+        return $this->render($sent_message_index_component);
     }
 
-    protected function render_historical_message_index_component(historical_message_index_component $historical_message_index_component) {
-        $data = $historical_message_index_component->export_for_template($this);
+    protected function render_sent_message_index_component(sent_message_index_component $sent_message_index_component) {
+        $data = $sent_message_index_component->export_for_template($this);
 
-        return $this->render_from_template('block_quickmail/historical_message_index', $data);
+        return $this->render_from_template('block_quickmail/sent_message_index', $data);
     }
 
 }

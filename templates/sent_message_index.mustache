@@ -1,4 +1,4 @@
-<div class="block_quickmail_draft_message_index">
+<div class="block_quickmail_sent_message_index">
     <select id="select_course_filter">
         <option value="0">All Courses</option>
         {{# userCourseArray }}
@@ -37,31 +37,18 @@
 
                 <th>Message Preview</th>
                 
-                {{#createdIsSorted}}
+                {{#sentAtIsSorted}}
                     {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=created&dir=desc">Created</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=sent&dir=desc">Sent At</a> {{#pix}} t/sort_asc {{/pix}}</th>
                     {{/isSortedAsc}}
 
                     {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">Created</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=sent&dir=asc">Sent At</a> {{#pix}} t/sort_desc {{/pix}}</th>
                     {{/isSortedAsc}}
-                {{/createdIsSorted}}
-                {{^createdIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">Created</a></th>
-                {{/createdIsSorted}}
-
-                {{#modifiedIsSorted}}
-                    {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=modified&dir=desc">Last Updated</a> {{#pix}} t/sort_asc {{/pix}}</th>
-                    {{/isSortedAsc}}
-
-                    {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=modified&dir=asc">Last Updated</a> {{#pix}} t/sort_desc {{/pix}}</th>
-                    {{/isSortedAsc}}
-                {{/modifiedIsSorted}}
-                {{^modifiedIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=modified&dir=asc">Last Updated</a></th>
-                {{/modifiedIsSorted}}
+                {{/sentAtIsSorted}}
+                {{^sentAtIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=sent&dir=asc">Sent At</a></th>
+                {{/sentAtIsSorted}}
 
                 <th></th>
             </tr>
@@ -72,19 +59,14 @@
                     <td>{{ courseName }}</td>
                     <td>{{ subjectPreview }}</td>
                     <td>{{ messagePreview }}</td>
-                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
-                    <td>{{#userdate}} {{lastModifiedAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
-                    <td>
-                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</a>
-                        <button role="button" class="btn btn-info btn-sm btn-duplicate-draft" data-draft-id="{{ id }}">{{# str }} duplicate {{/ str }}</button>
-                        <button role="button" class="btn btn-danger btn-sm btn-delete-draft" data-draft-id="{{ id }}">{{# str }} delete {{/ str }}</button>
-                    </td>
+                    <td>{{#userdate}} {{sentAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    <td></td>
                 </tr>
             {{/ tableRows }}
 
             {{^ tableRows }}
                 <tr>
-                    <td colspan="5" align="center">{{# str }} no_drafts, block_quickmail {{/ str }}</td>
+                    <td colspan="5" align="center">{{# str }} no_sents, block_quickmail {{/ str }}</td>
                 </tr>
             {{/ tableRows }}
         </tbody>

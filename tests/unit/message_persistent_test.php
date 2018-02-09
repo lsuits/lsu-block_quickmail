@@ -11,8 +11,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
     use has_general_helpers,
         sets_up_courses;
 
-    // test_get_all_historical_for_user
-
     public function test_getters()
     {
         $this->resetAfterTest(true);

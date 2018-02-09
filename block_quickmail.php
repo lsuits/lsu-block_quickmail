@@ -115,6 +115,13 @@ class block_quickmail extends block_list {
                 'page' => 'drafts',
             ]);
 
+            // view sent
+            $this->add_item_to_content([
+                'lang_key' => 'view_sent',
+                'icon_key' => 'e/increase_indent',
+                'page' => 'sent',
+            ]);
+
             // view send history
             // $this->add_item_to_content([
             //     'lang_key' => 'history',

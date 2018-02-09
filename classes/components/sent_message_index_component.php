@@ -28,25 +28,27 @@ use block_quickmail\components\component;
 use block_quickmail_plugin;
 use moodle_url;
 
-class historical_message_index_component extends component implements \renderable {
+class sent_message_index_component extends component implements \renderable {
 
-    public $historical_messages;
+    public $sent_messages;
 
     public $user;
     
     public $course_id;
     
-    public $course_historical_messages;
+    public $course_sent_messages;
 
     public $user_course_array;
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->historical_messages = $this->get_param('historical_messages');
+        $this->sent_messages = $this->get_param('sent_messages');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
-        $this->course_historical_messages = $this->filter_messages_by_course($this->historical_messages, $this->course_id);
-        $this->user_course_array = $this->get_user_course_array($this->historical_messages, $this->course_id);
+        $this->sort_by = $this->get_param('sort_by');
+        $this->sort_dir = $this->get_param('sort_dir');
+        $this->course_sent_messages = $this->filter_messages_by_course($this->sent_messages, $this->course_id);
+        $this->user_course_array = $this->get_user_course_array($this->sent_messages, $this->course_id);
     }
 
     /**
@@ -58,22 +60,24 @@ class historical_message_index_component extends component implements \renderabl
         $data = (object)[];
 
         $data->userCourseArray = $this->transform_course_array($this->user_course_array, $this->course_id);
-
         $data->courseId = $this->course_id;
+        
+        $data->sortBy = $this->sort_by;
+        $data->isSortedAsc = $this->sort_dir == 'asc';
+
+        $data->courseIsSorted = $this->is_attr_sorted('course');
+        $data->subjectIsSorted = $this->is_attr_sorted('subject');
+        $data->sentAtIsSorted = $this->is_attr_sorted('sent');
 
         $data->tableRows = [];
         
-        foreach ($this->course_historical_messages as $message) {
+        foreach ($this->course_sent_messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
                 'courseName' => $this->user_course_array[$message->get('course_id')],
                 'subjectPreview' => $message->get_subject_preview(24),
-                'status' => ucfirst($message->get_status()),
-                'sentScheduledDate' => $message->is_queued_message() ? $message->get_readable_to_send_at() : $message->get_readable_sent_at(),
-                'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
-                    'courseid' => $message->get('course_id'),
-                    'draftid' => $message->get('id')
-                ], '', '&')
+                'messagePreview' => $message->get_body_preview(),
+                'sentAt' => $message->get('sent_at'),
             ];
         }
 
@@ -83,7 +87,7 @@ class historical_message_index_component extends component implements \renderabl
 
         $data->urlBackLabel = $this->course_id 
             ? block_quickmail_plugin::_s('back_to_course')
-            : 'Back to My page'; // TODO - make this a lang string
+            : 'Back to My page';
 
         return $data;
     }
