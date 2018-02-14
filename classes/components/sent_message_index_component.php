@@ -77,6 +77,8 @@ class sent_message_index_component extends component implements \renderable {
                 'courseName' => $this->user_course_array[$message->get('course_id')],
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
+                'recipientTotal' => $message->cached_recipient_count(),
+                'additionalEmailTotal' => $message->cached_additional_email_count(),
                 'sentAt' => $message->get('sent_at'),
             ];
         }

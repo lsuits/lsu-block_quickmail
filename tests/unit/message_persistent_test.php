@@ -5,7 +5,6 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
-use block_quickmail_cache;
 
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
     
@@ -164,6 +163,9 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $cache = \cache::make('block_quickmail', 'qm_msg_recip_count');
         $cached_count = $cache->get($message->get('id'));
         $this->assertEquals(3, $cached_count);
+
+        $value = $message->cached_recipient_count();
+        $this->assertEquals(3, $value);
     }
 
     public function test_sync_additional_emails()
@@ -209,6 +211,9 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $cache = \cache::make('block_quickmail', 'qm_msg_addl_email_count');
         $cached_count = $cache->get($message->get('id'));
         $this->assertEquals(3, $cached_count);
+
+        $value = $message->cached_additional_email_count();
+        $this->assertEquals(3, $value);
     }
 
     public function test_message_draft_status()

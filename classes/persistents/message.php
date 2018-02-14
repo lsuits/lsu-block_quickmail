@@ -269,6 +269,38 @@ class message extends persistent {
 		return (bool) $this->get('sent_at');
 	}
 
+	/**
+	 * Returns the cached intended recipient count total for this message
+	 *
+	 * Attempts to set the total in the cache if not found
+	 * 
+	 * @return int
+	 */
+	public function cached_recipient_count()
+	{
+		$message = $this;
+
+		return (int) block_quickmail_cache::store('qm_msg_recip_count')->add($this->get('id'), function() use ($message) {
+			return count($message->get_message_recipients());
+		});
+	}
+
+	/**
+	 * Returns the cached intended additional email count total for this message
+	 *
+	 * Attempts to set the total in the cache if not found
+	 * 
+	 * @return int
+	 */
+	public function cached_additional_email_count()
+	{
+		$message = $this;
+
+		return (int) block_quickmail_cache::store('qm_msg_addl_email_count')->add($this->get('id'), function() use ($message) {
+			return count($message->get_additional_emails());
+		});
+	}
+
 	///////////////////////////////////////////////
 	///
 	///  VALIDATORS

@@ -36,6 +36,8 @@
                 {{/subjectIsSorted}}
 
                 <th>Message Preview</th>
+                <th>Recipients</th>
+                <th>Additional Emails</th>
                 
                 {{#sentAtIsSorted}}
                     {{#isSortedAsc}}
@@ -59,6 +61,8 @@
                     <td>{{ courseName }}</td>
                     <td>{{ subjectPreview }}</td>
                     <td>{{ messagePreview }}</td>
+                    <td>{{ recipientTotal }}</td>
+                    <td>{{ additionalEmailTotal }}</td>
                     <td>{{#userdate}} {{sentAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td></td>
                 </tr>
