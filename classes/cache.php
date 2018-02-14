@@ -6,9 +6,6 @@ class block_quickmail_cache {
 
     public $store;
 
-    // qm_msg_recip_count
-    // qm_msg_deliv_count
-
     public function __construct($store) {
         $this->store = $store;
     }
