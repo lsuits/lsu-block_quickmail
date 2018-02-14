@@ -24,6 +24,14 @@ class sent_repo extends repo {
             'key' => 'sent_at',
             'type' => 'int',
         ],
+        'created' => [
+            'key' => 'timecreated',
+            'type' => 'int',
+        ],
+        'modified' => [
+            'key' => 'timemodified',
+            'type' => 'int',
+        ],
     ];
 
     /**
