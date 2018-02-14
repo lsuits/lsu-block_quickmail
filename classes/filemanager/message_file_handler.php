@@ -3,6 +3,7 @@
 namespace block_quickmail\filemanager;
 
 use block_quickmail_config;
+use block_quickmail_cache;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_attachment;
 use context_course;
@@ -142,6 +143,8 @@ class message_file_handler {
         // get uploaded attachment files from the stack, if any
         $uploaded_files = $this->get_uploaded_files('attachments');
 
+        $count = 0;
+
         // iterate through each file
         foreach ($uploaded_files as $file) {
             // if any exceptions, proceed gracefully to the next
@@ -150,12 +153,17 @@ class message_file_handler {
                     'path' => $file['path'],
                     'filename' => $file['filename'],
                 ]);
+
+                $count++;
             } catch (\Exception $e) {
                 // most likely invalid user, exception thrown due to validation error
                 // log this?
                 continue;
             }
         }
+
+        // cache the count for external use
+        block_quickmail_cache::store('qm_msg_attach_count')->put($this->message->get('id'), $count);
     }
 
     /**

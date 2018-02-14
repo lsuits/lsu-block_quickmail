@@ -301,6 +301,22 @@ class message extends persistent {
 		});
 	}
 
+	/**
+	 * Returns the cached file attachment count total for this message
+	 *
+	 * Attempts to set the total in the cache if not found
+	 * 
+	 * @return int
+	 */
+	public function cached_attachment_count()
+	{
+		$message = $this;
+
+		return (int) block_quickmail_cache::store('qm_msg_attach_count')->add($this->get('id'), function() use ($message) {
+			return count($message->get_message_attachments());
+		});
+	}
+
 	///////////////////////////////////////////////
 	///
 	///  VALIDATORS
