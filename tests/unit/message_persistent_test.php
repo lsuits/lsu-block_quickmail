@@ -5,6 +5,7 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
+use block_quickmail_cache;
 
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
     
@@ -140,6 +141,31 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertCount(0, array_intersect($original_recipient_array, $new_recipient_array));
     }
 
+    public function test_sync_recipients_caches_count()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        // create new users to become recipients
+
+        $user_three = $this->getDataGenerator()->create_user();
+        $user_four = $this->getDataGenerator()->create_user();
+        $user_five = $this->getDataGenerator()->create_user();
+
+        // sync the recipients
+
+        $message->sync_recipients([
+            $user_three->id,
+            $user_four->id,
+            $user_five->id
+        ]);
+
+        $cache = \cache::make('block_quickmail', 'qm_msg_recip_count');
+        $cached_count = $cache->get($message->get('id'));
+        $this->assertEquals(3, $cached_count);
+    }
+
     public function test_sync_additional_emails()
     {
         $this->resetAfterTest(true);
@@ -168,6 +194,21 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertCount(3, $message->get_additional_emails(true));
 
         $this->assertCount(0, array_intersect($original_email_array, $new_email_array));
+    }
+
+    public function test_sync_additional_emails_caches_count()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        $new_email_array = ['email@three.com', 'email@four.com', 'email@five.com'];
+
+        $message->sync_additional_emails($new_email_array);
+
+        $cache = \cache::make('block_quickmail', 'qm_msg_addl_email_count');
+        $cached_count = $cache->get($message->get('id'));
+        $this->assertEquals(3, $cached_count);
     }
 
     public function test_message_draft_status()

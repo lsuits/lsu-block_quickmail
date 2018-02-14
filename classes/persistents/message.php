@@ -2,7 +2,7 @@
 
 namespace block_quickmail\persistents;
 
-use block_quickmail_plugin;
+use block_quickmail_cache;
 use \core\persistent;
 use \lang_string;
 use \dml_missing_record_exception;
@@ -351,17 +351,23 @@ class message extends persistent {
 		// clear all current recipients
 		message_recipient::clear_all_for_message($this);
 
+		$count = 0;
+
 		// add all new recipients
 		foreach ($recipient_user_ids as $user_id) {
 			// if any exceptions, proceed gracefully to the next
 			try {
 				message_recipient::create_for_message($this, ['user_id' => $user_id]);
+				$count++;
 			} catch (\Exception $e) {
 				// most likely invalid user, exception thrown due to validation error
 				// log this?
 				continue;
 			}
 		}
+
+		// cache the count for external use
+		block_quickmail_cache::store('qm_msg_recip_count')->put($this->get('id'), $count);
 
 		// refresh record (necessary?)
 		$this->read();
@@ -378,17 +384,23 @@ class message extends persistent {
 		// clear all current additional emails
 		message_additional_email::clear_all_for_message($this);
 
+		$count = 0;
+
 		// add all new additional emails
 		foreach ($additional_emails as $email) {
 			// if the email is invalid, proceed gracefully to the next
 			try {
 				message_additional_email::create_for_message($this, ['email' => $email]);
+				$count++;
 			} catch (\Exception $e) {
 				// most likely exception thrown due to validation error
 				// log this?
 				continue;
 			}
 		}
+
+		// cache the count for external use
+		block_quickmail_cache::store('qm_msg_addl_email_count')->put($this->get('id'), $count);
 
 		// refresh record (necessary?)
 		$this->read();

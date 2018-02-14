@@ -6,6 +6,11 @@ $definitions = [
         'simplekeys' => true,
         'simpledata' => true,
     ],
+    'qm_msg_addl_email_count' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
     'qm_msg_deliv_count' => [
         'mode' => cache_store::MODE_SESSION,
         'simplekeys' => true,

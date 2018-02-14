@@ -109,7 +109,7 @@ class block_quickmail_cache {
     /**
      * Stores a value in the cache only if an existing value does not exist
      *
-     * (Similar to add for now...)
+     * (Similar to add() for now...)
      * 
      * @param  string|int  $key
      * @param  mixed   $value   can be a closure
