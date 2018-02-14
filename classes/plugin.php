@@ -73,46 +73,4 @@ class block_quickmail_plugin {
         require_capability('block/quickmail:' . $permission, $context);
     }
 
-    ////////////////////////////////////////////////////
-    ///
-    ///  CACHE
-    ///  
-    ////////////////////////////////////////////////////
-    
-    /**
-     * Caches the given value under the given key in the given "store"
-     * 
-     * @param string  $store
-     * @param mixed   $key
-     * @param mixed   $value
-     */
-    public static function set_cache($store, $key, $value)
-    {
-        // stores...
-        // qm_msg_recip_count
-        // qm_msg_deliv_count
-
-        $cache = \cache::make('block_quickmail', $store);
-            
-        $result = $cache->set($key, $value);
-
-        return $result;
-    }
-
-    /**
-     * Returns cached data for the given key/store
-     * 
-     * @param string  $store
-     * @param mixed   $key
-     * @return mixed
-     */
-    public static function get_cache($store, $key)
-    {
-        $cache = \cache::make('block_quickmail', $store);
-            
-        $data = $cache->get($key);
-
-        return $data;
-    }
-
 }
