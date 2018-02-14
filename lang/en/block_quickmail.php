@@ -158,6 +158,9 @@ $string['moodle_attachments'] = 'Moodle Attachments ({$a})';
 $string['download_all'] = 'Download All';
 $string['qm_contents'] = 'Download File Contents';
 
+$string['cachedef_qm_msg_recip_count'] = 'Cached message recipient counts.';
+$string['cachedef_qm_msg_deliv_count'] = 'Cached message delievered counts.';
+
 
 $string['no_type'] = '{$a} is not in the acceptable type viewer. Please use the applciation correctly.';
 $string['no_email'] = 'Could not email {$a->firstname} {$a->lastname}.';

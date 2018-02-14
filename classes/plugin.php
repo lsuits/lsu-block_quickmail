@@ -73,82 +73,46 @@ class block_quickmail_plugin {
         require_capability('block/quickmail:' . $permission, $context);
     }
 
-
-
-    //////////////////// DEPRECATED /////////////////////////////
-
-
-    
     ////////////////////////////////////////////////////
     ///
-    ///  CONTEXT
+    ///  CACHE
     ///  
     ////////////////////////////////////////////////////
-
+    
     /**
-     * Resolves a context (system or course) based on a given course id
+     * Caches the given value under the given key in the given "store"
      * 
-     * @param string  $type        system|course
-     * @param int     $course_id
-     * @throws critical_exception
-     * @return mixed  context_system|context_course, course
+     * @param string  $store
+     * @param mixed   $key
+     * @param mixed   $value
      */
-    public static function resolve_context($type = 'system', $course_id = 0) {
-        switch ($type) {
-            case 'course':
-                // if course context is required, make sure we have an id
-                if (empty($course_id)) {
-                    throw new critical_exception('no_course', $course_id);
-                }
-                
-                // fetch the course
-                $course = self::get_valid_course($course_id);
+    public static function set_cache($store, $key, $value)
+    {
+        // stores...
+        // qm_msg_recip_count
+        // qm_msg_deliv_count
 
-                // fetch the course context
-                $context = context_course::instance($course->id);
-
-                // return the context AND course
-                return [$context, $course];
-
-                break;
+        $cache = \cache::make('block_quickmail', $store);
             
-            case 'system':
-            default:
-                // return only the context
-                return context_system::instance();
-                break;
-        }
+        $result = $cache->set($key, $value);
+
+        return $result;
     }
 
     /**
-     * Fetches a moodle course by id, if unavailable throw exception
+     * Returns cached data for the given key/store
      * 
-     * @param  int $course_id
-     * @return moodle course
-     * @throws critical_exception
+     * @param string  $store
+     * @param mixed   $key
+     * @return mixed
      */
-    public static function get_valid_course($course_id) {
-        try {
-            $course = get_course($course_id);
-        } catch (dml_exception $e) {
-            throw new critical_exception('no_course', $course_id);
-        }
+    public static function get_cache($store, $key)
+    {
+        $cache = \cache::make('block_quickmail', $store);
+            
+        $data = $cache->get($key);
 
-        return $course;
-    }
-
-    /**
-     * Throws exception if authenticated user does not have the given permission within the given context
-     * 
-     * @param  string $permission  cansend|allowalternate|canconfig|myaddinstance
-     * @param  object $context
-     * @throws authorization_exception
-     * @return void
-     */
-    public static function check_user_permission($permission, $context) {
-        if ( ! self::user_has_permission($permission, $context)) {
-            throw new authorization_exception('no_permission');
-        }
+        return $data;
     }
 
 }

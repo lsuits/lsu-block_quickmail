@@ -34,9 +34,10 @@
         <testsuite name="block_quickmail_testsuite">
             <directory suffix="_test.php">tests/unit</directory>
             <exclude>tests/unit/persistent_concerns_test.php</exclude>
+            <!-- <exclude>tests/unit/cache_test.php</exclude> -->
             <exclude>tests/unit/message_persistent_test.php</exclude>
             <exclude>tests/unit/draft_repo_test.php</exclude>
-            <!-- <exclude>tests/unit/sent_repo_test.php</exclude> -->
+                    <exclude>tests/unit/sent_repo_test.php</exclude>
             <exclude>tests/unit/signature_persistent_test.php</exclude>
             <exclude>tests/unit/alternate_persistent_test.php</exclude>
             <exclude>tests/unit/create_alternate_form_validator_test.php</exclude>
