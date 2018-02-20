@@ -7,27 +7,16 @@ use block_quickmail\persistents\message;
 
 class draft_repo extends repo {
 
-    public static $sortable_attrs = [
-        'id' => [
-            'key' => 'id',
-            'type' => 'int',
-        ],
-        'course' => [
-            'key' => 'course_id',
-            'type' => 'int',
-        ],
-        'subject' => [
-            'key' => 'subject',
-            'type' => 'string',
-        ],
-        'created' => [
-            'key' => 'timecreated',
-            'type' => 'int',
-        ],
-        'modified' => [
-            'key' => 'timemodified',
-            'type' => 'int',
-        ],
+    public $default_sort = 'created';
+
+    public $default_dir = 'desc';
+    
+    public $sortable_attrs = [
+        'id' => 'id',
+        'course' => 'course_id',
+        'subject' => 'subject',
+        'created' => 'timecreated',
+        'modified' => 'timemodified',
     ];
 
     /**
@@ -103,31 +92,53 @@ class draft_repo extends repo {
      * 
      * @param  int     $user_id
      * @param  int     $course_id   optional, defaults to 0 (all)
-     * @param  string  $sort_by     optional, id|course|subject|created|modified
-     * @param  string  $sort_dir    optional, asc|desc
-     * @return array
+     * @param  array   $params  sort|dir|paginate|page|per_page|uri
+     * @return mixed
      */
-    public static function get_for_user($user_id, $course_id = 0, $sort_by = '', $sort_dir = '')
+    public static function get_for_user($user_id, $course_id = 0, $params = [])
     {
-        $sort_by = $sort_by ?: 'id';
-        $sort_dir = $sort_dir ?: 'asc';
+        // set params
+            // sort, must be in list, default id
+            // dir, must asc|desc, default asc
+            // paginate, default false
+            // page, default 1
+            // per_page, default 10
+            // uri, default : $_SERVER['REQUEST_URI']
 
-        $params = [
+        $repo = new self($params);
+
+        $query_params = [
             'user_id' => $user_id, 
             'is_draft' => 1, 
             'sent_at' => 0, 
             'timedeleted' => 0
         ];
 
+        // conditionally add course id if appropriate
         if ($course_id) {
-            $params['course_id'] = $course_id;
+            $query_params['course_id'] = $course_id;
         }
 
-        $collection = message::get_records($params);
+        // if not paginating, return all results (sorted if necessary)
+        if ( ! $repo->paginate) {
+            $data = message::get_records(
+                $query_params,
+                $repo->get_sort_column_name($repo->sort),
+                strtoupper($repo->dir)
+            );
+        } else {
+            $count = message::count_records(
+                $query_params
+            );
 
-        self::sort_collection($collection, $sort_by, $sort_dir);
+            $paginator = $repo->make_paginator($count);
+            
+            var_dump($paginator);die;
+        }
 
-        return $collection;
+        $repo->set_result_data($data);
+
+        return $repo->result;
     }
 
 }

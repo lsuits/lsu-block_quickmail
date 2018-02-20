@@ -2,94 +2,93 @@
 
 namespace block_quickmail\repos;
 
+use block_quickmail\repos\pagination\paginator;
+
 abstract class repo {
 
-    /**
-     * Sorts the given collection (by association) by the given "sortable attr" name and direction
-     * 
-     * @param  array   &$collection
-     * @param  string  $attr    sortable attribute name (must be assigned to this repo implementation)
-     * @param  string  $dir     asc|desc
-     * @return void
-     */
-    public static function sort_collection(&$collection, $attr, $dir = 'asc') {
-        // if sorting by id ascending, stop now for it is likely already done!
-        if ($attr == 'id' && $dir == 'asc') {
-            return;
-        }
+    public $sort;
+    public $dir;
+    public $paginate;
+    public $page;
+    public $per_page;
+    public $uri;
+    public $result;
 
-        // get the comparisan function that we'll need
-        $comp = self::get_comparison($attr, $dir);
-
-        // sort the collection with the comparison function
-        usort($collection, $comp);
+    public function __construct($params = []) {
+        $this->set_sort($params);
+        $this->set_dir($params);
+        $this->set_paginate($params);
+        $this->set_page($params);
+        $this->set_per_page($params);
+        $this->set_uri($params);
+        $this->set_result();
     }
 
-    /**
-     * Returns an anonymous function to compare the given sortable attribute
-     * 
-     * @param  string  $attr  name of the "sortable attribute" to sort by
-     * @param  string  $dir   asc|desc
-     * @return callable
-     */
-    public static function get_comparison($attr, $dir)
+    private function set_sort($params)
     {
-        list($key, $type) = self::get_sortable_attr_props($attr);
-
-        $comp_type_method = 'get_comparison_by_type_' . $type;
-
-        return self::$comp_type_method($key, $dir);
+        $this->sort = array_key_exists('sort', $params) && in_array($params['sort'], array_keys($this->sortable_attrs))
+            ? $params['sort']
+            : 'id';
     }
 
-    /**
-     * Returns an array of properties of the given sortable attribute name
-     * 
-     * @param  string  $attr  name of the "sortable attribute" to sort by
-     * @return array [key, type]
-     */
-    private static function get_sortable_attr_props($attr)
+    private function set_dir($params)
     {
-        $attrs = static::$sortable_attrs;
-
-        return [$attrs[$attr]['key'], $attrs[$attr]['type']];
+        $this->dir = array_key_exists('dir', $params) && in_array($params['dir'], ['asc', 'desc'])
+            ? $params['dir']
+            : 'asc';
     }
 
-    /**
-     * Returns an anonymous function for sorting by attr type: integer
-     * 
-     * @param  string  $by  
-     * @param  string  $dir  asc|desc
-     * @return callable
-     */
-    public static function get_comparison_by_type_int($by, $dir)
+    private function set_paginate($params)
     {
-        $comp = function($value1, $value2) use ($by, $dir) {
-            $a = $dir == 'desc' ? $value2 : $value1;
-            $b = $dir == 'desc' ? $value1 : $value2;
-
-            return (int) $a->get($by) >= (int) $b->get($by);
-        };
-
-        return $comp;
+        $this->paginate = array_key_exists('paginate', $params)
+            ? $params['paginate']
+            : false;
     }
 
-    /**
-     * Returns an anonymous function for sorting by attr type: string
-     * 
-     * @param  string  $by  
-     * @param  string  $dir  asc|desc
-     * @return callable
-     */
-    public static function get_comparison_by_type_string($by, $dir)
+    private function set_page($params)
     {
-        $comp = function($value1, $value2) use ($by, $dir) {
-            $a = $dir == 'desc' ? $value2 : $value1;
-            $b = $dir == 'desc' ? $value1 : $value2;
+        $this->page = array_key_exists('page', $params) && is_int($params['page'] + 0)
+            ? $params['page']
+            : 1;
+    }
 
-            return strcmp($a->get($by), $b->get($by));
-        };
+    private function set_per_page($params)
+    {
+        $this->per_page = array_key_exists('per_page', $params)
+            ? $params['per_page']
+            : 10;
+    }
 
-        return $comp;
+    private function set_uri($params)
+    {
+        $this->uri = array_key_exists('uri', $params)
+            ? $params['uri']
+            : '';
+    }
+
+    private function set_result()
+    {
+        $this->result = (object) [
+            'data' => [],
+            'pagination' => (object) []
+        ];
+    }
+
+    public function get_sort_column_name($key)
+    {
+        return $this->sortable_attrs[$key];
+    }
+
+    public function set_result_data($data = [])
+    {
+        $this->result->data = $data;
+    }
+
+    public function make_paginator($count)
+    {
+        $paginator = new paginator($count, $this->page, $this->per_page, $this->uri);
+
+        return $paginator;
     }
 
 }

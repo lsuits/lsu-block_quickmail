@@ -1,25 +1,53 @@
 <?php
 
-namespace block_quickmail\pagination;
+namespace block_quickmail\repos\pagination;
 
-use block_quickmail\pagination\paginator;
+use block_quickmail\repos\pagination\paginator;
 
 class paginated {
 
     public $paginator;
 
+    public $data;
+    public $page_count;
+    public $per_page;
+    public $current_page;
+    public $next_page;
+    public $previous_page;
+    public $has_more_pages;
+    public $total_count;
+    public $uri_for_page;
+    public $first_page_uri;
+    public $last_page_uri;
+    public $next_page_uri;
+    public $previous_page_uri;
+
     public function __construct(paginator $paginator) {
         $this->paginator = $paginator;
+        $this->data = $this->set_data($paginator);
+        $this->page_count = $this->set_page_count($paginator);
+        $this->per_page = $this->set_per_page($paginator);
+        $this->current_page = $this->set_current_page($paginator);
+        $this->next_page = $this->set_next_page($paginator);
+        $this->previous_page = $this->set_previous_page($paginator);
+        $this->has_more_pages = $this->set_has_more_pages($paginator);
+        $this->total_count = $this->set_total_count($paginator);
+        $this->uri_for_page = $this->set_uri_for_page($paginator);
+        $this->first_page_uri = $this->set_first_page_uri($paginator);
+        $this->last_page_uri = $this->set_last_page_uri($paginator);
+        $this->next_page_uri = $this->set_next_page_uri($paginator);
+        $this->previous_page_uri = $this->set_previous_page_uri($paginator);
+        unset($this->paginator); // dont need this anymore
     }
 
     /**
-     * Returns the paginated results
+     * Returns the paginated data
      * 
      * @return mixed
      */
-    public function results()
+    public function data()
     {
-        return $this->paginator->sliced_results;
+        return $this->paginator->data;
     }
 
     /**
@@ -91,9 +119,9 @@ class paginated {
      * 
      * @return int
      */
-    public function total_results()
+    public function total_count()
     {
-        return (int) $this->paginator->results_total;
+        return (int) $this->paginator->total_count;
     }
 
     public function uri_for_page($page = null)

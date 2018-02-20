@@ -10,6 +10,30 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
     use has_general_helpers,
         sets_up_courses;
 
+    public function test_gets_paginated_results_for_user()
+    {
+        $this->resetAfterTest(true);
+
+        // create 30 drafts for user id: 1
+        foreach (range(1, 30) as $i) {
+            $this->create_message(true);
+        }
+
+        // get all drafts for user: 1
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'asc',
+            'paginate' => true,
+            'page' => '1',
+            'per_page' => '4',
+            'uri' => 'testy',
+        ]);
+
+        $this->assertCount(4, $drafts->data);
+    }
+
+    /////////////////////////////
+
     public function test_find_or_null()
     {
         $this->resetAfterTest(true);
@@ -83,6 +107,7 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
         $this->assertNull($not_found_message);
     }
 
+    
     public function test_get_for_user()
     {
         $this->resetAfterTest(true);
@@ -113,19 +138,19 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
         $draft8->update();
 
         // get all drafts for user: 1
-        $drafts = draft_repo::get_for_user(1);
+        $drafts = draft_repo::get_for_user(1, 0);
 
-        $this->assertCount(4, $drafts);
+        $this->assertCount(4, $drafts->data);
 
         // get all drafts for user: 1, course: 1
         $drafts = draft_repo::get_for_user(1, 1);
 
-        $this->assertCount(3, $drafts);
+        $this->assertCount(3, $drafts->data);
 
         // get all drafts for user: 1, course: 2
         $drafts = draft_repo::get_for_user(1, 2);
 
-        $this->assertCount(1, $drafts);
+        $this->assertCount(1, $drafts->data);
     }
 
     public function test_sorts_get_for_user()
@@ -135,44 +160,74 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
         $this->create_test_drafts();
 
         // get all drafts for user: 1
-        $drafts = draft_repo::get_for_user(1);
-        $this->assertCount(7, $drafts);
-        $this->assertEquals('date', $drafts[0]->get('subject'));
+        $drafts = draft_repo::get_for_user(1, 0);
+        $this->assertCount(7, $drafts->data);
+        $this->assertEquals('date', $drafts->data[0]->get('subject'));
 
         // sort by id
-        $drafts = draft_repo::get_for_user(1, 0, 'id', 'asc');
-        $this->assertEquals(142000, $drafts[0]->get('id'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(142000, $drafts->data[0]->get('id'));
 
-        $drafts = draft_repo::get_for_user(1, 0, 'id', 'desc');
-        $this->assertEquals(142006, $drafts[0]->get('id'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(142006, $drafts->data[0]->get('id'));
 
         // sort by course
-        $drafts = draft_repo::get_for_user(1, 0, 'course', 'asc');
-        $this->assertEquals(1, $drafts[0]->get('course_id'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'course',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1, $drafts->data[0]->get('course_id'));
 
-        $drafts = draft_repo::get_for_user(1, 0, 'course', 'desc');
-        $this->assertEquals(5, $drafts[0]->get('course_id'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'course',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(5, $drafts->data[0]->get('course_id'));
 
         // sort by subject
-        $drafts = draft_repo::get_for_user(1, 0, 'subject', 'asc');
-        $this->assertEquals('apple', $drafts[0]->get('subject'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'subject',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals('apple', $drafts->data[0]->get('subject'));
 
-        $drafts = draft_repo::get_for_user(1, 0, 'subject', 'desc');
-        $this->assertEquals('grape', $drafts[0]->get('subject'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'subject',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals('grape', $drafts->data[0]->get('subject'));
 
         // sort by (time) created
-        $drafts = draft_repo::get_for_user(1, 0, 'created', 'asc');
-        $this->assertEquals(1111111111, $drafts[0]->get('timecreated'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'created',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1111111111, $drafts->data[0]->get('timecreated'));
 
-        $drafts = draft_repo::get_for_user(1, 0, 'created', 'desc');
-        $this->assertEquals(8888888888, $drafts[0]->get('timecreated'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'created',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(8888888888, $drafts->data[0]->get('timecreated'));
 
         // sort by (time) modified
-        $drafts = draft_repo::get_for_user(1, 0, 'modified', 'asc');
-        $this->assertEquals(1010101010, $drafts[0]->get('timemodified'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'modified',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1010101010, $drafts->data[0]->get('timemodified'));
 
-        $drafts = draft_repo::get_for_user(1, 0, 'modified', 'desc');
-        $this->assertEquals(5454545454, $drafts[0]->get('timemodified'));
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'modified',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(5454545454, $drafts->data[0]->get('timemodified'));
     }
 
     public function test_sorts_get_for_user_and_course()
@@ -183,43 +238,73 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
 
         // get all drafts for user: 1, course: 1
         $drafts = draft_repo::get_for_user(1, 1);
-        $this->assertCount(4, $drafts);
-        $this->assertEquals('date', $drafts[0]->get('subject'));
+        $this->assertCount(4, $drafts->data);
+        $this->assertEquals('date', $drafts->data[0]->get('subject'));
 
         // sort by id
-        $drafts = draft_repo::get_for_user(1, 1, 'id', 'asc');
-        $this->assertEquals(142000, $drafts[0]->get('id'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'id',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(142000, $drafts->data[0]->get('id'));
 
-        $drafts = draft_repo::get_for_user(1, 1, 'id', 'desc');
-        $this->assertEquals(142006, $drafts[0]->get('id'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'id',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(142006, $drafts->data[0]->get('id'));
 
         // sort by course
-        $drafts = draft_repo::get_for_user(1, 1, 'course', 'asc');
-        $this->assertEquals(1, $drafts[0]->get('course_id'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'course',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1, $drafts->data[0]->get('course_id'));
 
-        $drafts = draft_repo::get_for_user(1, 1, 'course', 'desc');
-        $this->assertEquals(1, $drafts[0]->get('course_id'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'course',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(1, $drafts->data[0]->get('course_id'));
 
         // sort by subject
-        $drafts = draft_repo::get_for_user(1, 1, 'subject', 'asc');
-        $this->assertEquals('apple', $drafts[0]->get('subject'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'subject',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals('apple', $drafts->data[0]->get('subject'));
 
-        $drafts = draft_repo::get_for_user(1, 1, 'subject', 'desc');
-        $this->assertEquals('fig', $drafts[0]->get('subject'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'subject',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals('fig', $drafts->data[0]->get('subject'));
 
         // sort by (time) created
-        $drafts = draft_repo::get_for_user(1, 1, 'created', 'asc');
-        $this->assertEquals(1111111111, $drafts[0]->get('timecreated'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'created',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1111111111, $drafts->data[0]->get('timecreated'));
 
-        $drafts = draft_repo::get_for_user(1, 1, 'created', 'desc');
-        $this->assertEquals(8888888888, $drafts[0]->get('timecreated'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'created',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(8888888888, $drafts->data[0]->get('timecreated'));
 
         // sort by (time) modified
-        $drafts = draft_repo::get_for_user(1, 1, 'modified', 'asc');
-        $this->assertEquals(1010101010, $drafts[0]->get('timemodified'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'modified',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1010101010, $drafts->data[0]->get('timemodified'));
 
-        $drafts = draft_repo::get_for_user(1, 1, 'modified', 'desc');
-        $this->assertEquals(5454545454, $drafts[0]->get('timemodified'));
+        $drafts = draft_repo::get_for_user(1, 1, [
+            'sort' => 'modified',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(5454545454, $drafts->data[0]->get('timemodified'));
     }
 
     ///////////////////////////////////////////////

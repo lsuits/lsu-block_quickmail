@@ -9,6 +9,8 @@ $page_params = [
     'courseid' => optional_param('courseid', 0, PARAM_INT),
     'sort' => optional_param('sort', '', PARAM_TEXT), // (field name)
     'dir' => optional_param('dir', '', PARAM_TEXT), // asc|desc
+    'page' => optional_param('page', 1, PARAM_INT),
+    'per_page' => 10, // adjust as necessary, maybe turn into real param?
 ];
 
 ////////////////////////////////////////
@@ -44,8 +46,30 @@ $sent_messages = block_quickmail\repos\sent_repo::get_for_user(
     $page_params['dir']
 );
 
+$paginated = block_quickmail\repos\pagination\paginator::get_paginated(
+    $sent_messages, 
+    $page_params['page'], 
+    $page_params['per_page'],
+    $_SERVER['REQUEST_URI']
+);
+
+///////////////////////////////////////////////////////////////////
+
+$paginated = block_quickmail\repos\sent_repo::get_for_user(
+    $USER->id, 
+    $page_params['courseid'], 
+    [
+        'sort' => $page_params['sort'], 
+        'dir' => $page_params['dir'],
+        'paginate' => true,
+        'page' => $page_params['page'], 
+        'per_page' => $page_params['per_page'],
+        'uri' => $_SERVER['REQUEST_URI']
+    ]
+);
+
 $rendered_sent_message_index = $renderer->sent_message_index_component([
-    'sent_messages' => $sent_messages,
+    'paginated' => $paginated,
     'user' => $USER,
     'course_id' => $page_params['courseid'],
     'sort_by' => $page_params['sort'],

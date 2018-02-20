@@ -30,7 +30,7 @@ use moodle_url;
 
 class sent_message_index_component extends component implements \renderable {
 
-    public $sent_messages;
+    public $paginated;
 
     public $user;
     
@@ -42,13 +42,13 @@ class sent_message_index_component extends component implements \renderable {
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->sent_messages = $this->get_param('sent_messages');
+        $this->paginated = $this->get_param('paginated');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
-        $this->course_sent_messages = $this->filter_messages_by_course($this->sent_messages, $this->course_id);
-        $this->user_course_array = $this->get_user_course_array($this->sent_messages, $this->course_id);
+        $this->course_sent_messages = $this->filter_messages_by_course($this->paginated->results(), $this->course_id);
+        $this->user_course_array = $this->get_user_course_array($this->paginated->results(), $this->course_id);
     }
 
     /**

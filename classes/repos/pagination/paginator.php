@@ -1,34 +1,32 @@
 <?php
 
-namespace block_quickmail\pagination;
+namespace block_quickmail\repos\pagination;
 
-use block_quickmail\pagination\paginated;
+use block_quickmail\repos\pagination\paginated;
 
 class paginator {
 
-    public $results;
+    public $total_count;
     public $page;
     public $per_page;
     public $page_uri;
-    public $results_total;
     public $total_pages;
-    public $sliced_results;
+    public $data;
 
-    public function __construct($results, $page = 1, $per_page = 10, $page_uri = '') {
-        $this->results = $results;
+    public function __construct($total_count, $page = 1, $per_page = 10, $page_uri = '') {
+        $this->total_count = $total_count;
         $this->page = $page;
         $this->per_page = $per_page;
         $this->page_uri = $page_uri;
-        $this->set_results_total();
         $this->paginate();
     }
 
-    public static function get_paginated($results, $page = 1, $per_page = 10, $page_uri = '')
-    {
-        $paginator = new self($results, $page, $per_page, $page_uri);
+    // public static function get_paginated($results, $page = 1, $per_page = 10, $page_uri = '')
+    // {
+    //     $paginator = new self($results, $page, $per_page, $page_uri);
 
-        return $paginator->paginated();
-    }
+    //     return $paginator->paginated();
+    // }
 
     /**
      * Performs calculation and setting of all pagination details
@@ -45,7 +43,7 @@ class paginator {
         
         $offset = $this->calculate_offset();
 
-        $this->sliced_results = array_slice($this->results, $offset, $this->per_page);
+        // $this->data = array_slice($this->results, $offset, $this->per_page);
     }
 
     /**
@@ -55,15 +53,10 @@ class paginator {
      * 
      * @return object
      */
-    public function paginated()
-    {
-        return new paginated($this);
-    }
-
-    private function set_results_total()
-    {
-        $this->results_total = count($this->results);
-    }
+    // public function paginated()
+    // {
+    //     return new paginated($this);
+    // }
 
     /**
      * Sets page number to "1" if input index is less than 1
@@ -84,7 +77,7 @@ class paginator {
      */
     private function calculate_total_pages()
     {
-        $this->total_pages = (int) ceil($this->results_total / $this->per_page);
+        $this->total_pages = (int) ceil($this->total_count / $this->per_page);
     }
 
     /**
