@@ -97,16 +97,10 @@ class draft_repo extends repo {
      */
     public static function get_for_user($user_id, $course_id = 0, $params = [])
     {
-        // set params
-            // sort, must be in list, default id
-            // dir, must asc|desc, default asc
-            // paginate, default false
-            // page, default 1
-            // per_page, default 10
-            // uri, default : $_SERVER['REQUEST_URI']
-
+        // instantiate repo
         $repo = new self($params);
 
+        // set params for db query
         $query_params = [
             'user_id' => $user_id, 
             'is_draft' => 1, 
@@ -114,26 +108,40 @@ class draft_repo extends repo {
             'timedeleted' => 0
         ];
 
-        // conditionally add course id if appropriate
+        // conditionally add course id to db query params if appropriate
         if ($course_id) {
             $query_params['course_id'] = $course_id;
         }
 
-        // if not paginating, return all results (sorted if necessary)
+        // if not paginating, return all sorted results
         if ( ! $repo->paginate) {
             $data = message::get_records(
                 $query_params,
                 $repo->get_sort_column_name($repo->sort),
                 strtoupper($repo->dir)
             );
+        
+        // otherwise, paginate and set the sorted results
         } else {
+            // get total count of records (necessary for pagination)
             $count = message::count_records(
                 $query_params
             );
 
-            $paginator = $repo->make_paginator($count);
-            
-            var_dump($paginator);die;
+            // get the calculated pagination parameters object
+            $paginated = $repo->get_paginated($count);
+
+            // set the pagination object on the result
+            $repo->set_result_pagination($paginated);
+
+            // pull the data with the validated pagination offset
+            $data = message::get_records(
+                $query_params,
+                $repo->get_sort_column_name($repo->sort),
+                strtoupper($repo->dir),
+                $paginated->offset,
+                $paginated->per_page
+            );
         }
 
         $repo->set_result_data($data);

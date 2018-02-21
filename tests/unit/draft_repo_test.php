@@ -4,35 +4,12 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\draft_repo;
 use block_quickmail\persistents\message;
+use block_quickmail\repos\pagination\paginated;
 
 class block_quickmail_draft_repo_testcase extends advanced_testcase {
     
     use has_general_helpers,
         sets_up_courses;
-
-    public function test_gets_paginated_results_for_user()
-    {
-        $this->resetAfterTest(true);
-
-        // create 30 drafts for user id: 1
-        foreach (range(1, 30) as $i) {
-            $this->create_message(true);
-        }
-
-        // get all drafts for user: 1
-        $drafts = draft_repo::get_for_user(1, 0, [
-            'sort' => 'id',
-            'dir' => 'asc',
-            'paginate' => true,
-            'page' => '1',
-            'per_page' => '4',
-            'uri' => 'testy',
-        ]);
-
-        $this->assertCount(4, $drafts->data);
-    }
-
-    /////////////////////////////
 
     public function test_find_or_null()
     {
@@ -305,6 +282,41 @@ class block_quickmail_draft_repo_testcase extends advanced_testcase {
             'dir' => 'desc'
         ]);
         $this->assertEquals(5454545454, $drafts->data[0]->get('timemodified'));
+    }
+
+    public function test_gets_paginated_results_for_user()
+    {
+        $this->resetAfterTest(true);
+
+        // create 30 drafts for user id: 1
+        foreach (range(1, 30) as $i) {
+            $this->create_message(true);
+        }
+
+        // get all drafts for user: 1
+        $drafts = draft_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'asc',
+            'paginate' => true,
+            'page' => '2',
+            'per_page' => '4',
+            'uri' => '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc',
+        ]);
+
+        $this->assertCount(4, $drafts->data);
+        $this->assertInstanceOf(paginated::class, $drafts->pagination);
+        $this->assertEquals(8, $drafts->pagination->page_count);
+        $this->assertEquals(4, $drafts->pagination->offset);
+        $this->assertEquals(4, $drafts->pagination->per_page);
+        $this->assertEquals(2, $drafts->pagination->current_page);
+        $this->assertEquals(3, $drafts->pagination->next_page);
+        $this->assertEquals(1, $drafts->pagination->previous_page);
+        $this->assertEquals(30, $drafts->pagination->total_count);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=2', $drafts->pagination->uri_for_page);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $drafts->pagination->first_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=8', $drafts->pagination->last_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=3', $drafts->pagination->next_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $drafts->pagination->previous_page_uri);
     }
 
     ///////////////////////////////////////////////
