@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\sent_repo;
 use block_quickmail\persistents\message;
+use block_quickmail\repos\pagination\paginated;
 
 class block_quickmail_sent_repo_testcase extends advanced_testcase {
     
@@ -38,17 +39,17 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         // get all sents for user: 1
         $sents = sent_repo::get_for_user(1);
 
-        $this->assertCount(4, $sents);
+        $this->assertCount(4, $sents->data);
 
         // get all sents for user: 1, course: 1
         $sents = sent_repo::get_for_user(1, 1);
 
-        $this->assertCount(3, $sents);
+        $this->assertCount(3, $sents->data);
 
         // get all sents for user: 1, course: 2
         $sents = sent_repo::get_for_user(1, 2);
 
-        $this->assertCount(1, $sents);
+        $this->assertCount(1, $sents->data);
     }
 
     public function test_sorts_get_for_user()
@@ -60,43 +61,73 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         // get all sents for user: 1
         $sents = sent_repo::get_for_user(1);
 
-        $this->assertCount(7, $sents);
-        $this->assertEquals('date', $sents[0]->get('subject'));
+        $this->assertCount(7, $sents->data);
+        $this->assertEquals('date', $sents->data[0]->get('subject'));
 
         // sort by id
-        $sents = sent_repo::get_for_user(1, 0, 'id', 'asc');
-        $this->assertEquals(142000, $sents[0]->get('id'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(142000, $sents->data[0]->get('id'));
 
-        $sents = sent_repo::get_for_user(1, 0, 'id', 'desc');
-        $this->assertEquals(142006, $sents[0]->get('id'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(142006, $sents->data[0]->get('id'));
 
         // sort by course
-        $sents = sent_repo::get_for_user(1, 0, 'course', 'asc');
-        $this->assertEquals(1, $sents[0]->get('course_id'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'course',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1, $sents->data[0]->get('course_id'));
 
-        $sents = sent_repo::get_for_user(1, 0, 'course', 'desc');
-        $this->assertEquals(5, $sents[0]->get('course_id'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'course',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(5, $sents->data[0]->get('course_id'));
 
         // sort by subject
-        $sents = sent_repo::get_for_user(1, 0, 'subject', 'asc');
-        $this->assertEquals('apple', $sents[0]->get('subject'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'subject',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals('apple', $sents->data[0]->get('subject'));
 
-        $sents = sent_repo::get_for_user(1, 0, 'subject', 'desc');
-        $this->assertEquals('grape', $sents[0]->get('subject'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'subject',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals('grape', $sents->data[0]->get('subject'));
 
         // sort by (time) created
-        $sents = sent_repo::get_for_user(1, 0, 'created', 'asc');
-        $this->assertEquals(1111111111, $sents[0]->get('timecreated'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'created',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1111111111, $sents->data[0]->get('timecreated'));
 
-        $sents = sent_repo::get_for_user(1, 0, 'created', 'desc');
-        $this->assertEquals(8888888888, $sents[0]->get('timecreated'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'created',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(8888888888, $sents->data[0]->get('timecreated'));
 
         // sort by (time) modified
-        $sents = sent_repo::get_for_user(1, 0, 'modified', 'asc');
-        $this->assertEquals(1010101010, $sents[0]->get('timemodified'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'modified', 
+            'sir' => 'asc'
+        ]);
+        $this->assertEquals(1010101010, $sents->data[0]->get('timemodified'));
 
-        $sents = sent_repo::get_for_user(1, 0, 'modified', 'desc');
-        $this->assertEquals(5454545454, $sents[0]->get('timemodified'));
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'modified', 
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(5454545454, $sents->data[0]->get('timemodified'));
     }
 
     public function test_sorts_get_for_user_and_course()
@@ -107,43 +138,108 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
 
         // get all sents for user: 1, course: 1
         $sents = sent_repo::get_for_user(1, 1);
-        $this->assertCount(4, $sents);
-        $this->assertEquals('date', $sents[0]->get('subject'));
+        $this->assertCount(4, $sents->data);
+        $this->assertEquals('date', $sents->data[0]->get('subject'));
 
         // sort by id
-        $sents = sent_repo::get_for_user(1, 1, 'id', 'asc');
-        $this->assertEquals(142000, $sents[0]->get('id'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'id', 
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(142000, $sents->data[0]->get('id'));
 
-        $sents = sent_repo::get_for_user(1, 1, 'id', 'desc');
-        $this->assertEquals(142006, $sents[0]->get('id'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'id', 
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(142006, $sents->data[0]->get('id'));
 
         // sort by course
-        $sents = sent_repo::get_for_user(1, 1, 'course', 'asc');
-        $this->assertEquals(1, $sents[0]->get('course_id'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'course', 
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1, $sents->data[0]->get('course_id'));
 
-        $sents = sent_repo::get_for_user(1, 1, 'course', 'desc');
-        $this->assertEquals(1, $sents[0]->get('course_id'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'course', 
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(1, $sents->data[0]->get('course_id'));
 
         // sort by subject
-        $sents = sent_repo::get_for_user(1, 1, 'subject', 'asc');
-        $this->assertEquals('apple', $sents[0]->get('subject'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'subject', 
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals('apple', $sents->data[0]->get('subject'));
 
-        $sents = sent_repo::get_for_user(1, 1, 'subject', 'desc');
-        $this->assertEquals('fig', $sents[0]->get('subject'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'subject', 
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals('fig', $sents->data[0]->get('subject'));
 
         // sort by (time) created
-        $sents = sent_repo::get_for_user(1, 1, 'created', 'asc');
-        $this->assertEquals(1111111111, $sents[0]->get('timecreated'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'created',
+            'dir' => 'asc'
+        ]);
+        $this->assertEquals(1111111111, $sents->data[0]->get('timecreated'));
 
-        $sents = sent_repo::get_for_user(1, 1, 'created', 'desc');
-        $this->assertEquals(8888888888, $sents[0]->get('timecreated'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'created',
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(8888888888, $sents->data[0]->get('timecreated'));
 
         // sort by (time) modified
-        $sents = sent_repo::get_for_user(1, 1, 'modified', 'asc');
-        $this->assertEquals(1010101010, $sents[0]->get('timemodified'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'modified', 
+            'sir' => 'asc'
+        ]);
+        $this->assertEquals(1010101010, $sents->data[0]->get('timemodified'));
 
-        $sents = sent_repo::get_for_user(1, 1, 'modified', 'desc');
-        $this->assertEquals(5454545454, $sents[0]->get('timemodified'));
+        $sents = sent_repo::get_for_user(1, 1, [
+            'sort' => 'modified', 
+            'dir' => 'desc'
+        ]);
+        $this->assertEquals(5454545454, $sents->data[0]->get('timemodified'));
+    }
+
+    public function test_gets_paginated_results_for_user()
+    {
+        $this->resetAfterTest(true);
+
+        // create 30 sents for user id: 1
+        foreach (range(1, 30) as $i) {
+            $this->create_message(true);
+        }
+
+        // get all sents for user: 1
+        $sents = sent_repo::get_for_user(1, 0, [
+            'sort' => 'id',
+            'dir' => 'asc',
+            'paginate' => true,
+            'page' => '2',
+            'per_page' => '4',
+            'uri' => '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc',
+        ]);
+
+        $this->assertCount(4, $sents->data);
+        $this->assertInstanceOf(paginated::class, $sents->pagination);
+        $this->assertEquals(8, $sents->pagination->page_count);
+        $this->assertEquals(4, $sents->pagination->offset);
+        $this->assertEquals(4, $sents->pagination->per_page);
+        $this->assertEquals(2, $sents->pagination->current_page);
+        $this->assertEquals(3, $sents->pagination->next_page);
+        $this->assertEquals(1, $sents->pagination->previous_page);
+        $this->assertEquals(30, $sents->pagination->total_count);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=2', $sents->pagination->uri_for_page);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $sents->pagination->first_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=8', $sents->pagination->last_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=3', $sents->pagination->next_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $sents->pagination->previous_page_uri);
     }
 
     ///////////////////////////////////////////////
