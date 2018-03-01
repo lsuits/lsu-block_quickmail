@@ -424,17 +424,61 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(0, $second_updated_message->get('is_draft'));
     }
 
+    public function test_filter_messages_by_course_from_array()
+    {
+        $this->resetAfterTest(true);
+
+        $messages = [];
+
+        $messages[] = $this->create_message(false, 1, 1);
+        $messages[] = $this->create_message(false, 2, 1);
+        $messages[] = $this->create_message(false, 3, 1);
+        $messages[] = $this->create_message(false, 4, 1);
+        $messages[] = $this->create_message(false, 3, 1);
+        $messages[] = $this->create_message(false, 2, 1);
+        $messages[] = $this->create_message(false, 1, 1);
+
+        $filtered = message::filter_messages_by_course($messages, 1);
+        $this->assertCount(2, $filtered);
+        
+        $filtered = message::filter_messages_by_course($messages, 4);
+        $this->assertCount(1, $filtered);
+    }
+
+    public function test_get_user_course_array_from_array()
+    {
+        $this->resetAfterTest(true);
+
+        $messages = [];
+
+        list($course1, $user_teacher1, $user_students1) = $this->setup_course_with_teacher_and_students();
+
+        $messages[] = $this->create_message(false, 1, $user_students1[0]->id);
+        $messages[] = $this->create_message(false, 2, $user_students1[1]->id);
+        $messages[] = $this->create_message(false, 3, $user_students1[2]->id);
+        $messages[] = $this->create_message(false, 4, $user_teacher1->id);
+        $messages[] = $this->create_message(false, 3, $user_students1[2]->id);
+        $messages[] = $this->create_message(false, 2, $user_students1[1]->id);
+        $messages[] = $this->create_message(false, 1, $user_students1[0]->id);
+
+        $user_course_array = message::get_user_course_array($messages, $course1->id);
+        $this->assertCount(2, $user_course_array);
+        
+        // should include this course, and the master course
+        $this->assertEquals($course1->shortname, $user_course_array[$course1->id]);
+    }
+
     ///////////////////////////////////////////////
     ///
     /// HELPERS
     /// 
     //////////////////////////////////////////////
     
-    private function create_message($is_draft = false)
+    private function create_message($is_draft = false, $course_id = 1, $user_id = 1)
     {
         return message::create_new([
-            'course_id' => 1,
-            'user_id' => 1,
+            'course_id' => $course_id,
+            'user_id' => $user_id,
             'message_type' => 'email',
             'is_draft' => $is_draft
         ]);

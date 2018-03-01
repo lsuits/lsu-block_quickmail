@@ -102,6 +102,7 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=3', $paginated->last_page_uri);
         $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=2', $paginated->next_page_uri);
         $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $paginated->previous_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=', $paginated->empty_uri);
     }
     
     public function test_paginator_returns_paginated_object_scenario_two()
@@ -121,11 +122,12 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals(4, $paginated->next_page);
         $this->assertEquals(2, $paginated->previous_page);
         $this->assertEquals(25, $paginated->total_count);
-        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&page=3&sort=subject&dir=asc', $paginated->uri_for_page);
-        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&page=1&sort=subject&dir=asc', $paginated->first_page_uri);
-        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&page=7&sort=subject&dir=asc', $paginated->last_page_uri);
-        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&page=4&sort=subject&dir=asc', $paginated->next_page_uri);
-        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&page=2&sort=subject&dir=asc', $paginated->previous_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=3', $paginated->uri_for_page);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $paginated->first_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=7', $paginated->last_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=4', $paginated->next_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=2', $paginated->previous_page_uri);
+        $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=', $paginated->empty_uri);
     }
 
 }

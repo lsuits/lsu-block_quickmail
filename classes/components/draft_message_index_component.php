@@ -27,28 +27,27 @@ namespace block_quickmail\components;
 use block_quickmail\components\component;
 use block_quickmail_plugin;
 use moodle_url;
+use block_quickmail\persistents\message;
 
 class draft_message_index_component extends component implements \renderable {
 
     public $draft_messages;
-
+    public $pagination;
     public $user;
-    
     public $course_id;
-    
     public $course_draft_messages;
-
     public $user_course_array;
 
     public function __construct($params = []) {
         parent::__construct($params);
         $this->draft_messages = $this->get_param('draft_messages');
+        $this->pagination = $this->get_param('draft_pagination');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
-        $this->course_draft_messages = $this->filter_messages_by_course($this->draft_messages, $this->course_id);
-        $this->user_course_array = $this->get_user_course_array($this->draft_messages, $this->course_id);
+        $this->course_draft_messages = message::filter_messages_by_course($this->draft_messages, $this->course_id);
+        $this->user_course_array = message::get_user_course_array($this->draft_messages, $this->course_id);
     }
 
     /**
@@ -59,16 +58,17 @@ class draft_message_index_component extends component implements \renderable {
     public function export_for_template($output) {
         $data = (object)[];
 
+        // get a flat array of course id => course name
         $data->userCourseArray = $this->transform_course_array($this->user_course_array, $this->course_id);
         $data->courseId = $this->course_id;
-        
         $data->sortBy = $this->sort_by;
         $data->isSortedAsc = $this->sort_dir == 'asc';
-
         $data->courseIsSorted = $this->is_attr_sorted('course');
         $data->subjectIsSorted = $this->is_attr_sorted('subject');
         $data->createdIsSorted = $this->is_attr_sorted('created');
         $data->modifiedIsSorted = $this->is_attr_sorted('modified');
+        
+        $data = $this->include_pagination($data, $this->pagination);
 
         $data->tableRows = [];
         

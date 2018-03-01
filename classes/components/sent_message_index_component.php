@@ -27,28 +27,27 @@ namespace block_quickmail\components;
 use block_quickmail\components\component;
 use block_quickmail_plugin;
 use moodle_url;
+use block_quickmail\persistents\message;
 
 class sent_message_index_component extends component implements \renderable {
 
-    public $paginated;
-
+    public $sent_messages;
+    public $pagination;
     public $user;
-    
     public $course_id;
-    
     public $course_sent_messages;
-
     public $user_course_array;
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->paginated = $this->get_param('paginated');
+        $this->sent_messages = $this->get_param('sent_messages');
+        $this->pagination = $this->get_param('sent_pagination');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
-        $this->course_sent_messages = $this->filter_messages_by_course($this->paginated->results(), $this->course_id);
-        $this->user_course_array = $this->get_user_course_array($this->paginated->results(), $this->course_id);
+        $this->course_sent_messages = message::filter_messages_by_course($this->sent_messages, $this->course_id);
+        $this->user_course_array = message::get_user_course_array($this->sent_messages, $this->course_id);
     }
 
     /**
@@ -61,14 +60,14 @@ class sent_message_index_component extends component implements \renderable {
 
         $data->userCourseArray = $this->transform_course_array($this->user_course_array, $this->course_id);
         $data->courseId = $this->course_id;
-        
         $data->sortBy = $this->sort_by;
         $data->isSortedAsc = $this->sort_dir == 'asc';
-
         $data->courseIsSorted = $this->is_attr_sorted('course');
         $data->subjectIsSorted = $this->is_attr_sorted('subject');
         $data->sentAtIsSorted = $this->is_attr_sorted('sent');
 
+        $data = $this->include_pagination($data, $this->pagination);
+        
         $data->tableRows = [];
         
         foreach ($this->course_sent_messages as $message) {

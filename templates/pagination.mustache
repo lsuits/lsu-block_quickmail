@@ -1,0 +1,68 @@
+{{#paginationShow}}
+    <nav>
+        <ul class="pagination">
+            {{#paginationShowFirst}}
+                <li class="page-item "
+                    data-region="page-item"
+                    data-page-number="1">
+                    <a href="{{paginationFirstPageUri}}"
+                       class="page-link"
+                       data-region="page-link">
+                        <span aria-hidden="true">{{#str}}first{{/str}}</span>
+                        <span class="sr-only">{{#str}}first{{/str}}</span>
+                    </a>
+                </li>
+            {{/paginationShowFirst}}
+
+            {{#paginationShowPrevious}}
+                <li class="page-item "
+                    data-region="page-item"
+                    data-page-number="{{paginationPreviousPage}}">
+                    <a href="{{paginationPreviousPageUri}}"
+                       class="page-link"
+                       data-region="page-link">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">{{#str}}previous{{/str}}</span>
+                    </a>
+                </li>
+            {{/paginationShowPrevious}}
+
+            <li class="page-item active "
+                data-region="page-item"
+                data-page-number="{{paginationCurrentPage}}">
+                <a href="{{paginationCurrentPageUri}}"
+                   class="page-link"
+                   data-region="page-link">
+                    <span aria-hidden="true">{{paginationCurrentPage}}</span>
+                    <span class="sr-only">{{paginationCurrentPage}}</span>
+                </a>
+            </li>
+
+            {{#paginationShowNext}}
+                <li class="page-item "
+                    data-region="page-item"
+                    data-page-number="{{paginationNextPage}}">
+                    <a href="{{paginationNextPageUri}}"
+                       class="page-link"
+                       data-region="page-link">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">{{#str}}next{{/str}}</span>
+                    </a>
+                </li>
+            {{/paginationShowNext}}
+
+            {{#paginationShowLast}}
+                <li class="page-item "
+                    data-region="page-item"
+                    data-page-number="{{paginationTotalCount}}">
+                    <a href="{{paginationLastPageUri}}"
+                       class="page-link"
+                       data-region="page-link">
+                        <span aria-hidden="true">{{#str}}last{{/str}}</span>
+                        <span class="sr-only">{{#str}}last{{/str}}</span>
+                    </a>
+                </li>
+            {{/paginationShowLast}}
+        </ul>
+    </nav>
+{{/paginationShow}}

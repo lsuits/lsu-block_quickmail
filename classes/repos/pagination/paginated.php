@@ -20,6 +20,7 @@ class paginated {
     public $next_page;
     public $previous_page;
     public $total_count;
+    public $empty_uri;
     public $uri_for_page;
     public $first_page_uri;
     public $last_page_uri;
@@ -35,6 +36,7 @@ class paginated {
         $this->next_page = $this->next_page();
         $this->previous_page = $this->previous_page();
         $this->total_count = $this->total_count();
+        $this->empty_uri = $this->empty_uri();
         $this->uri_for_page = $this->uri_for_page();
         $this->first_page_uri = $this->first_page_uri();
         $this->last_page_uri = $this->last_page_uri();
@@ -134,6 +136,30 @@ class paginated {
 
         return $this->inject_page_in_uri($page);
     }
+
+    /**
+     * Returns a complete uri with page key but no page number
+     * 
+     * @return string
+     */
+    private function empty_uri()
+    {
+        $current_uri = $this->paginator->page_uri;
+
+        $url = strstr($current_uri, '?', true);
+
+        // get pure query string from uri
+        $query_string = substr(strstr($current_uri, '?'), 1);
+
+        // explode query string into associative array
+        parse_str($query_string, $exploded_query_string);
+
+        // make sure the page number is at the end of the array
+        unset($exploded_query_string['page']);
+        $exploded_query_string['page'] = '';
+
+        return $url . '?' . http_build_query($exploded_query_string, '', '&');
+    }
     
     /**
      * Returns the uri for the first page
@@ -193,6 +219,8 @@ class paginated {
         // explode query string into associative array
         parse_str($query_string, $exploded_query_string);
 
+        // make sure the page number is at the end of the array
+        unset($exploded_query_string['page']);
         $exploded_query_string['page'] = $page;
 
         return $url . '?' . http_build_query($exploded_query_string, '', '&');

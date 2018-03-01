@@ -88,8 +88,8 @@ try {
 
 // get all (unsent) message drafts belonging to this user and course
 $draft_messages = block_quickmail\repos\draft_repo::get_for_user($USER->id, $page_params['courseid'], [
-    $page_params['sort'], 
-    $page_params['dir'],
+    'sort' => $page_params['sort'], 
+    'dir' => $page_params['dir'],
     'paginate' => true,
     'page' => $page_params['page'], 
     'per_page' => $page_params['per_page'],
@@ -97,7 +97,8 @@ $draft_messages = block_quickmail\repos\draft_repo::get_for_user($USER->id, $pag
 ]);
 
 $rendered_draft_message_index = $renderer->draft_message_index_component([
-    'draft_messages' => $draft_messages,
+    'draft_messages' => $draft_messages->data,
+    'draft_pagination' => $draft_messages->pagination,
     'user' => $USER,
     'course_id' => $page_params['courseid'],
     'sort_by' => $page_params['sort'],

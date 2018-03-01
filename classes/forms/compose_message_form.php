@@ -188,6 +188,16 @@ class compose_message_form extends \moodleform {
                     implode(', ', $this->draft_message->get_additional_emails(true))
                 );
             }
+        } else {
+            $mform->addElement(
+                'hidden', 
+                'additional_emails',
+                ''
+            );
+            $mform->setType(
+                'additional_emails', 
+                PARAM_TEXT
+            );
         }
 
         ////////////////////////////////////////////////////////////
