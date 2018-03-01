@@ -456,6 +456,21 @@ class message extends persistent {
 		$this->read();
 	}
 
+	/**
+	 * Unqueue this message and move to draft status
+	 * 
+	 * @return message
+	 */
+	public function unqueue()
+	{
+		$this->set('to_send_at', 0);
+		$this->set('is_draft', true);
+		$this->update();
+		
+		// return a refreshed message record
+		return $this->read();
+	}
+
 	///////////////////////////////////////////////
 	///
 	///  UTILITIES

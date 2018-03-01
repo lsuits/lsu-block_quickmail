@@ -62,15 +62,14 @@ $request = block_quickmail_request::for_route('queued')->with_form($manage_queue
 try {
     // UNQUEUE
     if ($request->to_unqueue_message()) {
-        
         // attempt to fetch the message to unqueue
         if ( ! $message = block_quickmail\repos\queued_repo::find_for_user_or_null($request->data->unqueue_message_id, $USER->id)) {
             // redirect and notify of error
-            // $request->redirect_as_error(block_quickmail_plugin::_s('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);  <-----------------------
+            $request->redirect_as_error(block_quickmail_plugin::_s('queued_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
         }
 
-        // attempt to soft delete
-        // $message->soft_delete();  <---------------------
+        // attempt to unqueue
+        $message->unqueue();
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $manage_queued_form->set_error_exception($e);

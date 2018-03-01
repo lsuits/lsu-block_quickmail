@@ -468,6 +468,26 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($course1->shortname, $user_course_array[$course1->id]);
     }
 
+    public function test_unqueue_message()
+    {
+        $this->resetAfterTest(true);
+
+        $queued_message = message::create_new([
+            'course_id' => 1,
+            'user_id' => 1,
+            'message_type' => 'email',
+            'to_send_at' => time()
+        ]);
+
+        $this->assertTrue($queued_message->is_queued_message());
+        $this->assertEquals('queued', $queued_message->get_status());
+
+        $queued_message->unqueue();
+
+        $this->assertFalse($queued_message->is_queued_message());
+        $this->assertEquals('drafted', $queued_message->get_status());
+    }
+
     ///////////////////////////////////////////////
     ///
     /// HELPERS

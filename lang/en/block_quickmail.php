@@ -35,6 +35,7 @@ $string['alternate_resend_confirmation'] = 'Re-send confirm email';
 $string['alternate_confirmation_email_resent'] = 'The confirmation email has been resent!';
 
 $string['draft_no_record'] = 'Could not find that draft message.';
+$string['queued_no_record'] = 'Could not find that queued message.';
 
 $string['fullname'] ='Full name';
 $string['signature_title_required'] = 'A signature title is required.';
