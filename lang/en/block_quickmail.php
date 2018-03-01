@@ -1,12 +1,7 @@
 <?php
 
-// general
 $string['pluginname'] = 'Quickmail';
-
-// compose message form text
-$string['compose_heading'] = 'Send {$a->scope} {$a->message_type}';
 $string['subject'] = 'Subject';
-$string['noreply'] = 'No-Reply';
 $string['body'] = 'Body';
 $string['duplicate'] = 'Duplicate';
 $string['cancel'] = 'Cancel';
@@ -21,6 +16,7 @@ $string['view_queued'] = 'View Scheduled';
 $string['unqueue'] = 'Unqueue';
 $string['no_queued'] = 'Could not find that queued message.';
 $string['send_message'] = 'Send Message';
+
 $string['additional_emails'] = 'Additional Recipient Emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
 
