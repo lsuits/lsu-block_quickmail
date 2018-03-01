@@ -115,7 +115,12 @@ class block_quickmail extends block_list {
                 'page' => 'drafts',
             ]);
 
-            // TODO: view queued messages
+            // manage queued
+            $this->add_item_to_content([
+                'lang_key' => 'view_queued',
+                'icon_key' => 'i/calendareventtime',
+                'page' => 'queued',
+            ]);
 
             // view sent
             $this->add_item_to_content([

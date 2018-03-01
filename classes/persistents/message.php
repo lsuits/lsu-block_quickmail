@@ -246,7 +246,9 @@ class message extends persistent {
 	 */
 	public function is_queued_message()
 	{
-		return (bool) $this->get('to_send_at') !== 0 && ! $this->is_sent_message();
+		$to_be_sent = (bool) $this->get('to_send_at');
+
+		return (bool) $to_be_sent && ! $this->is_sent_message();
 	}
 
 	/**

@@ -1,0 +1,96 @@
+<div class="block_quickmail_queued_message_index">
+    <select id="select_course_filter">
+        <option value="0">All Courses</option>
+        {{# userCourseArray }}
+            <option value="{{ userCourseId }}" {{ selectedAttr }}>{{ userCourseName }}</option>
+        {{/ userCourseArray }}
+    </select>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {{#courseIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=course&dir=desc">Course</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">Course</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/courseIsSorted}}
+                {{^courseIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">Course</a></th>
+                {{/courseIsSorted}}
+
+                {{#subjectIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=desc">Subject</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">Subject</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/subjectIsSorted}}
+                {{^subjectIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">Subject</a></th>
+                {{/subjectIsSorted}}
+
+                <th>Message Preview</th>
+                
+                {{#createdIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=created&dir=desc">Created</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">Created</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/createdIsSorted}}
+                {{^createdIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">Created</a></th>
+                {{/createdIsSorted}}
+
+                {{#scheduledIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=scheduled&dir=desc">Scheduled Time</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=scheduled&dir=asc">Scheduled Time</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/scheduledIsSorted}}
+                {{^scheduledIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=scheduled&dir=asc">Scheduled Time</a></th>
+                {{/scheduledIsSorted}}
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ courseName }}</td>
+                    <td>{{ subjectPreview }}</td>
+                    <td>{{ messagePreview }}</td>
+                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    <td>{{#userdate}} {{scheduledSendAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    <td>
+                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</a>
+                        <button role="button" class="btn btn-info btn-sm btn-unqueue-message" data-queued-id="{{ id }}">{{# str }} unqueue, block_quickmail {{/ str }}</button>
+                    </td>
+                </tr>
+            {{/ tableRows }}
+
+            {{^ tableRows }}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} no_queued, block_quickmail {{/ str }}</td>
+                </tr>
+            {{/ tableRows }}
+        </tbody>
+    </table>
+
+    {{< block_quickmail/pagination }}
+    {{/ block_quickmail/pagination }}
+    
+    <a href="{{ urlBack }}" class="btn btn-info">{{ urlBackLabel }}</a>
+</div>

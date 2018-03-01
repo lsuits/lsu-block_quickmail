@@ -38,7 +38,8 @@
             <exclude>tests/unit/message_persistent_test.php</exclude>
             <exclude>tests/unit/draft_repo_test.php</exclude>
             <exclude>tests/unit/sent_repo_test.php</exclude>
-            <!-- <exclude>tests/unit/paginator_test.php</exclude> -->
+            <exclude>tests/unit/queued_repo_test.php</exclude>
+            <exclude>tests/unit/paginator_test.php</exclude>
             <exclude>tests/unit/signature_persistent_test.php</exclude>
             <exclude>tests/unit/alternate_persistent_test.php</exclude>
             <exclude>tests/unit/create_alternate_form_validator_test.php</exclude>
