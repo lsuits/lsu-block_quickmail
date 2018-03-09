@@ -1,23 +1,16 @@
 define(['jquery', 'core/log', 'core/notification'], function($, log, notification) {
  
     return {
-        init: function() {
-            // notification.alert('Hello', 'Welcome to my site!', 'Continue');
+        init: function(courseId) {
+            // console.log(courseUserData);
 
-            // log.debug('Quickmail initializing');
+            // var found = _.find(courseUserData.groups, { 'id': 3 });
+            // console.log(found);
 
-            // $('.create-signature-btn').click(function(e) {
+            // $('[name="doit"]').click(function(e) {
             //     e.preventDefault();
-            //     alert('you clicky!');
+            //     $('.courseUserData').append('one');
             // });
-            
-            // var trigger = $('#create-signature-btn');
-
-            // ModalFactory.create({
-            //     title: 'test title',
-            //     body: '<p>whateva</p>',
-            //     footer: 'and all that'
-            // }, trigger);
         }
     };
 });
