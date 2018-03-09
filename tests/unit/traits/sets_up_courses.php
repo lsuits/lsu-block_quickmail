@@ -73,6 +73,74 @@ trait sets_up_courses {
         ];
     }
 
+    public function get_role_list()
+    {
+        $archetypes = get_role_archetypes();
+
+        $results = [];
+        $i = 1;
+
+        foreach ($archetypes as $archetype) {
+            $results[$i] = $archetype;
+            $i++;
+        }
+
+        return $results;
+    }
+
+    // manager
+    // coursecreator
+    // editingteacher
+    // teacher
+    // student
+    // guest
+    // user
+    // frontpage
+    
+    // returns [course, context, enrolled_users]
+    public function setup_course_with_users($params = [])
+    {
+        // create a course category
+        $category = $this->getDataGenerator()->create_category();
+
+        // create a course
+        $course = $this->getDataGenerator()->create_course();
+
+        $roles = $this->get_role_list();
+        
+        // initialize user results container
+        $enrolled_users = [];
+
+        foreach($roles as $role_name) {
+            $enrolled_users[$role_name] = [];
+        }
+
+        foreach ($roles as $role_id => $role_name) {
+            if (array_key_exists($role_name, $params)) {
+                foreach (range(1, $params[$role_name]) as $i) {
+                    $handle = $role_name . $i;
+
+                    // create a user
+                    $user = $this->getDataGenerator()->create_user([
+                        'email' => $handle . '@example.com', 
+                        'username' => $handle
+                    ]);
+
+                    // enroll user in course
+                    $this->getDataGenerator()->enrol_user($user->id, $course->id, $role_id, 'manual');
+
+                    $enrolled_users[$role_name][] = $user;
+                }
+            }
+        }
+
+        return [
+            $course,
+            context_course::instance($course->id),
+            $enrolled_users
+        ];
+    }
+
     /*
      * FOR SOME REASON THIS DOES NOT WORK !! :(
      */
