@@ -10,7 +10,10 @@ class compose_transformer extends transformer {
     {
         $this->transformed_data->subject = (string) $this->form_data->subject;
         $this->transformed_data->message = (string) $this->form_data->message_editor['text'];
-        $this->transformed_data->mailto_ids = $this->get_transformed_mailto_ids();
+        $this->transformed_data->included_entity_ids = $this->get_transformed_included_entity_ids();
+        $this->transformed_data->excluded_entity_ids = $this->get_transformed_excluded_entity_ids();
+        $this->transformed_data->included_non_user_ids_string = $this->get_transformed_included_non_user_ids_string();
+        $this->transformed_data->excluded_non_user_ids_string = $this->get_transformed_excluded_non_user_ids_string();
         $this->transformed_data->additional_emails = $this->get_transformed_additional_emails();
         $this->transformed_data->signature_id = $this->get_transformed_signature_id();
         $this->transformed_data->message_type = $this->get_transformed_message_type();
@@ -22,13 +25,55 @@ class compose_transformer extends transformer {
     }
 
     /**
-     * Returns a sanitized array of recipient user ids from the form post data
+     * Returns a sanitized array of included recipient entity ids from the form post data (user_*, role_*, group_*)
      * 
      * @return array
      */
-    public function get_transformed_mailto_ids()
+    public function get_transformed_included_entity_ids()
     {
-        return empty($this->form_data->mailto_ids) ? [] : explode(',', rtrim($this->form_data->mailto_ids, ','));
+        return empty($this->form_data->included_ids) ? [] : $this->form_data->included_ids;
+    }
+
+    /**
+     * Returns a sanitized array of excluded recipient entity ids from the form post data (user_*, role_*, group_*)
+     * 
+     * @return array
+     */
+    public function get_transformed_excluded_entity_ids()
+    {
+        return empty($this->form_data->excluded_ids) ? [] : $this->form_data->excluded_ids;
+    }
+
+    /**
+     * Returns a comma-separated string of included role and group id keys from the form post data (role_*, group_*)
+     * 
+     * @return string
+     */
+    public function get_transformed_included_non_user_ids_string()
+    {
+        $ids = $this->get_transformed_included_entity_ids();
+
+        $ids = array_filter($ids, function($id) {
+            return strpos($id, 'role_') === 0 || strpos($id, 'group_') === 0;
+        });
+
+        return implode(',', $ids);
+    }
+
+    /**
+     * Returns a comma-separated string of excluded role and group id keys from the form post data (role_*, group_*)
+     * 
+     * @return string
+     */
+    public function get_transformed_excluded_non_user_ids_string()
+    {
+        $ids = $this->get_transformed_excluded_entity_ids();
+
+        $ids = array_filter($ids, function($id) {
+            return strpos($id, 'role_') === 0 || strpos($id, 'group_') === 0;
+        });
+
+        return implode(',', $ids);
     }
 
     /**

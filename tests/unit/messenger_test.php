@@ -27,8 +27,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
         ]);
@@ -52,8 +55,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
         ]);
@@ -96,8 +102,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
         ]);
@@ -125,8 +134,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
         ]);
@@ -180,8 +192,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message', []);
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'message', []);
 
         // send a moodle message from the teacher to the students now (not as queued adhoc tasks)
         messenger::compose($user_teacher, $course, $compose_form_data, null, false);
@@ -200,11 +215,13 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients, some invalid
+        $recipients['included']['user'] = ['12', '24', '36', '48', $user_students[0]->id];
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
-            'mailto_ids' => '12,24,36,48,' . $user_students[0]->id
         ]);
 
         // send an email from the teacher to the students as queued adhoc tasks)
@@ -227,11 +244,14 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         $now = time();
         $nextWeek = $now + (7 * 24 * 60 * 60);
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'to_send_at' => $nextWeek
         ]);
 
@@ -254,8 +274,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
             'additional_emails' => 'additional@one.com,additional@two.com,additional@three.com'
@@ -283,8 +306,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
             'receipt' => '1'
@@ -319,8 +345,11 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
             'signature' => '<p>This is my signature! Signed, The Teacher!</p>',
         ]);
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'subject' => 'Hello world',
             'body' => 'This is one fine body.',
             'signature_id' => $signature->get('id')

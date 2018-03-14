@@ -40,6 +40,7 @@ class compose_message_form extends \moodleform {
     public $context;
     public $user;
     public $course;
+    public $course_user_data;
     public $user_alternate_email_array;
     public $user_signature_array;
     public $course_config_array;
@@ -49,12 +50,13 @@ class compose_message_form extends \moodleform {
      * Instantiates and returns a compose message form
      * 
      * @param  object    $context
-     * @param  object    $user           auth user
-     * @param  object    $course         moodle course
+     * @param  object    $user               auth user
+     * @param  object    $course             moodle course
+     * @param  array.    $course_user_data   array including all role, group and user data for this course
      * @param  message   $draft_message
      * @return \block_quickmail\forms\compose_message_form
      */
-    public static function make($context, $user, $course, $draft_message = null)
+    public static function make($context, $user, $course, $course_user_data = [], $draft_message = null)
     {
         $target_url = self::generate_target_url([
             'courseid' => $course->id,
@@ -74,6 +76,7 @@ class compose_message_form extends \moodleform {
             'context' => $context,
             'user' => $user,
             'course' => $course,
+            'course_user_data' => $course_user_data,
             'user_alternate_email_array' => $user_alternate_email_array,
             'user_signature_array' => $user_signature_array,
             'course_config_array' => $course_config_array,
@@ -91,6 +94,7 @@ class compose_message_form extends \moodleform {
         $this->context = $this->_customdata['context'];
         $this->user = $this->_customdata['user'];
         $this->course = $this->_customdata['course'];
+        $this->course_user_data = $this->_customdata['course_user_data'];
         $this->user_alternate_email_array = $this->_customdata['user_alternate_email_array'];
         $this->user_signature_array = $this->_customdata['user_signature_array'];
         $this->course_config_array = $this->_customdata['course_config_array'];
@@ -120,25 +124,50 @@ class compose_message_form extends \moodleform {
         }
 
         ////////////////////////////////////////////////////////////
-        ///  mailto_ids (text)
+        ///  mailto_ids (text) - NOT USED ANYMORE, REMOVE!!!
         ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'hidden', 
-            'mailto_ids', 
-            ''
-        );
-        $mform->setType(
-            'mailto_ids', 
-            PARAM_TEXT
-        );
+        // $mform->addElement(
+        //     'hidden', 
+        //     'mailto_ids', 
+        //     ''
+        // );
+        // $mform->setType(
+        //     'mailto_ids', 
+        //     PARAM_TEXT
+        // );
 
-        // inject default if draft mesage
-        $mform->setDefault(
-            'mailto_ids', 
-            $this->is_draft_message() 
-                ? implode(',', $this->draft_message->get_message_recipients(true))
-                : '70,72,77,86,'   // <--------------- this is for testing!!!!
-        );
+        // // inject default if draft mesage
+        // $mform->setDefault(
+        //     'mailto_ids', 
+        //     $this->is_draft_message() 
+        //         ? implode(',', $this->draft_message->get_message_recipients(true))
+        //         : '70,72,77,86,'   // <--------------- this is for testing!!!!
+        // );
+
+        ////////////////////////////////////////////////////////////
+        ///  included & excluded recipient entities (multiselect)
+        ////////////////////////////////////////////////////////////
+        
+        $recipient_entities = $this->get_recipient_entities();
+
+        $options = [
+            'multiple' => true,
+            'showsuggestions' => true,
+            'casesensitive' => false,
+            'tags' => false,
+            'ajax' => ''
+        ];
+        
+        $mform->addElement('autocomplete', 'included_entity_ids', 'To', $recipient_entities, array_merge($options, [
+            'noselectionstring' => 'No included recipients',
+            'placeholder' => 'Who should recieve this message?',
+        ]))->setValue([]);
+
+        $mform->addElement('autocomplete', 'excluded_entity_ids', 'Exclude', $recipient_entities, array_merge($options, [
+            'noselectionstring' => 'No excluded recipients',
+            'placeholder' => 'Who should NOT recieve this message?',
+        ]))->setValue([]);
+
 
         ////////////////////////////////////////////////////////////
         ///  subject (text)
@@ -519,5 +548,22 @@ class compose_message_form extends \moodleform {
             date("s", $to_send_at)
         );
     }
+
+    private function get_recipient_entities()
+    {
+        $results = [];
+
+        foreach(['role', 'group', 'user'] as $type) {
+            foreach($this->course_user_data[$type . 's'] as $entity) {
+                $results[$type . '_' . $entity['id']] = $type == 'user' 
+                    ? $entity['name'] 
+                    : $entity['name'] . ' (' . ucfirst($type) . ')';
+            }            
+        }
+
+        return $results;
+    }
+
+    function dd($thing) { var_dump($thing);die;}
 
 }

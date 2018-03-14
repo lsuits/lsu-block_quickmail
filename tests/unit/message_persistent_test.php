@@ -11,6 +11,47 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
     use has_general_helpers,
         sets_up_courses;
 
+    public function test_create_composed_with_recipients_as_draft()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $params = [
+            'message_type' => 'message',
+            'alternate_email_id' => 4,
+            'included_non_user_ids_string' => 'role_3,group_1,role_4,user_1,user_2,user_3',
+            'excluded_non_user_ids_string' => 'role_5,group_2,role_1,user_4,user_2,user_6',
+            'signature_id' => 6,
+            'subject' => 'subject is here',
+            'message' => 'the message',
+            'receipt' => 0,
+            'to_send_at' => 0,
+            'no_reply' => 1,
+        ];
+
+        $message = message::create_composed($user_teacher, $course, (object) $params, true);
+
+        $this->assertInstanceOf(message::class, $message);
+        $this->assertEquals($course->id, $message->get('course_id'));
+        $this->assertEquals($user_teacher->id, $message->get('user_id'));
+        $this->assertEquals($params['message_type'], $message->get('message_type'));
+        // $this->assertEquals('role_3,group_1,role_4', $message->get('included_entity_ids'));
+        // $this->assertEquals('role_5,group_2,role_1', $message->get('excluded_entity_ids'));
+        $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
+        $this->assertEquals($params['signature_id'], $message->get('signature_id'));
+        $this->assertEquals($params['subject'], $message->get('subject'));
+        $this->assertEquals($params['message'], $message->get('body'));
+        $this->assertEquals($params['receipt'], $message->get('send_receipt'));
+        $this->assertEquals($params['to_send_at'], $message->get('to_send_at'));
+        $this->assertEquals($params['no_reply'], $message->get('no_reply'));
+        $this->assertEquals(1, $message->get('is_draft'));
+    }
+
+
+
     public function test_getters()
     {
         $this->resetAfterTest(true);
@@ -301,7 +342,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertTrue($message_future->get_to_send_in_future());
     }
 
-    public function test_create_composed_as_draft()
+    public function test_create_composed_with_no_recipients_as_draft()
     {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
@@ -312,6 +353,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
+            'included_non_user_ids_string' => '',
+            'excluded_non_user_ids_string' => '',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -326,6 +369,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $message->get('course_id'));
         $this->assertEquals($user_teacher->id, $message->get('user_id'));
         $this->assertEquals($params['message_type'], $message->get('message_type'));
+        // $this->assertEquals($params['included_non_user_ids_string'], $message->get('included_entity_ids'));
+        // $this->assertEquals($params['excluded_non_user_ids_string'], $message->get('excluded_entity_ids'));
         $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
         $this->assertEquals($params['signature_id'], $message->get('signature_id'));
         $this->assertEquals($params['subject'], $message->get('subject'));
@@ -335,6 +380,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($params['no_reply'], $message->get('no_reply'));
         $this->assertEquals(1, $message->get('is_draft'));
     }
+
+    
 
     public function test_create_composed_not_as_draft()
     {
@@ -347,6 +394,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
+            'included_non_user_ids_string' => '',
+            'excluded_non_user_ids_string' => '',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -372,6 +421,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $creation_params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
+            'included_non_user_ids_string' => '',
+            'excluded_non_user_ids_string' => '',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -385,6 +436,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $update_params = [
             'message_type' => 'email',
             'alternate_email_id' => 5,
+            'included_non_user_ids_string' => '',
+            'excluded_non_user_ids_string' => '',
             'signature_id' => 7,
             'subject' => 'an updated subject is here',
             'message' => 'the updated message',
@@ -411,6 +464,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $second_update_params = [
             'message_type' => 'email',
             'alternate_email_id' => 5,
+            'included_non_user_ids_string' => '',
+            'excluded_non_user_ids_string' => '',
             'signature_id' => 7,
             'subject' => 'an updated subject is here',
             'message' => 'the updated message',

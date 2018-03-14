@@ -17,6 +17,7 @@ use block_quickmail\filemanager\message_file_handler;
 use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
 use block_quickmail\messenger\subject_prepender;
+use block_quickmail\repos\user_repo;
 
 class messenger {
 
@@ -72,8 +73,11 @@ class messenger {
 
         // @TODO: handle posted file attachments (moodle)
         
+        // get only the resolved recipient user ids
+        $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
+
         // clear any existing recipients, and add those that have been recently submitted
-        $message->sync_recipients($transformed_data->mailto_ids);
+        $message->sync_recipients($recipient_user_ids);
 
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails($transformed_data->additional_emails);
@@ -184,8 +188,11 @@ class messenger {
         // handle saving and syncing of any uploaded file attachments
         message_file_handler::handle_posted_attachments($message, $form_data, 'attachments');
 
+        // get only the resolved recipient user ids
+        $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
+
         // clear any existing recipients, and add those that have been recently submitted
-        $message->sync_recipients($transformed_data->mailto_ids);
+        $message->sync_recipients($recipient_user_ids);
 
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails($transformed_data->additional_emails);

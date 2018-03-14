@@ -48,7 +48,7 @@
             <exclude>tests/unit/draft_repo_test.php</exclude>
             <exclude>tests/unit/sent_repo_test.php</exclude>
             <exclude>tests/unit/queued_repo_test.php</exclude>
-            <!-- <exclude>tests/unit/user_repo_test.php</exclude> -->
+            <exclude>tests/unit/user_repo_test.php</exclude>
 
             <!-- forms -->
             <exclude>tests/unit/compose_message_form_validator_test.php</exclude>

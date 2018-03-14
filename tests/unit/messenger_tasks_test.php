@@ -22,10 +22,13 @@ class block_quickmail_messenger_tasks_testcase extends advanced_testcase {
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
         $now = time();
 
         // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
             'to_send_at' => $now
         ]);
 

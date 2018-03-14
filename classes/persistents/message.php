@@ -32,63 +32,63 @@ class message extends persistent {
 	protected static function define_properties() {
 		return [
 			'course_id' => [
-					'type' => PARAM_INT,
+				'type' => PARAM_INT,
 			],
 			'user_id' => [
-					'type' => PARAM_INT,
+				'type' => PARAM_INT,
 			],
 			'message_type' => [
-					'type' => PARAM_TEXT,
+				'type' => PARAM_TEXT,
 			],
 			'alternate_email_id' => [
-					'type' => PARAM_INT,
-					'default' => 0,
+				'type' => PARAM_INT,
+				'default' => 0,
 			],
 			'signature_id' => [
-					'type' => PARAM_INT,
-					'default' => 0,
+				'type' => PARAM_INT,
+				'default' => 0,
 			],
 			'subject' => [
-					'type' => PARAM_TEXT,
-					'default' => null,
-					'null' => NULL_ALLOWED,
+				'type' => PARAM_TEXT,
+				'default' => null,
+				'null' => NULL_ALLOWED,
 			],
 			'body' => [
-					'type' => PARAM_RAW,
-					'default' => null,
-					'null' => NULL_ALLOWED,
+				'type' => PARAM_RAW,
+				'default' => null,
+				'null' => NULL_ALLOWED,
 			],
 			'editor_format' => [
-					'type' => PARAM_INT,
-					'default' => 1, // @TODO - make this configurable?
+				'type' => PARAM_INT,
+				'default' => 1, // @TODO - make this configurable?
 			],
 			'sent_at' => [
-					'type' => PARAM_INT,
-					'default' => 0,
+				'type' => PARAM_INT,
+				'default' => 0,
 			],
 			'to_send_at' => [
-					'type' => PARAM_INT,
-					'default' => 0,
+				'type' => PARAM_INT,
+				'default' => 0,
 			],
 			'is_draft' => [
-					'type' => PARAM_BOOL,
-					'default' => false,
+				'type' => PARAM_BOOL,
+				'default' => false,
 			],
 			'send_receipt' => [
-					'type' => PARAM_BOOL,
-					'default' => false,
+				'type' => PARAM_BOOL,
+				'default' => false,
 			],
 			'is_sending' => [
-					'type' => PARAM_BOOL,
-					'default' => false,
+				'type' => PARAM_BOOL,
+				'default' => false,
 			],
 			'no_reply' => [
-					'type' => PARAM_BOOL,
-					'default' => false,
+				'type' => PARAM_BOOL,
+				'default' => false,
 			],
 			'timedeleted' => [
-					'type' => PARAM_INT,
-					'default' => 0,
+				'type' => PARAM_INT,
+				'default' => 0,
 			],
 		];
 	}
@@ -350,6 +350,8 @@ class message extends persistent {
 			'user_id' => $user->id,
 			'message_type' => $data->message_type,
 			'alternate_email_id' => $data->alternate_email_id,
+			// 'included_entity_ids' => $data->included_non_user_ids_string,
+			// 'excluded_entity_ids' => $data->excluded_non_user_ids_string,
 			'signature_id' => $data->signature_id,
 			'subject' => $data->subject,
 			'body' => $data->message,
@@ -376,6 +378,8 @@ class message extends persistent {
 		}
 
 		$this->set('alternate_email_id', $data->alternate_email_id);
+		// $this->set('included_entity_ids', $data->included_non_user_ids_string);
+		// $this->set('excluded_entity_ids', $data->excluded_non_user_ids_string);
 		$this->set('subject', $data->subject);
 		$this->set('body', $data->message);
 		$this->set('message_type', $data->message_type);

@@ -23,6 +23,15 @@ $PAGE->set_url(new moodle_url($page_url, $page_params));
 block_quickmail_plugin::require_user_capability('cansend', $page_context);
 
 ////////////////////////////////////////
+/// GET COURSE USER DATA FOR SELECTION
+////////////////////////////////////////
+$course_user_data = get_course_user_data(
+    $course, 
+    $page_context, 
+    block_quickmail_config::block('roleselection')
+);
+
+////////////////////////////////////////
 /// CONSTRUCT PAGE
 ////////////////////////////////////////
 
@@ -33,7 +42,7 @@ $PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
 $PAGE->navbar->add(block_quickmail_plugin::_s('compose'));
 $PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-// $PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseid' => $course->id]);
+$PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseId' => $course->id]);
 // $PAGE->requires->js('/blocks/quickmail/js/selection.js'); // Get rid of this
 
 $renderer = $PAGE->get_renderer('block_quickmail');
@@ -85,6 +94,7 @@ $compose_form = \block_quickmail\forms\compose_message_form::make(
     $page_context, 
     $USER, 
     $course,
+    $course_user_data,
     $draft_message
 );
 
@@ -93,6 +103,8 @@ $compose_form = \block_quickmail\forms\compose_message_form::make(
 ////////////////////////////////////////
 
 $request = block_quickmail_request::for_route('compose')->with_form($compose_form);
+
+// dd($compose_form->get_data());
 
 // if a POST was submitted, attempt to take appropriate actions
 try {
@@ -104,6 +116,8 @@ try {
 
     // SEND
     } else if ($request->to_send_message()) {
+
+        // dd($compose_form->get_data());
 
         // attempt to send
         $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
@@ -144,3 +158,83 @@ echo $OUTPUT->header();
 $compose_form->render_error_notification();
 echo $rendered_compose_form;
 echo $OUTPUT->footer();
+
+////////////////////////////////////////
+/// PAGE DATA
+////////////////////////////////////////
+
+/**
+ * Returns an array of role/group/user data for a given course and context
+ *
+ * The returned array includes:
+ * - all course roles [id => name]
+ * - all course groups [id => name]
+ * - all actively enrolled users [id => "fullname"]
+ * 
+ * @param  object  $course
+ * @param  context $context
+ * @param  string $allowed_role_ids  optional comma-separated list of role ids to whitelist
+ * @return array
+ */
+function get_course_user_data($course, $context, $allowed_role_ids = '') {
+    $allowed_role_ids = explode(',', $allowed_role_ids);
+
+    // initialize a container for the collection of user data results
+    $course_user_data = [
+        'roles' => [],
+        'groups' => [],
+        'users' => [],
+    ];
+
+    // get all actively enrolled users
+    // $enrolled_users = get_enrolled_users($context, '', 0, $userfields = 'u.id,u.firstname,u.lastname', null, 0, 0, true);
+    $enrolled_users = \block_quickmail\repos\user_repo::get_course_users($context);
+
+    // add each user to the results collection
+    foreach ($enrolled_users as $user) {
+        $course_user_data['users'][] = [
+            'id' => $user->id,
+            'name' => $user->firstname . ' ' . $user->lastname,
+        ];
+    }
+
+    // get all roles in course
+    $roles = get_roles_used_in_context($context);
+
+    // iterate through each role, add to results container
+    foreach ($roles as $role) {
+        // get all users assigned to this role
+        // $role_users = get_role_users($role->id, $context, false, 'u.id,u.firstname,u.lastname', 'u.id ASC', false);
+        $role_users = \block_quickmail\repos\user_repo::get_course_role_users($context, $role->id);
+
+        // if role is not white-listed by config, do not add
+        if (in_array($role->id, $allowed_role_ids)) {
+            $course_user_data['roles'][] = [
+                'id' => $role->id,
+                'name' => $role->shortname,
+                // 'users' => array_values($role_users)
+            ];
+        }
+    }
+
+    // get all groups in course
+    $groups = groups_get_all_groups($course->id);
+
+    // iterate through each group
+    foreach ($groups as $group) {
+        // get all users for this group
+        // $group_users = groups_get_members($group->id, 'u.id,u.firstname,u.lastname', 'u.id ASC');
+        $role_users = \block_quickmail\repos\user_repo::get_course_group_users($context, $group->id);
+
+        // add this group's data to the results container
+        $course_user_data['groups'][] = [
+            'id' => $group->id,
+            'name' => $group->name,
+            // 'users' => array_values($group_users)
+        ];
+    }
+
+    return $course_user_data;
+}
+
+function dd($thing) { var_dump($thing);die; }

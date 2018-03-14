@@ -78,6 +78,21 @@
         <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="block_quickmail_draft_recips" COMMENT="The recipient entity keys of a specific message">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="message_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent message id"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="7" NOTNULL="true" SEQUENCE="false" COMMENT="The inclusion type. exclude or include"/>
+        <FIELD NAME="recipient_type" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="The type of recipient entity. role, group, or user."/>
+        <FIELD NAME="recipient_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The recipient entity id."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
     <TABLE NAME="block_quickmail_msg_ad_email" COMMENT="Additional emails that a specific message was sent to">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
