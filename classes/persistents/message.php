@@ -11,6 +11,7 @@ use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\message_recipient;
+use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_additional_email;
 use block_quickmail\persistents\message_attachment;
  
@@ -107,9 +108,9 @@ class message extends persistent {
 	 * @return array
 	 */
 	public function get_additional_emails($as_email_array = false) {
-		$messageId = $this->get('id');
+		$message_id = $this->get('id');
 
-		$additionals = message_additional_email::get_records(['message_id' => $messageId]);
+		$additionals = message_additional_email::get_records(['message_id' => $message_id]);
 
 		if ( ! $as_email_array) {
 			return $additionals;
@@ -132,9 +133,9 @@ class message extends persistent {
 	 * @return array
 	 */
 	public function get_message_recipients($as_user_id_array = false) {
-		$messageId = $this->get('id');
+		$message_id = $this->get('id');
 
-		$recipients = message_recipient::get_records(['message_id' => $messageId]);
+		$recipients = message_recipient::get_records(['message_id' => $message_id]);
 
 		if ( ! $as_user_id_array) {
 			return $recipients;
@@ -150,14 +151,27 @@ class message extends persistent {
 	}
 
 	/**
+	 * Returns the message draft recipients that are associated with this message
+	 *
+	 * @return array
+	 */
+	public function get_message_draft_recipients() {
+		$message_id = $this->get('id');
+
+		$recipients = message_draft_recipient::get_records(['message_id' => $message_id]);
+
+		return $recipients;
+	}
+
+	/**
 	 * Returns the message attachments that are associated with this message
 	 *
 	 * @return array
 	 */
 	public function get_message_attachments() {
-		$messageId = $this->get('id');
+		$message_id = $this->get('id');
 
-		$attachments = message_attachment::get_records(['message_id' => $messageId]);
+		$attachments = message_attachment::get_records(['message_id' => $message_id]);
 
 		return $attachments;
 	}
@@ -350,8 +364,6 @@ class message extends persistent {
 			'user_id' => $user->id,
 			'message_type' => $data->message_type,
 			'alternate_email_id' => $data->alternate_email_id,
-			// 'included_entity_ids' => $data->included_non_user_ids_string,
-			// 'excluded_entity_ids' => $data->excluded_non_user_ids_string,
 			'signature_id' => $data->signature_id,
 			'subject' => $data->subject,
 			'body' => $data->message,
@@ -378,8 +390,6 @@ class message extends persistent {
 		}
 
 		$this->set('alternate_email_id', $data->alternate_email_id);
-		// $this->set('included_entity_ids', $data->included_non_user_ids_string);
-		// $this->set('excluded_entity_ids', $data->excluded_non_user_ids_string);
 		$this->set('subject', $data->subject);
 		$this->set('body', $data->message);
 		$this->set('message_type', $data->message_type);
@@ -422,6 +432,48 @@ class message extends persistent {
 
 		// cache the count for external use
 		block_quickmail_cache::store('qm_msg_recip_count')->put($this->get('id'), $count);
+
+		// refresh record (necessary?)
+		$this->read();
+	}
+
+	/**
+	 * Replaces all "draft recipients" for this message with the given arrays of entity keys
+	 * 
+	 * @param  array  $include_key_container  [role_*, group_*, user_*]
+	 * @return void
+	 */
+	public function sync_draft_recipients($include_key_container = [], $exclude_key_container = [])
+	{
+		// clear all current draft recipients
+		message_draft_recipient::clear_all_for_message($this);
+
+		// iterate through allowed "inclusion types"
+		foreach (['include', 'exclude'] as $type) {
+			$key_container = $type . '_key_container';
+
+			// iterate through the given named key container
+			foreach ($$key_container as $key) {
+				$exploded = explode('_', $key);
+
+				// if the key was a valid value
+				if (count($exploded) == 2 && in_array($exploded[0], ['role', 'group', 'user'])) {
+					// set the attributes appropriately
+					$recipient_type = $exploded[0];
+					$recipient_id = $exploded[1];
+
+					// if the id is (potentially) valid
+					if (is_numeric($recipient_id)) {
+						// create a record
+						message_draft_recipient::create_for_message($this, [
+							'type' => $type,
+							'recipient_type' => $recipient_type,
+							'recipient_id' => $recipient_id,
+						]);
+					}
+				}
+			}
+		}
 
 		// refresh record (necessary?)
 		$this->read();

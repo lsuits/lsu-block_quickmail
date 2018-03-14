@@ -3,6 +3,7 @@
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\persistents\message;
+use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
 
@@ -22,8 +23,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
-            'included_non_user_ids_string' => 'role_3,group_1,role_4,user_1,user_2,user_3',
-            'excluded_non_user_ids_string' => 'role_5,group_2,role_1,user_4,user_2,user_6',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -38,8 +37,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $message->get('course_id'));
         $this->assertEquals($user_teacher->id, $message->get('user_id'));
         $this->assertEquals($params['message_type'], $message->get('message_type'));
-        // $this->assertEquals('role_3,group_1,role_4', $message->get('included_entity_ids'));
-        // $this->assertEquals('role_5,group_2,role_1', $message->get('excluded_entity_ids'));
         $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
         $this->assertEquals($params['signature_id'], $message->get('signature_id'));
         $this->assertEquals($params['subject'], $message->get('subject'));
@@ -49,8 +46,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($params['no_reply'], $message->get('no_reply'));
         $this->assertEquals(1, $message->get('is_draft'));
     }
-
-
 
     public function test_getters()
     {
@@ -257,6 +252,112 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(3, $value);
     }
 
+    public function test_sync_draft_recipients()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        // create some includes and excludes (with some invalid)
+        $includes = [
+            'not_good',
+            'role_1',
+            'role_a',
+            'role_3',
+            'group_2',
+            'group_4',
+            'user_11',
+            'user_15',
+            'something_else'
+        ];
+
+        $excludes = [
+            'role_1',
+            'role_2',
+            'group_2',
+            'group_45',
+            'user_19',
+            'user_15',
+            'invalid_key'
+        ];
+
+        $message->sync_draft_recipients($includes, $excludes);
+        
+        $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
+        
+        $this->assertCount(12, $count);
+
+        $draft_recipients = $message->get_message_draft_recipients();
+
+        $this->assertCount(12, $draft_recipients);
+
+        $first = $draft_recipients[0];
+
+        $this->assertInstanceOf(message_draft_recipient::class, $first);
+        $this->assertEquals('include', $first->get('type'));
+        $this->assertEquals('role', $first->get('recipient_type'));
+        $this->assertEquals('1', $first->get('recipient_id'));
+        $this->assertNotNull($first->get('timecreated'));
+        $this->assertNotNull($first->get('timemodified'));
+
+        message_draft_recipient::clear_all_for_message($message);
+
+        $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
+        
+        $this->assertCount(0, $count);
+
+        $message = $this->create_message();
+
+        // create some includes and excludes for this new message
+        $includes = [
+            'role_1',
+            'role_3',
+            'group_2',
+            'group_4',
+            'user_11',
+            'user_15',
+        ];
+
+        $excludes = [
+            'role_1',
+            'role_2',
+            'group_2',
+            'group_45',
+            'user_19',
+            'user_15',
+            'invalid_key'
+        ];
+
+        $message->sync_draft_recipients($includes, $excludes);
+        
+        $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
+
+        $this->assertCount(12, $count);
+
+        // create some different includes and excludes for this same message
+        $includes = [
+            'role_2',
+            'role_3',
+            'group_1',
+            'user_17',
+            'user_18',
+        ];
+
+        $excludes = [
+            'role_5',
+            'role_not_good',
+            'user_19',
+            'user_15',
+            'invalid_key'
+        ];
+
+        $message->sync_draft_recipients($includes, $excludes);
+
+        $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
+
+        $this->assertCount(8, $count);
+    }
+    
     public function test_message_draft_status()
     {
         $this->resetAfterTest(true);
@@ -353,8 +454,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
-            'included_non_user_ids_string' => '',
-            'excluded_non_user_ids_string' => '',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -369,8 +468,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $message->get('course_id'));
         $this->assertEquals($user_teacher->id, $message->get('user_id'));
         $this->assertEquals($params['message_type'], $message->get('message_type'));
-        // $this->assertEquals($params['included_non_user_ids_string'], $message->get('included_entity_ids'));
-        // $this->assertEquals($params['excluded_non_user_ids_string'], $message->get('excluded_entity_ids'));
         $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
         $this->assertEquals($params['signature_id'], $message->get('signature_id'));
         $this->assertEquals($params['subject'], $message->get('subject'));
@@ -394,8 +491,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
-            'included_non_user_ids_string' => '',
-            'excluded_non_user_ids_string' => '',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -421,8 +516,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $creation_params = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
-            'included_non_user_ids_string' => '',
-            'excluded_non_user_ids_string' => '',
             'signature_id' => 6,
             'subject' => 'subject is here',
             'message' => 'the message',
@@ -436,8 +529,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $update_params = [
             'message_type' => 'email',
             'alternate_email_id' => 5,
-            'included_non_user_ids_string' => '',
-            'excluded_non_user_ids_string' => '',
             'signature_id' => 7,
             'subject' => 'an updated subject is here',
             'message' => 'the updated message',
@@ -464,8 +555,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $second_update_params = [
             'message_type' => 'email',
             'alternate_email_id' => 5,
-            'included_non_user_ids_string' => '',
-            'excluded_non_user_ids_string' => '',
             'signature_id' => 7,
             'subject' => 'an updated subject is here',
             'message' => 'the updated message',

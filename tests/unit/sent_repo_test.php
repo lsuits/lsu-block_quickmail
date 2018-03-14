@@ -69,13 +69,13 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
             'sort' => 'id',
             'dir' => 'asc'
         ]);
-        $this->assertEquals(142000, $sents->data[0]->get('id'));
+        $this->assertEquals(143000, $sents->data[0]->get('id'));
 
         $sents = sent_repo::get_for_user(1, 0, [
             'sort' => 'id',
             'dir' => 'desc'
         ]);
-        $this->assertEquals(142006, $sents->data[0]->get('id'));
+        $this->assertEquals(143006, $sents->data[0]->get('id'));
 
         // sort by course
         $sents = sent_repo::get_for_user(1, 0, [
@@ -146,13 +146,13 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
             'sort' => 'id', 
             'dir' => 'asc'
         ]);
-        $this->assertEquals(142000, $sents->data[0]->get('id'));
+        $this->assertEquals(143000, $sents->data[0]->get('id'));
 
         $sents = sent_repo::get_for_user(1, 1, [
             'sort' => 'id', 
             'dir' => 'desc'
         ]);
-        $this->assertEquals(142006, $sents->data[0]->get('id'));
+        $this->assertEquals(143006, $sents->data[0]->get('id'));
 
         // sort by course
         $sents = sent_repo::get_for_user(1, 1, [
@@ -262,7 +262,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
     {
         global $DB;
 
-        // id: 142000
+        // id: 143000
         $sent1 = $this->create_message();
         $sent1->set('course_id', 1);
         $sent1->set('subject', 'date');
@@ -272,7 +272,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         $sent->timemodified = 3232323232;
         $DB->update_record('block_quickmail_messages', $sent);
 
-        // id: 142001
+        // id: 143001
         $sent2 = $this->create_message();
         $sent2->set('course_id', 5);
         $sent2->set('subject', 'elderberry');
@@ -282,7 +282,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         $sent->timemodified = 5252525252;
         $DB->update_record('block_quickmail_messages', $sent);
 
-        // id: 142002
+        // id: 143002
         $sent3 = $this->create_message();
         $sent3->set('course_id', 3);
         $sent3->set('subject', 'coconut');
@@ -292,7 +292,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         $sent->timemodified = 1919191919;
         $DB->update_record('block_quickmail_messages', $sent);
 
-        // id: 142003
+        // id: 143003
         $sent4 = $this->create_message();
         $sent4->set('course_id', 1);
         $sent4->set('subject', 'apple');
@@ -302,7 +302,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         $sent->timemodified = 5454545454;
         $DB->update_record('block_quickmail_messages', $sent);
 
-        // id: 142004
+        // id: 143004
         $sent5 = $this->create_message();
         $sent5->set('course_id', 1);
         $sent5->set('subject', 'banana');
@@ -312,7 +312,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         $sent->timemodified = 3333333333;
         $DB->update_record('block_quickmail_messages', $sent);
 
-        // id: 142005
+        // id: 143005
         $sent6 = $this->create_message();
         $sent6->set('course_id', 2);
         $sent6->set('subject', 'grape');
@@ -322,7 +322,7 @@ class block_quickmail_sent_repo_testcase extends advanced_testcase {
         $sent->timemodified = 2525252525;
         $DB->update_record('block_quickmail_messages', $sent);
 
-        // id: 142006
+        // id: 143006
         $sent7 = $this->create_message();
         $sent7->set('course_id', 1);
         $sent7->set('subject', 'fig');
