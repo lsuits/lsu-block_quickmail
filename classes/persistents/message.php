@@ -194,14 +194,6 @@ class message extends persistent {
 
 	///////////////////////////////////////////////
 	///
-	///  SETTERS
-	/// 
-	///////////////////////////////////////////////
-	
-	//
-
-	///////////////////////////////////////////////
-	///
 	///  GETTERS
 	/// 
 	///////////////////////////////////////////////
@@ -351,11 +343,26 @@ class message extends persistent {
 
 	///////////////////////////////////////////////
 	///
-	///  VALIDATORS
+	///  PERSISTENT HOOKS
 	/// 
 	///////////////////////////////////////////////
-
-	//
+	
+	/**
+	 * After delete hook
+	 * 
+	 * @param  bool  $result
+	 * @return void
+	 */
+	protected function after_delete($result)
+	{
+		// if this was a draft message (which are hard deleted), delete all related data
+		if ($this->is_message_draft()) {
+			message_recipient::clear_all_for_message($this);
+			message_draft_recipient::clear_all_for_message($this);
+			message_additional_email::clear_all_for_message($this);
+			message_attachment::clear_all_for_message($this);
+		}
+	}
 
 	///////////////////////////////////////////////
 	///

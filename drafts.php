@@ -77,8 +77,8 @@ try {
             $request->redirect_as_error(block_quickmail_plugin::_s('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
         }
 
-        // attempt to soft delete draft
-        $draft_message->soft_delete();
+        // attempt to hard delete draft
+        $draft_message->hard_delete();
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $manage_drafts_form->set_error_exception($e);
