@@ -117,8 +117,6 @@ try {
     // SEND
     } else if ($request->to_send_message()) {
 
-        // dd($compose_form->get_data());
-
         // attempt to send
         $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
 
@@ -236,5 +234,3 @@ function get_course_user_data($course, $context, $allowed_role_ids = '') {
 
     return $course_user_data;
 }
-
-function dd($thing) { var_dump($thing);die; }

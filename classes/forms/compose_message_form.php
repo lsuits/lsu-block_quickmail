@@ -45,6 +45,8 @@ class compose_message_form extends \moodleform {
     public $user_signature_array;
     public $course_config_array;
     public $draft_message;
+    public $included_draft_recipients;
+    public $excluded_draft_recipients;
 
     /**
      * Instantiates and returns a compose message form
@@ -72,6 +74,10 @@ class compose_message_form extends \moodleform {
         // get config variables for this course, defaulting to block level
         $course_config_array = block_quickmail_config::_c('', $course);
 
+        // if this is a draft message, get any included/excluded draft recipients formatted as key arrays
+        $included_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('include', true) : [];
+        $excluded_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('exclude', true) : [];
+
         return new self($target_url, [
             'context' => $context,
             'user' => $user,
@@ -81,6 +87,8 @@ class compose_message_form extends \moodleform {
             'user_signature_array' => $user_signature_array,
             'course_config_array' => $course_config_array,
             'draft_message' => $draft_message,
+            'included_draft_recipients' => $included_draft_recipients,
+            'excluded_draft_recipients' => $excluded_draft_recipients,
         ], 'post', '', ['id' => 'mform-compose']);
     }
 
@@ -99,6 +107,8 @@ class compose_message_form extends \moodleform {
         $this->user_signature_array = $this->_customdata['user_signature_array'];
         $this->course_config_array = $this->_customdata['course_config_array'];
         $this->draft_message = $this->_customdata['draft_message'];
+        $this->included_draft_recipients = $this->_customdata['included_draft_recipients'];
+        $this->excluded_draft_recipients = $this->_customdata['excluded_draft_recipients'];
 
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
@@ -124,27 +134,6 @@ class compose_message_form extends \moodleform {
         }
 
         ////////////////////////////////////////////////////////////
-        ///  mailto_ids (text) - NOT USED ANYMORE, REMOVE!!!
-        ////////////////////////////////////////////////////////////
-        // $mform->addElement(
-        //     'hidden', 
-        //     'mailto_ids', 
-        //     ''
-        // );
-        // $mform->setType(
-        //     'mailto_ids', 
-        //     PARAM_TEXT
-        // );
-
-        // // inject default if draft mesage
-        // $mform->setDefault(
-        //     'mailto_ids', 
-        //     $this->is_draft_message() 
-        //         ? implode(',', $this->draft_message->get_message_recipients(true))
-        //         : '70,72,77,86,'   // <--------------- this is for testing!!!!
-        // );
-
-        ////////////////////////////////////////////////////////////
         ///  included & excluded recipient entities (multiselect)
         ////////////////////////////////////////////////////////////
         
@@ -161,12 +150,12 @@ class compose_message_form extends \moodleform {
         $mform->addElement('autocomplete', 'included_entity_ids', 'To', $recipient_entities, array_merge($options, [
             'noselectionstring' => 'No included recipients',
             'placeholder' => 'Who should recieve this message?',
-        ]))->setValue([]);
+        ]))->setValue($this->included_draft_recipients);
 
         $mform->addElement('autocomplete', 'excluded_entity_ids', 'Exclude', $recipient_entities, array_merge($options, [
             'noselectionstring' => 'No excluded recipients',
             'placeholder' => 'Who should NOT recieve this message?',
-        ]))->setValue([]);
+        ]))->setValue($this->excluded_draft_recipients);
 
 
         ////////////////////////////////////////////////////////////
@@ -394,6 +383,11 @@ class compose_message_form extends \moodleform {
     public function validation($data, $files) {
         $errors = [];
 
+        // check that we have at least one recipient
+        if (empty($data['included_entity_ids'])) {
+            $errors['included_entity_ids'] = 'You must select at least one recipient';
+        }
+
         // additional_emails - make sure each is valid
         $cleansed_additional_emails = preg_replace('/\s+/', '', $data['additional_emails']);
         
@@ -563,7 +557,5 @@ class compose_message_form extends \moodleform {
 
         return $results;
     }
-
-    function dd($thing) { var_dump($thing);die;}
 
 }

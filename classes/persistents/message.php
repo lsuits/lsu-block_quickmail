@@ -155,12 +155,28 @@ class message extends persistent {
 	 *
 	 * @return array
 	 */
-	public function get_message_draft_recipients() {
+	public function get_message_draft_recipients($type = '', $as_key_array = false) {
 		$message_id = $this->get('id');
 
-		$recipients = message_draft_recipient::get_records(['message_id' => $message_id]);
+		$params = [
+			'message_id' => $message_id
+		];
 
-		return $recipients;
+		if ($type) {
+			$params['type'] = $type;
+		}
+
+		$recipients = message_draft_recipient::get_records($params);
+
+		if ( ! $as_key_array) {
+			return $recipients;
+		}
+
+		$key_array = array_map(function($recipient) {
+			return $recipient->get_recipient_key();
+		}, $recipients);
+
+		return $key_array;
 	}
 
 	/**

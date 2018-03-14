@@ -7,6 +7,7 @@ use block_quickmail_emailer;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\persistents\message_recipient;
+use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_additional_email;
 use block_quickmail\validators\compose_message_form_validator;
 use block_quickmail\validators\save_draft_message_form_validator;
@@ -76,6 +77,9 @@ class messenger {
         // get only the resolved recipient user ids
         $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
 
+        // clear any existing draft recipients, and add those that have been recently submitted
+        $message->sync_draft_recipients($transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
+
         // clear any existing recipients, and add those that have been recently submitted
         $message->sync_recipients($recipient_user_ids);
 
@@ -125,6 +129,16 @@ class messenger {
             message_recipient::create_new([
                 'message_id' => $new_draft->get('id'),
                 'user_id' => $recipient->get('user_id'),
+            ]);
+        }
+
+        // duplicate the message draft recipients
+        foreach ($original_draft->get_message_draft_recipients() as $recipient) {
+            message_draft_recipient::create_new([
+                'message_id' => $new_draft->get('id'),
+                'type' => $recipient->get('type'),
+                'recipient_type' => $recipient->get('recipient_type'),
+                'recipient_id' => $recipient->get('recipient_id'),
             ]);
         }
 
@@ -190,6 +204,9 @@ class messenger {
 
         // get only the resolved recipient user ids
         $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
+
+        // clear any draft recipients for this message, unnecessary at this point
+        message_draft_recipient::clear_all_for_message($message);
 
         // clear any existing recipients, and add those that have been recently submitted
         $message->sync_recipients($recipient_user_ids);

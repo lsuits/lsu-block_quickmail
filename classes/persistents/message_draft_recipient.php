@@ -39,6 +39,17 @@ class message_draft_recipient extends persistent {
  
     ///////////////////////////////////////////////
     ///
+    ///  GETTERS
+    /// 
+    ///////////////////////////////////////////////
+    
+    public function get_recipient_key()
+    {
+        return $this->get('recipient_type') . '_' . $this->get('recipient_id');
+    }
+
+    ///////////////////////////////////////////////
+    ///
     ///  CUSTOM STATIC METHODS
     /// 
     ///////////////////////////////////////////////
