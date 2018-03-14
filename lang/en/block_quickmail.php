@@ -5,6 +5,7 @@ $string['subject'] = 'Subject';
 $string['body'] = 'Body';
 $string['duplicate'] = 'Duplicate';
 $string['cancel'] = 'Cancel';
+$string['delete'] = 'Delete';
 $string['save_draft'] = 'Save Draft';
 $string['save_signature'] = 'Save Signature';
 $string['delete_signature'] = 'Delete Signature';
