@@ -27,7 +27,7 @@ namespace block_quickmail\forms;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\forms\concerns\is_quickmail_form;
-use block_quickmail_plugin;
+use block_quickmail_string;
 use block_quickmail_config;
 
 class course_config_form extends \moodleform {
@@ -87,7 +87,7 @@ class course_config_form extends \moodleform {
             $mform->addElement(
                 'select', 
                 'allowstudents', 
-                block_quickmail_plugin::_s('allowstudents'), 
+                block_quickmail_string::get('allowstudents'), 
                 $this->get_yes_or_no_options());
             $mform->setDefault(
                 'allowstudents', 
@@ -105,7 +105,7 @@ class course_config_form extends \moodleform {
         $mform->addElement(
             'select', 
             'roleselection', 
-            block_quickmail_plugin::_s('select_roles'), 
+            block_quickmail_string::get('select_roles'), 
             $this->get_all_available_roles()
         )->setMultiple(true);
         $mform->getElement('roleselection')->setSelected($this->get_selected_role_ids_array());
@@ -121,7 +121,7 @@ class course_config_form extends \moodleform {
         $mform->addElement(
             'select', 
             'prepend_class', 
-            block_quickmail_plugin::_s('prepend_class'), 
+            block_quickmail_string::get('prepend_class'), 
             $this->get_prepend_class_options()
         );
         $mform->setDefault(
@@ -135,7 +135,7 @@ class course_config_form extends \moodleform {
         $mform->addElement(
             'select', 
             'receipt', 
-            block_quickmail_plugin::_s('receipt'), 
+            block_quickmail_string::get('receipt'), 
             $this->get_yes_or_no_options()
         );
         $mform->setDefault(
@@ -150,7 +150,7 @@ class course_config_form extends \moodleform {
             $mform->addElement(
                 'select', 
                 'default_message_type', 
-                block_quickmail_plugin::_s('default_message_type'), 
+                block_quickmail_string::get('default_message_type'), 
                 $this->get_default_message_type_options()
             );
             $mform->setDefault(
@@ -161,7 +161,7 @@ class course_config_form extends \moodleform {
             $mform->addElement(
                 'static', 
                 'default_message_type', 
-                block_quickmail_plugin::_s('default_message_type'), 
+                block_quickmail_string::get('default_message_type'), 
                 $this->display_default_message_type()
             );
         }
@@ -170,9 +170,9 @@ class course_config_form extends \moodleform {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('submit', 'save', block_quickmail_plugin::_s('save_configuration')),
-            $mform->createElement('submit', 'reset', block_quickmail_plugin::_s('reset')),
-            $mform->createElement('cancel', 'cancel', block_quickmail_plugin::_s('cancel'))
+            $mform->createElement('submit', 'save', block_quickmail_string::get('save_configuration')),
+            $mform->createElement('submit', 'reset', block_quickmail_string::get('reset')),
+            $mform->createElement('cancel', 'cancel', block_quickmail_string::get('cancel'))
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
@@ -254,8 +254,8 @@ class course_config_form extends \moodleform {
     private function get_default_message_type_options()
     {
         return [
-            'message' => block_quickmail_plugin::_s('message_type_message'),
-            'email' => block_quickmail_plugin::_s('message_type_email')
+            'message' => block_quickmail_string::get('message_type_message'),
+            'email' => block_quickmail_string::get('message_type_email')
         ];
     }
     
@@ -268,7 +268,7 @@ class course_config_form extends \moodleform {
     {
         $key = block_quickmail_config::_c('message_types_available');
 
-        return block_quickmail_plugin::_s('message_type_' . $key);
+        return block_quickmail_string::get('message_type_' . $key);
     }
 
 }

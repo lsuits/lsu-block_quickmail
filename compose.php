@@ -37,10 +37,10 @@ $course_user_data = get_course_user_data(
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('compose'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('compose'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('compose'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('compose'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('compose'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/compose-message', 'init', ['courseId' => $course->id]);
 // $PAGE->requires->js('/blocks/quickmail/js/selection.js'); // Get rid of this
@@ -112,7 +112,7 @@ try {
     if ($request->is_form_cancellation()) {
         
         // redirect back to course page
-        $request->redirect_as_info(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_cancel', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_cancel', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     // SEND
     } else if ($request->to_send_message()) {
@@ -122,7 +122,7 @@ try {
 
         // redirect back to course page
         // @TODO - after send redirect to sent messages? (?)
-        $request->redirect_as_success(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_send', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_as_success(block_quickmail_string::get('redirect_back_to_course_from_message_after_send', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     // SAVE DRAFT
     } else if ($request->to_save_draft()) {
@@ -132,7 +132,7 @@ try {
 
         // redirect back to course page
         // @TODO - after send redirect to compose (?)
-        $request->redirect_as_info(block_quickmail_plugin::_s('redirect_back_to_course_from_message_after_save', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_save', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {

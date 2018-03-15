@@ -8,34 +8,6 @@ class block_quickmail_plugin {
 
     ////////////////////////////////////////////////////
     ///
-    ///  LOCALIZATION
-    ///  
-    ////////////////////////////////////////////////////
-
-    /**
-     * Shortcut for get_string()
-     * 
-     * @param  string $key
-     * @param  mixed $a  optional attributes
-     * @return string
-     */
-    public static function _s($key, $a = null) {
-        return self::get_block_string($key, $a);
-    }
-
-    /**
-     * Returns a lang string for this plugin
-     * 
-     * @param  string $key
-     * @param  mixed $a  optional attributes
-     * @return string
-     */
-    private static function get_block_string($key, $a = null) {
-        return get_string($key, self::$name, $a);
-    }
-
-    ////////////////////////////////////////////////////
-    ///
     ///  AUTHORIZATION
     ///  
     ////////////////////////////////////////////////////

@@ -27,7 +27,7 @@ namespace block_quickmail\forms;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\forms\concerns\is_quickmail_form;
-use block_quickmail_plugin;
+use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
 
@@ -195,7 +195,7 @@ class manage_signatures_form extends \moodleform {
     }
 
     public function get_plugin_string($key, $a = null) {
-        return block_quickmail_plugin::_s($key, $a);
+        return block_quickmail_string::get($key, $a);
     }
 
 }

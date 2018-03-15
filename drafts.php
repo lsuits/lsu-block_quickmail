@@ -29,10 +29,10 @@ block_quickmail_plugin::require_user_capability('cansend', $page_context);
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('drafts'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('drafts'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('drafts'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('drafts'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('drafts'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('drafts'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/draft-index', 'init');
 
@@ -74,7 +74,7 @@ try {
         // attempt to fetch the draft message
         if ( ! $draft_message = block_quickmail\repos\draft_repo::find_for_user_or_null($request->data->delete_draft_id, $USER->id)) {
             // redirect and notify of error
-            $request->redirect_as_error(block_quickmail_plugin::_s('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
+            $request->redirect_as_error(block_quickmail_string::get('draft_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
         }
 
         // attempt to hard delete draft

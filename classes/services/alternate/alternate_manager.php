@@ -6,7 +6,7 @@ use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\create_alternate_form_validator;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail_emailer;
-
+use block_quickmail_string;
 use html_writer;
 use moodle_url;
 
@@ -183,15 +183,15 @@ class alternate_manager {
         $a = (object)[];
         $a->email = $alternate_email->get('email');
         $a->url = html_writer::link($approval_url, $approval_url->out());
-        $a->plugin_name = \block_quickmail_plugin::_s('pluginname');
+        $a->plugin_name = block_quickmail_string::get('pluginname');
         $a->fullname = fullname($user);
-        $html_body = \block_quickmail_plugin::_s('alternate_body', $a);
+        $html_body = block_quickmail_string::get('alternate_body', $a);
         $body = strip_tags($html_body);
 
         // send the email
         $emailer = new block_quickmail_emailer(
             $alternate_email->get_setup_user(), 
-            \block_quickmail_plugin::_s('alternate_subject'), 
+            block_quickmail_string::get('alternate_subject'), 
             $body
         );
         $emailer->to_email($alternate_email->get('email'));

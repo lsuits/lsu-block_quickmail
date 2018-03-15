@@ -25,7 +25,7 @@
 namespace block_quickmail\components;
 
 use block_quickmail\components\component;
-use block_quickmail_plugin;
+use block_quickmail_string;
 use moodle_url;
 
 class alternate_index_component extends component implements \renderable {
@@ -53,8 +53,8 @@ class alternate_index_component extends component implements \renderable {
         $data->tableHeadings = [
             get_string('email'),
             get_string('fullname'),
-            block_quickmail_plugin::_s('alternate_availability'),
-            block_quickmail_plugin::_s('status'),
+            block_quickmail_string::get('alternate_availability'),
+            block_quickmail_string::get('status'),
             get_string('action')
         ];
 
@@ -77,7 +77,7 @@ class alternate_index_component extends component implements \renderable {
             : new moodle_url('/my');
 
         $data->urlBackLabel = $this->course_id 
-            ? block_quickmail_plugin::_s('back_to_course')
+            ? block_quickmail_string::get('back_to_course')
             : 'Back to My page'; // TODO - make this a lang string
         
         return $data;

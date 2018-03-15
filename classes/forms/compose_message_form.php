@@ -27,7 +27,7 @@ namespace block_quickmail\forms;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\forms\concerns\is_quickmail_form;
-use block_quickmail_plugin;
+use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
@@ -116,7 +116,7 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'select', 
             'from_email_id', 
-            block_quickmail_plugin::_s('from'), 
+            block_quickmail_string::get('from'), 
             $this->get_from_email_values()
         );
         $mform->addHelpButton(
@@ -164,7 +164,7 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'text', 
             'subject', 
-            block_quickmail_plugin::_s('subject')
+            block_quickmail_string::get('subject')
         );
         $mform->setType(
             'subject', 
@@ -186,7 +186,7 @@ class compose_message_form extends \moodleform {
             $mform->addElement(
                 'text', 
                 'additional_emails', 
-                block_quickmail_plugin::_s('additional_emails')
+                block_quickmail_string::get('additional_emails')
             );
             $mform->setType(
                 'additional_emails', 
@@ -230,7 +230,7 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'editor', 
             'message_editor',  
-            block_quickmail_plugin::_s('body'), 
+            block_quickmail_string::get('body'), 
             'bdfsdgsdg', 
             $this->get_editor_options()
         )->setValue([
@@ -248,7 +248,7 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'filemanager', 
             'attachments', 
-            block_quickmail_plugin::_s('attachment'), 
+            block_quickmail_string::get('attachment'), 
             null,
             block_quickmail_config::get_filemanager_options()
         );
@@ -261,7 +261,7 @@ class compose_message_form extends \moodleform {
             $mform->addElement(
                 'select', 
                 'signature_id', 
-                block_quickmail_plugin::_s('signature'), 
+                block_quickmail_string::get('signature'), 
                 $this->get_user_signature_options()
             );
 
@@ -276,8 +276,8 @@ class compose_message_form extends \moodleform {
             $mform->addElement(
                 'static', 
                 'add_signature_text', 
-                block_quickmail_plugin::_s('sig'), 
-                block_quickmail_plugin::_s('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . block_quickmail_plugin::_s('create_one_now') . '</a>')
+                block_quickmail_string::get('sig'), 
+                block_quickmail_string::get('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . block_quickmail_string::get('create_one_now') . '</a>')
             );
             $mform->addElement(
                 'hidden', 
@@ -297,7 +297,7 @@ class compose_message_form extends \moodleform {
             $mform->addElement(
                 'select', 
                 'message_type', 
-                block_quickmail_plugin::_s('select_message_type'), 
+                block_quickmail_string::get('select_message_type'), 
                 $this->get_message_type_options()
             );
             
@@ -325,7 +325,7 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'date_time_selector', 
             'to_send_at', 
-            block_quickmail_plugin::_s('send_at'),
+            block_quickmail_string::get('send_at'),
             $this->get_to_send_at_options()
         );
 
@@ -348,7 +348,7 @@ class compose_message_form extends \moodleform {
         $mform->addGroup(
             $receipt_options, 
             'receipt_action', 
-            block_quickmail_plugin::_s('receipt'), 
+            block_quickmail_string::get('receipt'), 
             [' '], 
             false
         );
@@ -369,9 +369,9 @@ class compose_message_form extends \moodleform {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('submit', 'send', block_quickmail_plugin::_s('send_message')),
-            $mform->createElement('submit', 'save', block_quickmail_plugin::_s('save_draft')),
-            $mform->createElement('cancel', 'cancel', block_quickmail_plugin::_s('cancel'))
+            $mform->createElement('submit', 'send', block_quickmail_string::get('send_message')),
+            $mform->createElement('submit', 'save', block_quickmail_string::get('save_draft')),
+            $mform->createElement('cancel', 'cancel', block_quickmail_string::get('cancel'))
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', [' '], false);
@@ -476,8 +476,8 @@ class compose_message_form extends \moodleform {
      */
     private function get_message_type_options() {
         return [
-            'message' => block_quickmail_plugin::_s('message_type_message'),
-            'email' => block_quickmail_plugin::_s('message_type_email')
+            'message' => block_quickmail_string::get('message_type_message'),
+            'email' => block_quickmail_string::get('message_type_email')
         ];
     }
 

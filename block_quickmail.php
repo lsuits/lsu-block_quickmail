@@ -36,7 +36,7 @@ class block_quickmail extends block_list {
     }
 
     public function get_title() {
-        return block_quickmail_plugin::_s('pluginname');
+        return block_quickmail_string::get('pluginname');
     }
 
     public function set_course() {
@@ -181,7 +181,7 @@ class block_quickmail extends block_list {
     {
         global $OUTPUT;
 
-        $label = block_quickmail_plugin::_s($attributes['lang_key']);
+        $label = block_quickmail_string::get($attributes['lang_key']);
         
         $icon = $OUTPUT->pix_icon($attributes['icon_key'], $label, 'moodle', $this->get_content_icon_class());
 

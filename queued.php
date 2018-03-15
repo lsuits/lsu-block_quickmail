@@ -29,10 +29,10 @@ block_quickmail_plugin::require_user_capability('cansend', $page_context);
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('queued'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('queued'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('queued'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('queued'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('queued'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('queued'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/queued-index', 'init');
 
@@ -65,7 +65,7 @@ try {
         // attempt to fetch the message to unqueue
         if ( ! $message = block_quickmail\repos\queued_repo::find_for_user_or_null($request->data->unqueue_message_id, $USER->id)) {
             // redirect and notify of error
-            $request->redirect_as_error(block_quickmail_plugin::_s('queued_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
+            $request->redirect_as_error(block_quickmail_string::get('queued_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
         }
 
         // attempt to unqueue

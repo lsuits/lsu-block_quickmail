@@ -4,7 +4,7 @@ namespace block_quickmail\filemanager;
 
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_attachment;
-use block_quickmail_plugin;
+use block_quickmail_string;
 use moodle_url;
 use html_writer;
 use context_course;
@@ -65,7 +65,7 @@ class attachment_appender {
     {
         if ($this->has_attachments()) {
             $this->body .= $this->hr();
-            $this->body .= block_quickmail_plugin::_s('moodle_attachments', $this->get_download_all_link());
+            $this->body .= block_quickmail_string::get('moodle_attachments', $this->get_download_all_link());
             $this->body .= $this->br();
             $this->body .= $this->get_download_all_link(true);
         }
@@ -86,7 +86,7 @@ class attachment_appender {
         $url = $this->generate_url('/', $filename);
 
         return ! $as_url
-            ? html_writer::link($url, block_quickmail_plugin::_s('download_all'))
+            ? html_writer::link($url, block_quickmail_string::get('download_all'))
             : html_writer::link($url, $url);
     }
 
@@ -97,7 +97,7 @@ class attachment_appender {
     {
         if ($this->has_attachments()) {
             $this->body .= $this->hr();
-            $this->body .= block_quickmail_plugin::_s('qm_contents');
+            $this->body .= block_quickmail_string::get('qm_contents');
             $this->body .= $this->br();
 
             // iterate through each attachment, adding a link and line break

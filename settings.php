@@ -47,8 +47,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configselect(
             'block_quickmail_allowstudents',
-            block_quickmail_plugin::_s('allowstudents'), 
-            block_quickmail_plugin::_s('allowstudentsdesc'), 
+            block_quickmail_string::get('allowstudents'), 
+            block_quickmail_string::get('allowstudentsdesc'), 
             0, // <-- default
             $never_no_or_yes_options
         )
@@ -83,8 +83,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configmultiselect(
             'block_quickmail_roleselection',
-            block_quickmail_plugin::_s('select_roles'), 
-            block_quickmail_plugin::_s('select_roles'),
+            block_quickmail_string::get('select_roles'), 
+            block_quickmail_string::get('select_roles'),
             $default_roles_keys, // <-- default
             $block_quickmail_roleselection_options
         )
@@ -99,8 +99,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configselect(
             'block_quickmail_receipt',
-            block_quickmail_plugin::_s('receipt'), 
-            block_quickmail_plugin::_s('receipt_help'),
+            block_quickmail_string::get('receipt'), 
+            block_quickmail_string::get('receipt_help'),
             0,  // <-- default
             $no_or_yes_options
         )
@@ -122,8 +122,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configselect(
             'block_quickmail_prepend_class',
-            block_quickmail_plugin::_s('prepend_class'), 
-            block_quickmail_plugin::_s('prepend_class_desc'),
+            block_quickmail_string::get('prepend_class'), 
+            block_quickmail_string::get('prepend_class_desc'),
             0,  // <-- default
             $block_quickmail_prepend_class_options
         )
@@ -136,16 +136,16 @@ if($ADMIN->fulltree) {
     ///////////////////////////////////////////////////////////
 
     $block_quickmail_ferpa_options = [
-        'strictferpa' => block_quickmail_plugin::_s('strictferpa'),
-        'courseferpa' => block_quickmail_plugin::_s('courseferpa'),
-        'noferpa' => block_quickmail_plugin::_s('noferpa')
+        'strictferpa' => block_quickmail_string::get('strictferpa'),
+        'courseferpa' => block_quickmail_string::get('courseferpa'),
+        'noferpa' => block_quickmail_string::get('noferpa')
     ];
 
     $settings->add(
         new admin_setting_configselect(
             'block_quickmail_ferpa',
-            block_quickmail_plugin::_s('ferpa'), 
-            block_quickmail_plugin::_s('ferpa_desc'),
+            block_quickmail_string::get('ferpa'), 
+            block_quickmail_string::get('ferpa_desc'),
             'strictferpa',  // <-- default
             $block_quickmail_ferpa_options
         )
@@ -160,8 +160,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configcheckbox(
             'block_quickmail_downloads', 
-            block_quickmail_plugin::_s('downloads'), 
-            block_quickmail_plugin::_s('downloads_desc'),
+            block_quickmail_string::get('downloads'), 
+            block_quickmail_string::get('downloads_desc'),
             1  // <-- default
         )
     );
@@ -175,8 +175,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configcheckbox(
             'block_quickmail_additionalemail', 
-            block_quickmail_plugin::_s('additionalemail'), 
-            block_quickmail_plugin::_s('additionalemail_desc'),
+            block_quickmail_string::get('additionalemail'), 
+            block_quickmail_string::get('additionalemail_desc'),
             0   // <-- default
         )
     );
@@ -188,16 +188,16 @@ if($ADMIN->fulltree) {
     ///////////////////////////////////////////////////////////
 
     $block_quickmail_message_types_available_options = [
-        'all' => block_quickmail_plugin::_s('message_type_available_all'),
-        'message' => block_quickmail_plugin::_s('message_type_available_message'),
-        'email' => block_quickmail_plugin::_s('message_type_available_email')
+        'all' => block_quickmail_string::get('message_type_available_all'),
+        'message' => block_quickmail_string::get('message_type_available_message'),
+        'email' => block_quickmail_string::get('message_type_available_email')
     ];
 
     $settings->add(
         new admin_setting_configselect(
             'block_quickmail_message_types_available', 
-            block_quickmail_plugin::_s('message_types_available'), 
-            block_quickmail_plugin::_s('message_types_available_desc'),
+            block_quickmail_string::get('message_types_available'), 
+            block_quickmail_string::get('message_types_available_desc'),
             'all',  // <-- default
             $block_quickmail_message_types_available_options
         )
@@ -216,8 +216,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configmultiselect(
             'block_quickmail_allowed_user_fields',
-            block_quickmail_plugin::_s('select_allowed_user_fields'), 
-            block_quickmail_plugin::_s('select_allowed_user_fields_desc'),
+            block_quickmail_string::get('select_allowed_user_fields'), 
+            block_quickmail_string::get('select_allowed_user_fields_desc'),
             [], // <-- default
             array_combine($supported_user_fields, $supported_user_fields)
         )

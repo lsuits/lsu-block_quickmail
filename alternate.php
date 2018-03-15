@@ -28,10 +28,10 @@ block_quickmail_plugin::require_user_capability('allowalternate', $page_context)
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('alternate'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('alternate'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('alternate'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('alternate'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('alternate'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('alternate'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/alternate-index', 'init');
 
@@ -65,7 +65,7 @@ try {
             $USER
         );
 
-        $request->redirect_as_success(block_quickmail_plugin::_s('entry_activated', $alternate_email->get('email')), $page_url, ['courseid' => $page_params['courseid']]);
+        $request->redirect_as_success(block_quickmail_string::get('entry_activated', $alternate_email->get('email')), $page_url, ['courseid' => $page_params['courseid']]);
 
     // RESEND
     } else if ($page_params['resendid']) {
@@ -74,7 +74,7 @@ try {
         \block_quickmail\services\alternate\alternate_manager::resend_confirmation_email_for_user($page_params['resendid'], $USER);
 
         // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_plugin::_s('alternate_confirmation_email_resent'), $page_url, ['courseid' => $page_params['courseid']]);
+        $request->redirect_as_success(block_quickmail_string::get('alternate_confirmation_email_resent'), $page_url, ['courseid' => $page_params['courseid']]);
 
     // DELETE
     } else if ($request->to_delete_alternate()) {
@@ -83,7 +83,7 @@ try {
         \block_quickmail\services\alternate\alternate_manager::delete_alternate_email_for_user($request->data->delete_alternate_id, $USER);
 
         // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_plugin::_s('alternate_deleted'), $page_url, ['courseid' => $page_params['courseid']]);
+        $request->redirect_as_success(block_quickmail_string::get('alternate_deleted'), $page_url, ['courseid' => $page_params['courseid']]);
 
     // CREATE
     } else if ($request->to_create_alternate()) {
@@ -97,7 +97,7 @@ try {
         ]);
 
         // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_plugin::_s('alternate_created'), $page_url, ['courseid' => $page_params['courseid']]);
+        $request->redirect_as_success(block_quickmail_string::get('alternate_created'), $page_url, ['courseid' => $page_params['courseid']]);
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $manage_alternates_form->set_error_exception($e);

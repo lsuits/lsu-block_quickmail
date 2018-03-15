@@ -25,7 +25,7 @@
 namespace block_quickmail\components;
 
 use block_quickmail\components\component;
-use block_quickmail_plugin;
+use block_quickmail_string;
 use moodle_url;
 use block_quickmail\persistents\message;
 
@@ -88,7 +88,7 @@ class sent_message_index_component extends component implements \renderable {
             : new moodle_url('/my');
 
         $data->urlBackLabel = $this->course_id 
-            ? block_quickmail_plugin::_s('back_to_course')
+            ? block_quickmail_string::get('back_to_course')
             : 'Back to My page';
 
         return $data;

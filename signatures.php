@@ -26,10 +26,10 @@ block_quickmail_plugin::require_user_capability('cansend', $page_context);
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('manage_signatures'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('signatures'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('manage_signatures'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('signatures'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/manage-signatures', 'init', ['courseid' => $page_params['courseid']]);
 
@@ -81,7 +81,7 @@ try {
         $signature->soft_delete();
 
         // redirect back to the user's edit default signature (if any) page, preserving the courseid parameter
-        $request->redirect_to_user_default_signature('warning', $USER, $page_params['courseid'], \block_quickmail_plugin::_s('user_signature_deleted'));
+        $request->redirect_to_user_default_signature('warning', $USER, $page_params['courseid'], block_quickmail_string::get('user_signature_deleted'));
 
     // SAVE / UPDATE
     } else if ($request->to_save()) {

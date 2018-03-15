@@ -5,7 +5,7 @@ namespace block_quickmail\persistents;
 use core\persistent;
 use core_user;
 use core\ip_utils;
-use lang_string;
+use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
  
@@ -105,8 +105,8 @@ class alternate_email extends persistent {
      */
     public function get_status() {
         return $this->get('is_validated') ?
-            \block_quickmail_plugin::_s('confirmed') :
-            \block_quickmail_plugin::_s('waiting');
+            block_quickmail_string::get('confirmed') :
+            block_quickmail_string::get('waiting');
     }
 
     /**
@@ -125,11 +125,11 @@ class alternate_email extends persistent {
      */
     public function get_scope() {
         if ( ! empty($this->get('course_id')) && ! empty($this->get('user_id'))) {
-            return \block_quickmail_plugin::_s('alternate_availability_only');
+            return block_quickmail_string::get('alternate_availability_only');
         } else if ( ! empty($this->get('course_id'))) {
-            return \block_quickmail_plugin::_s('alternate_availability_course');
+            return block_quickmail_string::get('alternate_availability_course');
         } else {
-            return \block_quickmail_plugin::_s('alternate_availability_user');
+            return block_quickmail_string::get('alternate_availability_user');
         }
     }
 

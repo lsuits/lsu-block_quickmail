@@ -27,10 +27,10 @@ block_quickmail_plugin::require_user_capability('canconfig', $page_context);
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('config'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('pluginname'));
-$PAGE->navbar->add(block_quickmail_plugin::_s('config'));
-$PAGE->set_heading(block_quickmail_plugin::_s('pluginname') . ': ' . block_quickmail_plugin::_s('config'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('config'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('config'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('config'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/course-config', 'init', ['courseid' => $page_params['courseid']]);
 
@@ -58,7 +58,7 @@ try {
     if ($request->is_form_cancellation()) {
         
         // redirect back to appropriate page
-        $request->redirect_as_info(block_quickmail_plugin::_s('cancel_and_redirect_to_course', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_as_info(block_quickmail_string::get('cancel_and_redirect_to_course', $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     // RESTORE
     } else if ($request->to_restore_defaults()) {
