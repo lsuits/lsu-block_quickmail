@@ -46,7 +46,7 @@ class messenger {
     {
         // validate form data
         $validator = new save_draft_message_form_validator($form_data, [
-            'course_config' => block_quickmail_config::_c('', $course)
+            'course_config' => block_quickmail_config::get('', $course)
         ]);
         $validator->validate();
 

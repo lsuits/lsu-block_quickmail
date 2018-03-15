@@ -1,6 +1,7 @@
 <?php
 
 namespace block_quickmail\messenger;
+use block_quickmail_config;
 
 class body_parser {
 
@@ -27,7 +28,7 @@ class body_parser {
      */
     private function set_supported_keys()
     {
-        $this->supported_keys = \block_quickmail_config::_c('allowed_user_fields');
+        $this->supported_keys = block_quickmail_config::get('allowed_user_fields');
     }
 
     /**

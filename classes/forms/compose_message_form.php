@@ -72,7 +72,7 @@ class compose_message_form extends \moodleform {
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
         // get config variables for this course, defaulting to block level
-        $course_config_array = block_quickmail_config::_c('', $course);
+        $course_config_array = block_quickmail_config::get('', $course);
 
         // if this is a draft message, get any included/excluded draft recipients formatted as key arrays
         $included_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('include', true) : [];

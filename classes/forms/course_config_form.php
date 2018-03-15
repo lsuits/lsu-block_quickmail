@@ -71,7 +71,7 @@ class course_config_form extends \moodleform {
         $this->context = $this->_customdata['context'];
         $this->user = $this->_customdata['user'];
         $this->course = $this->_customdata['course'];
-        $this->course_config = block_quickmail_config::_c('', $this->course);
+        $this->course_config = block_quickmail_config::get('', $this->course);
 
         ////////////////////////////////////////////////////////////
         ///  restore flag
@@ -185,7 +185,7 @@ class course_config_form extends \moodleform {
      */
     private function should_show_allow_students()
     {
-        return block_quickmail_config::_c('allowstudents') !== -1;
+        return block_quickmail_config::get('allowstudents') !== -1;
     }
 
     /**
@@ -243,7 +243,7 @@ class course_config_form extends \moodleform {
      */
     private function should_show_default_message_type()
     {
-        return block_quickmail_config::_c('message_types_available') == 'all';
+        return block_quickmail_config::get('message_types_available') == 'all';
     }
 
     /**
@@ -266,7 +266,7 @@ class course_config_form extends \moodleform {
      */
     private function display_default_message_type()
     {
-        $key = block_quickmail_config::_c('message_types_available');
+        $key = block_quickmail_config::get('message_types_available');
 
         return block_quickmail_string::get('message_type_' . $key);
     }

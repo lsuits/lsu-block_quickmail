@@ -10,7 +10,7 @@ class block_quickmail_config {
      * @param  bool  $transformed  whether or not to transform the output values
      * @return mixed
      */
-    public static function _c($key = '', $courseorid = 0, $transformed = true)
+    public static function get($key = '', $courseorid = 0, $transformed = true)
     {
         return $courseorid ? 
             self::course($courseorid, $key, $transformed) :

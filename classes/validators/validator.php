@@ -1,6 +1,7 @@
 <?php
 
 namespace block_quickmail\validators;
+use block_quickmail_config;
 
 abstract class validator {
 
@@ -83,7 +84,7 @@ abstract class validator {
     {
         $course_id = empty($this->course) ? 0 : $this->course->id;
 
-        return \block_quickmail_config::_c($key, $course_id);
+        return block_quickmail_config::get($key, $course_id);
     }
 
 }

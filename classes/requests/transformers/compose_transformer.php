@@ -85,7 +85,7 @@ class compose_transformer extends transformer {
     {
         return ! empty($this->form_data->message_type) 
             ? (string) $this->form_data->message_type 
-            : block_quickmail_config::_c('default_message_type');
+            : block_quickmail_config::get('default_message_type');
     }
 
     /**

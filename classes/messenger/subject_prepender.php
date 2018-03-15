@@ -50,7 +50,7 @@ class subject_prepender {
 
     private function get_course_config_setting($course)
     {
-        return block_quickmail_config::_c('prepend_class', $course);
+        return block_quickmail_config::get('prepend_class', $course);
     }
 
     private function get_prepended_with($value)

@@ -14,7 +14,7 @@ function block_quickmail_pluginfile($course, $cm, $context, $filearea, $args, $f
 
     // Make sure the user is logged in and has access to the module (plugins that are not course modules should leave out the 'cm' part).
     // depending on configuration, allow unauthenticated users to download file
-    if ( ! empty(block_quickmail_config::_c('downloads'))) {
+    if ( ! empty(block_quickmail_config::get('downloads'))) {
         require_course_login($course, true, $cm);
     }
 
