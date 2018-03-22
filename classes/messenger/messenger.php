@@ -75,7 +75,12 @@ class messenger {
         // @TODO: handle posted file attachments (moodle)
         
         // get only the resolved recipient user ids
-        $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
+        $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities(
+            $course, 
+            $user, 
+            $transformed_data->included_entity_ids, 
+            $transformed_data->excluded_entity_ids
+        );
 
         // clear any existing draft recipients, and add those that have been recently submitted
         $message->sync_draft_recipients($transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
@@ -203,7 +208,12 @@ class messenger {
         message_file_handler::handle_posted_attachments($message, $form_data, 'attachments');
 
         // get only the resolved recipient user ids
-        $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $transformed_data->included_entity_ids, $transformed_data->excluded_entity_ids);
+        $recipient_user_ids = user_repo::get_unique_course_user_ids_from_selected_entities(
+            $course, 
+            $user, 
+            $transformed_data->included_entity_ids, 
+            $transformed_data->excluded_entity_ids
+        );
 
         // clear any draft recipients for this message, unnecessary at this point
         message_draft_recipient::clear_all_for_message($message);

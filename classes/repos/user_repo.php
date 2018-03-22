@@ -4,6 +4,8 @@ namespace block_quickmail\repos;
 
 use block_quickmail\repos\repo;
 use context_course;
+use block_quickmail\repos\role_repo;
+use block_quickmail\repos\group_repo;
 
 class user_repo extends repo {
 
@@ -14,6 +16,44 @@ class user_repo extends repo {
     public $sortable_attrs = [
         'id' => 'id',
     ];
+
+    /**
+     * Returns an array of all users that are allowed to be selected to message in the given course by the given user
+     *
+     * @param  object  $course
+     * @param  object  $user
+     * @param  object  $course_context  optional, if not given, will be resolved
+     * @return array   keyed by user id
+     */
+    public static function get_course_user_selectable_users($course, $user, $course_context = null)
+    {
+        // if a context was not passed, pull one now
+        $course_context = $course_context ?: \context_course::instance($course->id);
+
+        // if user cannot access all groups in the course, and the course is set to be strict
+        if ( ! self::user_can_access_all_groups($user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+            // get all users with non-"group limited role"'s
+            $allaccess_users = get_enrolled_users($course_context, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
+
+            // get the groups that this user is associated with
+            $groups = group_repo::get_course_user_groups($course, $user, $course_context);
+
+            $group_ids = array_keys($groups);
+
+            // get all users within any groups the user belongs to
+            $peer_users = self::get_course_group_users($course_context, $group_ids, true, 'u.*');
+
+            $users = array_merge($allaccess_users, $peer_users);
+
+            // be sure that we have unique users
+            $users = array_unique($users, SORT_REGULAR);
+        } else {
+            // get all users in course
+            $users = self::get_course_users($course_context);
+        }
+        
+        return $users;
+    }
 
     /**
      * Get all users within a course
@@ -38,24 +78,54 @@ class user_repo extends repo {
      * Get all users within a course group
      * 
      * @param  object  $course_context  must be a course context
-     * @param  integer $group_id
+     * @param  mixed   $group_id        a group id, or an array of group ids
      * @param  boolean $active_only     whether or not to filter by active enrollment, defaults to true
      * @param  string  $user_fields     comma-separated list of fields to include in results, must be prefixed with "u."
-     * @return array
+     * @return array   keyed by user id
      */
     public static function get_course_group_users($course_context, $group_id, $active_only = true, $user_fields = null)
     {
-        return self::get_course_users($course_context, $active_only, $user_fields, $group_id);
+        // if this is a single group, return all users for the group
+        if ( ! is_array($group_id)) {
+            $group_users = self::get_course_users($course_context, $active_only, $user_fields, $group_id);
+
+            $users = [];
+
+            // rekey the returned array by user id
+            foreach ($group_users as $group_user) {
+                $users[$group_user->id] = $group_user;
+            }
+        
+        // otherwise, get the unique users within the given list of group ids
+        } else {
+            $users = [];
+
+            // for each given group id
+            foreach ($group_id as $gid) {
+                // pull the users within the group
+                $group_users = self::get_course_users($course_context, $active_only, $user_fields, $gid);
+
+                // add each to the container
+                foreach ($group_users as $group_user) {
+                    $users[$group_user->id] = $group_user;
+                }
+
+                // be sure we have a unique list of users (still necessary?)
+                $users = array_unique($users, SORT_REGULAR);
+            }
+        }
+
+        return $users;
     }
 
     /**
-     * Get all users with a given role within a course
+     * Get all users with a given role (or roles) within a given course
      * 
      * @param  object  $course_context  must be a course context
-     * @param  integer $role_id
+     * @param  mixed   $role_id         a role id, or an array of role ids
      * @param  boolean $active_only     whether or not to filter by active enrollment, defaults to true
      * @param  string  $user_fields     comma-separated list of fields to include in results, must be prefixed with "u."
-     * @return array
+     * @return array   keyed by user id
      */
     public static function get_course_role_users($course_context, $role_id, $active_only = true, $user_fields = null)
     {
@@ -64,20 +134,50 @@ class user_repo extends repo {
 
         $order_by = 'u.firstname ASC';
 
-        $users = get_role_users($role_id, $course_context, false, $user_fields, $order_by, ! $active_only);
+        // if this is a single role, return all users for the role
+        if ( ! is_array($role_id)) {
+            // pull all
+            $role_users = get_role_users($role_id, $course_context, false, $user_fields, $order_by, ! $active_only);
+
+            $users = [];
+
+            // rekey the returned array by user id
+            foreach ($role_users as $role_user) {
+                $users[$role_user->id] = $role_user;
+            }
+        
+        // otherwise, get the unique users within the given list of role ids
+        } else {
+            $users = [];
+
+            // for each given role id
+            foreach ($role_id as $rid) {
+                // pull the users within the role
+                $role_users = get_role_users($rid, $course_context, false, $user_fields, $order_by, ! $active_only);
+
+                // add each to the container
+                foreach ($role_users as $role_user) {
+                    $users[$role_user->id] = $role_user;
+                }
+
+                // be sure we have a unique list of users (still necessary?)
+                $users = array_unique($users, SORT_REGULAR);
+            }
+        }
 
         return $users;
     }
 
     /**
-     * Returns an array of unique user ids given arrays of included and excluded "entity ids"
+     * Returns an array of unique user ids, "selectable" by the given user, given arrays of included and excluded "entity ids"
      * 
      * @param  object  $course
+     * @param  object  $user
      * @param  array   $included_entity_ids   [role_(role id), group_(group id), user_(user id)]
      * @param  array   $excluded_entity_ids   [role_(role id), group_(group id), user_(user id)]
      * @return array
      */
-    public static function get_unique_course_user_ids_from_selected_entities($course, $included_entity_ids = [], $excluded_entity_ids = [])
+    public static function get_unique_course_user_ids_from_selected_entities($course, $user, $included_entity_ids = [], $excluded_entity_ids = [])
     {
         $result_user_ids = [];
 
@@ -164,8 +264,10 @@ class user_repo extends repo {
                     
                     // get all user for this included/excluded role/group, scoped to this course
                     $users = $name == 'role'
-                        ? self::get_course_role_users($course_context, $name_id)
-                        : self::get_course_group_users($course_context, $name_id);
+                        // ? self::get_course_role_users($course_context, $name_id)
+                        ? role_repo::get_course_selectable_roles($course, $course_context)
+                        // : self::get_course_group_users($course_context, $name_id);
+                        : group_repo::get_course_user_selectable_groups($course, $user, $course_context);
 
                     // get appropriate name for the container to place these user ids within
                     $type_container = $type . '_user_ids';
@@ -179,7 +281,7 @@ class user_repo extends repo {
         }
 
         // pull all course users for later use
-        $course_users = self::get_course_users($course_context);
+        $course_users = self::get_course_user_selectable_users($course, $user, $course_context);
 
         // convert these users to an array of ids
         $course_user_ids = array_map(function($user) {
@@ -225,6 +327,18 @@ class user_repo extends repo {
 
         // return a unique list of user ids
         return array_unique($result_user_ids);
+    }
+
+    /**
+     * Reports whether or not the given user can access all groups within the given context
+     * 
+     * @param  object  $user
+     * @param  object  $context
+     * @return bool
+     */
+    private static function user_can_access_all_groups($user, $context)
+    {
+        return has_capability('moodle/site:accessallgroups', $context, $user->id);
     }
 
 }

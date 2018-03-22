@@ -116,6 +116,21 @@ class block_quickmail_config {
     }
 
     /**
+     * Returns an array of role ids configured to be selectable when composing message
+     * 
+     * @param  object  $course  optional, if not given will default to the block-level setting
+     * @return array
+     */
+    public static function get_role_selection_array($course = null)
+    {
+        $roleselection_value = $course
+            ? self::course($course, 'roleselection')
+            : self::block('roleselection');
+
+        return explode(',', $roleselection_value);
+    }
+
+    /**
      * Returns a transformed array from the given array
      * 
      * @param  array  $params
@@ -129,7 +144,7 @@ class block_quickmail_config {
             'roleselection'             => (string) $params['roleselection'],
             'receipt'                   => (int) $params['receipt'],
             'prepend_class'             => (string) $params['prepend_class'],
-            'ferpa'                     => (int) $params['ferpa'],
+            'ferpa'                     => (string) $params['ferpa'],
             'downloads'                 => (int) $params['downloads'],
             'additionalemail'           => (int) $params['additionalemail'],
             'message_types_available' => (string) $params['message_types_available'],
@@ -138,16 +153,6 @@ class block_quickmail_config {
         ];
 
         return $key ? $transformed[$key] : $transformed;
-    }
-
-    public static function roleselection_to_array(string $roleselection_value)
-    {
-        return explode(',', $roleselection_value);
-    }
-
-    public static function roleselection_to_string(array $roleselection_value)
-    {
-        return implode(',', $roleselection_value);
     }
 
     /**
@@ -231,7 +236,8 @@ class block_quickmail_config {
         // handle conversion of special cases...
         if (array_key_exists('roleselection', $params)) {
             if (is_array($params['roleselection'])) {
-                $params['roleselection'] = self::roleselection_to_string($params['roleselection']);
+                // convert array to comma-delimited string for single field storage
+                $params['roleselection'] = implode(',', $params['roleselection']);
             }
         }
 
@@ -257,6 +263,35 @@ class block_quickmail_config {
         global $DB;
 
         $DB->delete_records('block_quickmail_config', ['coursesid' => $course->id]);
+    }
+
+    /**
+     * Reports whether or the given course is configured to have FERPA restrictions or not
+     *
+     * FERPA restrictions = if true, any user that cannot access all groups in the course
+     * will have limited results when pulling groups or users. These results are limited
+     * to whichever groups the user is in, or the users within those groups.
+     * 
+     * @param  object  $course
+     * @return bool
+     */
+    public static function be_ferpa_strict_for_course($course)
+    {
+        // get this block's ferpa setting
+        $setting = self::block('ferpa', false);
+        
+        // if strict, the be strict
+        if ($setting == 'strictferpa') {
+            return true;
+        }
+
+        // if deferred to course, return what is configured by the course
+        if ($setting == 'courseferpa') {
+            return (bool) $course->groupmode;
+        }
+
+        // otherwise, do not be strict
+        return false;
     }
 
 }

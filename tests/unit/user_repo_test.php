@@ -9,6 +9,36 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
     use has_general_helpers,
         sets_up_courses;
 
+    public function test_get_course_user_selectable_users()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+
+        // should have access to all users
+        $editingteacher = $enrolled_users['editingteacher'][0];
+        $student = $enrolled_users['student'][0];
+
+        $users = user_repo::get_course_user_selectable_users($course, $editingteacher, $course_context);
+
+        $first_user = current($users);
+
+        $this->assertInternalType('array', $users);
+        $this->assertCount(44, $users);
+        $this->assertArrayHasKey($editingteacher->id, $users);
+        $this->assertArrayHasKey($student->id, $users);
+        $this->assertInternalType('object', $first_user);
+        $this->assertObjectHasAttribute('id', $first_user);
+        $this->assertObjectHasAttribute('firstname', $first_user);
+        $this->assertObjectHasAttribute('lastname', $first_user);
+
+        // should have limited access
+        $users = user_repo::get_course_user_selectable_users($course, $student, $course_context);
+
+        $this->assertInternalType('array', $users);
+        $this->assertCount(22, $users); // TODO: more testing on this
+    }
+
     public function test_get_course_users()
     {
         $this->resetAfterTest(true);
@@ -117,10 +147,13 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
 
         list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
 
+        $editingteacher = $enrolled_users['editingteacher'][0];
+        $student = $enrolled_users['student'][0];
+
         // get posted includs/excludes
         list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_one($enrolled_users, $groups);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $included_entity_ids, $excluded_entity_ids);
+        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
 
         $this->assertCount(23, $user_ids);
     }
@@ -131,10 +164,13 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
 
         list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
 
+        $editingteacher = $enrolled_users['editingteacher'][0];
+        $student = $enrolled_users['student'][0];
+
         // get posted includs/excludes
         list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_two($enrolled_users, $groups);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $included_entity_ids, $excluded_entity_ids);
+        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
 
         $this->assertCount(10, $user_ids);
     }
@@ -145,10 +181,13 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
 
         list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
 
+        $editingteacher = $enrolled_users['editingteacher'][0];
+        $student = $enrolled_users['student'][0];
+
         // get posted includs/excludes
         list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_three($enrolled_users);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $included_entity_ids, $excluded_entity_ids);
+        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
 
         $this->assertCount(13, $user_ids);
     }
@@ -159,10 +198,13 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
 
         list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
 
+        $editingteacher = $enrolled_users['editingteacher'][0];
+        $student = $enrolled_users['student'][0];
+
         // get posted includs/excludes
         list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_four($enrolled_users);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $included_entity_ids, $excluded_entity_ids);
+        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
 
         $this->assertCount(15, $user_ids);
     }
@@ -173,10 +215,13 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
 
         list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
 
+        $editingteacher = $enrolled_users['editingteacher'][0];
+        $student = $enrolled_users['student'][0];
+
         // get posted includs/excludes
         list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_five($enrolled_users, $groups);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $included_entity_ids, $excluded_entity_ids);
+        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
 
         $this->assertCount(15, $user_ids);
     }
@@ -186,73 +231,6 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
     /// HELPERS
     /// 
     //////////////////////////////////////////////
-    
-    /**
-     * Returns a test course with:
-     * - 1 editing teacher
-     * - 3 teachers
-     * - 40 students
-     * - "red" group with 11 members (1 teacher, 10 students)
-     * - "yellow" group with 15 members (1 teacher, 14 students)
-     * - "blue" group with 15 members (1 teacher, 14 students)
-     * 
-     * @return array [course, course_context, users, groups]
-     */
-    private function create_course_with_users_and_groups()
-    {
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users([
-            'editingteacher' => 1,
-            'teacher' => 3,
-            'student' => 40,
-        ]);
-
-        $groups = [];
-
-        $student_start = 1;
-
-        foreach (['red', 'yellow', 'blue'] as $color) {
-            // create a group 
-            $groups[$color] = $this->getDataGenerator()->create_group([
-                'courseid' => $course->id, 
-                'name' => $color
-            ]);
-
-            // assign a unique teacher to the group
-            $this->getDataGenerator()->create_group_member([
-                'userid' => $users['teacher'][0]->id, 
-                'groupid' => $groups[$color]->id]
-            );
-
-            // assign 10 unique users to the group
-            foreach (range($student_start, $student_start + 9) as $i) {
-                $this->getDataGenerator()->create_group_member([
-                    'userid' => $users['student'][$i - 1]->id, 
-                    'groupid' => $groups[$color]->id]
-                );
-            }
-
-            $student_start += 10;
-        }
-
-        // assign first 4 students from group red into group yellow as well
-        foreach (range(1, 4) as $i) {
-            $this->getDataGenerator()->create_group_member([
-                'userid' => $users['student'][$i - 1]->id, 
-                'groupid' => $groups['yellow']->id]
-            );
-        }
-
-        // assign first 4 students from group yellow into group blue as well
-        foreach (range(11, 14) as $i) {
-            $this->getDataGenerator()->create_group_member([
-                'userid' => $users['student'][$i - 1]->id, 
-                'groupid' => $groups['blue']->id]
-            );
-        }
-
-        return [$course, $course_context, $users, $groups];
-    }
 
     /**
      * This returns include and excluded "entity ids" (user_, role_, group_)

@@ -141,6 +141,73 @@ trait sets_up_courses {
         ];
     }
 
+    /**
+     * Returns a test course with:
+     * - 1 editing teacher
+     * - 3 teachers
+     * - 40 students
+     * - "red" group with 11 members (1 teacher, 10 students)
+     * - "yellow" group with 15 members (1 teacher, 14 students)
+     * - "blue" group with 15 members (1 teacher, 14 students)
+     * 
+     * @return array [course, course_context, users, groups]
+     */
+    public function create_course_with_users_and_groups()
+    {
+        // create course with enrolled users
+        list($course, $course_context, $users) = $this->setup_course_with_users([
+            'editingteacher' => 1,
+            'teacher' => 3,
+            'student' => 40,
+        ]);
+
+        $groups = [];
+
+        $student_start = 1;
+
+        foreach (['red', 'yellow', 'blue'] as $color) {
+            // create a group 
+            $groups[$color] = $this->getDataGenerator()->create_group([
+                'courseid' => $course->id, 
+                'name' => $color
+            ]);
+
+            // assign a unique teacher to the group
+            $this->getDataGenerator()->create_group_member([
+                'userid' => $users['teacher'][0]->id, 
+                'groupid' => $groups[$color]->id]
+            );
+
+            // assign 10 unique users to the group
+            foreach (range($student_start, $student_start + 9) as $i) {
+                $this->getDataGenerator()->create_group_member([
+                    'userid' => $users['student'][$i - 1]->id, 
+                    'groupid' => $groups[$color]->id]
+                );
+            }
+
+            $student_start += 10;
+        }
+
+        // assign first 4 students from group red into group yellow as well
+        foreach (range(1, 4) as $i) {
+            $this->getDataGenerator()->create_group_member([
+                'userid' => $users['student'][$i - 1]->id, 
+                'groupid' => $groups['yellow']->id]
+            );
+        }
+
+        // assign first 4 students from group yellow into group blue as well
+        foreach (range(11, 14) as $i) {
+            $this->getDataGenerator()->create_group_member([
+                'userid' => $users['student'][$i - 1]->id, 
+                'groupid' => $groups['blue']->id]
+            );
+        }
+
+        return [$course, $course_context, $users, $groups];
+    }
+
     /*
      * FOR SOME REASON THIS DOES NOT WORK !! :(
      */

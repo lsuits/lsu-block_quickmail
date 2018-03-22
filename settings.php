@@ -25,8 +25,6 @@ defined('MOODLE_INTERNAL') || die;
  */
 
 if($ADMIN->fulltree) {
-    // require_once $CFG->dirroot . '/blocks/quickmail/lib.php';
-
     $never_no_or_yes_options = [
         -1 => get_string('never'), 
         0 => get_string('no'), 
