@@ -172,13 +172,13 @@ trait sets_up_courses {
                 'name' => $color
             ]);
 
-            // assign a unique teacher to the group
+            // assign the first teacher to the group
             $this->getDataGenerator()->create_group_member([
                 'userid' => $users['teacher'][0]->id, 
                 'groupid' => $groups[$color]->id]
             );
 
-            // assign 10 unique users to the group
+            // assign a chunk of 10 unique users to the group
             foreach (range($student_start, $student_start + 9) as $i) {
                 $this->getDataGenerator()->create_group_member([
                     'userid' => $users['student'][$i - 1]->id, 
@@ -189,7 +189,8 @@ trait sets_up_courses {
             $student_start += 10;
         }
 
-        // assign first 4 students from group red into group yellow as well
+        // assign first 4 students to group yellow
+        // (these users are in group red as well)
         foreach (range(1, 4) as $i) {
             $this->getDataGenerator()->create_group_member([
                 'userid' => $users['student'][$i - 1]->id, 
@@ -197,7 +198,8 @@ trait sets_up_courses {
             );
         }
 
-        // assign first 4 students from group yellow into group blue as well
+        // assign first 4 students to group blue
+        // (these users are in group yellow as well)
         foreach (range(11, 14) as $i) {
             $this->getDataGenerator()->create_group_member([
                 'userid' => $users['student'][$i - 1]->id, 

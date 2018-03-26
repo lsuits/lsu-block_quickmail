@@ -70,7 +70,7 @@ class group_repo extends repo {
      */
     private static function user_can_access_all_groups($user, $context)
     {
-        return has_capability('moodle/site:accessallgroups', $context, $user->id);
+        return has_capability('block/quickmail:viewgroupusers', $context, $user);
     }
 
     /**

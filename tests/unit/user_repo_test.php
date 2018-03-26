@@ -15,6 +15,16 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
 
         list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
 
+        // manager: 0
+        // coursecreator: 0
+        // editingteacher: 1
+        // teacher: 3
+        // student: 40
+        // guest: 0
+        // user: 0
+        // frontpage: 0
+        $teacher = $enrolled_users['teacher'][0];
+
         // should have access to all users
         $editingteacher = $enrolled_users['editingteacher'][0];
         $student = $enrolled_users['student'][0];
@@ -232,21 +242,20 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
     /// 
     //////////////////////////////////////////////
 
+    // first 4 students from group "red" are in group "yellow" as well
+    // first 4 students from group "yellow" are in group "blue" as well
+
     /**
      * This returns include and excluded "entity ids" (user_, role_, group_)
      *
      * This scenario will return included:
-     * - 13 users (students)
+     * - 16 users (students)
      * - 1 group (yellow)
-     *
-     * - the yellow group contains 1 teacher & 10 students
-     * - 8 of the explicity included students belong to the yellow group
-     * - 1 additional student belongs to the yellow group
+     * --- 15 users (1 teacher, 14 students)
+     * --- 8 students already included
      *
      * This scenario will return excluded:
      * - none
-     * 
-     * This returns: 23 net included users
      */
     private function get_post_scenario_one($enrolled_users, $groups)
     {
@@ -277,7 +286,16 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
     }
 
     /**
-     * This returns: 10 net included users
+     * This returns include and excluded "entity ids" (user_, role_, group_)
+     *
+     * This scenario will return included:
+     * - 12 users (students)
+     * - 1 group (red)
+     * --- 15 users (1 teacher, 14 students)
+     * --- 8 students already included
+     *
+     * This scenario will return excluded:
+     * - none
      */
     private function get_post_scenario_two($enrolled_users, $groups)
     {
@@ -319,7 +337,15 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
     }
 
     /**
-     * This returns: 13 net included users
+     * This returns include and excluded "entity ids" (user_, role_, group_)
+     *
+     * This scenario will return included:
+     * - 12 users (students)
+     * - 1 role (editing teacher)
+     * --- 1 user
+     *
+     * This scenario will return excluded:
+     * - none
      */
     private function get_post_scenario_three($enrolled_users)
     {

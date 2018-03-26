@@ -257,17 +257,25 @@ class user_repo extends repo {
         /// PULL ALL USERS FOR EACH INCLUDED/EXCLUDED ROLE/GROUP, ADDING THEM TO THE NEW CONTAINERS
         //////////////////////////////////////////////////////////////
 
+        $selectable_role_ids = array_keys(role_repo::get_course_selectable_roles($course, $course_context));
+        $selectable_group_ids = array_keys(group_repo::get_course_user_selectable_groups($course, $user, $course_context));
+
         // iterate through initial container of included/excluded role/group
         foreach (['included', 'excluded'] as $type) {
             foreach (['role', 'group'] as $name) {
                 foreach ($filtered_entity_ids[$type][$name] as $name_id) {
                     
+                    // first check if this role or group is selectable by the sending user
+                    if ($name == 'role' && ! in_array($name_id, $selectable_role_ids)) {
+                        continue;
+                    } else if ($name == 'group' && ! in_array($name_id, $selectable_group_ids)) {
+                        continue;
+                    }
+
                     // get all user for this included/excluded role/group, scoped to this course
                     $users = $name == 'role'
-                        // ? self::get_course_role_users($course_context, $name_id)
-                        ? role_repo::get_course_selectable_roles($course, $course_context)
-                        // : self::get_course_group_users($course_context, $name_id);
-                        : group_repo::get_course_user_selectable_groups($course, $user, $course_context);
+                        ? self::get_course_role_users($course_context, $name_id)
+                        : self::get_course_group_users($course_context, $name_id);
 
                     // get appropriate name for the container to place these user ids within
                     $type_container = $type . '_user_ids';
@@ -338,7 +346,9 @@ class user_repo extends repo {
      */
     private static function user_can_access_all_groups($user, $context)
     {
-        return has_capability('moodle/site:accessallgroups', $context, $user->id);
+        return has_capability('block/quickmail:viewgroupusers', $context, $user);
+        // return has_capability('moodle/site:accessallgroups', $context, $user->id);
+        // return \block_quickmail_plugin::user_has_permission('viewgroupusers', $context);
     }
 
 }

@@ -72,28 +72,20 @@ $capabilities = array(
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'coursecreator' => CAP_ALLOW
         )
     ),
 
-    //////////////////////////
-
-
-    'block/quickmail:canimpersonate' => array(
-        'captype' => 'write',
+    'block/quickmail:viewgroupusers' => array(
+        'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
-        )
-    ),
-
-    'block/quickmail:candelete' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
         )
     ),
 );

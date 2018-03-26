@@ -17,7 +17,37 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
     
     // public function test_message_with_alternate_id_posted_is_sent_from_that_alternate_email()
 
-    // 
+    public function test_messenger_saves_draft_email()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+        ]);
+
+        // save this email message as a draft
+        $message = messenger::save_draft($user_teacher, $course, $compose_form_data);
+
+        $message_recipients = $message->get_message_recipients();
+
+        $this->assertEquals(0, $this->email_sink_email_count($sink));
+        $this->assertCount(4, $message_recipients);
+        $this->assertInstanceOf(message::class, $message);
+        $this->assertEquals(1, $message->get('is_draft'));
+
+        $this->close_email_sink($sink);
+    }
     
     public function test_cannot_duplicate_a_draft_that_not_created_by_the_given_user()
     {
@@ -90,38 +120,6 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         $draft_message_additional_emails = $draft_message->get_additional_emails();
         $duplicated_draft_additional_emails = $duplicated_draft->get_additional_emails();
         $this->assertEquals(count($draft_message_additional_emails), count($duplicated_draft_additional_emails));
-    }
-
-    public function test_messenger_saves_draft_email()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
-        
-        $sink = $this->open_email_sink();
- 
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-
-        // specify recipients
-        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
-
-        // get a compose form submission
-        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
-            'subject' => 'Hello world',
-            'body' => 'This is one fine body.',
-        ]);
-
-        // save this email message as a draft
-        $message = messenger::save_draft($user_teacher, $course, $compose_form_data);
-
-        $message_recipients = $message->get_message_recipients();
-
-        $this->assertEquals(0, $this->email_sink_email_count($sink));
-        $this->assertCount(4, $message_recipients);
-        $this->assertInstanceOf(message::class, $message);
-        $this->assertEquals(1, $message->get('is_draft'));
-
-        $this->close_email_sink($sink);
     }
 
     public function test_messenger_sends_composed_email_now()

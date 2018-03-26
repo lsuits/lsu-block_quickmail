@@ -50,7 +50,7 @@
             <exclude>tests/unit/queued_repo_test.php</exclude>
             <exclude>tests/unit/role_repo_test.php</exclude>
             <exclude>tests/unit/group_repo_test.php</exclude>
-            <exclude>tests/unit/user_repo_test.php</exclude> <!-- FIX THIS!! -->
+            <exclude>tests/unit/user_repo_test.php</exclude>
 
             <!-- forms -->
             <exclude>tests/unit/compose_message_form_validator_test.php</exclude>
@@ -61,8 +61,8 @@
             <exclude>tests/unit/configuration_test.php</exclude>
             
             <!-- messaging -->
-            <exclude>tests/unit/messenger_test.php</exclude> <!-- FIX THIS!! -->
-            <exclude>tests/unit/messenger_tasks_test.php</exclude> <!-- FIX THIS!! -->
+            <exclude>tests/unit/messenger_test.php</exclude>
+            <exclude>tests/unit/messenger_tasks_test.php</exclude>
             <exclude>tests/unit/subject_prepender_test.php</exclude>
             <exclude>tests/unit/signature_appender_test.php</exclude>
             <exclude>tests/unit/body_parser_test.php</exclude>

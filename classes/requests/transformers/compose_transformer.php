@@ -29,7 +29,7 @@ class compose_transformer extends transformer {
      */
     public function get_transformed_included_entity_ids()
     {
-        return empty($this->form_data->included_entity_ids) ? [] : $this->form_data->included_entity_ids;
+        return empty($this->form_data->included_ids) ? [] : $this->form_data->included_ids;
     }
 
     /**
@@ -39,7 +39,7 @@ class compose_transformer extends transformer {
      */
     public function get_transformed_excluded_entity_ids()
     {
-        return empty($this->form_data->excluded_entity_ids) ? [] : $this->form_data->excluded_entity_ids;
+        return empty($this->form_data->excluded_ids) ? [] : $this->form_data->excluded_ids;
     }
 
     /**
