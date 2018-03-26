@@ -89,7 +89,6 @@ class block_quickmail extends block_list {
      * @return object
      */
     public function get_content() {
-        // cache the content for this instance
         // @TODO: should we cache the content?
         if ( ! empty($this->content)) {
             return $this->content;
@@ -100,7 +99,7 @@ class block_quickmail extends block_list {
         // begin building content...
 
         // if this user has the ability to send quickmail messages
-        if (block_quickmail_plugin::user_has_permission('cansend', $this->context)) {
+        if (\block_quickmail_plugin::user_can_send_messages($this->context)) {
             // compose message
             $this->add_item_to_content([
                 'lang_key' => 'compose',
@@ -137,7 +136,7 @@ class block_quickmail extends block_list {
             ]);
 
             // manage alternate send-from emails
-            if (block_quickmail_plugin::user_has_permission('allowalternate', $this->context)) {
+            if (\block_quickmail_plugin::user_has_permission('allowalternate', $this->context)) {
                 $this->add_item_to_content([
                     'lang_key' => 'alternate',
                     'icon_key' => 't/addcontact',
@@ -146,7 +145,7 @@ class block_quickmail extends block_list {
             }
 
             // manage quickmail config
-            if (block_quickmail_plugin::user_has_permission('canconfig', $this->context)) {
+            if (\block_quickmail_plugin::user_has_permission('canconfig', $this->context)) {
                 $this->add_item_to_content([
                     'lang_key' => 'config',
                     'icon_key' => 'i/settings',

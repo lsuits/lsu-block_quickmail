@@ -31,7 +31,7 @@ class user_repo extends repo {
         $course_context = $course_context ?: \context_course::instance($course->id);
 
         // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! self::user_can_access_all_groups($user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+        if ( ! \block_quickmail_plugin::user_can_access_all_groups($course_context, $user) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
             // get all users with non-"group limited role"'s
             $allaccess_users = get_enrolled_users($course_context, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
 
@@ -346,20 +346,6 @@ class user_repo extends repo {
 
         // return a unique list of user ids
         return array_unique($result_user_ids);
-    }
-
-    /**
-     * Reports whether or not the given user can access all groups within the given context
-     * 
-     * @param  object  $user
-     * @param  object  $context
-     * @return bool
-     */
-    private static function user_can_access_all_groups($user, $context)
-    {
-        return has_capability('block/quickmail:viewgroupusers', $context, $user);
-        // return has_capability('moodle/site:accessallgroups', $context, $user->id);
-        // return \block_quickmail_plugin::user_has_permission('viewgroupusers', $context);
     }
 
 }

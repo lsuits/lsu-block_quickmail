@@ -17,18 +17,45 @@ class block_quickmail_plugin {
     /**
      * Reports whether or not the authenticated user has the given permission within the given context
      * 
-     * @param  string $permission  cansend|allowalternate|canconfig|myaddinstance
+     * @param  string $permission  allowalternate|canconfig|myaddinstance
      * @param  object $context
+     * @param  object $user
      * @return bool
      */
-    public static function user_has_permission($permission, $context) {
-        // first, check for special cases...
-        if ($permission == 'cansend' && block_quickmail_config::block('allowstudents')) {
+    public static function user_has_permission($permission, $context, $user = null) {
+        return has_capability('block/quickmail:' . $permission, $context, $user);
+    }
+
+    /**
+     * Reports whether or not the given user has the permission to compose/draft messages
+     *
+     * Note: User defaults to auth user
+     * 
+     * @param  object $context
+     * @param  object $user
+     * @return bool
+     */
+    public static function user_can_send_messages($context, $user = null) {
+        // if this user is enrolled in the class and students are allowed to send messages
+        if (is_enrolled($context, $user, '', true) && block_quickmail_config::block('allowstudents')) {
             return true;
         }
 
-        // finally, check capability
-        return has_capability('block/quickmail:' . $permission, $context);
+        // otherwise, check user's permission normally
+        return has_capability('block/quickmail:cansend', $context, $user);
+    }
+
+    /**
+     * Reports whether or not the given user has the permission to access groups in the given context
+     *
+     * Note: User defaults to auth user
+     * 
+     * @param  object $context
+     * @param  object $user
+     * @return bool
+     */
+    public static function user_can_access_all_groups($context, $user = null) {
+        return has_capability('block/quickmail:viewgroupusers', $context, $user);
     }
 
     /**

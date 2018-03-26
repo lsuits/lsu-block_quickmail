@@ -28,7 +28,7 @@ class group_repo extends repo {
         $course_context = $course_context ?: \context_course::instance($course->id);
 
         // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! self::user_can_access_all_groups($user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+        if ( ! \block_quickmail_plugin::user_can_access_all_groups($course_context, $user) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
             // get this user's group associations, by groupings
             $grouping_array = groups_get_user_groups($course->id, $user->id);
             
@@ -59,18 +59,6 @@ class group_repo extends repo {
         $groups = self::transform_grouping_array_to_groups($grouping_array);
 
         return $groups;
-    }
-
-    /**
-     * Reports whether or not the given user can access all groups within the given context
-     * 
-     * @param  object  $user
-     * @param  object  $context
-     * @return bool
-     */
-    private static function user_can_access_all_groups($user, $context)
-    {
-        return has_capability('block/quickmail:viewgroupusers', $context, $user);
     }
 
     /**

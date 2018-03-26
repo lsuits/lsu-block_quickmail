@@ -18,10 +18,7 @@ function block_quickmail_pluginfile($course, $cm, $context, $filearea, $args, $f
         require_course_login($course, true, $cm);
     }
 
-    // Check the relevant capabilities - these may vary depending on the filearea being accessed.
-    // if ( ! has_capability('block/quickmail:view', $context)) {
-    //     return false;
-    // }
+    // TODO: check permission here?
     
     // extract params through args
     $itemid = array_shift($args);
