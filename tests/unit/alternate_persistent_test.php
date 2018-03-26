@@ -3,7 +3,6 @@
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\persistents\alternate_email;
-use block_quickmail_string;
 
 class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
     
@@ -22,7 +21,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
         $this->assertEquals(0, $alternate->get('is_validated'));
         $this->assertEquals(0, $alternate->get('timedeleted'));
         $this->assertEquals('Firsty Lasty', $alternate->get_fullname());
-        $this->assertEquals(block_quickmail_string::get('waiting'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_string::get('waiting'), $alternate->get_status());
     }
 
     public function test_get_status()
@@ -33,12 +32,12 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
 
         $alternate = $this->create_alternate($user_teacher, $course, 'only', 'email@one.com');
 
-        $this->assertEquals(block_quickmail_string::get('waiting'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_string::get('waiting'), $alternate->get_status());
 
         $alternate->set('is_validated', 1);
         $alternate->update();
 
-        $this->assertEquals(block_quickmail_string::get('confirmed'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_string::get('confirmed'), $alternate->get_status());
     }
 
     public function test_get_scope()
@@ -49,15 +48,15 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
 
         $alternate = $this->create_alternate($user_teacher, $course, 'only', 'email@one.com');
 
-        $this->assertEquals(block_quickmail_string::get('alternate_availability_only'), $alternate->get_scope());
+        $this->assertEquals(\block_quickmail_string::get('alternate_availability_only'), $alternate->get_scope());
 
         $alternate = $this->create_alternate($user_teacher, $course, 'user', 'email@two.com');
 
-        $this->assertEquals(block_quickmail_string::get('alternate_availability_user'), $alternate->get_scope());
+        $this->assertEquals(\block_quickmail_string::get('alternate_availability_user'), $alternate->get_scope());
 
         $alternate = $this->create_alternate($user_teacher, $course, 'course', 'email@three.com');
 
-        $this->assertEquals(block_quickmail_string::get('alternate_availability_course'), $alternate->get_scope());
+        $this->assertEquals(\block_quickmail_string::get('alternate_availability_course'), $alternate->get_scope());
     }
 
     public function test_get_domain()

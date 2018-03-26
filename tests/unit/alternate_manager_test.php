@@ -5,7 +5,6 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 use block_quickmail\services\alternate\alternate_manager;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\exceptions\validation_exception;
-use block_quickmail_string;
 
 class block_quickmail_alternate_manager_testcase extends advanced_testcase {
     
@@ -160,7 +159,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
 
         $this->assertEquals(1, $this->email_sink_email_count($sink));
-        $this->assertEquals(block_quickmail_string::get('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
+        $this->assertEquals(\block_quickmail_string::get('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
         $this->assertEquals('an@email.com', $this->email_in_sink_attr($sink, 1, 'to'));
 
         $this->close_email_sink($sink);
@@ -252,7 +251,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         alternate_manager::resend_confirmation_email_for_user($alternate->get('id'), $user_teacher);
 
         $this->assertEquals(1, $this->email_sink_email_count($sink));
-        $this->assertEquals(block_quickmail_string::get('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
+        $this->assertEquals(\block_quickmail_string::get('alternate_subject'), $this->email_in_sink_attr($sink, 1, 'subject'));
         $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 1, 'to'));
 
         $this->close_email_sink($sink);

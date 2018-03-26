@@ -257,19 +257,30 @@ class user_repo extends repo {
         /// PULL ALL USERS FOR EACH INCLUDED/EXCLUDED ROLE/GROUP, ADDING THEM TO THE NEW CONTAINERS
         //////////////////////////////////////////////////////////////
 
-        $selectable_role_ids = array_keys(role_repo::get_course_selectable_roles($course, $course_context));
-        $selectable_group_ids = array_keys(group_repo::get_course_user_selectable_groups($course, $user, $course_context));
+        // pull all selectable roles for the auth user if we're going to be including roles
+        $selectable_role_ids = ! empty($filtered_entity_ids['included']['role'])
+            ? array_keys(role_repo::get_course_selectable_roles($course, $course_context))
+            : [];
+        
+        // pull all selectable groups for the auth user if we're going to be including groups
+        $selectable_group_ids = ! empty($filtered_entity_ids['included']['group'])
+            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, $course_context))
+            : [];
 
         // iterate through initial container of included/excluded role/group
         foreach (['included', 'excluded'] as $type) {
             foreach (['role', 'group'] as $name) {
                 foreach ($filtered_entity_ids[$type][$name] as $name_id) {
-                    
-                    // first check if this role or group is selectable by the sending user
-                    if ($name == 'role' && ! in_array($name_id, $selectable_role_ids)) {
-                        continue;
-                    } else if ($name == 'group' && ! in_array($name_id, $selectable_group_ids)) {
-                        continue;
+                    // for inclusions, check that the role or group is selectable by the user
+                    if ($type == 'included') {
+                        // if this is a role but NOT selectable by this user
+                        if ($name == 'role' && ! in_array($name_id, $selectable_role_ids)) {
+                            continue;
+                        
+                        // otherwise, if this is a group but NOT selectable by this user
+                        } else if ($name == 'group' && ! in_array($name_id, $selectable_group_ids)) {
+                            continue;
+                        }
                     }
 
                     // get all user for this included/excluded role/group, scoped to this course
