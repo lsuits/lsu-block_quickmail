@@ -16,13 +16,13 @@ trait submits_compose_message_form {
     {
         $params = $this->get_compose_message_form_submission_params($override_params);
 
-        list($included_ids, $excluded_ids) = $this->get_recipients_array($recipients);
+        list($included_entity_ids, $excluded_entity_ids) = $this->get_recipients_array($recipients);
 
         $form_data = (object)[];
 
         $form_data->from_email_id = $params['from_email_id']; // default: '0' (user email), '-1' (system no reply), else alt id
-        $form_data->included_ids = $included_ids;
-        $form_data->excluded_ids = $excluded_ids;
+        $form_data->included_entity_ids = $included_entity_ids;
+        $form_data->excluded_entity_ids = $excluded_entity_ids;
         $form_data->subject = $params['subject']; // default: 'this is the subject'
         $form_data->additional_emails = $params['additional_emails']; // default: ''
         $form_data->message_editor = [
@@ -53,15 +53,15 @@ trait submits_compose_message_form {
     // @TODO : convert additional_emails override to an array of emails
     private function get_recipients_array($recipients)
     {
-        $included_ids = [];
-        $excluded_ids = [];
+        $included_entity_ids = [];
+        $excluded_entity_ids = [];
 
         foreach (['included', 'excluded'] as $inclusion_type) {
             if (array_key_exists($inclusion_type, $recipients)) {
                 foreach (['role', 'group', 'user'] as $recipient_type) {
                     if (array_key_exists($recipient_type, $recipients[$inclusion_type])) {
                         foreach ($recipients[$inclusion_type][$recipient_type] as $id) {
-                            $container_name = $inclusion_type . '_ids';
+                            $container_name = $inclusion_type . '_entity_ids';
 
                             $$container_name[] = $recipient_type . '_' . $id;
                         }
@@ -70,7 +70,7 @@ trait submits_compose_message_form {
             }
         }
 
-        return [$included_ids, $excluded_ids];
+        return [$included_entity_ids, $excluded_entity_ids];
     }
 
     public function get_compose_message_form_submission_params(array $override_params)
