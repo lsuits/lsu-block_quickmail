@@ -38,7 +38,7 @@ if($ADMIN->fulltree) {
 
     ///////////////////////////////////////////////////////////
     ///
-    ///  ALLOW STUDENTS TO USE QUICKMAIL ?
+    ///  ALLOW STUDENTS TO SEND QUICKMAIL MESSAGES?
     ///  
     ///////////////////////////////////////////////////////////
     
@@ -54,7 +54,7 @@ if($ADMIN->fulltree) {
 
     ///////////////////////////////////////////////////////////
     ///
-    ///  ROLE FILTERING
+    ///  ROLE SELECTION 
     ///  
     ///////////////////////////////////////////////////////////
 
@@ -81,8 +81,8 @@ if($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configmultiselect(
             'block_quickmail_roleselection',
-            block_quickmail_string::get('select_roles'), 
-            block_quickmail_string::get('select_roles'),
+            block_quickmail_string::get('selectable_roles'), 
+            block_quickmail_string::get('selectable_roles_desc'),
             $default_roles_keys, // <-- default
             $block_quickmail_roleselection_options
         )

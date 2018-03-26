@@ -49,7 +49,8 @@ $string['send_email'] = 'Send Email'; // <---- deprecate
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
 $string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
-$string['select_roles'] = 'Roles to filter by';
+$string['selectable_roles'] = 'Selectable roles';
+$string['selectable_roles_desc'] = 'These roles will be available for selection when composing a message.';
 $string['receipt'] = 'Receive a send report';
 $string['receipt_help'] = 'Receive an emailed report with the details of this message send';
 $string['prepend_class'] = 'Prepend Course name';

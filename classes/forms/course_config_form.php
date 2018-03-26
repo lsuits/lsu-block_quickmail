@@ -105,7 +105,7 @@ class course_config_form extends \moodleform {
         $mform->addElement(
             'select', 
             'roleselection', 
-            block_quickmail_string::get('select_roles'), 
+            block_quickmail_string::get('selectable_roles'), 
             $this->get_all_available_roles()
         )->setMultiple(true);
         $mform->getElement('roleselection')->setSelected($this->get_selected_role_ids_array());
