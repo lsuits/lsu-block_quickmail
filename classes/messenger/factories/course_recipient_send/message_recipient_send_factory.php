@@ -40,6 +40,11 @@ class message_recipient_send_factory extends recipient_send_factory implements r
         // returns mixed the integer ID of the new message or false if there was a problem with submitted data
         $result = message_send($moodlemessage);
 
+        // if the message was sent successfully, handle post send tasks
+        if ($result) {
+            $this->handle_recipient_post_send((int) $result);
+        }
+
         return $result;
     }
 

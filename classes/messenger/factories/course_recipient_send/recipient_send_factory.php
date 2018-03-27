@@ -37,7 +37,17 @@ abstract class recipient_send_factory {
 
         // return the constructed factory
         return new $message_factory_class($message, $recipient);
-        
+    }
+
+    /**
+     * Handles post successfully-sent tasks for a recipient
+     * 
+     * @param  int  $moodle_message_id  optional, defaults to 0 (for emails)
+     * @return void
+     */
+    public function handle_recipient_post_send($moodle_message_id = 0)
+    {
+        $this->recipient->mark_as_sent_to($moodle_message_id);
     }
 
     private static function get_message_factory_class_name($message)

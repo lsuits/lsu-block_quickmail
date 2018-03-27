@@ -47,7 +47,7 @@
             <!-- repos -->
             <exclude>tests/unit/draft_repo_test.php</exclude>
             <exclude>tests/unit/sent_repo_test.php</exclude>
-            <exclude>tests/unit/queued_repo_test.php</exclude>
+            <!-- <exclude>tests/unit/queued_repo_test.php</exclude> -->
             <exclude>tests/unit/role_repo_test.php</exclude>
             <exclude>tests/unit/group_repo_test.php</exclude>
             <exclude>tests/unit/user_repo_test.php</exclude>

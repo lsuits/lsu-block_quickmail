@@ -61,11 +61,44 @@ class message_recipient extends persistent {
 
     ///////////////////////////////////////////////
     ///
-    ///  SETTERS
+    ///  GETTERS
     /// 
     ///////////////////////////////////////////////
     
-    //
+    /**
+     * Reports whether or not this recipient has been messaged
+     * 
+     * @return bool
+     */
+    public function has_been_sent_to()
+    {
+        return (bool) $this->get('sent_at');
+    }
+
+    ///////////////////////////////////////////////
+    ///
+    ///  SETTERS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Update the recipient as having been sent to right now
+     *
+     * Optionally, save the moodle message id on the recipient
+     * 
+     * @param  int        $moodle_message_id
+     * @return void
+     */
+    public function mark_as_sent_to($moodle_message_id = 0)
+    {
+        $this->set('sent_at', time());
+
+        if ($moodle_message_id) {
+            $this->set('moodle_message_id', (int) $moodle_message_id);
+        }
+        
+        $this->update();
+    }
 
     ///////////////////////////////////////////////
     ///

@@ -319,6 +319,61 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $this->assertEquals('/blocks/quickmail/queued.php?courseid=7&sort=subject&dir=asc&page=1', $queueds->pagination->previous_page_uri);
     }
 
+    public function test_get_all_messages_to_send()
+    {
+        $this->resetAfterTest(true);
+
+        // should produce 6 queued messages with send times in the future AND 1 with scheduled time in the past
+        $queueds = $this->create_test_queueds();
+
+        $messages = queued_repo::get_all_messages_to_send();
+
+        $this->assertCount(1, $messages);
+
+        $now = time();
+
+        // update 3 of these messages to have send times in the past
+        foreach ($queueds as $key => $message) {
+            if (in_array($key, [1, 3, 5])) {
+                $message = new message($message->id);
+
+                $message->set('to_send_at', $now - $key);
+                $message->update();
+            }
+        }
+
+        $messages = queued_repo::get_all_messages_to_send();
+
+        $this->assertCount(4, $messages);
+
+        // change one of these updated messages to a draft
+        $message = new message($queueds[1]->id);
+        $message->set('is_draft', 1);
+        $message->update();
+
+        $messages = queued_repo::get_all_messages_to_send();
+
+        $this->assertCount(3, $messages);
+
+        // change another one of these updated messages to sent status
+        $message = new message($queueds[3]->id);
+        $message->set('sent_at', $now + 100000);
+        $message->update();
+
+        $messages = queued_repo::get_all_messages_to_send();
+
+        $this->assertCount(2, $messages);
+
+        // change another one of these updated messages to sending status
+        $message = new message($queueds[5]->id);
+        $message->set('is_sending', 1);
+        $message->update();
+
+        $messages = queued_repo::get_all_messages_to_send();
+
+        $this->assertCount(1, $messages);
+    }
+
     ///////////////////////////////////////////////
     ///
     /// HELPERS
@@ -335,9 +390,17 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         ]);
     }
 
+    /**
+     * Creates test queued messages, returns an array of messages
+     * Note: may need to update timestamps based on actual time of running these tests
+     * 
+     * @return array
+     */
     private function create_test_queueds()
     {
         global $DB;
+
+        $queueds = [];
 
         // id: 143000
         $queued1 = $this->create_message(true);
@@ -348,6 +411,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 8888888888;
         $queued->to_send_at = 3232323232;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
 
         // id: 143001
         $queued2 = $this->create_message(true);
@@ -358,6 +422,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 4444444444;
         $queued->to_send_at = 5252525252;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
 
         // id: 143002
         $queued3 = $this->create_message(true);
@@ -368,6 +433,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 7777777777;
         $queued->to_send_at = 1919191919;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
 
         // id: 143003
         $queued4 = $this->create_message(true);
@@ -378,6 +444,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 1111111111;
         $queued->to_send_at = 5454545454;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
 
         // id: 143004
         $queued5 = $this->create_message(true);
@@ -388,6 +455,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 2222222222;
         $queued->to_send_at = 3333333333;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
 
         // id: 143005
         $queued6 = $this->create_message(true);
@@ -398,6 +466,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 1212121212;
         $queued->to_send_at = 2525252525;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
 
         // id: 143006
         $queued7 = $this->create_message(true);
@@ -408,6 +477,9 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $queued->timecreated = 3434343434;
         $queued->to_send_at = 1010101010;
         $DB->update_record('block_quickmail_messages', $queued);
+        $queueds[] = $queued;
+
+        return $queueds;
     }
 
 }

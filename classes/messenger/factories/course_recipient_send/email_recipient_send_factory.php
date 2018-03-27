@@ -39,6 +39,11 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
             $this->message_params->wordwrapwidth
         );
 
+        // if the message was sent successfully, handle post send tasks
+        if ($success) {
+            $this->handle_recipient_post_send();
+        }
+        
         return $success;
     }
 

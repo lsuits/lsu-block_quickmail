@@ -117,8 +117,8 @@ try {
     // SEND
     } else if ($request->to_send_message()) {
 
-        // attempt to send
-        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, false);  // <---------- remove the last parameter for production!!!!
+        // attempt to send (as task)
+        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, true);
 
         // redirect back to course page
         // @TODO - after send redirect to sent messages? (?)

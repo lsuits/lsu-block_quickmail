@@ -8,16 +8,22 @@ use block_quickmail\persistents\message;
 
 class send_message_adhoc_task extends adhoc_task {
     
-    // custom data:
-    //  - message_id
+    /*
+     * This tasks kicks off the sending of a specific message to all of it's recipients
+     * Note: this will in turn kick off subsequent scheduled tasks for each individual recipient delivery
+     *
+     * Required custom data: message_id
+     */
     public function execute() {
         $data = $this->get_custom_data();
 
-        $message = message::find_or_null($data->message_id);
+        // attempt to fetch the message
+        if ($message = message::find_or_null($data->message_id)) {
+            // message is found, instantiate a messenger and send
+            $messenger = new messenger($message);
 
-        $messenger = new messenger($message);
-
-        $messenger->send();
+            $messenger->send();
+        }
     }
 
 }
