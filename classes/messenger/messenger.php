@@ -255,12 +255,12 @@ class messenger {
     /**
      * Sends the message to all of its recipients
      * 
-     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task
+     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task, otherwise will send synchronously right away
      * @return bool
      */
     public function send($queue_send = true)
     {
-        // if sending now, handle pre-send actions
+        // if sending synchronously, handle pre-send actions
         if ( ! $queue_send) {
             $this->handle_message_pre_send();
         }
@@ -269,11 +269,13 @@ class messenger {
         foreach($this->message->get_message_recipients() as $recipient) {
             // if any exceptions are thrown, gracefully move to the next recipient
             try {
+                // if sending synchronously, send to recipient now
                 if ( ! $queue_send) {
                     // send now
-                    $this->send_to_recipient($recipient, false);
+                    $this->send_to_recipient($recipient);
+                
+                // otherwise, queue a task to handle sending to the recipient
                 } else {
-                    // create a job
                     $task = new send_message_to_recipient_adhoc_task();
 
                     $task->set_custom_data([
@@ -281,7 +283,6 @@ class messenger {
                         'recipient_id' => $recipient->get('id'),
                     ]);
 
-                    // queue job
                     task_manager::queue_adhoc_task($task);
                 }
             } catch (\Exception $e) {
@@ -289,7 +290,7 @@ class messenger {
             }
         }
         
-        // if sending now, handle post-send actions
+        // if sending synchronously, handle post-send actions
         if ( ! $queue_send) {
             $this->handle_message_post_send();
         }
@@ -300,27 +301,16 @@ class messenger {
     /**
      * Sends the message to the given recipient
      * 
-     * @param  message_recipient  $recipient       message recipient to recieve the message
-     * @param  bool               $event_handling  if true, pre-send and post-send actions will be fired
+     * @param  message_recipient  $recipient   message recipient to recieve the message
      * @return bool
      */
-    public function send_to_recipient($recipient, $event_handling = false)
+    public function send_to_recipient($recipient)
     {
-        // if we're handling pre/post send actions (likely, is queued send) AND this recipient should be first to receive message
-        if ($event_handling && $recipient->should_be_first_to_receive_message()) {
-            $this->handle_message_pre_send();
-        }
-
         // instantiate recipient_send_factory
         $recipient_send_factory = recipient_send_factory::make($this->message, $recipient);
 
         // send recipient_send_factory
         $recipient_send_factory->send();
-
-        // if we're handling pre/post send actions (likely, is queued send) AND this recipient should be last to receive message
-        if ($event_handling && $recipient->should_be_last_to_receive_message()) {
-            $this->handle_message_post_send();
-        }
 
         return true;
     }
@@ -330,7 +320,7 @@ class messenger {
      * 
      * @return void
      */
-    private function handle_message_pre_send()
+    public function handle_message_pre_send()
     {
         $this->message->set('is_sending', 1);
         $this->message->update();
@@ -342,7 +332,7 @@ class messenger {
      * 
      * @return void
      */
-    private function handle_message_post_send()
+    public function handle_message_post_send()
     {
         // send to any additional emails (if any)
         $this->send_message_additional_emails();

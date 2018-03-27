@@ -22,7 +22,9 @@ class send_message_adhoc_task extends adhoc_task {
             // message is found, instantiate a messenger and send
             $messenger = new messenger($message);
 
+            $messenger->handle_message_pre_send();
             $messenger->send();
+            $messenger->handle_message_post_send();
         }
     }
 

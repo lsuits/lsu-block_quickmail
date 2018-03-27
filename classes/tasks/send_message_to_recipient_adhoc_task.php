@@ -26,7 +26,7 @@ class send_message_to_recipient_adhoc_task extends adhoc_task {
                 if ( ! $recipient->has_been_sent_to()) {
                     $messenger = new messenger($message);
                         
-                    $messenger->send_to_recipient($recipient, true);
+                    $messenger->send_to_recipient($recipient);
                 }
             }
         }
