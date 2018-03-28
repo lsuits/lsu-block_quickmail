@@ -89,7 +89,6 @@ class block_quickmail extends block_list {
      * @return object
      */
     public function get_content() {
-        // @TODO: should we cache the content?
         if ( ! empty($this->content)) {
             return $this->content;
         }
@@ -102,35 +101,35 @@ class block_quickmail extends block_list {
         if (\block_quickmail_plugin::user_can_send_messages($this->context)) {
             // compose message
             $this->add_item_to_content([
-                'lang_key' => 'compose',
+                'lang_key' => block_quickmail_string::get('open_compose'),
                 'icon_key' => 't/email',
                 'page' => 'compose',
             ]);
 
             // manage drafts
             $this->add_item_to_content([
-                'lang_key' => 'drafts',
+                'lang_key' => block_quickmail_string::get('manage_drafts'),
                 'icon_key' => 'i/open',
                 'page' => 'drafts',
             ]);
 
             // manage queued
             $this->add_item_to_content([
-                'lang_key' => 'view_queued',
+                'lang_key' => block_quickmail_string::get('view_queued'),
                 'icon_key' => 'i/calendareventtime',
                 'page' => 'queued',
             ]);
 
             // view sent
             $this->add_item_to_content([
-                'lang_key' => 'view_sent',
+                'lang_key' => block_quickmail_string::get('view_sent'),
                 'icon_key' => 'e/increase_indent',
                 'page' => 'sent',
             ]);
 
             // manage signatures
             $this->add_item_to_content([
-                'lang_key' => 'manage_signatures',
+                'lang_key' => block_quickmail_string::get('manage_signatures'),
                 'icon_key' => 'i/edit',
                 'page' => 'signatures',
             ]);
@@ -138,7 +137,7 @@ class block_quickmail extends block_list {
             // manage alternate send-from emails
             if (\block_quickmail_plugin::user_has_permission('allowalternate', $this->context)) {
                 $this->add_item_to_content([
-                    'lang_key' => 'alternate',
+                    'lang_key' => block_quickmail_string::get('manage_alternates'),
                     'icon_key' => 't/addcontact',
                     'page' => 'alternate',
                 ]);
@@ -147,7 +146,7 @@ class block_quickmail extends block_list {
             // manage quickmail config
             if (\block_quickmail_plugin::user_has_permission('canconfig', $this->context)) {
                 $this->add_item_to_content([
-                    'lang_key' => 'config',
+                    'lang_key' => get_string('configuration'),
                     'icon_key' => 'i/settings',
                     'page' => 'configuration',
                 ]);
@@ -180,7 +179,7 @@ class block_quickmail extends block_list {
     {
         global $OUTPUT;
 
-        $label = block_quickmail_string::get($attributes['lang_key']);
+        $label = $attributes['lang_key'];
         
         $icon = $OUTPUT->pix_icon($attributes['icon_key'], $label, 'moodle', $this->get_content_icon_class());
 

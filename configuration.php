@@ -27,10 +27,10 @@ block_quickmail_plugin::require_user_capability('canconfig', $page_context);
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('config'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
-$PAGE->navbar->add(block_quickmail_string::get('config'));
-$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('config'));
+$PAGE->navbar->add(get_string('configuration'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->js_call_amd('block_quickmail/course-config', 'init', ['courseid' => $page_params['courseid']]);
 

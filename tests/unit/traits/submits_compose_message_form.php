@@ -11,7 +11,6 @@
 
 trait submits_compose_message_form {
 
-    // @TODO : convert additional_emails override to an array of emails
     public function get_compose_message_form_submission(array $recipients = [], $message_type = 'email', array $override_params = [])
     {
         $params = $this->get_compose_message_form_submission_params($override_params);
@@ -50,7 +49,6 @@ trait submits_compose_message_form {
             // groups
             // users
 
-    // @TODO : convert additional_emails override to an array of emails
     private function get_recipients_array($recipients)
     {
         $included_entity_ids = [];

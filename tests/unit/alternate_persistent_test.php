@@ -21,7 +21,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
         $this->assertEquals(0, $alternate->get('is_validated'));
         $this->assertEquals(0, $alternate->get('timedeleted'));
         $this->assertEquals('Firsty Lasty', $alternate->get_fullname());
-        $this->assertEquals(\block_quickmail_string::get('waiting'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_string::get('alternate_waiting'), $alternate->get_status());
     }
 
     public function test_get_status()
@@ -32,12 +32,12 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
 
         $alternate = $this->create_alternate($user_teacher, $course, 'only', 'email@one.com');
 
-        $this->assertEquals(\block_quickmail_string::get('waiting'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_string::get('alternate_waiting'), $alternate->get_status());
 
         $alternate->set('is_validated', 1);
         $alternate->update();
 
-        $this->assertEquals(\block_quickmail_string::get('confirmed'), $alternate->get_status());
+        $this->assertEquals(\block_quickmail_string::get('alternate_confirmed'), $alternate->get_status());
     }
 
     public function test_get_scope()

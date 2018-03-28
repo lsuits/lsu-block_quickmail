@@ -65,7 +65,7 @@ try {
             $USER
         );
 
-        $request->redirect_as_success(block_quickmail_string::get('entry_activated', $alternate_email->get('email')), $page_url, ['courseid' => $page_params['courseid']]);
+        $request->redirect_as_success(block_quickmail_string::get('alternate_activated', $alternate_email->get('email')), $page_url, ['courseid' => $page_params['courseid']]);
 
     // RESEND
     } else if ($page_params['resendid']) {

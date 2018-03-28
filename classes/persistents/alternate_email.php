@@ -105,8 +105,8 @@ class alternate_email extends persistent {
      */
     public function get_status() {
         return $this->get('is_validated') ?
-            block_quickmail_string::get('confirmed') :
-            block_quickmail_string::get('waiting');
+            block_quickmail_string::get('alternate_confirmed') :
+            block_quickmail_string::get('alternate_waiting');
     }
 
     /**

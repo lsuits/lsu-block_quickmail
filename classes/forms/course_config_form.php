@@ -170,9 +170,9 @@ class course_config_form extends \moodleform {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('submit', 'save', block_quickmail_string::get('save_configuration')),
-            $mform->createElement('submit', 'reset', block_quickmail_string::get('reset')),
-            $mform->createElement('cancel', 'cancel', block_quickmail_string::get('cancel'))
+            $mform->createElement('submit', 'save', get_string('savepreferences')),
+            $mform->createElement('submit', 'reset', get_string('resettodefaults')),
+            $mform->createElement('cancel', 'cancel', get_string('cancel'))
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
@@ -231,8 +231,8 @@ class course_config_form extends \moodleform {
         return [
             0 => get_string('none'),
             'idnumber' => get_string('idnumber'),
-            'shortname' => get_string('shortname'),
-            'fullname' => get_string ('fullname')
+            'shortname' => get_string('shortnamecourse'),
+            'fullname' => get_string('fullname')
         ];
     }
 

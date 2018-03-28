@@ -116,12 +116,12 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'select', 
             'from_email_id', 
-            block_quickmail_string::get('from'), 
+            get_string('from'), 
             $this->get_from_email_values()
         );
         $mform->addHelpButton(
             'from_email_id', 
-            'from', 
+            'from_email', 
             'block_quickmail'
         );
 
@@ -248,7 +248,7 @@ class compose_message_form extends \moodleform {
         $mform->addElement(
             'filemanager', 
             'attachments', 
-            block_quickmail_string::get('attachment'), 
+            get_string('attachedfiles', 'repository'), 
             null,
             block_quickmail_config::get_filemanager_options()
         );
@@ -276,8 +276,8 @@ class compose_message_form extends \moodleform {
             $mform->addElement(
                 'static', 
                 'add_signature_text', 
-                block_quickmail_string::get('sig'), 
-                block_quickmail_string::get('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . block_quickmail_string::get('create_one_now') . '</a>')
+                block_quickmail_string::get('signature'), 
+                block_quickmail_string::get('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . block_quickmail_string::get('create_new') . '</a>')
             );
             $mform->addElement(
                 'hidden', 
@@ -371,7 +371,7 @@ class compose_message_form extends \moodleform {
         $buttons = [
             $mform->createElement('submit', 'send', block_quickmail_string::get('send_message')),
             $mform->createElement('submit', 'save', block_quickmail_string::get('save_draft')),
-            $mform->createElement('cancel', 'cancel', block_quickmail_string::get('cancel'))
+            $mform->createElement('cancel', 'cancel', get_string('cancel'))
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', [' '], false);

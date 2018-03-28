@@ -46,7 +46,7 @@ if($ADMIN->fulltree) {
         new admin_setting_configselect(
             'block_quickmail_allowstudents',
             block_quickmail_string::get('allowstudents'), 
-            block_quickmail_string::get('allowstudentsdesc'), 
+            block_quickmail_string::get('allowstudents_desc'), 
             0, // <-- default
             $never_no_or_yes_options
         )
@@ -113,8 +113,8 @@ if($ADMIN->fulltree) {
     $block_quickmail_prepend_class_options = [
         0 => get_string('none'),
         'idnumber' => get_string('idnumber'),
-        'shortname' => get_string('shortname'),
-        'fullname' => get_string ('fullname')
+        'shortname' => get_string('shortnamecourse'),
+        'fullname' => get_string('fullname')
     ];
 
     $settings->add(

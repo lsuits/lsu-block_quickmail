@@ -151,7 +151,7 @@ class manage_signatures_form extends \moodleform {
         $mform->addElement(
             'checkbox', 
             'default_flag', 
-            $this->get_plugin_string('default_flag')
+            get_string('default')
         );
         $mform->setType(
             'default_flag', 
@@ -191,7 +191,7 @@ class manage_signatures_form extends \moodleform {
     }
 
     public function get_cancel_button_text() {
-        return ! empty($this->course) ? $this->get_plugin_string('back_to_course') : $this->get_plugin_string('cancel');
+        return ! empty($this->course) ? $this->get_plugin_string('back_to_course') : get_string('cancel');
     }
 
     public function get_plugin_string($key, $a = null) {

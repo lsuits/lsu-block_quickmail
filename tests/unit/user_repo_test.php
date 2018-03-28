@@ -46,7 +46,7 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
         $users = user_repo::get_course_user_selectable_users($course, $student, $course_context);
 
         $this->assertInternalType('array', $users);
-        $this->assertCount(22, $users); // TODO: more testing on this
+        $this->assertCount(22, $users);
     }
 
     public function test_get_course_users()
