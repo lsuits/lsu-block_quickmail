@@ -39,19 +39,19 @@ class message_additional_email extends persistent {
  
     ///////////////////////////////////////////////
     ///
-    ///  RELATIONSHIPS
+    ///  GETTERS
     /// 
     ///////////////////////////////////////////////
-
-    //
-
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
-    //
+    
+    /**
+     * Reports whether or not this additional email has been messaged
+     * 
+     * @return bool
+     */
+    public function has_been_sent_to()
+    {
+        return (bool) $this->get('sent_at');
+    }
 
     ///////////////////////////////////////////////
     ///

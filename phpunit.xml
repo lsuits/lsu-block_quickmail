@@ -47,7 +47,7 @@
             <!-- repos -->
             <exclude>tests/unit/draft_repo_test.php</exclude>
             <exclude>tests/unit/sent_repo_test.php</exclude>
-            <!-- <exclude>tests/unit/queued_repo_test.php</exclude> -->
+            <exclude>tests/unit/queued_repo_test.php</exclude>
             <exclude>tests/unit/role_repo_test.php</exclude>
             <exclude>tests/unit/group_repo_test.php</exclude>
             <exclude>tests/unit/user_repo_test.php</exclude>
@@ -62,13 +62,16 @@
             
             <!-- messaging -->
             <exclude>tests/unit/messenger_test.php</exclude>
-            <exclude>tests/unit/messenger_tasks_test.php</exclude>
             <exclude>tests/unit/subject_prepender_test.php</exclude>
             <exclude>tests/unit/signature_appender_test.php</exclude>
             <exclude>tests/unit/body_parser_test.php</exclude>
             <exclude>tests/unit/user_course_data_injector_test.php</exclude>
             <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
             <exclude>tests/unit/save_draft_message_validator_test.php</exclude>
+            
+            <!-- messaging tasks -->
+            <exclude>tests/unit/send_message_adhoc_task_test.php</exclude>
+            <exclude>tests/unit/send_all_ready_messages_task_test.php</exclude>
         </testsuite>
     </testsuites>
 

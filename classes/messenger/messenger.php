@@ -224,8 +224,10 @@ class messenger {
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails($transformed_data->additional_emails);
         
-        // if not scheduled for delivery later, send now
-        if ( ! $message->get_to_send_in_future()) {
+        // if not sending as a task, and scheduled for delivery later, send now
+        // the ability to do this is not allowed for the end user, but available for testing
+        // TODO: make task-based sending configurable (ie: do not allow scheduled sends)
+        if ( ! $send_as_tasks && ! $message->get_to_send_in_future()) {
             self::deliver($message, $send_as_tasks);
         }
 
@@ -338,7 +340,7 @@ class messenger {
         $this->send_message_additional_emails();
 
         // send receipt message (if applicable)
-        if ($this->message->get('send_receipt')) {
+        if ($this->message->should_send_receipt()) {
             $this->send_message_reciept();
         }
         
@@ -366,30 +368,31 @@ class messenger {
         $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
         
         foreach($this->message->get_additional_emails() as $additional_email) {
+            if ( ! $additional_email->has_been_sent_to()) {
+                // instantiate an emailer
+                $emailer = new block_quickmail_emailer($fromuser, $subject, $body);
+                $emailer->to_email($additional_email->get('email'));
 
-            // instantiate an emailer
-            $emailer = new block_quickmail_emailer($fromuser, $subject, $body);
-            $emailer->to_email($additional_email->get('email'));
+                // determine reply to parameters based off of message settings
+                if ( ! (bool) $this->message->get('no_reply')) {
+                    // if the message has an alternate email, reply to that
+                    if ($alternate_email = alternate_email::find_or_null($this->message->get('alternate_email_id'))) {
+                        $replyto_email = $alternate_email->get('email');
+                        $replyto_name = $alternate_email->get_fullname();
+                    
+                    // otherwise, reply to sending user
+                    } else {
+                        $replyto_email = $fromuser->email;
+                        $replyto_name = fullname($fromuser);
+                    }
 
-            // determine reply to parameters based off of message settings
-            if ( ! (bool) $this->message->get('no_reply')) {
-                // if the message has an alternate email, reply to that
-                if ($alternate_email = alternate_email::find_or_null($this->message->get('alternate_email_id'))) {
-                    $replyto_email = $alternate_email->get('email');
-                    $replyto_name = $alternate_email->get_fullname();
-                
-                // otherwise, reply to sending user
-                } else {
-                    $replyto_email = $fromuser->email;
-                    $replyto_name = fullname($fromuser);
+                    $emailer->reply_to($replyto_email, $replyto_name);
                 }
 
-                $emailer->reply_to($replyto_email, $replyto_name);
-            }
-
-            // attempt to send the email
-            if ($emailer->send()) {
-                $additional_email->mark_as_sent();
+                // attempt to send the email
+                if ($emailer->send()) {
+                    $additional_email->mark_as_sent();
+                }
             }
         }
     }
@@ -421,6 +424,9 @@ class messenger {
 
         // attempt to send the email
         $emailer->send();
+
+        // flag message as having sent the receipt message
+        $this->message->mark_receipt_as_sent();
     }
 
 }

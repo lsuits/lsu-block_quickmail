@@ -284,6 +284,16 @@ class message extends persistent {
 	}
 
 	/**
+	 * Reports whether or not this message needs to send a receipt email
+	 * 
+	 * @return bool
+	 */
+	public function should_send_receipt()
+	{
+		return (bool) $this->get('send_receipt');
+	}
+
+	/**
 	 * Reports whether or not this message is marked as sent
 	 * 
 	 * @return bool
@@ -339,6 +349,24 @@ class message extends persistent {
 		return (int) block_quickmail_cache::store('qm_msg_attach_count')->add($this->get('id'), function() use ($message) {
 			return count($message->get_message_attachments());
 		});
+	}
+
+	///////////////////////////////////////////////
+	///
+	///  SETTERS
+	/// 
+	///////////////////////////////////////////////
+
+	/**
+	 * Update this message as having sent a receipt message
+	 * 
+	 * @return void
+	 */
+	public function mark_receipt_as_sent()
+	{
+		$this->set('send_receipt', 0);
+        
+        $this->update();
 	}
 
 	///////////////////////////////////////////////
