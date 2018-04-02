@@ -67,6 +67,8 @@ $string['scheduled_time'] = 'Scheduled Time';
 $string['sent_at'] = 'Sent At';
 $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
+$string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
+$string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
