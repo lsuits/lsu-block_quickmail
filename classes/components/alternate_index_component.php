@@ -78,7 +78,7 @@ class alternate_index_component extends component implements \renderable {
 
         $data->urlBackLabel = $this->course_id 
             ? block_quickmail_string::get('back_to_course')
-            : 'Back to My page'; // TODO - make this a lang string
+            : block_quickmail_string::get('back_to_mypage');
         
         return $data;
     }

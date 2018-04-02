@@ -2,10 +2,9 @@
 
 namespace block_quickmail\persistents;
 
-use block_quickmail_cache;
 use \core\persistent;
-use \lang_string;
-use \dml_missing_record_exception;
+use block_quickmail_cache;
+use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
@@ -205,22 +204,22 @@ class message extends persistent {
 	 */
 	public function get_status() {
 		if ($this->is_being_sent()) {
-			return 'sending';
+			return block_quickmail_string::get('sending');
 		}
 
 		if ($this->is_soft_deleted()) {
-			return 'deleted';
+			return block_quickmail_string::get('deleted');
 		}
 
 		if ($this->is_message_draft()) {
-			return 'drafted';
+			return block_quickmail_string::get('drafted');
 		}
 
 		if ($this->is_queued_message()) {
-			return 'queued';
+			return block_quickmail_string::get('queued');
 		}
 		
-		return 'sent';
+		return block_quickmail_string::get('sent');
 	}
 
 	public function get_to_send_in_future() {
@@ -228,11 +227,11 @@ class message extends persistent {
 	}
 
 	public function get_subject_preview($length = 20) {
-		return $this->render_preview_string('subject', $length, '...', '(No subject)');
+		return $this->render_preview_string('subject', $length, '...', block_quickmail_string::get('preview_no_subject'));
 	}
 
 	public function get_body_preview($length = 40) {
-		return strip_tags($this->render_preview_string('body', $length, '...', '(No content)'));
+		return strip_tags($this->render_preview_string('body', $length, '...', block_quickmail_string::get('preview_no_body')));
 	}
 
 	public function get_readable_created_at() {

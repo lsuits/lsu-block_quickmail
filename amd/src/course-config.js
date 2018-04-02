@@ -1,4 +1,4 @@
-define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalFactory, ModalEvents) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], function($, ModalFactory, ModalEvents, Str) {
  
     return {
         init: function(courseid) {
@@ -9,8 +9,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
 
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
-                title: 'Restore Default Configuration',
-                body: '<p>This will restore this course\'s Quickmail settings to default, are you sure?</p>',
+                title: Str.get_string('restore_default_modal_title', 'block_quickmail'),
+                body: '<p>' + Str.get_string('restore_default_confirm_message', 'block_quickmail') + '</p>'
             }, trigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();

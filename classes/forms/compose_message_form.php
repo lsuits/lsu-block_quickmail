@@ -147,14 +147,14 @@ class compose_message_form extends \moodleform {
             'ajax' => ''
         ];
         
-        $mform->addElement('autocomplete', 'included_entity_ids', 'To', $recipient_entities, array_merge($options, [
-            'noselectionstring' => 'No included recipients',
-            'placeholder' => 'Who should recieve this message?',
+        $mform->addElement('autocomplete', 'included_entity_ids', block_quickmail_string::get('included_ids_label'), $recipient_entities, array_merge($options, [
+            'noselectionstring' => block_quickmail_string::get('no_included_recipients'),
+            'placeholder' => block_quickmail_string::get('included_recipients_desc'),
         ]))->setValue($this->included_draft_recipients);
 
-        $mform->addElement('autocomplete', 'excluded_entity_ids', 'Exclude', $recipient_entities, array_merge($options, [
-            'noselectionstring' => 'No excluded recipients',
-            'placeholder' => 'Who should NOT recieve this message?',
+        $mform->addElement('autocomplete', 'excluded_entity_ids', block_quickmail_string::get('excluded_ids_label'), $recipient_entities, array_merge($options, [
+            'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
+            'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
         ]))->setValue($this->excluded_draft_recipients);
 
 
@@ -231,7 +231,7 @@ class compose_message_form extends \moodleform {
             'editor', 
             'message_editor',  
             block_quickmail_string::get('body'), 
-            'bdfsdgsdg', 
+            '', 
             $this->get_editor_options()
         )->setValue([
             'text' => $default_text
@@ -385,7 +385,7 @@ class compose_message_form extends \moodleform {
 
         // check that we have at least one recipient
         if (empty($data['included_entity_ids'])) {
-            $errors['included_entity_ids'] = 'You must select at least one recipient';
+            $errors['included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
         }
 
         // additional_emails - make sure each is valid
@@ -394,7 +394,7 @@ class compose_message_form extends \moodleform {
         if ( ! empty($cleansed_additional_emails) && count(array_filter(explode(',', $cleansed_additional_emails), function($email) {
             return ! filter_var($email, FILTER_VALIDATE_EMAIL);
         }))) {
-            $errors['additional_emails'] = 'Some of the additional emails you entered were invalid.';
+            $errors['additional_emails'] = block_quickmail_string::get('invalid_additional_emails_validation');
         }
 
         return $errors;

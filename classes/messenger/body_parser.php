@@ -1,7 +1,9 @@
 <?php
 
 namespace block_quickmail\messenger;
+
 use block_quickmail_config;
+use block_quickmail_string;
 
 class body_parser {
 
@@ -61,7 +63,7 @@ class body_parser {
 
             // if no ending delimiter, no bueno
             if ( ! $next_last_delimiter = strpos($message, $last_delimiter)) {
-                $this->add_error('Custom data delimiters not formatted properly.');
+                $this->add_error(block_quickmail_string::get('invalid_custom_data_delimiters'));
             }
 
             // get the custom message key
@@ -86,7 +88,7 @@ class body_parser {
     {
         foreach ($this->message_keys as $message_key) {
             if ( ! in_array($message_key, $this->supported_keys)) {
-                $this->add_error('Custom data key "' . $message_key . '" is not allowed.');
+                $this->add_error(block_quickmail_string::get('invalid_custom_data_key', $message_key));
             }
         }
     }

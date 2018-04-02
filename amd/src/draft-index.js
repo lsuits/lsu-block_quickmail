@@ -1,4 +1,4 @@
-define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalFactory, ModalEvents) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], function($, ModalFactory, ModalEvents, Str) {
  
     return {
         init: function() {
@@ -30,8 +30,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
 
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
-                title: 'Delete Message Draft',
-                body: '<p>This will permanently delete your draft message, are you sure?</p>',
+                title: Str.get_string('delete_draft_modal_title', 'block_quickmail'),
+                body: '<p>' + Str.get_string('delete_draft_confirm_message', 'block_quickmail') + '</p>'
             }, deleteTrigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();
@@ -48,8 +48,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
 
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
-                title: 'Duplicate Message Draft',
-                body: '<p>This will make a copy of the draft, are you sure?</p>',
+                title: Str.get_string('duplicate_draft_modal_title', 'block_quickmail'),
+                body: '<p>' + Str.get_string('duplicate_draft_confirm_message', 'block_quickmail') + '</p>'
             }, duplicateTrigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();

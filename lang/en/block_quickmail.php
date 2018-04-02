@@ -26,17 +26,30 @@ $string['actions'] = 'Actions';
 $string['title'] = 'Title';
 $string['status'] = 'Status';
 $string['back_to_course'] = 'Back to course';
+$string['back_to_mypage'] = 'Back to My page';
+
+// message status
+$string['drafted'] = 'Drafted';
+$string['queued'] = 'Scheduled';
+$string['sending'] = 'Sending';
+$string['sent'] = 'Sent';
+$string['deleted'] = 'Deleted';
 
 // messaging terms
+$string['included_ids_label'] = 'To';
+$string['excluded_ids_label'] = 'Exclude';
 $string['compose'] = 'Compose Message';
 $string['subject'] = 'Subject';
+$string['message_preview'] = 'Message Preview';
+$string['preview_no_subject'] = '(No subject)';
 $string['body'] = 'Body';
+$string['preview_no_body'] = '(No content)';
 $string['send_at'] = 'Send at';
 $string['send_message'] = 'Send Message';
 $string['additional_emails'] = 'Additional Recipient Emails';
-$string['queued'] = 'Scheduled';
 $string['unqueue'] = 'Unqueue';
 $string['no_queued'] = 'Could not find that queued message.';
+$string['message_no_record'] = 'Could not find that message.';
 $string['queued_no_record'] = 'Could not find that queued message.';
 $string['receipt'] = 'Receive a send report';
 $string['select_message_type'] = 'Send message as';
@@ -44,6 +57,16 @@ $string['message_type_message'] = 'Moodle Message';
 $string['message_type_email'] = 'Email';
 $string['attached_files'] = 'Attached Files ({$a})';
 $string['download_file_content'] = 'Download File Content';
+$string['included_recipients_desc'] = 'Who should receive this message?';
+$string['no_included_recipients'] = 'No included recipients';
+$string['excluded_recipients_desc'] = 'Who should NOT receive this message?';
+$string['no_excluded_recipients'] = 'No excluded recipients';
+$string['created'] = 'Created';
+$string['last_updated'] = 'Last Updated';
+$string['scheduled_time'] = 'Scheduled Time';
+$string['sent_at'] = 'Sent At';
+$string['attachments'] = 'Attachments';
+$string['recipients'] = 'Recipients';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
@@ -54,23 +77,38 @@ $string['drafts'] = 'Drafts';
 $string['no_drafts'] = 'You have no message drafts.';
 $string['save_draft'] = 'Save Draft';
 $string['draft_no_record'] = 'Could not find that draft message.';
+$string['could_not_duplicate'] = 'Could not duplicate this draft. Please try again.';
+$string['must_be_draft_to_duplicate'] = 'Message must be a draft to duplicate.';
+$string['must_be_owner_to_duplicate'] = 'Sorry, that draft does not belong to you and cannot be duplicated.';
+$string['delete_draft_modal_title'] = 'Delete Message Draft';
+$string['delete_draft_confirm_message'] = 'This will permanently delete your draft message, are you sure?';
+$string['duplicate_draft_modal_title'] = 'Duplicate Message Draft';
+$string['duplicate_draft_confirm_message'] = 'This will make a copy of the draft, are you sure?';
 
 // alternates
 $string['alternate'] = 'Alternate Email';
 $string['no_alternates'] = 'You have no alternate emails. Create a new one now!';
 $string['alternate_new'] = 'Add Alternate Address';
+$string['alternate_delete'] = 'Delete Alternate Address';
 $string['alternate_availability'] = 'Who can send from this email?';
 $string['alternate_availability_only'] = 'Only to me for this course only';
 $string['alternate_availability_user'] = 'Only to me';
 $string['alternate_availability_course'] = 'All course senders';
 $string['alternate_resend_confirmation'] = 'Re-send confirm email';
 $string['alternate_created'] = 'Alternate sending email successfully created!';
+$string['alternate_delete_confirm'] = 'This will permanently delete your alternate email, are you sure?';
 $string['alternate_deleted'] = 'Your alternate sending email has been deleted.';
 $string['alternate_confirmed'] = 'Confirmed';
+$string['alternate_email_not_found'] = 'Could not find that alternate email.';
+$string['alternate_owner_must_confirm'] = 'Must be the owner of the email to confirm.';
+$string['alternate_owner_must_delete'] = 'Must be the owner of the email to delete.';
+$string['alternate_already_confirmed'] = 'That email has already been confirmed.';
+$string['alternate_invalid_token'] = 'Invalid token.';
 $string['alternate_waiting'] = 'Waiting';
 $string['alternate_activated'] = 'Alternate email {$a} can now be used!';
 $string['alternate_confirmation_email_resent'] = 'The confirmation email has been resent!';
 $string['eventalternateemailadded'] = 'Alternate email added';
+$string['eventalternateemailadded_desc'] = 'The user with id {$a->user_id} has added an alternate email: {$a->email}';
 $string['alternate_subject'] = 'Alternate email address verification';
 $string['alternate_body'] = '
 <p>
@@ -106,16 +144,23 @@ $string['save_signature'] = 'Save Signature';
 $string['delete_signature'] = 'Delete Signature';
 $string['user_signature_deleted'] = 'Your signature has been deleted.';
 $string['no_signatures_create'] = 'You have no signatures. {$a}.';
+$string['delete_signature_modal_title'] = 'Delete Signature';
+$string['delete_signature_confirm_message'] = 'This will permanently delete your signature, are you sure?';
 
 // help buttons
+$string['additional_emails'] = 'Additional emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
 
  email1@example.com, email2@example.com
  ';
+$string['receipt'] = 'Receipt email';
 $string['receipt_help'] = 'Receive an emailed report with the details of this message send';
+$string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
 
 // settings management
+$string['restore_default_modal_title'] = 'Restore Default Configuration';
+$string['restore_default_confirm_message'] = 'This will restore this course\'s Quickmail settings to default, are you sure?';
 $string['reset_success_message'] = 'Quickmail default settings have been restored!';
 
 // configuration
@@ -149,11 +194,29 @@ $string['select_allowed_user_fields_desc'] = 'Senders will be able to reference 
 // redirect messages
 $string['redirect_back_to_course_from_message_after_cancel'] = 'Your message has been cancelled and you are now being redirected back to your course, {$a}';
 $string['redirect_back_to_course_from_message_after_send'] = 'Your message has been successfully sent.';
+$string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['cancel_and_redirect_to_course'] = 'Any changes have been cancelled and you are now being redirected back to your course, {$a}';
 
+// validation
+$string['missing_subject'] = 'Missing subject line.';
+$string['missing_body'] = 'Missing message body.';
+$string['missing_email'] = 'Missing email address.';
+$string['invalid_email'] = 'Invalid email address.';
+$string['missing_firstname'] = 'Missing first name.';
+$string['missing_lastname'] = 'Missing last name.';
+$string['invalid_availability'] = 'Invalid availability value.';
+$string['no_included_recipients_validation'] = 'You must select at least one recipient.';
+$string['invalid_additional_emails_validation'] = 'Some of the additional emails you entered were invalid.';
+$string['invalid_custom_data_key'] = 'Custom data key {$a} is not allowed.';
+$string['invalid_custom_data_delimiters'] = 'Custom data delimiters not formatted properly.';
+$string['invalid_additional_email'] = 'The additional email {$a} you entered is invalid';
+$string['invalid_send_method'] = 'That send method is not allowed';
+
 // errors
 $string['critical_error'] = 'Critical error';
+$string['validation_exception_message'] = 'Validation exception!';
+$string['course_required'] = 'A course is required.';
 
 // caches
 $string['cachedef_qm_msg_recip_count'] = 'Cached message recipient counts.';

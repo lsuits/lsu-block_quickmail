@@ -89,12 +89,4 @@ trait belongs_to_a_course {
         return $this->get('course_id') == $course_id;
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
-    //
-
 }

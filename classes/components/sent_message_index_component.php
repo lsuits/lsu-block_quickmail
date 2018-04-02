@@ -89,7 +89,7 @@ class sent_message_index_component extends component implements \renderable {
 
         $data->urlBackLabel = $this->course_id 
             ? block_quickmail_string::get('back_to_course')
-            : 'Back to My page';
+            : block_quickmail_string::get('back_to_mypage');
 
         return $data;
     }

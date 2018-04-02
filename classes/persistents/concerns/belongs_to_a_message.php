@@ -3,6 +3,7 @@
 namespace block_quickmail\persistents\concerns;
 
 use block_quickmail\persistents\message;
+use block_quickmail_string;
 
 trait belongs_to_a_message {
 
@@ -35,9 +36,7 @@ trait belongs_to_a_message {
      */
     protected function validate_message_id($value) {
         if ( ! $message = message::find_or_null($value)) {
-            // @TODO - make a lang string for this!
-            // return new lang_string('invalidcourseid', 'error');
-            return 'no message record!';
+            return block_quickmail_string::get('message_no_record');
         }
 
         return true;

@@ -6,6 +6,7 @@ use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
+use block_quickmail_string;
 
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
     
@@ -370,7 +371,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ]);
 
         $this->assertTrue($message->is_message_draft());
-        $this->assertEquals('drafted', $message->get_status());
+        $this->assertEquals(block_quickmail_string::get('drafted'), $message->get_status());
     }
 
     public function test_message_queued_status()
@@ -385,7 +386,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ]);
 
         $this->assertTrue($message->is_queued_message());
-        $this->assertEquals('queued', $message->get_status());
+        $this->assertEquals(block_quickmail_string::get('queued'), $message->get_status());
     }
 
     public function test_message_sending_status()
@@ -400,7 +401,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ]);
 
         $this->assertTrue($message->is_being_sent());
-        $this->assertEquals('sending', $message->get_status());
+        $this->assertEquals(block_quickmail_string::get('sending'), $message->get_status());
     }
 
     public function test_message_sent_status()
@@ -415,7 +416,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ]);
 
         $this->assertTrue($message->is_sent_message());
-        $this->assertEquals('sent', $message->get_status());
+        $this->assertEquals(block_quickmail_string::get('sent'), $message->get_status());
     }
 
     public function test_message_get_to_send_in_future()
@@ -624,12 +625,12 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ]);
 
         $this->assertTrue($queued_message->is_queued_message());
-        $this->assertEquals('queued', $queued_message->get_status());
+        $this->assertEquals(block_quickmail_string::get('queued'), $queued_message->get_status());
 
         $queued_message->unqueue();
 
         $this->assertFalse($queued_message->is_queued_message());
-        $this->assertEquals('drafted', $queued_message->get_status());
+        $this->assertEquals(block_quickmail_string::get('drafted'), $queued_message->get_status());
     }
 
     ///////////////////////////////////////////////

@@ -47,8 +47,11 @@ class alternate_email_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->userid}' has added an alternate email  "
-            . "{$this->other['address']}.";
+        $a = (object)[];
+        $a->user_id = $this->userid;
+        $a->email = $this->other['address'];
+        
+        return block_quickmail_string::get('eventalternateemailadded_desc');
     }
  
     /**

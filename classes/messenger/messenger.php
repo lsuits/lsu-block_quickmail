@@ -3,6 +3,7 @@
 namespace block_quickmail\messenger;
 
 use block_quickmail_config;
+use block_quickmail_string;
 use block_quickmail_emailer;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\alternate_email;
@@ -52,7 +53,7 @@ class messenger {
 
         // if errors, throw exception
         if ($validator->has_errors()) {
-            throw new validation_exception('Validation exception!', $validator->errors);
+            throw new validation_exception(block_quickmail_string::get('validation_exception_message'), $validator->errors);
         }
 
         // get transformed (valid) post data
@@ -62,7 +63,7 @@ class messenger {
         if ( ! empty($draft_message)) {
             // if draft message was already sent (shouldn't happen)
             if ($draft_message->is_sent_message()) {
-                throw new validation_exception('Critical exception!');
+                throw new validation_exception(block_quickmail_string::get('critical_error'));
             }
 
             // update draft message, maintaining draft status
@@ -100,17 +101,17 @@ class messenger {
     {
         // get the draft to be duplicated
         if ( ! $original_draft = new message($draft_id)) {
-            throw new validation_exception('Could not duplicate this draft. Please try again.');
+            throw new validation_exception(block_quickmail_string::get('could_not_duplicate'));
         }
 
         // make sure it's a draft
         if ( ! $original_draft->is_message_draft()) {
-            throw new validation_exception('Message must be a draft to duplicate.');
+            throw new validation_exception(block_quickmail_string::get('must_be_draft_to_duplicate'));
         }
 
         // check that the draft belongs to the given user id
         if ($original_draft->get('user_id') !== $user->id) {
-            throw new validation_exception('Sorry, that draft does not belong to you and cannot be duplicated.');
+            throw new validation_exception(block_quickmail_string::get('must_be_owner_to_duplicate'));
         }
 
         // create a new draft message from the original's data
@@ -184,7 +185,7 @@ class messenger {
 
         // if errors, throw exception
         if ($validator->has_errors()) {
-            throw new validation_exception('Validation exception!', $validator->errors);
+            throw new validation_exception(block_quickmail_string::get('validation_exception_message'), $validator->errors);
         }
 
         // get transformed (valid) post data
@@ -194,7 +195,7 @@ class messenger {
         if ( ! empty($draft_message)) {
             // if draft message was already sent (shouldn't happen)
             if ($draft_message->is_sent_message()) {
-                throw new validation_exception('Critical exception!');
+                throw new validation_exception(block_quickmail_string::get('critical_error'));
             }
 
             // update draft message, and remove draft status

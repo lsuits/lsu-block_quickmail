@@ -28,7 +28,10 @@ class alternate_manager {
 
         // if errors, throw exception
         if ($validator->has_errors()) {
-            throw new validation_exception('Validation exception!', $validator->errors);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), 
+                $validator->errors
+            );
         }
 
         // alternate_availability_only (user + course)
@@ -37,8 +40,9 @@ class alternate_manager {
 
         // if an availability requiring a scoped course is selected and no course was given
         if ($params['availability'] !== 'user' && ! $course_id) {
-            throw new validation_exception('Validation exception!', [
-                'Course is required!'
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                block_quickmail_string::get('course_required')
             ]);
         }
 
@@ -73,17 +77,26 @@ class alternate_manager {
     {
         // attempt to fetch the alternate
         if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
-            throw new validation_exception('Validation exception!', ['Could not find that alternate email.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_email_not_found')
+                ]);
         }
 
         // make sure the requesting user is this alternate's setup user
         if ($user->id !== $alternate->get('setup_user_id')) {
-            throw new validation_exception('Validation exception!', ['Must be the owner of the email to confirm.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_owner_must_confirm')
+                ]);
         }
 
         // make sure the alternate is not already confirmed (validated)
         if ($alternate->get('is_validated')) {
-            throw new validation_exception('Validation exception!', ['That email has already been confirmed.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_already_confirmed')
+                ]);
         }
 
         self::send_confirmation_email($alternate);
@@ -101,12 +114,18 @@ class alternate_manager {
     {
         // attempt to fetch the alternate
         if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
-            throw new validation_exception('Validation exception!', ['Could not find that alternate email.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_email_not_found')
+                ]);
         }
 
         // make sure the alternate is not already confirmed (validated)
         if ($alternate->get('is_validated')) {
-            throw new validation_exception('Validation exception!', ['That email has already been confirmed.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_already_confirmed')
+                ]);
         }
 
         global $DB;
@@ -118,7 +137,10 @@ class alternate_manager {
             'userid' => $user->id,
             'script' => 'blocks/quickmail'
         ])) {
-            throw new validation_exception('Validation exception!', ['Invalid token.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_invalid_token')
+                ]);
         }
 
         // mark this alternate email as validated
@@ -142,12 +164,18 @@ class alternate_manager {
     {
         // attempt to fetch the alternate
         if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
-            throw new validation_exception('Validation exception!', ['Could not find that alternate email.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_email_not_found')
+                ]);
         }
 
         // make sure the given user is the owner of this alternate
         if ($alternate->get('setup_user_id') !== $user->id) {
-            throw new validation_exception('Validation exception!', ['Must be the owner to delete that alternate.']);
+            throw new validation_exception(
+                block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('alternate_owner_must_delete')
+                ]);
         }
 
         // attempt to soft delete alternate

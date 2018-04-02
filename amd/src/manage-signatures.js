@@ -1,4 +1,4 @@
-define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalFactory, ModalEvents) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], function($, ModalFactory, ModalEvents, Str) {
  
     return {
         init: function(courseid) {
@@ -23,8 +23,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
 
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
-                title: 'Delete Signature',
-                body: '<p>This will permanently delete your signature, are you sure?</p>',
+                title: Str.get_string('delete_signature_modal_title', 'block_quickmail'),
+                body: '<p>' + Str.get_string('delete_signature_confirm_message', 'block_quickmail') + '</p>'
             }, trigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();

@@ -66,7 +66,7 @@ try {
         $draft_message = \block_quickmail\messenger\messenger::duplicate_draft($request->data->duplicate_draft_id, $USER);
 
         // redirect back to this page
-        $request->redirect_as_success('Your draft has been successfully duplicated.', $page_url, ['courseid' => $page_params['courseid']]);
+        $request->redirect_as_success(block_quickmail_string::get('redirect_back_to_course_from_message_after_duplicate'), $page_url, ['courseid' => $page_params['courseid']]);
     
     // DELETE
     } else if ($request->to_delete_draft()) {

@@ -5,6 +5,7 @@ namespace block_quickmail\validators;
 use block_quickmail\validators\validator;
 use block_quickmail\messenger\body_parser;
 use block_quickmail\requests\compose_request;
+use block_quickmail_string;
 
 class save_draft_message_form_validator extends validator {
 
@@ -54,7 +55,7 @@ class save_draft_message_form_validator extends validator {
         //  validate each email value
         foreach ($this->transformed_data->additional_emails as $email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
-                $this->errors[] = 'The additional email "' . $email . '" you entered is invalid';
+                $this->errors[] = block_quickmail_string::get('invalid_additional_email', $email);
             }
         }
     }
@@ -67,7 +68,7 @@ class save_draft_message_form_validator extends validator {
     private function validate_message_type()
     {
         if ( ! in_array($this->form_data->message_type, \block_quickmail_config::get_supported_message_types())) {
-            $this->errors[] = 'That send method is not allowed.';
+            $this->errors[] = block_quickmail_string::get('invalid_send_method');
         }
 
         $supported_option = $this->get_config('message_types_available');
@@ -77,7 +78,7 @@ class save_draft_message_form_validator extends validator {
         }
 
         if ($supported_option !== $this->form_data->message_type) {
-            $this->errors[] = 'That send method is not allowed.';
+            $this->errors[] = block_quickmail_string::get('invalid_send_method');
         }
     }
 

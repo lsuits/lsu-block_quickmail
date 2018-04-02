@@ -1,6 +1,6 @@
 <div class="block_quickmail_draft_message_index">
     <select id="select_course_filter">
-        <option value="0">All Courses</option>
+        <option value="0">{{# str }} fulllistofcourses {{/ str }}</option>
         {{# userCourseArray }}
             <option value="{{ userCourseId }}" {{ selectedAttr }}>{{ userCourseName }}</option>
         {{/ userCourseArray }}
@@ -11,56 +11,56 @@
             <tr>
                 {{#courseIsSorted}}
                     {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=course&dir=desc">Course</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=course&dir=desc">{{# str }} course {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
                     {{/isSortedAsc}}
 
                     {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">Course</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">{{# str }} course {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
                     {{/isSortedAsc}}
                 {{/courseIsSorted}}
                 {{^courseIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">Course</a></th>
+                    <th><a href="?courseid={{ courseId }}&sort=course&dir=asc">{{# str }} course {{/ str }}</a></th>
                 {{/courseIsSorted}}
 
                 {{#subjectIsSorted}}
                     {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=desc">Subject</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=desc">{{# str }} subject, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
                     {{/isSortedAsc}}
 
                     {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">Subject</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">{{# str }} subject, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
                     {{/isSortedAsc}}
                 {{/subjectIsSorted}}
                 {{^subjectIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">Subject</a></th>
+                    <th><a href="?courseid={{ courseId }}&sort=subject&dir=asc">{{# str }} subject, block_quickmail {{/ str }}</a></th>
                 {{/subjectIsSorted}}
 
-                <th>Message Preview</th>
+                <th>{{# str }} message_preview, block_quickmail {{/ str }}</th>
                 
                 {{#createdIsSorted}}
                     {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=created&dir=desc">Created</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=created&dir=desc">{{# str }} created, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
                     {{/isSortedAsc}}
 
                     {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">Created</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">{{# str }} created, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
                     {{/isSortedAsc}}
                 {{/createdIsSorted}}
                 {{^createdIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">Created</a></th>
+                    <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">{{# str }} created, block_quickmail {{/ str }}</a></th>
                 {{/createdIsSorted}}
 
                 {{#modifiedIsSorted}}
                     {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=modified&dir=desc">Last Updated</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=modified&dir=desc">{{# str }} last_updated, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
                     {{/isSortedAsc}}
 
                     {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=modified&dir=asc">Last Updated</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                        <th><a href="?courseid={{ courseId }}&sort=modified&dir=asc">{{# str }} last_updated, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
                     {{/isSortedAsc}}
                 {{/modifiedIsSorted}}
                 {{^modifiedIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=modified&dir=asc">Last Updated</a></th>
+                    <th><a href="?courseid={{ courseId }}&sort=modified&dir=asc">{{# str }} last_updated, block_quickmail {{/ str }}</a></th>
                 {{/modifiedIsSorted}}
 
                 <th></th>

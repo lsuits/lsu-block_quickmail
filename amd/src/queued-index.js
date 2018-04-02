@@ -1,4 +1,4 @@
-define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalFactory, ModalEvents) {
+define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], function($, ModalFactory, ModalEvents, Str) {
  
     return {
         init: function() {
@@ -28,8 +28,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events'], function($, ModalF
 
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
-                title: 'Unqueue Scheduled Message',
-                body: '<p>This will unschedule this message to be sent and save the message as a draft, are you sure?</p>',
+                title: Str.get_string('unqueue_scheduled_modal_title', 'block_quickmail'),
+                body: '<p>' + Str.get_string('unqueue_scheduled_confirm_message', 'block_quickmail') + '</p>'
             }, unqueueTrigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();

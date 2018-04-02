@@ -5,6 +5,7 @@ namespace block_quickmail\validators;
 use block_quickmail\validators\validator;
 use block_quickmail\messenger\body_parser;
 use block_quickmail\requests\compose_request;
+use block_quickmail_string;
 
 class compose_message_form_validator extends validator {
 
@@ -36,7 +37,7 @@ class compose_message_form_validator extends validator {
     private function validate_subject()
     {
         if ($this->is_missing('subject')) {
-            $this->add_error('Missing subject line.');
+            $this->add_error(block_quickmail_string::get('missing_subject'));
         }
     }
 
@@ -51,7 +52,7 @@ class compose_message_form_validator extends validator {
 
         // first, check that there is a message body which is required
         if (empty($body)) {
-            $this->add_error('Missing message body.');
+            $this->add_error(block_quickmail_string::get('missing_body'));
         }
 
         $parser = new body_parser($body);
@@ -73,7 +74,7 @@ class compose_message_form_validator extends validator {
         //  validate each email value
         foreach ($this->transformed_data->additional_emails as $email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
-                $this->errors[] = 'The additional email "' . $email . '" you entered is invalid';
+                $this->errors[] = block_quickmail_string::get('invalid_additional_email', $email);
             }
         }
     }
@@ -86,7 +87,7 @@ class compose_message_form_validator extends validator {
     private function validate_message_type()
     {
         if ( ! in_array($this->form_data->message_type, \block_quickmail_config::get_supported_message_types())) {
-            $this->errors[] = 'That send method is not allowed.';
+            $this->errors[] = block_quickmail_string::get('invalid_send_method');
         }
 
         $supported_option = $this->get_config('message_types_available');
@@ -96,7 +97,7 @@ class compose_message_form_validator extends validator {
         }
 
         if ($supported_option !== $this->form_data->message_type) {
-            $this->errors[] = 'That send method is not allowed.';
+            $this->errors[] = block_quickmail_string::get('invalid_send_method');
         }
     }
 

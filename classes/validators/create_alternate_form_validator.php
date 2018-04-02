@@ -3,6 +3,7 @@
 namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
+use block_quickmail_string;
 
 class create_alternate_form_validator extends validator {
 
@@ -30,11 +31,11 @@ class create_alternate_form_validator extends validator {
     private function validate_email()
     {
         if ($this->is_missing('email')) {
-            $this->add_error('Missing email address.');
+            $this->add_error(block_quickmail_string::get('missing_email'));
         }
 
         if (filter_var($this->form_data->email, FILTER_VALIDATE_EMAIL) == false) {
-            $this->add_error('Invalid email address.');
+            $this->add_error(block_quickmail_string::get('invalid_email'));
         }
     }
 
@@ -46,7 +47,7 @@ class create_alternate_form_validator extends validator {
     private function validate_firstname()
     {
         if ($this->is_missing('firstname')) {
-            $this->add_error('Missing first name.');
+            $this->add_error(block_quickmail_string::get('missing_firstname'));
         }
     }
 
@@ -58,7 +59,7 @@ class create_alternate_form_validator extends validator {
     private function validate_lastname()
     {
         if ($this->is_missing('lastname')) {
-            $this->add_error('Missing last name.');
+            $this->add_error(block_quickmail_string::get('missing_lastname'));
         }
     }
 
@@ -74,7 +75,7 @@ class create_alternate_form_validator extends validator {
             'user',
             'course'
         ])) { 
-            $this->add_error('Invalid availability value.');
+            $this->add_error(block_quickmail_string::get('invalid_availability'));
         }
     }
 

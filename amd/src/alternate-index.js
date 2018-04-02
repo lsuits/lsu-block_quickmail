@@ -13,8 +13,8 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str', 'block_
 
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
-                title: 'Delete Alternate Email',
-                body: '<p>This will permanently delete your alternate email, are you sure?</p>',
+                title: Str.get_string('alternate_delete', 'block_quickmail'),
+                body: '<p>' + Str.get_string('alternate_delete_confirm', 'block_quickmail') + '</p>'
             }, deleteTrigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();
