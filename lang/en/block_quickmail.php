@@ -247,5 +247,7 @@ $string['receipt_email_body'] = '
 <br>File Attachment Count: {$a->attachment_count}
 </p>
 
+<p>Note: This message does not guarantee that all messages were received by the potential recipients.</p>
+
 <p>You can view further details of this sent message {$a->sent_message_link}.</p>
 ';
