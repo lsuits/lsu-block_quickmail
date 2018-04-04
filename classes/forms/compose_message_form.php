@@ -71,6 +71,13 @@ class compose_message_form extends \moodleform {
         // get the auth user's current signatures as array (id => title)
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
+        // get the auth user's default signature id, if any, defaulting to 0
+        if ($signature = signature::get_default_signature_for_user($user->id)) {
+            $user_default_signature_id = $signature->get('id');
+        } else {
+            $user_default_signature_id = 0;
+        }
+
         // get config variables for this course, defaulting to block level
         $course_config_array = block_quickmail_config::get('', $course);
 
@@ -85,6 +92,7 @@ class compose_message_form extends \moodleform {
             'course_user_data' => $course_user_data,
             'user_alternate_email_array' => $user_alternate_email_array,
             'user_signature_array' => $user_signature_array,
+            'user_default_signature_id' => $user_default_signature_id,
             'course_config_array' => $course_config_array,
             'draft_message' => $draft_message,
             'included_draft_recipients' => $included_draft_recipients,
@@ -105,6 +113,7 @@ class compose_message_form extends \moodleform {
         $this->course_user_data = $this->_customdata['course_user_data'];
         $this->user_alternate_email_array = $this->_customdata['user_alternate_email_array'];
         $this->user_signature_array = $this->_customdata['user_signature_array'];
+        $this->user_default_signature_id = $this->_customdata['user_default_signature_id'];
         $this->course_config_array = $this->_customdata['course_config_array'];
         $this->draft_message = $this->_customdata['draft_message'];
         $this->included_draft_recipients = $this->_customdata['included_draft_recipients'];
@@ -265,11 +274,18 @@ class compose_message_form extends \moodleform {
                 $this->get_user_signature_options()
             );
 
-            // inject default if draft mesage
+            // inject default for draft mesage
             if ($this->is_draft_message()) {
                 $mform->setDefault(
                     'signature_id', 
                     $this->draft_message->get('signature_id')
+                );
+
+            // otherwise, set to user's default signature, if any
+            } else {
+                $mform->setDefault(
+                    'signature_id', 
+                    $this->user_default_signature_id
                 );
             }
         } else {
