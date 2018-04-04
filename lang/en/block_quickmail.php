@@ -25,6 +25,7 @@ $string['create_new'] = 'Create New';
 $string['actions'] = 'Actions';
 $string['title'] = 'Title';
 $string['status'] = 'Status';
+$string['here'] = 'here';
 $string['back_to_course'] = 'Back to course';
 $string['back_to_mypage'] = 'Back to My page';
 
@@ -69,6 +70,7 @@ $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
 $string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
 $string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
+$string['send_receipt_subject_addendage'] = 'Sent Message:';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
@@ -112,28 +114,6 @@ $string['alternate_confirmation_email_resent'] = 'The confirmation email has bee
 $string['eventalternateemailadded'] = 'Alternate email added';
 $string['eventalternateemailadded_desc'] = 'The user with id {$a->user_id} has added an alternate email: {$a->email}';
 $string['alternate_subject'] = 'Alternate email address verification';
-$string['alternate_body'] = '
-<p>
-{$a->fullname} added {$a->email} as an alternate sending address for {$a->plugin_name}.
-</p>
-
-<p>
-The purpose of this email was to verify that this address exists, and the owner
-of this address has the appropriate permissions in Moodle.
-</p>
-
-<p>
-If you wish to complete the verification process, please continue by directing
-your browser to the following url: {$a->url}.
-</p>
-
-<p>
-If the description of this email does not make any sense to you, then you may have
-received it by mistake. Simply discard this message.
-</p>
-
-Thank you.
-';
 
 // signatures
 $string['signature'] = 'Signature';
@@ -230,3 +210,42 @@ $string['backup_history'] = 'Include Quickmail History';
 $string['backup_block_configuration'] = 'Backup Quickmail Block Level Configuration Settings (Such as [Allow Students to use Quickmail])';
 $string['restore_history'] = 'Restore Quickmail History';
 $string['overwrite_history'] = 'Overwrite Quickmail History';
+
+// email templates
+$string['alternate_body'] = '
+<p>
+{$a->fullname} added {$a->email} as an alternate sending address for {$a->plugin_name}.
+</p>
+
+<p>
+The purpose of this email was to verify that this address exists, and the owner
+of this address has the appropriate permissions in Moodle.
+</p>
+
+<p>
+If you wish to complete the verification process, please continue by directing
+your browser to the following url: {$a->url}.
+</p>
+
+<p>
+If the description of this email does not make any sense to you, then you may have
+received it by mistake. Simply discard this message.
+</p>
+
+Thank you.
+';
+
+$string['receipt_email_body'] = '
+<p>This message is to inform you that your message was sent.</p>
+
+<p>
+<strong>Message details summary:</strong><br>
+<br>Course: {$a->course_name}
+<br>Message Subject: {$a->subject}
+<br>Recipients: {$a->recipient_count}
+<br>Additional Recipient Emails: {$a->additional_email_count}
+<br>File Attachment Count: {$a->attachment_count}
+</p>
+
+<p>You can view further details of this sent message {$a->sent_message_link}.</p>
+';

@@ -20,6 +20,8 @@ use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
 use block_quickmail\messenger\subject_prepender;
 use block_quickmail\repos\user_repo;
+use moodle_url;
+use html_writer;
 
 class messenger {
 
@@ -342,7 +344,7 @@ class messenger {
 
         // send receipt message (if applicable)
         if ($this->message->should_send_receipt()) {
-            $this->send_message_reciept();
+            $this->send_message_receipt();
         }
         
         // update message as having been sent
@@ -403,16 +405,15 @@ class messenger {
      * 
      * @return void
      */
-    private function send_message_reciept()
+    private function send_message_receipt()
     {
         $fromuser = $this->message->get_user();
 
-        $subject = subject_prepender::format_course_subject(
-            $this->message->get_course(), 
+        $subject = subject_prepender::format_for_receipt_subject(
             $this->message->get('subject')
         );
 
-        $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
+        $body = $this->get_receipt_message_body();
         
         // instantiate an emailer
         $emailer = new block_quickmail_emailer($fromuser, $subject, $body);
@@ -428,6 +429,26 @@ class messenger {
 
         // flag message as having sent the receipt message
         $this->message->mark_receipt_as_sent();
+    }
+
+    /**
+     * Returns a body of text content for this message's send receipt
+     * 
+     * @return string
+     */
+    private function get_receipt_message_body()
+    {
+        $data = (object) [];
+
+        $data->subject = $this->message->get('subject');
+        // TODO - format this course name based off of preference?
+        $data->course_name = $this->message->get_course()->fullname;
+        $data->recipient_count = $this->message->cached_recipient_count();
+        $data->additional_email_count = $this->message->cached_additional_email_count();
+        $data->attachment_count = $this->message->cached_attachment_count();
+        $data->sent_message_link = html_writer::link(new moodle_url('/blocks/quickmail/sent.php', ['courseid' => $this->message->get_course()->id]), block_quickmail_string::get('here'));
+
+        return block_quickmail_string::get('receipt_email_body', $data);
     }
 
 }
