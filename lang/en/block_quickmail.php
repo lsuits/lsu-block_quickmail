@@ -194,11 +194,10 @@ $string['select_allowed_user_fields'] = 'Supported user data fields';
 $string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make email content dynamic and specific to the recipient. Ex: "[:firstname:]"';
 
 // redirect messages
-$string['redirect_back_to_course_from_message_after_cancel'] = 'Your message has been cancelled and you are now being redirected back to your course, {$a}';
-$string['redirect_back_to_course_from_message_after_send'] = 'Your message has been successfully sent.';
+$string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
+$string['redirect_back_to_course_from_message_after_send'] = 'Your message will be sent shortly.';
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
-$string['cancel_and_redirect_to_course'] = 'Any changes have been cancelled and you are now being redirected back to your course, {$a}';
 
 // validation
 $string['missing_subject'] = 'Missing subject line.';

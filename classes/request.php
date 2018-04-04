@@ -175,6 +175,20 @@ class block_quickmail_request {
     /**
      * Convenience wrapper for redirecting to moodle URLs
      * 
+     * @param  string  $url
+     * @param  array   $url_params   array of parameters for the given URL
+     * @param  int     $delay        delay, in seconds, before redirecting
+     * @return (http redirect header)
+     */
+    public function redirect_to_url($url, $url_params = [], $delay = 2) {
+        $moodle_url = new \moodle_url($url, $url_params);
+
+        redirect($moodle_url, '', $delay);
+    }
+
+    /**
+     * Convenience wrapper for redirecting to moodle URLs while including a status type and message
+     * 
      * @param  string  $type         success|info|warning|error
      * @param  string  $message      a pre-rendered string message
      * @param  string  $url

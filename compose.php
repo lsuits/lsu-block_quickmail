@@ -111,7 +111,7 @@ try {
     if ($request->is_form_cancellation()) {
         
         // redirect back to course page
-        $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_cancel', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_to_url('/course/view.php', ['id' => $course->id]);
 
     // SEND
     } else if ($request->to_send_message()) {
@@ -120,8 +120,11 @@ try {
         $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, true);
 
         // redirect back to course page
-        // @TODO - after send redirect to sent messages? (?)
-        $request->redirect_as_success(block_quickmail_string::get('redirect_back_to_course_from_message_after_send', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $redirect_message = $message->is_queued_message()
+            ? 'redirect_back_to_course_from_message_after_queued_send'
+            : 'redirect_back_to_course_from_message_after_send';
+
+        $request->redirect_as_success(block_quickmail_string::get($redirect_message, $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     // SAVE DRAFT
     } else if ($request->to_save_draft()) {
@@ -130,9 +133,7 @@ try {
         $message = \block_quickmail\messenger\messenger::save_draft($USER, $course, $compose_form->get_data(), $draft_message);
 
         // redirect back to course page
-        // @TODO - after send redirect to compose (?)
         $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_save', $course->fullname), '/course/view.php', ['id' => $course->id]);
-
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $compose_form->set_error_exception($e);

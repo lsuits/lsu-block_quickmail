@@ -68,10 +68,10 @@ try {
         
         // if no course id was provided, redirect back to "my page"
         if (empty($page_params['courseid'])) {
-            $request->redirect_as_info('Form cancelled!!', '/my');
+            $request->redirect_to_url('/my');
         // otherwise, redirect back to course page
         } else {
-            $request->redirect_as_info('Form cancelled!!', '/course/view.php', ['id' => $page_params['courseid']]);
+            $request->redirect_to_url('/course/view.php', ['id' => $page_params['courseid']]);
         }
 
     // DELETE

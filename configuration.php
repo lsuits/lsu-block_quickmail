@@ -58,7 +58,7 @@ try {
     if ($request->is_form_cancellation()) {
         
         // redirect back to appropriate page
-        $request->redirect_as_info(block_quickmail_string::get('cancel_and_redirect_to_course', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_to_url('/course/view.php', ['id' => $course->id]);
 
     // RESTORE
     } else if ($request->to_restore_defaults()) {

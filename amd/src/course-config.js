@@ -10,7 +10,7 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], functi
             ModalFactory.create({
                 type: ModalFactory.types.CONFIRM,
                 title: Str.get_string('restore_default_modal_title', 'block_quickmail'),
-                body: '<p>' + Str.get_string('restore_default_confirm_message', 'block_quickmail') + '</p>'
+                body: Str.get_string('restore_default_confirm_message', 'block_quickmail')
             }, trigger).done(function(modal) {
                 modal.getRoot().on(ModalEvents.yes, function(e) {
                     e.preventDefault();
