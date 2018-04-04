@@ -41,7 +41,7 @@ class subject_prepender {
      */
     public static function format_for_receipt_subject($subject)
     {
-        return block_quickmail_string::get('send_receipt_subject_addendage') . ' ' . $subject;
+        return block_quickmail_string::get('send_receipt_subject_addendage') . ': ' . $subject;
     }
 
     /**

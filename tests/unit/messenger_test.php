@@ -318,8 +318,8 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         messenger::compose($user_teacher, $course, $compose_form_data, null, false);
 
         $this->assertEquals(5, $this->email_sink_email_count($sink));
-        $this->assertEquals('Hello world', $this->email_in_sink_attr($sink, 5, 'subject'));
-        $this->assertTrue($this->email_in_sink_body_contains($sink, 5, 'This is one fine body.'));
+        $this->assertEquals(block_quickmail_string::get('send_receipt_subject_addendage') . ': Hello world', $this->email_in_sink_attr($sink, 5, 'subject'));
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 5, 'This message is to inform you that your message was sent.'));
         $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 5, 'from'));
         $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 5, 'to'));
 

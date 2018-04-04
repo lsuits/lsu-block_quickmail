@@ -6,7 +6,6 @@ use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
-use block_quickmail_string;
 
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
     
