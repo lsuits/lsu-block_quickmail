@@ -7,8 +7,8 @@ $page_url = '/blocks/quickmail/sent.php';
 
 $page_params = [
     'courseid' => optional_param('courseid', 0, PARAM_INT),
-    'sort' => optional_param('sort', '', PARAM_TEXT), // (field name)
-    'dir' => optional_param('dir', '', PARAM_TEXT), // asc|desc
+    'sort' => optional_param('sort', 'sent', PARAM_TEXT), // (field name)
+    'dir' => optional_param('dir', 'desc', PARAM_TEXT), // asc|desc
     'page' => optional_param('page', 1, PARAM_INT),
     'per_page' => 10, // adjust as necessary, maybe turn into real param?
 ];
