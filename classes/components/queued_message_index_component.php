@@ -80,10 +80,6 @@ class queued_message_index_component extends component implements \renderable {
                 'messagePreview' => $message->get_body_preview(),
                 'createdAt' => $message->get('timecreated'),
                 'scheduledSendAt' => $message->get('to_send_at'),
-                'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
-                    'courseid' => $message->get('course_id'),
-                    'draftid' => $message->get('id')
-                ], '', '&')
             ];
         }
 

@@ -75,7 +75,6 @@
                     <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td>{{#userdate}} {{scheduledSendAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td>
-                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} open, block_quickmail {{/ str }}</a>
                         <button role="button" class="btn btn-info btn-sm btn-unqueue-message" data-queued-id="{{ id }}">{{# str }} unqueue, block_quickmail {{/ str }}</button>
                     </td>
                 </tr>

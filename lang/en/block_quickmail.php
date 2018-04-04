@@ -70,7 +70,7 @@ $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
 $string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
 $string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
-$string['send_receipt_subject_addendage'] = 'Sent Message:';
+$string['send_receipt_subject_addendage'] = 'Sent Message';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
@@ -189,10 +189,10 @@ $string['missing_lastname'] = 'Missing last name.';
 $string['invalid_availability'] = 'Invalid availability value.';
 $string['no_included_recipients_validation'] = 'You must select at least one recipient.';
 $string['invalid_additional_emails_validation'] = 'Some of the additional emails you entered were invalid.';
-$string['invalid_custom_data_key'] = 'Custom data key {$a} is not allowed.';
+$string['invalid_custom_data_key'] = 'Custom data key "{$a}" is not allowed.';
 $string['invalid_custom_data_delimiters'] = 'Custom data delimiters not formatted properly.';
-$string['invalid_additional_email'] = 'The additional email {$a} you entered is invalid';
-$string['invalid_send_method'] = 'That send method is not allowed';
+$string['invalid_additional_email'] = 'The additional email "{$a}" you entered is invalid';
+$string['invalid_send_method'] = 'That send method is not allowed.';
 
 // errors
 $string['critical_error'] = 'Critical error';
