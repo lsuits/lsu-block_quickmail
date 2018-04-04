@@ -46,6 +46,7 @@ $string['preview_no_subject'] = '(No subject)';
 $string['body'] = 'Body';
 $string['preview_no_body'] = '(No content)';
 $string['send_at'] = 'Send at';
+$string['send_now'] = 'Send Now';
 $string['send_message'] = 'Send Message';
 $string['additional_emails'] = 'Additional Recipient Emails';
 $string['unqueue'] = 'Unqueue';
@@ -70,6 +71,8 @@ $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
 $string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
 $string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
+$string['send_now_scheduled_modal_title'] = 'Send Message Now';
+$string['send_now_scheduled_confirm_message'] = 'This will forget the schedule and send the message now, are you sure?';
 $string['send_receipt_subject_addendage'] = 'Sent Message';
 
 // history

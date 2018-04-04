@@ -70,6 +70,17 @@ try {
 
         // attempt to unqueue
         $message->unqueue();
+    
+    // SEND NOW
+    } else if ($request->to_send_message_now()) {
+        // attempt to fetch the message to send now
+        if ( ! $message = block_quickmail\repos\queued_repo::find_for_user_or_null($request->data->send_now_message_id, $USER->id)) {
+            // redirect and notify of error
+            $request->redirect_as_error(block_quickmail_string::get('queued_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
+        }
+
+        // attempt to force the queued message to be sent now
+        $message->changed_queued_to_now();
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $manage_queued_form->set_error_exception($e);

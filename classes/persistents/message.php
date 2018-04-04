@@ -577,6 +577,20 @@ class message extends persistent {
 		return $this->read();
 	}
 
+	/**
+	 * Updates this message to be sent now rather than later
+	 * 
+	 * @return message
+	 */
+	public function changed_queued_to_now()
+	{
+		$this->set('to_send_at', 0);
+		$this->update();
+
+		// return a refreshed message record
+		return $this->read();
+	}
+
 	///////////////////////////////////////////////
 	///
 	///  UTILITIES

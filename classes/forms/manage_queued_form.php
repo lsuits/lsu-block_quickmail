@@ -74,6 +74,12 @@ class manage_queued_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         $mform->addElement('hidden', 'unqueue_message_id');
         $mform->setType('unqueue_message_id', PARAM_INT);
+
+        ////////////////////////////////////////////////////////////
+        ///  send now (message) id
+        ////////////////////////////////////////////////////////////
+        $mform->addElement('hidden', 'send_now_message_id');
+        $mform->setType('send_now_message_id', PARAM_INT);
     }
 
 }

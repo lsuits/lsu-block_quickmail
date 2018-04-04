@@ -21,6 +21,10 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], functi
                 if ($(e.target).hasClass("btn-unqueue-message")) {
                     unqueueMessageId = $(e.target).attr("data-queued-id");
                 }
+
+                if ($(e.target).hasClass("btn-send-now")) {
+                    sendNowMessageId = $(e.target).attr("data-message-id");
+                }
             });
 
             // handle deletion modal/request
@@ -36,6 +40,25 @@ define(['jquery', 'core/modal_factory', 'core/modal_events', 'core/str'], functi
                     
                     // change value of hidden input
                     $('input[name="unqueue_message_id"]').val(unqueueMessageId);
+
+                    // submit the form
+                    $('#mform-manage-queued').submit();
+                });
+            });
+
+            // handle send now modal/request
+            var sendNowTrigger = $('.btn-send-now');
+
+            ModalFactory.create({
+                type: ModalFactory.types.CONFIRM,
+                title: Str.get_string('send_now_scheduled_modal_title', 'block_quickmail'),
+                body: Str.get_string('send_now_scheduled_confirm_message', 'block_quickmail')
+            }, sendNowTrigger).done(function(modal) {
+                modal.getRoot().on(ModalEvents.yes, function(e) {
+                    e.preventDefault();
+                    
+                    // change value of hidden input
+                    $('input[name="send_now_message_id"]').val(sendNowMessageId);
 
                     // submit the form
                     $('#mform-manage-queued').submit();
