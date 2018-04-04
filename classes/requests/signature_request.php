@@ -62,7 +62,7 @@ class signature_request extends \block_quickmail_request {
     public function redirect_to_edit_signature_id($notification_type, $signature_id, $course_id = null, $notification_text = null) {
         $course_id = $course_id ?: 0;
 
-        $this->redirect_as_type($notification_type, $notification_text, '/blocks/quickmail/signature.php', ['id' => $signature_id, 'courseid' => $course_id]);
+        $this->redirect_as_type($notification_type, $notification_text, '/blocks/quickmail/signatures.php', ['id' => $signature_id, 'courseid' => $course_id]);
     }
     
 }
