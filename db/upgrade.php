@@ -234,7 +234,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         
         $table = new xmldb_table('block_quickmail_messages');
 
-        // Adding fields to table block_quickmail_messages.
+        // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -255,14 +255,14 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timedeleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table block_quickmail_messages.
+        // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('course_id', XMLDB_KEY_FOREIGN, array('course_id'), 'course', array('id'));
         $table->add_key('user_id', XMLDB_KEY_FOREIGN, array('user_id'), 'user', array('id'));
         $table->add_key('alternate_email_id', XMLDB_KEY_FOREIGN, array('alternate_email_id'), 'block_quickmail_alt_emails', array('id'));
         $table->add_key('signature_id', XMLDB_KEY_FOREIGN, array('signature_id'), 'block_quickmail_signatures', array('id'));
 
-        // Conditionally launch create table for block_quickmail_messages.
+        // make table
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -275,7 +275,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table = new xmldb_table('block_quickmail_msg_recips');
 
-        // Adding fields to table block_quickmail_msg_recips.
+        // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
@@ -285,12 +285,12 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table block_quickmail_msg_recips.
+        // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('message_id', XMLDB_KEY_FOREIGN, array('message_id'), 'block_quickmail_messages', array('id'));
         $table->add_key('user_id', XMLDB_KEY_FOREIGN, array('user_id'), 'user', array('id'));
 
-        // Conditionally launch create table for block_quickmail_msg_recips.
+        // create table
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -303,7 +303,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table = new xmldb_table('block_quickmail_draft_recips');
 
-        // Adding fields to table block_quickmail_draft_recips.
+        // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_CHAR, '7', null, XMLDB_NOTNULL, null, null);
@@ -312,11 +312,11 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table block_quickmail_draft_recips.
+        // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('message_id', XMLDB_KEY_FOREIGN, array('message_id'), 'block_quickmail_messages', array('id'));
 
-        // Conditionally launch create table for block_quickmail_draft_recips.
+        // create table
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -329,7 +329,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table = new xmldb_table('block_quickmail_msg_ad_email');
 
-        // Adding fields to table block_quickmail_msg_ad_email.
+        // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('email', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
@@ -338,11 +338,11 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table block_quickmail_msg_ad_email.
+        // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('message_id', XMLDB_KEY_FOREIGN, array('message_id'), 'block_quickmail_messages', array('id'));
 
-        // Conditionally launch create table for block_quickmail_msg_ad_email.
+        // create table
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -355,7 +355,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         
         $table = new xmldb_table('block_quickmail_msg_attach');
 
-        // Adding fields to table block_quickmail_msg_attach.
+        // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('path', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
@@ -364,11 +364,11 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table block_quickmail_msg_attach.
+        // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('message_id', XMLDB_KEY_FOREIGN, array('message_id'), 'block_quickmail_messages', array('id'));
 
-        // Conditionally launch create table for block_quickmail_msg_attach.
+        // create table
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -381,7 +381,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table = new xmldb_table('block_quickmail_alt_emails');
 
-        // Adding fields to table block_quickmail_alt_emails.
+        // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('setup_user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('firstname', XMLDB_TYPE_CHAR, '125', null, XMLDB_NOTNULL, null, null);
@@ -395,62 +395,62 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timedeleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table block_quickmail_alt_emails.
+        // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('setup_user_id', XMLDB_KEY_FOREIGN, array('setup_user_id'), 'user', array('id'));
         $table->add_key('course_id', XMLDB_KEY_FOREIGN, array('course_id'), 'course', array('id'));
         $table->add_key('user_id', XMLDB_KEY_FOREIGN, array('user_id'), 'user', array('id'));
 
-        // Conditionally launch create table for block_quickmail_alt_emails.
+        // create table
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
         
         ///////////////////////////////////////////////
         ///
-        ///  MODIFY TABLE: block_quickmail_signatures
+        ///  MODIFY EXISTING TABLE: block_quickmail_signatures
         /// 
         ///////////////////////////////////////////////
 
-        // add fields and change a field name in block_quickmail_signatures table
+        // get existing table
         $signature_table = new xmldb_table('block_quickmail_signatures');
         
-        // renaming userid to user_id for consistency in new version
+        // renaming userid to user_id (for consistency in new version)
         $user_id_field = new xmldb_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         // adding required fields for persistent api
         $usermodified_field = new xmldb_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $timecreated_field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $timemodified_field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $timedeleted_field = new xmldb_field('timedeleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        // add soft delete field
+        $timedeleted_field = new xmldb_field('timedeleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, '0');
 
-        // Conditionally launch add field user_id.
+        // add user_id column
         if (!$dbman->field_exists($signature_table, $user_id_field)) {
             $dbman->add_field($signature_table, $user_id_field);
         }
 
-        // Conditionally launch add field usermodified.
+        // add usermodified column
         if (!$dbman->field_exists($signature_table, $usermodified_field)) {
             $dbman->add_field($signature_table, $usermodified_field);
         }
 
-        // Conditionally launch add field timecreated.
+        // add timecreated column
         if (!$dbman->field_exists($signature_table, $timecreated_field)) {
             $dbman->add_field($signature_table, $timecreated_field);
         }
 
-        // Conditionally launch add field timemodified.
+        // add timemodified column
         if (!$dbman->field_exists($signature_table, $timemodified_field)) {
             $dbman->add_field($signature_table, $timemodified_field);
         }
 
-        // Conditionally launch add field timemodified.
+        // add timedeleted column
         if (!$dbman->field_exists($signature_table, $timedeleted_field)) {
             $dbman->add_field($signature_table, $timedeleted_field);
         }
 
+        // add key on user_id
         $user_id_key = new xmldb_key('user_id', XMLDB_KEY_FOREIGN, array('user_id'), 'user', array('id'));
-
-        // Launch add key primary.
         $dbman->add_key($signature_table, $user_id_key);
 
         // make title non null
@@ -466,18 +466,21 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $dbman->change_field_default($signature_table, $default_flag_field);
 
         /*
-         * Update signature records, update all userid => user_id
+         * Update signature records, update all userid --> user_id
          */
+        
+        // get all existing records
         $all_signatures = $DB->get_records('block_quickmail_signatures');
 
+        // for each record, copy userid to user_id and update
         foreach ($all_signatures as $signature) {
             $signature->user_id = $signature->userid;
-
+            
             $DB->update_record('block_quickmail_signatures', $signature);
         }
 
+        // drop userid field
         $userid_field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-
         $dbman->drop_field($signature_table, $userid_field);
 
         // Quickmail savepoint reached.
