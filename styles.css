@@ -63,14 +63,6 @@
    margin:auto;
 }
 
-#page-block-quickmail .mform #add_button,
-#remove_button,
-#add_all,
-#remove_all {
-    width: 100px;
-    height: 25px;
-}
-
 #page-block-quickmail .mform input#id_subject {
     width: 75%;
 }
