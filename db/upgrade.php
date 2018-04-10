@@ -224,7 +224,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
     // upgrade schema for version 2.0
 
-    if ($oldversion < 2017111400) {
+    if ($oldversion < 2018040900) {
 
         ///////////////////////////////////////////////
         ///
@@ -483,8 +483,21 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $userid_field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $dbman->drop_field($signature_table, $userid_field);
 
+        // migrate the data from v1 to v2
+        migrate_quickmail_v1_to_v2();
+
+        // drop all of the old tables
+        
+        foreach (['block_quickmail_alternates', 'block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
+            $table = new xmldb_table($table_name);
+
+            if ($dbman->table_exists($table)) {
+                $dbman->drop_table($table);
+            }
+        }
+
         // Quickmail savepoint reached.
-        upgrade_block_savepoint(true, 2017111400, 'quickmail');
+        upgrade_block_savepoint(true, 2018040900, 'quickmail');
     }
 
     return $result;
