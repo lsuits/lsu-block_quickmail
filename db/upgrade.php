@@ -487,7 +487,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018040900, 'quickmail');
     }
 
-    if ($oldversion < 2018040900) {
+    if ($oldversion < 2018041100) {
         // migrate the data from v1 to v2
         migrate_quickmail_v1_to_v2();
 
