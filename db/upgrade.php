@@ -23,6 +23,8 @@
  */
 
 function xmldb_block_quickmail_upgrade($oldversion) {
+    require_once('upgradelib.php');
+
     global $DB;
 
     $result = true;
@@ -483,14 +485,6 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $userid_field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '11', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $dbman->drop_field($signature_table, $userid_field);
 
-        // Quickmail savepoint reached.
-        upgrade_block_savepoint(true, 2018040900, 'quickmail');
-
-        // bail out here to trigger another upgrade process
-        return $result;
-    }
-
-    if ($oldversion < 2018041100) {
         // migrate the data from v1 to v2
         migrate_quickmail_v1_to_v2();
 
@@ -502,9 +496,9 @@ function xmldb_block_quickmail_upgrade($oldversion) {
                 $dbman->drop_table($table);
             }
         }
-        
+
         // Quickmail savepoint reached.
-        upgrade_block_savepoint(true, 2018041100, 'quickmail');
+        upgrade_block_savepoint(true, 2018040900, 'quickmail');
     }
 
     return $result;
