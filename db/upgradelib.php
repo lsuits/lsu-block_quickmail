@@ -259,14 +259,14 @@ function migrate_quickmail_v1_to_v2() {
 			// create a new record
 			$message = (object) [
 				'course_id' => $old->courseid,
-				'user_id' => $old->user_id,
+				'user_id' => $old->userid,
 				'message_type' => 'email',
 				'subject' => $old->subject,
 				'editor_format' => $old->format,
 				'sent_at' => $table_type == 'draft' ? 0 : $old->time,
 				'to_send_at' => 0,
 				'is_draft' => $table_type == 'draft' ? 1 : 0,
-				'usermodified' => $old->user_id,
+				'usermodified' => $old->userid,
 				'timecreated' => $old->time,
 				'timemodified' => $old->time,
 				'timedeleted' => 0
