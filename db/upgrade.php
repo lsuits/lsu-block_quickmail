@@ -485,6 +485,9 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // Quickmail savepoint reached.
         upgrade_block_savepoint(true, 2018040900, 'quickmail');
+
+        // bail out here to trigger another upgrade process
+        return $result;
     }
 
     if ($oldversion < 2018041100) {
@@ -492,7 +495,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         migrate_quickmail_v1_to_v2();
 
         // drop all of the old tables
-        foreach (['block_quickmail_alternates', 'block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
+        foreach (['block_quickmail_alternate', 'block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
             $table = new xmldb_table($table_name);
 
             if ($dbman->table_exists($table)) {
