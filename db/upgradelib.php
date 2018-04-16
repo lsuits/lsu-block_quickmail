@@ -262,6 +262,7 @@ function migrate_quickmail_v1_to_v2() {
 				'user_id' => $old->userid,
 				'message_type' => 'email',
 				'subject' => $old->subject,
+				'body' => $old->message,
 				'editor_format' => $old->format,
 				'sent_at' => $table_type == 'draft' ? 0 : $old->time,
 				'to_send_at' => 0,
