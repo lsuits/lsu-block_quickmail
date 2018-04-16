@@ -32,8 +32,6 @@ $course_user_data = block_quickmail_plugin::get_compose_message_recipients(
     $page_context
 );
 
-// var_dump($course_user_data);die;
-
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
 ////////////////////////////////////////

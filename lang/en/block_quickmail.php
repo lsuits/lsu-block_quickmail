@@ -2,6 +2,7 @@
 
 // block
 $string['pluginname'] = 'Quickmail';
+$string['open_broadcast'] = 'Compose Message';
 $string['open_compose'] = 'Compose Message';
 $string['manage_drafts'] = 'View Drafts';
 $string['view_queued'] = 'View Scheduled';
@@ -39,7 +40,8 @@ $string['deleted'] = 'Deleted';
 // messaging terms
 $string['included_ids_label'] = 'To';
 $string['excluded_ids_label'] = 'Exclude';
-$string['compose'] = 'Compose Message';
+$string['compose'] = 'Compose Course Message';
+$string['broadcast'] = 'Compose Admin Message';
 $string['subject'] = 'Subject';
 $string['message_preview'] = 'Message Preview';
 $string['preview_no_subject'] = '(No subject)';

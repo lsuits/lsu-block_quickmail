@@ -22,27 +22,18 @@ class block_quickmail_plugin {
      * @param  object $user
      * @return bool
      */
-    public static function user_has_permission($permission, $context, $user = null) {
-        return has_capability('block/quickmail:' . $permission, $context, $user);
-    }
+    public static function user_has_capability($permission, $context, $user = null) {
+        global $USER;
 
-    /**
-     * Reports whether or not the given user has the permission to compose/draft messages
-     *
-     * Note: User defaults to auth user
-     * 
-     * @param  object $context
-     * @param  object $user
-     * @return bool
-     */
-    public static function user_can_send_messages($context, $user = null) {
-        // if this user is enrolled in the class and students are allowed to send messages
-        if (is_enrolled($context, $user, '', true) && block_quickmail_config::block('allowstudents')) {
+        // if no user was passed, set as the auth user
+        $user = empty($user) ? $USER : $user;
+
+        // always allow site admins
+        if (is_siteadmin($user)) {
             return true;
         }
 
-        // otherwise, check user's permission normally
-        return has_capability('block/quickmail:cansend', $context, $user);
+        return has_capability('block/quickmail:' . $permission, $context, $user);
     }
 
     /**
@@ -55,7 +46,7 @@ class block_quickmail_plugin {
      * @return bool
      */
     public static function user_can_access_all_groups($context, $user = null) {
-        return has_capability('block/quickmail:viewgroupusers', $context, $user);
+        return self::user_has_capability('viewgroupusers', $context, $user);
     }
 
     /**
