@@ -43,6 +43,7 @@ class compose_message_form extends \moodleform {
     public $course_user_data;
     public $user_alternate_email_array;
     public $user_signature_array;
+    public $user_default_signature_id;
     public $course_config_array;
     public $draft_message;
     public $included_draft_recipients;
