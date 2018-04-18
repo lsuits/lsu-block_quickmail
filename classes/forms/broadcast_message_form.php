@@ -30,9 +30,8 @@ use block_quickmail\forms\concerns\is_quickmail_form;
 use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
-use block_quickmail\persistents\alternate_email;
 
-class compose_message_form extends \moodleform {
+class broadcast_message_form extends \moodleform {
 
     use is_quickmail_form;
 
@@ -40,8 +39,6 @@ class compose_message_form extends \moodleform {
     public $context;
     public $user;
     public $course;
-    public $course_user_data;
-    public $user_alternate_email_array;
     public $user_signature_array;
     public $user_default_signature_id;
     public $course_config_array;
@@ -54,25 +51,21 @@ class compose_message_form extends \moodleform {
      * 
      * @param  object    $context
      * @param  object    $user               (auth user)
-     * @param  object    $course             moodle course
-     * @param  array.    $course_user_data   array including all role, group and user data for this course
+     * @param  object    $course             moodle (site) course
      * @param  message   $draft_message
-     * @return \block_quickmail\forms\compose_message_form
+     * @return \block_quickmail\forms\broadcast_message_form
      */
-    public static function make($context, $user, $course, $course_user_data = [], $draft_message = null)
+    public static function make($context, $user, $course, $draft_message = null)
     {
         $target_url = self::generate_target_url([
             'courseid' => $course->id,
             'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
         ]);
 
-        // get the user's available alternate emails for this course
-        $user_alternate_email_array = alternate_email::get_flat_array_for_course_user($course->id, $user);
-
-        // get the user's current signatures as array (id => title)
+        // get the auth user's current signatures as array (id => title)
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
-        // get the user's default signature id, if any, defaulting to 0
+        // get the auth user's default signature id, if any, defaulting to 0
         if ($signature = signature::get_default_signature_for_user($user->id)) {
             $user_default_signature_id = $signature->get('id');
         } else {
@@ -80,7 +73,7 @@ class compose_message_form extends \moodleform {
         }
 
         // get config variables for this course, defaulting to block level
-        $course_config_array = block_quickmail_config::get('', $course);
+        $course_config_array = block_quickmail_config::get('', $course->id);
 
         // if this is a draft message, get any included/excluded draft recipients formatted as key arrays
         $included_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('include', true) : [];
@@ -90,8 +83,6 @@ class compose_message_form extends \moodleform {
             'context' => $context,
             'user' => $user,
             'course' => $course,
-            'course_user_data' => $course_user_data,
-            'user_alternate_email_array' => $user_alternate_email_array,
             'user_signature_array' => $user_signature_array,
             'user_default_signature_id' => $user_default_signature_id,
             'course_config_array' => $course_config_array,
@@ -111,8 +102,6 @@ class compose_message_form extends \moodleform {
         $this->context = $this->_customdata['context'];
         $this->user = $this->_customdata['user'];
         $this->course = $this->_customdata['course'];
-        $this->course_user_data = $this->_customdata['course_user_data'];
-        $this->user_alternate_email_array = $this->_customdata['user_alternate_email_array'];
         $this->user_signature_array = $this->_customdata['user_signature_array'];
         $this->user_default_signature_id = $this->_customdata['user_default_signature_id'];
         $this->course_config_array = $this->_customdata['course_config_array'];
@@ -121,34 +110,9 @@ class compose_message_form extends \moodleform {
         $this->excluded_draft_recipients = $this->_customdata['excluded_draft_recipients'];
 
         ////////////////////////////////////////////////////////////
-        ///  from / alternate email (select)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'from_email_id', 
-            get_string('from'), 
-            $this->get_from_email_values()
-        );
-        $mform->addHelpButton(
-            'from_email_id', 
-            'from_email', 
-            'block_quickmail'
-        );
-
-        // inject default if draft mesage
-        if ($this->is_draft_message()) {
-            $mform->setDefault(
-                'from_email_id', 
-                $this->draft_message->get('alternate_email_id')
-            );
-        }
-
-        ////////////////////////////////////////////////////////////
-        ///  included & excluded recipient entities (multiselect)
+        ///  select recipients
         ////////////////////////////////////////////////////////////
         
-        $recipient_entities = $this->get_recipient_entities();
-
         $options = [
             'multiple' => true,
             'showsuggestions' => true,
@@ -157,16 +121,7 @@ class compose_message_form extends \moodleform {
             'ajax' => ''
         ];
         
-        $mform->addElement('autocomplete', 'included_entity_ids', block_quickmail_string::get('included_ids_label'), $recipient_entities, array_merge($options, [
-            'noselectionstring' => block_quickmail_string::get('no_included_recipients'),
-            'placeholder' => block_quickmail_string::get('included_recipients_desc'),
-        ]))->setValue($this->included_draft_recipients);
-
-        $mform->addElement('autocomplete', 'excluded_entity_ids', block_quickmail_string::get('excluded_ids_label'), $recipient_entities, array_merge($options, [
-            'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
-            'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
-        ]))->setValue($this->excluded_draft_recipients);
-
+        // @TODO - NEED TO SELECT RECIPS HERE!!!
 
         ////////////////////////////////////////////////////////////
         ///  subject (text)
@@ -400,10 +355,7 @@ class compose_message_form extends \moodleform {
     public function validation($data, $files) {
         $errors = [];
 
-        // check that we have at least one recipient
-        if (empty($data['included_entity_ids'])) {
-            $errors['included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
-        }
+        // @TODO - check that we have at least one recipient !!!!
 
         // additional_emails - make sure each is valid
         $cleansed_additional_emails = preg_replace('/\s+/', '', $data['additional_emails']);
@@ -442,21 +394,6 @@ class compose_message_form extends \moodleform {
      */
     private function should_show_additional_email_input() {
         return (bool) $this->course_config_array['additionalemail'];
-    }
-
-    /**
-     * Returns an array of available sending email options
-     * 
-     * @return array
-     */
-    private function get_from_email_values() {
-        $values = ['-1' => get_config('moodle', 'noreplyaddress')];
-
-        foreach ($this->user_alternate_email_array as $key => $value) {
-            $values[(string) $key] = $value;
-        }
-
-        return $values;
     }
 
     /**
@@ -559,21 +496,6 @@ class compose_message_form extends \moodleform {
             date("i", $to_send_at), 
             date("s", $to_send_at)
         );
-    }
-
-    private function get_recipient_entities()
-    {
-        $results = [];
-
-        foreach(['role', 'group', 'user'] as $type) {
-            foreach($this->course_user_data[$type . 's'] as $entity) {
-                $results[$type . '_' . $entity['id']] = $type == 'user' 
-                    ? $entity['name'] 
-                    : $entity['name'] . ' (' . ucfirst($type) . ')';
-            }            
-        }
-
-        return $results;
     }
 
 }

@@ -26,6 +26,7 @@
 // require_once 'classes/forms/manage_signatures_form.php';
 // require_once 'classes/forms/course_config_form.php';
 
+use block_quickmail\components\broadcast_message_component;
 use block_quickmail\components\compose_message_component;
 use block_quickmail\components\draft_message_index_component;
 use block_quickmail\components\queued_message_index_component;
@@ -38,6 +39,28 @@ use block_quickmail\components\manage_drafts_component;
 use block_quickmail\components\manage_queued_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
+
+    ////////////////////////////////////////
+    /// BROADCAST FORM
+    ////////////////////////////////////////
+    
+    public function broadcast_message_component($params = []) {
+        $broadcast_message_component = new broadcast_message_component($params);
+        
+        return $this->render($broadcast_message_component);
+    }
+
+    protected function render_broadcast_message_component(broadcast_message_component $broadcast_message_component) {
+        $out = '';
+        
+        // render heading
+        $out .= $this->output->heading(format_string($broadcast_message_component->heading), 2);
+
+        // render compose form
+        $out .= $broadcast_message_component->broadcast_form->render();
+
+        return $this->output->container($out, 'broadcast_message_component');
+    }
 
     ////////////////////////////////////////
     /// COMPOSE FORM
