@@ -52,7 +52,7 @@ class compose_message_form extends \moodleform {
      * Instantiates and returns a compose message form
      * 
      * @param  object    $context
-     * @param  object    $user               auth user
+     * @param  object    $user               (auth user)
      * @param  object    $course             moodle course
      * @param  array.    $course_user_data   array including all role, group and user data for this course
      * @param  message   $draft_message
@@ -65,13 +65,13 @@ class compose_message_form extends \moodleform {
             'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
         ]);
 
-        // get the auth user's available alternate emails for this course
+        // get the user's available alternate emails for this course
         $user_alternate_email_array = alternate_email::get_flat_array_for_course_user($course->id, $user);
 
-        // get the auth user's current signatures as array (id => title)
+        // get the user's current signatures as array (id => title)
         $user_signature_array = signature::get_flat_array_for_user($user->id);
 
-        // get the auth user's default signature id, if any, defaulting to 0
+        // get the user's default signature id, if any, defaulting to 0
         if ($signature = signature::get_default_signature_for_user($user->id)) {
             $user_default_signature_id = $signature->get('id');
         } else {
