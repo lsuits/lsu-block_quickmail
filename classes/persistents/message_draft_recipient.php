@@ -37,7 +37,8 @@ class message_draft_recipient extends persistent {
             ],
             'recipient_filter' => [
                 'type' => PARAM_TEXT,
-                'default' => null
+                'default' => null,
+                'null' => NULL_ALLOWED
             ],
         ];
     }
