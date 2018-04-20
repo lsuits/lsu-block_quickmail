@@ -85,6 +85,7 @@
         <FIELD NAME="type" TYPE="char" LENGTH="7" NOTNULL="true" SEQUENCE="false" COMMENT="The inclusion type. exclude or include"/>
         <FIELD NAME="recipient_type" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="The type of recipient entity. role, group, or user."/>
         <FIELD NAME="recipient_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The recipient entity id."/>
+        <FIELD NAME="recipient_filter" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="The user_filtering serialized data for user selection."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
       </FIELDS>

@@ -43,8 +43,6 @@ class broadcast_message_form extends \moodleform {
     public $user_default_signature_id;
     public $course_config_array;
     public $draft_message;
-    public $included_draft_recipients;
-    public $excluded_draft_recipients;
 
     /**
      * Instantiates and returns a compose message form
@@ -75,10 +73,6 @@ class broadcast_message_form extends \moodleform {
         // get config variables for this course, defaulting to block level
         $course_config_array = block_quickmail_config::get('', $course->id);
 
-        // if this is a draft message, get any included/excluded draft recipients formatted as key arrays
-        $included_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('include', true) : [];
-        $excluded_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('exclude', true) : [];
-
         return new self($target_url, [
             'context' => $context,
             'user' => $user,
@@ -87,8 +81,6 @@ class broadcast_message_form extends \moodleform {
             'user_default_signature_id' => $user_default_signature_id,
             'course_config_array' => $course_config_array,
             'draft_message' => $draft_message,
-            'included_draft_recipients' => $included_draft_recipients,
-            'excluded_draft_recipients' => $excluded_draft_recipients,
         ], 'post', '', ['id' => 'mform-compose']);
     }
 
@@ -106,8 +98,6 @@ class broadcast_message_form extends \moodleform {
         $this->user_default_signature_id = $this->_customdata['user_default_signature_id'];
         $this->course_config_array = $this->_customdata['course_config_array'];
         $this->draft_message = $this->_customdata['draft_message'];
-        $this->included_draft_recipients = $this->_customdata['included_draft_recipients'];
-        $this->excluded_draft_recipients = $this->_customdata['excluded_draft_recipients'];
 
         ////////////////////////////////////////////////////////////
         ///  select recipients
@@ -121,8 +111,6 @@ class broadcast_message_form extends \moodleform {
             'ajax' => ''
         ];
         
-        // @TODO - NEED TO SELECT RECIPS HERE!!!
-
         ////////////////////////////////////////////////////////////
         ///  subject (text)
         ////////////////////////////////////////////////////////////

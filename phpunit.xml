@@ -53,7 +53,7 @@
             <exclude>tests/unit/user_repo_test.php</exclude>
 
             <!-- forms -->
-            <exclude>tests/unit/compose_message_form_validator_test.php</exclude>
+            <exclude>tests/unit/message_form_validator_test.php</exclude>
             <exclude>tests/unit/create_alternate_form_validator_test.php</exclude>
 
             <!-- block utilities -->

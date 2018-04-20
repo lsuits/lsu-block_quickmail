@@ -68,8 +68,6 @@ if ($page_params['draftid']) {
 
 $broadcast_recipient_filter = block_quickmail_broadcast_recipient_filter::make($page_params, $draft_message);
 
-// dd($broadcast_recipient_filter->result_users);
-
 ////////////////////////////////////////
 /// FILE ATTACHMENT HANDLING
 ////////////////////////////////////////
@@ -118,14 +116,12 @@ try {
     // SEND
     } else if ($request->to_send_message()) {
 
-        dd('send broadcast message');
-
         // attempt to send (as task)
-        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $broadcast_form->get_data(), $draft_message, true);
-
+        $message = \block_quickmail\messenger\messenger::broadcast($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message, true);
+        
         // clear any recipient user filtering session data
         $broadcast_recipient_filter->clear_session();
-
+        
         // redirect back to course page
         $redirect_message = $message->is_queued_message()
             ? 'redirect_back_to_course_from_message_after_queued_send'
@@ -171,12 +167,13 @@ $rendered_broadcast_recipient_filter_results = $renderer->broadcast_recipient_fi
 echo $OUTPUT->header();
 $broadcast_form->render_error_notification();
 
+// BEGIN RENDERING USER FILTER/RESULTS
 $broadcast_recipient_filter->render_add();
 $broadcast_recipient_filter->render_active();
 
 if ($broadcast_recipient_filter->get_result_user_count()) {
     // PAGINATION BAR (if appropriate)
-    if ($this->get_result_user_count() > $page_params['per_page']) {
+    if ($broadcast_recipient_filter->get_result_user_count() > $page_params['per_page']) {
         $broadcast_recipient_filter->render_paging_bar();
     }
 
@@ -184,10 +181,11 @@ if ($broadcast_recipient_filter->get_result_user_count()) {
     echo $rendered_broadcast_recipient_filter_results;
 
     // PAGINATION BAR (if appropriate)
-    if ($this->get_result_user_count() > $page_params['per_page']) {
+    if ($broadcast_recipient_filter->get_result_user_count() > $page_params['per_page']) {
         $broadcast_recipient_filter->render_paging_bar();
     }
 }
+// END RENDERING USER FILTER/RESULTS
 
 echo $rendered_broadcast_form;
 echo $OUTPUT->footer();

@@ -2,9 +2,9 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\validators\compose_message_form_validator;
+use block_quickmail\validators\message_form_validator;
 
-class block_quickmail_compose_message_form_validator_testcase extends advanced_testcase {
+class block_quickmail_message_form_validator_testcase extends advanced_testcase {
     
     use has_general_helpers,
         sets_up_courses,
@@ -23,7 +23,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'subject' => ''
         ]);
 
-        $validator = new compose_message_form_validator($compose_form_data);
+        $validator = new message_form_validator($compose_form_data);
         $validator->for_course($course);
         $validator->validate();
 
@@ -44,7 +44,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'body' => ''
         ]);
 
-        $validator = new compose_message_form_validator($compose_form_data);
+        $validator = new message_form_validator($compose_form_data);
         $validator->for_course($course);
         $validator->validate();
 
@@ -65,7 +65,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'additional_emails' => 'test@email.com, another@email.com'
         ]);
 
-        $validator = new compose_message_form_validator($compose_form_data);
+        $validator = new message_form_validator($compose_form_data);
         $validator->for_course($course);
         $validator->validate();
 
@@ -85,7 +85,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
             'additional_emails' => 'invalid@email, another@email.com'
         ]);
 
-        $validator = new compose_message_form_validator($compose_form_data);
+        $validator = new message_form_validator($compose_form_data);
         $validator->for_course($course);
         $validator->validate();
 
@@ -104,7 +104,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         // get a compose form submission
         $compose_form_data = $this->get_compose_message_form_submission($user_students, 'invalid');
 
-        $validator = new compose_message_form_validator($compose_form_data);
+        $validator = new message_form_validator($compose_form_data);
         $validator->for_course($course);
         $validator->validate();
 
@@ -125,7 +125,7 @@ class block_quickmail_compose_message_form_validator_testcase extends advanced_t
         // get a compose form submission
         $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message');
 
-        $validator = new compose_message_form_validator($compose_form_data);
+        $validator = new message_form_validator($compose_form_data);
         $validator->for_course($course);
         $validator->validate();
 

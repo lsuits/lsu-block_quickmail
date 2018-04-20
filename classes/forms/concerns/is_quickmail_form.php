@@ -38,7 +38,12 @@ trait is_quickmail_form {
         if (get_class($exception) == 'core\invalid_persistent_exception') {
             $this->errors[] = $exception->a;
         } else if (get_class($exception) == 'block_quickmail\exceptions\validation_exception') {
-            $this->errors = array_merge($this->errors, $exception->errors);
+            // if the "errors" is not an array, make it an array
+            if ( ! is_array($exception->errors)) {
+                $this->errors = array_merge($this->errors, [$exception->errors]);
+            } else {
+                $this->errors = array_merge($this->errors, $exception->errors);
+            }
         }
     }
 

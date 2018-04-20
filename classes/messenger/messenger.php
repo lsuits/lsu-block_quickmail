@@ -10,9 +10,10 @@ use block_quickmail\persistents\alternate_email;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_additional_email;
-use block_quickmail\validators\compose_message_form_validator;
+use block_quickmail\validators\message_form_validator;
 use block_quickmail\validators\save_draft_message_form_validator;
 use block_quickmail\requests\compose_request;
+use block_quickmail\requests\broadcast_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\filemanager\message_file_handler;
@@ -162,7 +163,7 @@ class messenger {
     }
 
     /**
-     * Creates a message from the given user within the given course using the given form data
+     * Creates a "course" message from the given user within the given course using the given form data
      * 
      * Depending on the given form data, this message may be sent now or at some point in the future.
      * By default, the message delivery will be handled as individual adhoc tasks which are
@@ -182,7 +183,7 @@ class messenger {
     public static function compose($user, $course, $form_data, $draft_message = null, $send_as_tasks = true)
     {
         // validate form data
-        $validator = new compose_message_form_validator($form_data);
+        $validator = new message_form_validator($form_data);
         $validator->validate();
 
         // if errors, throw exception
@@ -217,6 +218,83 @@ class messenger {
             $transformed_data->included_entity_ids, 
             $transformed_data->excluded_entity_ids
         );
+
+        // clear any draft recipients for this message, unnecessary at this point
+        message_draft_recipient::clear_all_for_message($message);
+
+        // clear any existing recipients, and add those that have been recently submitted
+        $message->sync_recipients($recipient_user_ids);
+
+        // clear any existing additional emails, and add those that have been recently submitted
+        $message->sync_additional_emails($transformed_data->additional_emails);
+        
+        // if not sending as a task, and scheduled for delivery later, send now
+        // the ability to do this is not allowed for the end user, but available for testing
+        // TODO: make task-based sending configurable (ie: do not allow scheduled sends)
+        if ( ! $send_as_tasks && ! $message->get_to_send_in_future()) {
+            self::deliver($message, $send_as_tasks);
+        }
+
+        return $message;
+    }
+
+    /**
+     * Creates an "admin" message from the given user using the given user filter and form data
+     * 
+     * Depending on the given form data, this message may be sent now or at some point in the future.
+     * By default, the message delivery will be handled as individual adhoc tasks which are
+     * picked up by a scheduled task.
+     *
+     * Optionally, a draft message may be passed which will use and update the draft information
+     *
+     * @param  object                                       $user                         moodle user sending the message
+     * @param  object                                       $course                       the moodle "SITEID" course
+     * @param  array                                        $form_data                    message parameters which will be validated
+     * @param  block_quickmail_broadcast_recipient_filter   $broadcast_recipient_filter
+     * @param  message                                      $draft_message                a draft message (optional, defaults to null)
+     * @param  bool                                         $send_as_tasks                if false, the message will be sent immediately
+     * @return message
+     * @throws validation_exception
+     * @throws critical_exception
+     */
+    public static function broadcast($user, $course, $form_data, $block_quickmail_broadcast_recipient_filter, $draft_message = null, $send_as_tasks = true)
+    {
+        // validate form data
+        $validator = new message_form_validator($form_data, ['is_broadcast_message' => true]);
+        $validator->validate();
+
+        // if errors, throw exception
+        if ($validator->has_errors()) {
+            throw new validation_exception(block_quickmail_string::get('validation_exception_message'), $validator->errors);
+        }
+
+        // be sure that we have at least one recipient
+        if ( ! $block_quickmail_broadcast_recipient_filter->get_result_user_count()) {
+            throw new validation_exception(block_quickmail_string::get('validation_exception_message'), block_quickmail_string::get('no_included_recipients_validation'));
+        }
+
+        // get transformed (valid) post data
+        $transformed_data = broadcast_request::get_transformed_post_data($form_data);
+
+        // if draft message was passed
+        if ( ! empty($draft_message)) {
+            // if draft message was already sent (shouldn't happen)
+            if ($draft_message->is_sent_message()) {
+                throw new validation_exception(block_quickmail_string::get('critical_error'));
+            }
+
+            // update draft message, and remove draft status
+            $message = $draft_message->update_draft($transformed_data, false);
+        } else {
+            // create new message (use same method as compose for now)
+            $message = message::create_composed($user, $course, $transformed_data);
+        }
+
+        // handle saving and syncing of any uploaded file attachments
+        message_file_handler::handle_posted_attachments($message, $form_data, 'attachments');
+        
+        // get the filtered recipient user ids
+        $recipient_user_ids = $block_quickmail_broadcast_recipient_filter->get_result_user_ids();
 
         // clear any draft recipients for this message, unnecessary at this point
         message_draft_recipient::clear_all_for_message($message);

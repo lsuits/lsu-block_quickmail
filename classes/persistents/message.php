@@ -398,7 +398,7 @@ class message extends persistent {
 	///////////////////////////////////////////////
 
 	/**
-	 * Creates a new message from the given sending user, course, and data
+	 * Creates a new "course" or "admin" message from the given sending user, course, and data
 	 * 
 	 * @param  object  $user  moodle user
 	 * @param  object  $course  moodle course
@@ -429,7 +429,7 @@ class message extends persistent {
 	/**
 	 * Updates this draft message with the given data
 	 * 
-	 * @param  object  $data      transformed compose request data
+	 * @param  object  $data      transformed compose/broadcast request data
 	 * @param  bool    $is_draft  whether or not this draft is still a draft after this update
 	 * @return message
 	 */

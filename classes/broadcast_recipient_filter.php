@@ -137,6 +137,20 @@ class block_quickmail_broadcast_recipient_filter {
     }
 
     /**
+     * Reports whether or not there are filters set
+     * 
+     * @return bool
+     */
+    public function has_set_filter()
+    {
+        global $SESSION;
+
+        $key = self::$session_key;
+
+        return ! empty($SESSION->$key);
+    }
+
+    /**
      * Sets the filtered "result" users
      */
     public function set_result_users()
@@ -172,6 +186,16 @@ class block_quickmail_broadcast_recipient_filter {
         }
 
         return $this->result_user_count;
+    }
+
+    /**
+     * Returns the user ids for the result users
+     * 
+     * @return array
+     */
+    public function get_result_user_ids()
+    {
+        return array_keys($this->result_users);
     }
 
     /**

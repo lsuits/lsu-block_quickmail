@@ -26,13 +26,18 @@ class message_draft_recipient extends persistent {
                 'type' => PARAM_INT,
             ],
             'type' => [
-                'type' => PARAM_TEXT,
+                'type' => PARAM_TEXT, // include, exclude
             ],
             'recipient_type' => [
-                'type' => PARAM_TEXT,
+                'type' => PARAM_TEXT, // role, user, group, filter
             ],
             'recipient_id' => [
                 'type' => PARAM_INT,
+                'default' => 0
+            ],
+            'recipient_filter' => [
+                'type' => PARAM_TEXT,
+                'default' => null
             ],
         ];
     }
