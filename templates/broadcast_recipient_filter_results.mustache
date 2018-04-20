@@ -1,0 +1,85 @@
+<div class="block_quickmail_broadcast_recipient_filter_results">
+    <h4>{{ foundUsersHeadingText }}</h4>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {{#firstnameIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=firstname&sort_dir=desc">{{# str }} firstname {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=firstname&sort_dir=asc">{{# str }} firstname {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/firstnameIsSorted}}
+                {{^firstnameIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=firstname&sort_dir=asc">{{# str }} firstname {{/ str }}</a></th>
+                {{/firstnameIsSorted}}
+
+                {{#lastnameIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastname&sort_dir=desc">{{# str }} lastname {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastname&sort_dir=asc">{{# str }} lastname {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/lastnameIsSorted}}
+                {{^lastnameIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=lastname&sort_dir=asc">{{# str }} lastname {{/ str }}</a></th>
+                {{/lastnameIsSorted}}
+
+                {{#emailIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=email&sort_dir=desc">{{# str }} email {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=email&sort_dir=asc">{{# str }} email {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/emailIsSorted}}
+                {{^emailIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=email&sort_dir=asc">{{# str }} email {{/ str }}</a></th>
+                {{/emailIsSorted}}
+
+                {{#cityIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=city&sort_dir=desc">{{# str }} city {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=city&sort_dir=asc">{{# str }} city {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/cityIsSorted}}
+                {{^cityIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=city&sort_dir=asc">{{# str }} city {{/ str }}</a></th>
+                {{/cityIsSorted}}
+
+                {{#lastaccessIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastaccess&sort_dir=desc">{{# str }} lastaccess {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="{{ baseSortQueryString }}&sort_by=lastaccess&sort_dir=asc">{{# str }} lastaccess {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/lastaccessIsSorted}}
+                {{^lastaccessIsSorted}}
+                    <th><a href="{{ baseSortQueryString }}&sort_by=lastaccess&sort_dir=asc">{{# str }} lastaccess {{/ str }}</a></th>
+                {{/lastaccessIsSorted}}
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ firstname }}</td>
+                    <td>{{ lastname }}</td>
+                    <td>{{ email }}</td>
+                    <td>{{ city }}</td>
+                    <td>{{ lastaccess }}</td>
+                </tr>
+            {{/ tableRows }}
+        </tbody>
+    </table>
+</div>

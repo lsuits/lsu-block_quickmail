@@ -35,6 +35,8 @@ class draft_message_index_component extends component implements \renderable {
     public $pagination;
     public $user;
     public $course_id;
+    public $sort_by;
+    public $sort_dir;
     public $course_draft_messages;
     public $user_course_array;
 

@@ -27,6 +27,7 @@
 // require_once 'classes/forms/course_config_form.php';
 
 use block_quickmail\components\broadcast_message_component;
+use block_quickmail\components\broadcast_recipient_filter_results_component;
 use block_quickmail\components\compose_message_component;
 use block_quickmail\components\draft_message_index_component;
 use block_quickmail\components\queued_message_index_component;
@@ -60,6 +61,22 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $broadcast_message_component->broadcast_form->render();
 
         return $this->output->container($out, 'broadcast_message_component');
+    }
+
+    ////////////////////////////////////////
+    /// BROADCAST RECIPIENT FILTER RESULTS
+    ////////////////////////////////////////
+    
+    public function broadcast_recipient_filter_results_component($params = []) {
+        $broadcast_recipient_filter_results_component = new broadcast_recipient_filter_results_component($params);
+        
+        return $this->render($broadcast_recipient_filter_results_component);
+    }
+
+    protected function render_broadcast_recipient_filter_results_component(broadcast_recipient_filter_results_component $broadcast_recipient_filter_results_component) {
+        $data = $broadcast_recipient_filter_results_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/broadcast_recipient_filter_results', $data);
     }
 
     ////////////////////////////////////////

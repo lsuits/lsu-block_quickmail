@@ -8,6 +8,10 @@ $page_url = '/blocks/quickmail/broadcast.php';
 $page_params = [
     'courseid' => SITEID,
     'draftid' => optional_param('draftid', 0, PARAM_INT),
+    'page' => optional_param('page', 0, PARAM_INT),
+    'per_page' => optional_param('per_page', 20, PARAM_INT),
+    'sort_by' => optional_param('sort_by', 'lastname', PARAM_ALPHA),
+    'sort_dir' => optional_param('sort_dir', 'asc', PARAM_ALPHA)
 ];
 
 ////////////////////////////////////////
@@ -62,6 +66,10 @@ if ($page_params['draftid']) {
     $draft_message = null;
 }
 
+$broadcast_recipient_filter = block_quickmail_broadcast_recipient_filter::make($page_params, $draft_message);
+
+// dd($broadcast_recipient_filter->result_users);
+
 ////////////////////////////////////////
 /// FILE ATTACHMENT HANDLING
 ////////////////////////////////////////
@@ -101,6 +109,9 @@ try {
     // CANCEL
     if ($request->is_form_cancellation()) {
         
+        // clear any recipient user filtering session data
+        $broadcast_recipient_filter->clear_session();
+
         // redirect back to course page
         $request->redirect_to_url('/my');
 
@@ -111,6 +122,9 @@ try {
 
         // attempt to send (as task)
         $message = \block_quickmail\messenger\messenger::compose($USER, $course, $broadcast_form->get_data(), $draft_message, true);
+
+        // clear any recipient user filtering session data
+        $broadcast_recipient_filter->clear_session();
 
         // redirect back to course page
         $redirect_message = $message->is_queued_message()
@@ -123,6 +137,9 @@ try {
     } else if ($request->to_save_draft()) {
 
         dd('save broadcast draft');
+
+        // clear any recipient user filtering session data
+        $broadcast_recipient_filter->clear_session();
 
         // attempt to save draft, handle exceptions
         // $message = \block_quickmail\messenger\messenger::save_draft($USER, $course, $broadcast_form->get_data(), $draft_message);
@@ -147,8 +164,31 @@ $rendered_broadcast_form = $renderer->broadcast_message_component([
     'broadcast_form' => $broadcast_form,
 ]);
 
+$rendered_broadcast_recipient_filter_results = $renderer->broadcast_recipient_filter_results_component([
+    'broadcast_recipient_filter' => $broadcast_recipient_filter
+]);
+
 echo $OUTPUT->header();
 $broadcast_form->render_error_notification();
+
+$broadcast_recipient_filter->render_add();
+$broadcast_recipient_filter->render_active();
+
+if ($broadcast_recipient_filter->get_result_user_count()) {
+    // PAGINATION BAR (if appropriate)
+    if ($this->get_result_user_count() > $page_params['per_page']) {
+        $broadcast_recipient_filter->render_paging_bar();
+    }
+
+    // TABLE OF DISPLAY USERS
+    echo $rendered_broadcast_recipient_filter_results;
+
+    // PAGINATION BAR (if appropriate)
+    if ($this->get_result_user_count() > $page_params['per_page']) {
+        $broadcast_recipient_filter->render_paging_bar();
+    }
+}
+
 echo $rendered_broadcast_form;
 echo $OUTPUT->footer();
 

@@ -76,6 +76,7 @@ $string['unqueue_scheduled_confirm_message'] = 'This will unschedule this messag
 $string['send_now_scheduled_modal_title'] = 'Send Message Now';
 $string['send_now_scheduled_confirm_message'] = 'This will forget the schedule and send the message now, are you sure?';
 $string['send_receipt_subject_addendage'] = 'Sent Message';
+$string['found_filtered_users'] = 'Found {$a} user(s)';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
