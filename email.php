@@ -156,7 +156,7 @@ if (empty($users)) {
     echo $OUTPUT->notification(quickmail::_s('no_usergroups'), 'notifyproblem');
     
     echo html_writer::start_tag('div', array('class' => 'no-overflow'));
-    echo html_writer::link(new moodle_url('/course/view.php', ['id' => $courseid]), 'Back to previous page', null);
+    echo html_writer::link(new moodle_url('/course/view.php', ['id' => $courseid]), get_string('back_to_previous', 'block_quickmail'), null);
     echo html_writer::end_tag('div');
     
     echo $OUTPUT->footer();

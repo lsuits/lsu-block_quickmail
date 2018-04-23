@@ -61,6 +61,7 @@ $string['select_groups'] = 'Select Sections ...';
 $string['moodle_attachments'] = 'Moodle Attachments ({$a})';
 $string['download_all'] = 'Download All';
 $string['qm_contents'] = 'Download File Contents';
+$string['back_to_previous'] = 'Back to previous page';
 
 // Config form strings
 $string['allowstudents'] = 'Allow students to use Quickmail';
