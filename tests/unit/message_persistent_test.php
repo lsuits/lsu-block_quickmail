@@ -31,7 +31,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'no_reply' => 1,
         ];
 
-        $message = message::create_composed($user_teacher, $course, (object) $params, true);
+        $message = message::create_type('compose', $user_teacher, $course, (object) $params, true);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals($course->id, $message->get('course_id'));
@@ -462,7 +462,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'no_reply' => 1,
         ];
 
-        $message = message::create_composed($user_teacher, $course, (object) $params, true);
+        $message = message::create_type('compose', $user_teacher, $course, (object) $params, true);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals($course->id, $message->get('course_id'));
@@ -499,7 +499,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'no_reply' => 1,
         ];
 
-        $message = message::create_composed($user_teacher, $course, (object) $params, false);
+        $message = message::create_type('compose', $user_teacher, $course, (object) $params, false);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals(0, $message->get('is_draft'));
@@ -524,7 +524,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'no_reply' => 1,
         ];
 
-        $message = message::create_composed($user_teacher, $course, (object) $creation_params, true);
+        $message = message::create_type('compose', $user_teacher, $course, (object) $creation_params, true);
 
         $update_params = [
             'message_type' => 'email',

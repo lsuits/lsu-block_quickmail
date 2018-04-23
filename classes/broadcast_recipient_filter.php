@@ -71,6 +71,15 @@ class block_quickmail_broadcast_recipient_filter {
         $this->set_display_users();
     }
 
+    /**
+     * Instantiates a new recipient filter object based on page params and optional draft message
+     *
+     * If a draft message is passed, this will set the current filter selections to anything saved for that draft
+     * 
+     * @param  array    $page_params
+     * @param  message  $draft_message  optional
+     * @return broadcast_recipient_filter
+     */
     public static function make($page_params, $draft_message = null)
     {
         $filter_params = self::get_filter_params($page_params);
@@ -120,34 +129,6 @@ class block_quickmail_broadcast_recipient_filter {
 
         $this->filter_result_sql = $sql;
         $this->filter_result_params = $params;
-    }
-
-    /**
-     * Unsets any session data for this filter
-     * 
-     * @return void
-     */
-    public function clear_session()
-    {
-        global $SESSION;
-
-        $key = self::$session_key;
-
-        unset($SESSION->$key);
-    }
-
-    /**
-     * Reports whether or not there are filters set
-     * 
-     * @return bool
-     */
-    public function has_set_filter()
-    {
-        global $SESSION;
-
-        $key = self::$session_key;
-
-        return ! empty($SESSION->$key);
     }
 
     /**
@@ -210,6 +191,12 @@ class block_quickmail_broadcast_recipient_filter {
             : 0;
     }
 
+    ////////////////////////////////////////////////////////
+    ///
+    ///  OUTPUT RENDERING
+    ///
+    //////////////////////////////////////////////////////// 
+
     /**
      * Renders the user_filtering "add" magic
      * 
@@ -247,6 +234,40 @@ class block_quickmail_broadcast_recipient_filter {
                 'per_page' => $this->filter_params['per_page'],
             ]
         ));
+    }
+
+    ////////////////////////////////////////////////////////
+    ///
+    ///  SESSION
+    ///
+    //////////////////////////////////////////////////////// 
+
+    /**
+     * Unsets any session data for this filter
+     * 
+     * @return void
+     */
+    public function clear_session()
+    {
+        global $SESSION;
+
+        $key = self::$session_key;
+
+        unset($SESSION->$key);
+    }
+
+    /**
+     * Reports whether or not there are filters set
+     * 
+     * @return bool
+     */
+    public function has_set_filter()
+    {
+        global $SESSION;
+
+        $key = self::$session_key;
+
+        return ! empty($SESSION->$key);
     }
 
 }

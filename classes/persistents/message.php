@@ -398,15 +398,16 @@ class message extends persistent {
 	///////////////////////////////////////////////
 
 	/**
-	 * Creates a new "course" or "admin" message from the given sending user, course, and data
+	 * Creates a new "compose" (course-scoped) or "broadcast" (site-scoped) message from the given sending user, course, and data
 	 * 
+	 * @param  string  $type  compose|broadcast
 	 * @param  object  $user  moodle user
 	 * @param  object  $course  moodle course
 	 * @param  object  $data  transformed compose request data
 	 * @param  bool    $is_draft  whether or not this is a draft message
 	 * @return message
 	 */
-	public static function create_composed($user, $course, $data, $is_draft = false)
+	public static function create_type($type, $user, $course, $data, $is_draft = false)
 	{
 		// create a new message
 		$message = self::create_new([
