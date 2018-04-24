@@ -16,6 +16,7 @@ class compose_transformer extends transformer {
         $this->transformed_data->signature_id = $this->get_transformed_signature_id();
         $this->transformed_data->message_type = $this->get_transformed_message_type();
         $this->transformed_data->receipt = (bool) $this->form_data->receipt;
+        $this->transformed_data->mentor_copy = (bool) $this->form_data->mentor_copy;
         $this->transformed_data->alternate_email_id = $this->get_transformed_alternate_email_id();
         $this->transformed_data->to_send_at = $this->get_transformed_to_send_at();
         $this->transformed_data->attachments_draftitem_id = $this->get_transformed_attachments_draftitem_id();

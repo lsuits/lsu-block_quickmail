@@ -6,6 +6,7 @@ use block_quickmail\messenger\subject_prepender;
 use block_quickmail\messenger\user_course_data_injector;
 use block_quickmail\filemanager\attachment_appender;
 use block_quickmail\messenger\signature_appender;
+use block_quickmail\repos\user_repo;
 
 /**
  * This class is a base class to be extended by all types of "message types" (ex: email, message)
@@ -47,6 +48,10 @@ abstract class recipient_send_factory {
      */
     public function handle_recipient_post_send($moodle_message_id = 0)
     {
+        if ($this->message->get('send_to_mentors')) {
+            $this->send_to_mentors();
+        }
+
         $this->recipient->mark_as_sent_to($moodle_message_id);
     }
 
@@ -97,6 +102,18 @@ abstract class recipient_send_factory {
         // course/user formatted message (html format)
         // full version (the message processor will choose with one to use)
         $this->message_params->fullmessagehtml = purify_html($formatted_body);
+    }
+
+    /**
+     * Returns any existing mentors of this recipient
+     * 
+     * @return array
+     */
+    public function get_recipient_mentors()
+    {
+        $mentor_users = user_repo::get_mentors_of_user($this->recipient->get_user());
+
+        return $mentor_users;
     }
 
 }

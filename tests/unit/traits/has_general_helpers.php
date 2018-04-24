@@ -29,7 +29,7 @@ trait has_general_helpers {
     {
         $default_message_type = get_config('moodle', 'block_quickmail_message_types_available');
 
-        $default_default_message_type = $default_message_type == 'all' ? 'message' : $default_message_type;
+        $default_default_message_type = $default_message_type == 'all' ? 'email' : $default_message_type;
 
         $supported_user_fields_string = implode(',', block_quickmail_config::get_supported_data_injection_fields());
 
@@ -41,6 +41,7 @@ trait has_general_helpers {
         $params['prepend_class'] = array_key_exists('prepend_class', $override_params) ? $override_params['prepend_class'] : get_config('moodle', 'block_quickmail_prepend_class');
         $params['ferpa'] = array_key_exists('ferpa', $override_params) ? $override_params['ferpa'] : get_config('moodle', 'block_quickmail_ferpa');
         $params['downloads'] = array_key_exists('downloads', $override_params) ? $override_params['downloads'] : (int) get_config('moodle', 'block_quickmail_downloads');
+        $params['allow_mentor_copy'] = array_key_exists('allow_mentor_copy', $override_params) ? $override_params['allow_mentor_copy'] : (int) get_config('moodle', 'block_quickmail_allow_mentor_copy');
         $params['additionalemail'] = array_key_exists('additionalemail', $override_params) ? $override_params['additionalemail'] : (int) get_config('moodle', 'block_quickmail_additionalemail');
         $params['message_types_available'] = array_key_exists('message_types_available', $override_params) ? $override_params['message_types_available'] : $default_message_type;
         $params['default_message_type'] = array_key_exists('default_message_type', $override_params) ? $override_params['default_message_type'] : $default_default_message_type;

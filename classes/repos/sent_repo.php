@@ -3,9 +3,10 @@
 namespace block_quickmail\repos;
 
 use block_quickmail\repos\repo;
+use block_quickmail\repos\interfaces\sent_repo_interface;
 use block_quickmail\persistents\message;
 
-class sent_repo extends repo {
+class sent_repo extends repo implements sent_repo_interface {
 
     public $default_sort = 'sent';
 

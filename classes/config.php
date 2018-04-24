@@ -32,13 +32,14 @@ class block_quickmail_config {
             'allowstudents'             => get_config('moodle', 'block_quickmail_allowstudents'),
             'roleselection'             => get_config('moodle', 'block_quickmail_roleselection'),
             'receipt'                   => get_config('moodle', 'block_quickmail_receipt'),
+            'allow_mentor_copy'         => get_config('moodle', 'block_quickmail_allow_mentor_copy'),
             'prepend_class'             => get_config('moodle', 'block_quickmail_prepend_class'),
             'ferpa'                     => get_config('moodle', 'block_quickmail_ferpa'),
             'downloads'                 => get_config('moodle', 'block_quickmail_downloads'),
             'additionalemail'           => get_config('moodle', 'block_quickmail_additionalemail'),
             'message_types_available' => $default_message_type,
             'default_message_type'    => $default_message_type == 'all' 
-                ? 'message' 
+                ? 'email' 
                 : $default_message_type,
             'allowed_user_fields'       => get_config('moodle', 'block_quickmail_allowed_user_fields')
         ];
@@ -80,11 +81,11 @@ class block_quickmail_config {
         }
 
         // determine default message_type, if any, for this course
-        // NOTE: block-level "all" will default to course-level "message"
+        // NOTE: block-level "all" will default to course-level "email"
         if ($block_config['message_types_available'] == 'all') {
-            $course_default_message_type = array_key_exists('default_message_type', $course_config) ? 
-                $course_config['default_message_type'] : 
-                'message';
+            $course_default_message_type = array_key_exists('default_message_type', $course_config) 
+                ? $course_config['default_message_type'] 
+                : 'email';
         } else {
             $course_default_message_type = $block_config['message_types_available'];
         }
@@ -102,6 +103,7 @@ class block_quickmail_config {
                 : $block_config['prepend_class'],
             'ferpa'                     => $block_config['ferpa'],
             'downloads'                 => $block_config['downloads'],
+            'allow_mentor_copy'         => $block_config['allow_mentor_copy'],
             'additionalemail'           => $block_config['additionalemail'],
             'message_types_available' => $block_config['message_types_available'],
             'default_message_type'    => $course_default_message_type,
@@ -143,6 +145,7 @@ class block_quickmail_config {
             'allowstudents'             => (int) $params['allowstudents'],
             'roleselection'             => (string) $params['roleselection'],
             'receipt'                   => (int) $params['receipt'],
+            'allow_mentor_copy'         => (int) $params['allow_mentor_copy'],
             'prepend_class'             => (string) $params['prepend_class'],
             'ferpa'                     => (string) $params['ferpa'],
             'downloads'                 => (int) $params['downloads'],

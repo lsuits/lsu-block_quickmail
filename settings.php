@@ -108,6 +108,22 @@ if($ADMIN->fulltree) {
 
     ///////////////////////////////////////////////////////////
     ///
+    ///  ALLOW SENDER TO CC MENTORS OF RECIPIENTS ?
+    ///  
+    ///////////////////////////////////////////////////////////
+
+    $settings->add(
+        new admin_setting_configselect(
+            'block_quickmail_allow_mentor_copy',
+            block_quickmail_string::get('allow_mentor_copy'), 
+            block_quickmail_string::get('allow_mentor_copy_help'),
+            0,  // <-- default
+            $no_or_yes_options
+        )
+    );
+
+    ///////////////////////////////////////////////////////////
+    ///
     ///  SUBJECT PREPEND OPTIONS
     ///  
     ///////////////////////////////////////////////////////////

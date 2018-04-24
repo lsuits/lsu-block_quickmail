@@ -23,10 +23,42 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
         $this->alternate_email = alternate_email::find_or_null($this->message->get('alternate_email_id'));
     }
 
+    /**
+     * Executes the sending of this message to this recipient
+     *
+     * Additionally, if successful, handle any post send actions (marking as sent, sending to mentors if appropriate)
+     * 
+     * @return bool
+     */
     public function send()
     {
+        $success = $this->send_email_to_user();
+
+        // if the message was sent successfully, handle post send tasks
+        if ($success) {
+            $this->handle_recipient_post_send();
+        }
+        
+        return $success;
+    }
+
+    /**
+     * Sends this formatted message content to the given user
+     *
+     * If no user is given, sends to this recipient user
+     * 
+     * @param  object  $user
+     * @return bool
+     */
+    private function send_email_to_user($user = null)
+    {
+        // if no user was specified, use the recipient user
+        if (is_null($user)) {
+            $user = $this->message_params->userto;
+        }
+
         $success = email_to_user(
-            $this->message_params->userto,
+            $user,
             $this->message_params->userfrom,
             $this->message_params->subject,
             $this->message_params->fullmessage,
@@ -39,12 +71,21 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
             $this->message_params->wordwrapwidth
         );
 
-        // if the message was sent successfully, handle post send tasks
-        if ($success) {
-            $this->handle_recipient_post_send();
-        }
-        
         return $success;
+    }
+
+    /**
+     * Sends this formatted message to any existing mentors of this recipient user
+     * 
+     * @return void
+     */
+    public function send_to_mentors()
+    {
+        $mentor_users = $this->get_recipient_mentors();
+
+        foreach ($mentor_users as $mentor_user) {
+            $this->send_email_to_user($mentor_user);
+        }
     }
 
     private function should_use_true_address()

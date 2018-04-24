@@ -56,6 +56,7 @@ $string['no_queued'] = 'You have no scheduled messages.';
 $string['message_no_record'] = 'Could not find that message.';
 $string['queued_no_record'] = 'Could not find that queued message.';
 $string['receipt'] = 'Receive a send report';
+$string['mentor_copy'] = 'Send copies to mentors of recipients?';
 $string['select_message_type'] = 'Send message as';
 $string['message_type_message'] = 'Moodle Message';
 $string['message_type_email'] = 'Email';
@@ -141,10 +142,12 @@ $string['additional_emails_help'] = 'Other email addresses you would like the me
 
  email1@example.com, email2@example.com
  ';
-$string['receipt'] = 'Receipt email';
 $string['receipt_help'] = 'Receive an emailed report with the details of this message send';
+$string['mentor_copy_help'] = 'If selected, any mentors of your recipients will receive a copy of the message.';
 $string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
+$string['allow_mentor_copy'] = 'Allow senders to automatically message mentors of recipients when sending';
+$string['allow_mentor_copy_help'] = 'If enabled, the sender will have the ability to select whether or not mentors should be copied to any outbound message. This message will only happen if the recipient user has a mentor, otherwise, they will receive the message individually as per normal.';
 
 // settings management
 $string['restore_default_modal_title'] = 'Restore Default Configuration';

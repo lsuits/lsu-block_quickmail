@@ -253,10 +253,17 @@ class course_config_form extends \moodleform {
      */
     private function get_default_message_type_options()
     {
-        return [
-            'message' => block_quickmail_string::get('message_type_message'),
+        global $CFG;
+
+        $options = [
             'email' => block_quickmail_string::get('message_type_email')
         ];
+
+        if ( ! empty($CFG->messaging)) {
+            $options['message'] = block_quickmail_string::get('message_type_message');
+        }
+
+        return $options;
     }
     
     /**

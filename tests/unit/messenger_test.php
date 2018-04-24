@@ -13,7 +13,8 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         sets_up_courses, 
         submits_compose_message_form, 
         sends_emails, 
-        sends_messages;
+        sends_messages,
+        assigns_mentors;
     
     // public function test_message_with_alternate_id_posted_is_sent_from_that_alternate_email()
 
@@ -145,6 +146,43 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         messenger::compose($user_teacher, $course, $compose_form_data, null, false);
 
         $this->assertEquals(4, $this->email_sink_email_count($sink));
+        $this->assertEquals('Hello world', $this->email_in_sink_attr($sink, 1, 'subject'));
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is one fine body.'));
+        // $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 1, 'from'));  <--- this would be nice
+        $this->assertEquals(get_config('moodle', 'noreplyaddress'), $this->email_in_sink_attr($sink, 1, 'from'));
+        $this->assertEquals($user_students[0]->email, $this->email_in_sink_attr($sink, 1, 'to'));
+
+        $this->close_email_sink($sink);
+    }
+
+    public function test_messenger_sends_composed_email_including_mentors_now()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        $sink = $this->open_email_sink();
+ 
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // assign a mentor to the first student
+        $mentor_user = $this->create_mentor_for_user($user_students[0]);
+
+        // specify recipients
+        $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+
+        // get a compose form submission
+        $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
+            'subject' => 'Hello world',
+            'body' => 'This is one fine body.',
+            'mentor_copy' => 1,
+        ]);
+
+        // send an email from the teacher to the students now (not as queued adhoc tasks)
+        messenger::compose($user_teacher, $course, $compose_form_data, null, false);
+
+        // should have been sent to 4 users + 1 mentor
+        $this->assertEquals(5, $this->email_sink_email_count($sink));
         $this->assertEquals('Hello world', $this->email_in_sink_attr($sink, 1, 'subject'));
         $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is one fine body.'));
         // $this->assertEquals($user_teacher->email, $this->email_in_sink_attr($sink, 1, 'from'));  <--- this would be nice

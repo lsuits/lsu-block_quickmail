@@ -3,8 +3,9 @@
 namespace block_quickmail\repos;
 
 use block_quickmail\repos\repo;
+use block_quickmail\repos\interfaces\role_repo_interface;
 
-class role_repo extends repo {
+class role_repo extends repo implements role_repo_interface {
 
     public $default_sort = 'id';
 
