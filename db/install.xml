@@ -47,6 +47,7 @@
         <FIELD NAME="to_send_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp for when this message is scheduled to be sent"/>
         <FIELD NAME="is_draft" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this is a message draft"/>
         <FIELD NAME="send_receipt" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message sender should receive a receipt message."/>
+        <FIELD NAME="send_to_mentors" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message should be sent to any mentors of recipients."/>
         <FIELD NAME="is_sending" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message is being sent at the moment."/>
         <FIELD NAME="no_reply" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not the message is to be sent as no reply."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>

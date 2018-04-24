@@ -78,6 +78,10 @@ class message extends persistent {
 				'type' => PARAM_BOOL,
 				'default' => false,
 			],
+			'send_to_mentors' => [
+				'type' => PARAM_BOOL,
+				'default' => false,
+			],
 			'is_sending' => [
 				'type' => PARAM_BOOL,
 				'default' => false,
