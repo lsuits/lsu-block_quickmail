@@ -182,11 +182,18 @@ class block_quickmail_config {
      * @return array
      */
     public static function get_supported_message_types() {
-        return [
+        global $CFG;
+
+        $types = [
             'all',
-            'message',
             'email'
         ];
+
+        if ( ! empty($CFG->messaging)) {
+            $types[] = 'message';
+        }
+
+        return $types;
     }
 
     /**
