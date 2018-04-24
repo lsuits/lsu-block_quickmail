@@ -24,6 +24,8 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+global $CFG;
+
 if($ADMIN->fulltree) {
     $never_no_or_yes_options = [
         -1 => get_string('never'), 
@@ -187,9 +189,13 @@ if($ADMIN->fulltree) {
 
     $block_quickmail_message_types_available_options = [
         'all' => block_quickmail_string::get('message_type_available_all'),
-        'message' => block_quickmail_string::get('message_type_available_message'),
         'email' => block_quickmail_string::get('message_type_available_email')
     ];
+
+    // allow messaging as an option only if messaging is enabled
+    if ( ! empty($CFG->messaging)) {
+        $block_quickmail_message_types_available_options['message'] = block_quickmail_string::get('message_type_available_message');
+    }
 
     $settings->add(
         new admin_setting_configselect(
