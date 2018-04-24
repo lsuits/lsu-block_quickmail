@@ -48,10 +48,10 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 
 // if a draft id was passed
 if ($page_params['draftid']) {
-    
     // attempt to fetch the draft which must belong to this course and user
-    $draft_message = $draft_message = block_quickmail\repos\draft_repo::find_for_user_course_or_null($page_params['draftid'], $USER->id, $course->id);
+    $draft_message = block_quickmail\repos\draft_repo::find_for_user_course_or_null($page_params['draftid'], $USER->id, $course->id);
 
+    // if no valid draft message was found, reset param
     if (empty($draft_message)) {
         $page_params['draftid'] = 0;
     } else {
@@ -63,7 +63,6 @@ if ($page_params['draftid']) {
             $page_params['draftid'] = 0;
         }
     }
-
 } else {
     $draft_message = null;
 }
@@ -128,7 +127,7 @@ try {
     } else if ($request->to_save_draft()) {
 
         // attempt to save draft, handle exceptions
-        $message = \block_quickmail\messenger\messenger::save_draft($USER, $course, $compose_form->get_data(), $draft_message);
+        $message = \block_quickmail\messenger\messenger::save_compose_draft($USER, $course, $compose_form->get_data(), $draft_message);
 
         // redirect back to course page
         $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_save', $course->fullname), '/course/view.php', ['id' => $course->id]);

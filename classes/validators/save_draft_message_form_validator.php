@@ -4,6 +4,7 @@ namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
 use block_quickmail\messenger\body_parser;
+use block_quickmail\requests\broadcast_request;
 use block_quickmail\requests\compose_request;
 use block_quickmail_string;
 
@@ -16,7 +17,9 @@ class save_draft_message_form_validator extends validator {
      */
     public function validator_rules()
     {
-        $this->transformed_data = compose_request::get_transformed_post_data($this->form_data);
+        $this->transformed_data = $this->check_extra_params_value('is_broadcast_message', true)
+            ? broadcast_request::get_transformed_post_data($this->form_data)
+            : compose_request::get_transformed_post_data($this->form_data);
 
         $this->validate_message_body();
 

@@ -66,6 +66,12 @@ class block_quickmail_broadcast_recipient_filter {
         $this->extra_params = $extra_params;
         $this->draft_message = $draft_message;
         $this->ufilter = new user_filtering($this->supported_fields, null, $this->extra_params);
+        
+        // if there is a valid draft message passed, attempt to set the pre-set the filter but only if none already exist
+        if ( ! empty($this->draft_message) && ! $this->has_set_filter()) {
+            $this->set_filter_value($this->draft_message->get_broadcast_draft_recipient_filter());
+        }
+        
         $this->set_filter_sql_results();
         $this->set_result_users();
         $this->set_display_users();
@@ -268,6 +274,45 @@ class block_quickmail_broadcast_recipient_filter {
         $key = self::$session_key;
 
         return ! empty($SESSION->$key);
+    }
+
+    /**
+     * Returns the set user filter value, optionally as serialized string (by default)
+     * 
+     * @param  bool    $serialize   if true, will return as serialized string
+     * @param  mixed   $default     default value to return if no filter in session
+     * @return mixed
+     */
+    public function get_filter_value($serialize = true, $default = '')
+    {
+        if ( ! $this->has_set_filter()) {
+            return $default;
+        }
+
+        global $SESSION;
+
+        $key = self::$session_key;
+
+        $value = $SESSION->$key;
+
+        return $serialize
+            ? serialize($value)
+            : $value;
+    }
+
+    /**
+     * Sets the current filter state to the given value
+     * 
+     * @param  array
+     * @return void
+     */
+    public function set_filter_value($value)
+    {
+        global $SESSION;
+
+        $key = self::$session_key;
+
+        $SESSION->$key = $value;
     }
 
 }

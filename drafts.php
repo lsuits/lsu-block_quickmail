@@ -58,7 +58,6 @@ $request = block_quickmail_request::for_route('draft')->with_form($manage_drafts
 /// HANDLE REQUEST
 ////////////////////////////////////////
 
-
 try {
     // DUPLICATE
     if ($request->to_duplicate_draft()) {

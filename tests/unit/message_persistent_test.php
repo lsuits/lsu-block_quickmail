@@ -252,7 +252,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(3, $value);
     }
 
-    public function test_sync_draft_recipients()
+    public function test_sync_compose_draft_recipients()
     {
         $this->resetAfterTest(true);
 
@@ -281,7 +281,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'invalid_key'
         ];
 
-        $message->sync_draft_recipients($includes, $excludes);
+        $message->sync_compose_draft_recipients($includes, $excludes);
         
         $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
         
@@ -328,7 +328,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'invalid_key'
         ];
 
-        $message->sync_draft_recipients($includes, $excludes);
+        $message->sync_compose_draft_recipients($includes, $excludes);
         
         $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
 
@@ -351,7 +351,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'invalid_key'
         ];
 
-        $message->sync_draft_recipients($includes, $excludes);
+        $message->sync_compose_draft_recipients($includes, $excludes);
 
         $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
 

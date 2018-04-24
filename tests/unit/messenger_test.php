@@ -37,7 +37,7 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         ]);
 
         // save this email message as a draft
-        $message = messenger::save_draft($user_teacher, $course, $compose_form_data);
+        $message = messenger::save_compose_draft($user_teacher, $course, $compose_form_data);
 
         $message_recipients = $message->get_message_recipients();
 
@@ -67,7 +67,7 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         ]);
 
         // save this email message as a draft
-        $draft_message = messenger::save_draft($user_teacher, $course, $compose_form_data);
+        $draft_message = messenger::save_compose_draft($user_teacher, $course, $compose_form_data);
 
         $this->expectException(validation_exception::class);
 
@@ -95,7 +95,7 @@ class block_quickmail_messenger_testcase extends advanced_testcase {
         ]);
 
         // save this email message as a draft
-        $draft_message = messenger::save_draft($user_teacher, $course, $compose_form_data);
+        $draft_message = messenger::save_compose_draft($user_teacher, $course, $compose_form_data);
 
         // now attempt to duplicate this draft
         $duplicated_draft = messenger::duplicate_draft($draft_message->get('id'), $user_teacher);

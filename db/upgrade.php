@@ -309,8 +309,9 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('message_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_CHAR, '7', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('recipient_type', XMLDB_TYPE_CHAR, '5', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('recipient_type', XMLDB_TYPE_CHAR, '6', null, XMLDB_NOTNULL, null, null);
         $table->add_field('recipient_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('recipient_filter', XMLDB_TYPE_TEXT, 'medium', null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 

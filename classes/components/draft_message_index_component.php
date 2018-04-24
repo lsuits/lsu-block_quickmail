@@ -82,7 +82,7 @@ class draft_message_index_component extends component implements \renderable {
                 'messagePreview' => $message->get_body_preview(),
                 'createdAt' => $message->get('timecreated'),
                 'lastModifiedAt' => $message->get('timemodified'),
-                'openUrl' => '/blocks/quickmail/compose.php?' . http_build_query([
+                'openUrl' => '/blocks/quickmail/' . $message->get_message_scope() . '.php?' . http_build_query([
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')
                 ], '', '&')

@@ -150,6 +150,32 @@ class message extends persistent {
 	}
 
 	/**
+	 * Returns any single stored user filter value for this message
+	 *
+	 * Note: this will only return a value for "broadcast" messages with a valid draft recipient filter value set
+	 * 
+	 * @return mixed, defaults to empty string
+	 */
+	public function get_broadcast_draft_recipient_filter()
+	{
+		if ($this->get_message_scope() !== 'broadcast') {
+			return '';
+		}
+
+		$recipients = $this->get_message_draft_recipients();
+
+		if ( ! $recip = reset($recipients)) {
+			return '';
+		}
+
+		if ( ! $filter = $recip->get('recipient_filter')) {
+			return '';
+		}
+
+		return @unserialize($filter);
+	}
+
+	/**
 	 * Returns the message draft recipients that are associated with this message
 	 *
 	 * @return array
@@ -258,6 +284,21 @@ class message extends persistent {
 	public function is_message_draft()
 	{
 		return (bool) $this->get('is_draft');
+	}
+
+	/**
+	 * Returns the "scope" of this message
+	 *
+	 * broadcast = site-level admin message
+	 * compose   = course-level message
+	 * 
+	 * @return bool
+	 */
+	public function get_message_scope()
+	{
+		return $this->get('course_id') == SITEID
+			? 'broadcast'
+			: 'compose';
 	}
 
 	/**
@@ -489,12 +530,12 @@ class message extends persistent {
 	}
 
 	/**
-	 * Replaces all "draft recipients" for this message with the given arrays of entity keys
+	 * Replaces all "draft recipients" for this "compose" message with the given arrays of entity keys
 	 * 
 	 * @param  array  $include_key_container  [role_*, group_*, user_*]
 	 * @return void
 	 */
-	public function sync_draft_recipients($include_key_container = [], $exclude_key_container = [])
+	public function sync_compose_draft_recipients($include_key_container = [], $exclude_key_container = [])
 	{
 		// clear all current draft recipients
 		message_draft_recipient::clear_all_for_message($this);
@@ -525,6 +566,28 @@ class message extends persistent {
 				}
 			}
 		}
+
+		// refresh record (necessary?)
+		$this->read();
+	}
+
+	/**
+	 * Replaces all "draft recipients" for this "broadcast" message with the given filter string
+	 * 
+	 * @param  string  $filter_value   a serialized string
+	 * @return void
+	 */
+	public function sync_broadcast_draft_recipients($filter_value)
+	{
+		// clear all current draft recipients
+		message_draft_recipient::clear_all_for_message($this);
+
+		// create a record
+		message_draft_recipient::create_for_message($this, [
+			'type' => 'include',
+			'recipient_type' => 'filter',
+			'recipient_filter' => $filter_value,
+		]);
 
 		// refresh record (necessary?)
 		$this->read();

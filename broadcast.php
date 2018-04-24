@@ -46,10 +46,10 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 
 // if a draft id was passed
 if ($page_params['draftid']) {
-    
     // attempt to fetch the draft which must belong to this course and user
-    $draft_message = $draft_message = block_quickmail\repos\draft_repo::find_for_user_course_or_null($page_params['draftid'], $USER->id, $course->id);
+    $draft_message = block_quickmail\repos\draft_repo::find_for_user_course_or_null($page_params['draftid'], $USER->id, $course->id);
 
+    // if no valid draft message was found, reset param
     if (empty($draft_message)) {
         $page_params['draftid'] = 0;
     } else {
@@ -61,10 +61,13 @@ if ($page_params['draftid']) {
             $page_params['draftid'] = 0;
         }
     }
-
 } else {
     $draft_message = null;
 }
+
+////////////////////////////////////////
+/// INSTANTIATE USER FILTER FOR RECIPIENT FILTERING
+////////////////////////////////////////
 
 $broadcast_recipient_filter = block_quickmail_broadcast_recipient_filter::make($page_params, $draft_message);
 
@@ -132,16 +135,13 @@ try {
     // SAVE DRAFT
     } else if ($request->to_save_draft()) {
 
-        dd('save broadcast draft');
-
+        // attempt to save draft, handle exceptions
+        $message = \block_quickmail\messenger\messenger::save_broadcast_draft($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message);
+        
         // clear any recipient user filtering session data
         $broadcast_recipient_filter->clear_session();
 
-        // attempt to save draft, handle exceptions
-        // $message = \block_quickmail\messenger\messenger::save_draft($USER, $course, $broadcast_form->get_data(), $draft_message);
-
-        // redirect back to course page
-        // $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_save', $course->fullname), '/course/view.php', ['id' => $course->id]);
+        $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_save', $course->fullname), '/my');
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
     $broadcast_form->set_error_exception($e);
@@ -189,7 +189,3 @@ if ($broadcast_recipient_filter->get_result_user_count()) {
 
 echo $rendered_broadcast_form;
 echo $OUTPUT->footer();
-
-function dd($thing) {
-    var_dump($thing);die;
-}
