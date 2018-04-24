@@ -3,11 +3,12 @@
 namespace block_quickmail\repos;
 
 use block_quickmail\repos\repo;
+use block_quickmail\repos\interfaces\user_repo_interface;
 use context_course;
 use block_quickmail\repos\role_repo;
 use block_quickmail\repos\group_repo;
 
-class user_repo extends repo {
+class user_repo extends repo implements user_repo_interface {
 
     public $default_sort = 'id';
 
@@ -346,6 +347,25 @@ class user_repo extends repo {
 
         // return a unique list of user ids
         return array_unique($result_user_ids);
+    }
+
+    /**
+     * Returns an array of mentor users that are assigned to the given "mentee" user
+     * 
+     * @param  object  $user
+     * @return array  keyed by user ids
+     */
+    public static function get_mentors_of_user($user)
+    {
+        global $DB;
+
+        $result = $DB->get_records_sql('SELECT ra.userid as mentor_user_id FROM {context} c JOIN {role_assignments} ra on c.id = ra.contextid WHERE contextlevel = 30 AND instanceid = ?', [$user->id]);
+
+        if ( ! $result) {
+            return [];
+        }
+
+        return $DB->get_records_list('user', 'id', array_keys($result));
     }
 
 }

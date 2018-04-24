@@ -383,6 +383,46 @@ class compose_message_form extends \moodleform {
         );
 
         ////////////////////////////////////////////////////////////
+        ///  mentor_copy (radio) - copy mentors of recipients or not?
+        ////////////////////////////////////////////////////////////
+        if ($this->should_show_copy_mentor()) {
+            $mentor_copy_options = [
+                $mform->createElement('radio', 'mentor_copy', '', get_string('yes'), 1),
+                $mform->createElement('radio', 'mentor_copy', '', get_string('no'), 0)
+            ];
+
+            $mform->addGroup(
+                $mentor_copy_options, 
+                'mentor_copy_action', 
+                block_quickmail_string::get('mentor_copy'), 
+                [' '], 
+                false
+            );
+            $mform->addHelpButton(
+                'mentor_copy_action', 
+                'mentor_copy', 
+                'block_quickmail'
+            );
+
+            $mform->setDefault(
+                'mentor_copy', 
+                $this->is_draft_message() 
+                ? $this->draft_message->get('send_to_mentors') // inject default if draft mesage
+                : 0 // otherwise, default to no
+            );
+        } else {
+            $mform->addElement(
+                'hidden', 
+                'mentor_copy', 
+                0
+            );
+            $mform->setType(
+                'mentor_copy', 
+                PARAM_INT
+            );
+        }
+
+        ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
@@ -475,6 +515,15 @@ class compose_message_form extends \moodleform {
      */
     private function should_show_message_type_selection() {
         return (bool) $this->course_config_array['message_types_available'] == 'all';
+    }
+
+    /**
+     * Reports whether or not this form should display the "copy mentor" input
+     * 
+     * @return bool
+     */
+    private function should_show_copy_mentor() {
+        return (bool) $this->course_config_array['allow_mentor_copy'];
     }
 
     /**

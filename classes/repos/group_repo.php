@@ -3,8 +3,9 @@
 namespace block_quickmail\repos;
 
 use block_quickmail\repos\repo;
+use block_quickmail\repos\interfaces\group_repo_interface;
 
-class group_repo extends repo {
+class group_repo extends repo implements group_repo_interface {
 
     public $default_sort = 'id';
 

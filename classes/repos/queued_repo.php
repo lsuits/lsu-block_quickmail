@@ -3,9 +3,10 @@
 namespace block_quickmail\repos;
 
 use block_quickmail\repos\repo;
+use block_quickmail\repos\interfaces\queued_repo_interface;
 use block_quickmail\persistents\message;
 
-class queued_repo extends repo {
+class queued_repo extends repo implements queued_repo_interface {
 
 	public $default_sort = 'created';
 

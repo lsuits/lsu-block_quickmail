@@ -29,6 +29,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 0,
             'to_send_at' => 0,
             'no_reply' => 1,
+            'mentor_copy' => 1,
         ];
 
         $message = message::create_type('compose', $user_teacher, $course, (object) $params, true);
@@ -44,6 +45,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($params['receipt'], $message->get('send_receipt'));
         $this->assertEquals($params['to_send_at'], $message->get('to_send_at'));
         $this->assertEquals($params['no_reply'], $message->get('no_reply'));
+        $this->assertEquals($params['mentor_copy'], $message->get('send_to_mentors'));
         $this->assertEquals(1, $message->get('is_draft'));
     }
 
@@ -460,6 +462,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 0,
             'to_send_at' => 0,
             'no_reply' => 1,
+            'mentor_copy' => 1,
         ];
 
         $message = message::create_type('compose', $user_teacher, $course, (object) $params, true);
@@ -475,10 +478,9 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($params['receipt'], $message->get('send_receipt'));
         $this->assertEquals($params['to_send_at'], $message->get('to_send_at'));
         $this->assertEquals($params['no_reply'], $message->get('no_reply'));
+        $this->assertEquals($params['mentor_copy'], $message->get('send_to_mentors'));
         $this->assertEquals(1, $message->get('is_draft'));
     }
-
-    
 
     public function test_create_composed_not_as_draft()
     {
@@ -497,6 +499,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 0,
             'to_send_at' => 0,
             'no_reply' => 1,
+            'mentor_copy' => 1,
         ];
 
         $message = message::create_type('compose', $user_teacher, $course, (object) $params, false);
@@ -522,6 +525,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 0,
             'to_send_at' => 0,
             'no_reply' => 1,
+            'mentor_copy' => 1,
         ];
 
         $message = message::create_type('compose', $user_teacher, $course, (object) $creation_params, true);
@@ -535,6 +539,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 1,
             'to_send_at' => 1518124011,
             'no_reply' => 0,
+            'send_to_mentors' => 0,
         ];
 
         $updated_message = $message->update_draft((object) $update_params);
@@ -550,6 +555,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($update_params['receipt'], $updated_message->get('send_receipt'));
         $this->assertEquals($update_params['to_send_at'], $updated_message->get('to_send_at'));
         $this->assertEquals($update_params['no_reply'], $updated_message->get('no_reply'));
+        $this->assertEquals($update_params['send_to_mentors'], $updated_message->get('send_to_mentors'));
         $this->assertEquals(1, $updated_message->get('is_draft'));
 
         $second_update_params = [
@@ -561,6 +567,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 1,
             'to_send_at' => 1518124011,
             'no_reply' => 0,
+            'send_to_mentors' => 0,
         ];
 
         $second_updated_message = $message->update_draft((object) $second_update_params, false);

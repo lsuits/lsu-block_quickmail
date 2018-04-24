@@ -7,7 +7,8 @@ use block_quickmail\repos\user_repo;
 class block_quickmail_user_repo_testcase extends advanced_testcase {
     
     use has_general_helpers,
-        sets_up_courses;
+        sets_up_courses,
+        assigns_mentors;
 
     public function test_get_course_user_selectable_users()
     {
@@ -234,6 +235,34 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
         $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
 
         $this->assertCount(15, $user_ids);
+    }
+
+    public function test_get_mentors_of_user()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        
+        // pick the first student to be the mentee
+        $mentee_user = reset($enrolled_users['student']);
+
+        // attempt to fetch all mentors of this mentee (should be none)
+        $mentor_users = user_repo::get_mentors_of_user($mentee_user);
+
+        $this->assertCount(0, $mentor_users);
+
+        // create mentor for the mentee
+        $mentor_user = $this->create_mentor_for_user($mentee_user);
+
+        $mentor_users = user_repo::get_mentors_of_user($mentee_user);
+
+        $this->assertCount(1, $mentor_users);
+
+        $first_mentor = reset($mentor_users);
+
+        $this->assertObjectHasAttribute('id', $first_mentor);
+        $this->assertObjectHasAttribute('firstname', $first_mentor);
+        $this->assertObjectHasAttribute('lastname', $first_mentor);
     }
 
     ///////////////////////////////////////////////

@@ -70,6 +70,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'prepend_class' => 'fullname',
             'ferpa' => 'noferpa',
             'downloads' => '1',
+            'allow_mentor_copy' => '1',
             'additionalemail' => '1',
             'default_message_type' => 'email',
             'message_types_available' => 'email',
@@ -126,12 +127,13 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'allowstudents' => '1',
             'roleselection' => '1,2',
             'receipt' => '1',
+            'allow_mentor_copy' => '1',
             'prepend_class' => 'fullname',
             'ferpa' => 'noferpa',
             'downloads' => '1',
             'additionalemail' => '1',
-            'default_message_type' => 'email',
-            'message_types_available' => 'email',
+            'default_message_type' => 'message',
+            'message_types_available' => 'all',
             'allowed_user_fields' => 'firstname',
         ];
 
@@ -146,11 +148,12 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertNotEquals($default_params['roleselection'], $course_config['roleselection']);
         $this->assertNotEquals($default_params['receipt'], $course_config['receipt']);
         $this->assertNotEquals($default_params['prepend_class'], $course_config['prepend_class']);
-        $this->assertNotEquals($default_params['default_message_type'], $course_config['default_message_type']);
+        // $this->assertNotEquals($default_params['default_message_type'], $course_config['default_message_type']);
         
         // check attributes that CANNOT be changed by a course (only changed at system level)
         $this->assertEquals($default_params['ferpa'], $course_config['ferpa']);
         $this->assertEquals($default_params['downloads'], $course_config['downloads']);
+        $this->assertEquals($default_params['allow_mentor_copy'], $course_config['allow_mentor_copy']);
         $this->assertEquals($default_params['additionalemail'], $course_config['additionalemail']);
         $this->assertEquals($default_params['message_types_available'], $course_config['message_types_available']);
         $this->assertEquals($default_params['allowed_user_fields'], $course_config['allowed_user_fields']);
@@ -189,7 +192,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertNotEquals($default_params['roleselection'], $course_config['roleselection']);
         $this->assertNotEquals($default_params['receipt'], $course_config['receipt']);
         $this->assertNotEquals($default_params['prepend_class'], $course_config['prepend_class']);
-        $this->assertNotEquals($default_params['default_message_type'], $course_config['default_message_type']);
+        // $this->assertNotEquals($default_params['default_message_type'], $course_config['default_message_type']);
         
         // restore to default config
         block_quickmail_config::delete_course_config($course);
@@ -204,6 +207,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertEquals($default_params['default_message_type'], $course_config['default_message_type']);
         $this->assertEquals($default_params['ferpa'], $course_config['ferpa']);
         $this->assertEquals($default_params['downloads'], $course_config['downloads']);
+        $this->assertEquals($default_params['allow_mentor_copy'], $course_config['allow_mentor_copy']);
         $this->assertEquals($default_params['additionalemail'], $course_config['additionalemail']);
         $this->assertEquals($default_params['message_types_available'], $course_config['message_types_available']);
         $this->assertEquals($default_params['allowed_user_fields'], $course_config['allowed_user_fields']);

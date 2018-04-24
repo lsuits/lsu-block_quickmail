@@ -34,6 +34,7 @@ trait submits_compose_message_form {
         $form_data->message_type = $message_type;
         $form_data->to_send_at = $params['to_send_at']; // default: 0
         $form_data->receipt = $params['receipt']; // default: '0'
+        $form_data->mentor_copy = $params['mentor_copy']; // default: '0'
         $form_data->send = 'Send Message';
 
         return $form_data;
@@ -82,6 +83,7 @@ trait submits_compose_message_form {
         $params['signature_id'] = array_key_exists('signature_id', $override_params) ? $override_params['signature_id'] : '0';
         $params['to_send_at'] = array_key_exists('to_send_at', $override_params) ? $override_params['to_send_at'] : 0;
         $params['receipt'] = array_key_exists('receipt', $override_params) ? $override_params['receipt'] : '0';
+        $params['mentor_copy'] = array_key_exists('mentor_copy', $override_params) ? $override_params['mentor_copy'] : '0';
 
         return $params;
     }
