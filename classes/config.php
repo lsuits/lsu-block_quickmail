@@ -2,6 +2,20 @@
 
 class block_quickmail_config {
 
+    public static $supported_data_fields = [
+        'firstname',
+        'middlename',
+        'lastname',
+        'email',
+        'alternatename',
+        'coursefullname',
+        'courseshortname',
+        'courseidnumber',
+        'coursesummary',
+        'coursestartdate',
+        'courseenddate',
+    ];
+
     /**
      * Returns a transformed config array, or specific value, for the given key (block or course relative)
      * 
@@ -164,19 +178,7 @@ class block_quickmail_config {
      * @return array
      */
     public static function get_supported_data_injection_fields() {
-        return [
-            'firstname',
-            'middlename',
-            'lastname',
-            'email',
-            'alternatename',
-            'coursefullname',
-            'courseshortname',
-            'courseidnumber',
-            'coursesummary',
-            'coursestartdate',
-            'courseenddate',
-        ];
+        return self::$supported_data_fields;
     }
 
     /**
