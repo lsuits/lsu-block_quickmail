@@ -494,7 +494,7 @@ class message extends persistent {
 		$this->set('send_receipt', $data->receipt);
 		$this->set('to_send_at', $data->to_send_at);
 		$this->set('no_reply', $data->no_reply);
-		$this->set('send_to_mentors', $data->send_to_mentors);
+		$this->set('send_to_mentors', $data->mentor_copy);
 		$this->set('is_draft', (bool) $is_draft);
 		$this->update();
 		
