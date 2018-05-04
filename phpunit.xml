@@ -51,6 +51,7 @@
             <exclude>tests/unit/role_repo_test.php</exclude>
             <exclude>tests/unit/group_repo_test.php</exclude>
             <exclude>tests/unit/user_repo_test.php</exclude>
+            <exclude>tests/unit/course_repo_test.php</exclude>
 
             <!-- forms -->
             <exclude>tests/unit/message_form_validator_test.php</exclude>

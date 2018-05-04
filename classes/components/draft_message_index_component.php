@@ -28,6 +28,7 @@ use block_quickmail\components\component;
 use block_quickmail_string;
 use moodle_url;
 use block_quickmail\persistents\message;
+use block_quickmail\repos\course_repo;
 
 class draft_message_index_component extends component implements \renderable {
 
@@ -49,7 +50,7 @@ class draft_message_index_component extends component implements \renderable {
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
         $this->course_draft_messages = message::filter_messages_by_course($this->draft_messages, $this->course_id);
-        $this->user_course_array = message::get_user_course_array($this->draft_messages, $this->course_id);
+        $this->user_course_array = course_repo::get_user_course_array($this->user);
     }
 
     /**

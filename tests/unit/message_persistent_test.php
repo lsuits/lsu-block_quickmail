@@ -596,29 +596,6 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertCount(1, $filtered);
     }
 
-    public function test_get_user_course_array_from_array()
-    {
-        $this->resetAfterTest(true);
-
-        $messages = [];
-
-        list($course1, $user_teacher1, $user_students1) = $this->setup_course_with_teacher_and_students();
-
-        $messages[] = $this->create_message(false, 1, $user_students1[0]->id);
-        $messages[] = $this->create_message(false, 2, $user_students1[1]->id);
-        $messages[] = $this->create_message(false, 3, $user_students1[2]->id);
-        $messages[] = $this->create_message(false, 4, $user_teacher1->id);
-        $messages[] = $this->create_message(false, 3, $user_students1[2]->id);
-        $messages[] = $this->create_message(false, 2, $user_students1[1]->id);
-        $messages[] = $this->create_message(false, 1, $user_students1[0]->id);
-
-        $user_course_array = message::get_user_course_array($messages, $course1->id);
-        $this->assertCount(2, $user_course_array);
-        
-        // should include this course, and the master course
-        $this->assertEquals($course1->shortname, $user_course_array[$course1->id]);
-    }
-
     public function test_unqueue_message()
     {
         $this->resetAfterTest(true);
