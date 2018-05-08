@@ -16,6 +16,14 @@ class block_quickmail_config {
         'courseenddate',
     ];
 
+    public static $course_configurable_fields = [
+        'allowstudents',
+        'roleselection',
+        'receipt',
+        'prepend_class',
+        'default_message_type',
+    ];
+
     /**
      * Returns a transformed config array, or specific value, for the given key (block or course relative)
      * 
@@ -244,6 +252,13 @@ class block_quickmail_config {
 
         // first, clear out old settings
         self::delete_course_config($course);
+
+        $course_configurable_fields = self::$course_configurable_fields;
+
+        // get rid of non-course-configurable fields
+        $params = array_filter($params, function ($key) use ($course_configurable_fields) {
+            return in_array($key, $course_configurable_fields);
+        }, ARRAY_FILTER_USE_KEY);
 
         // handle conversion of special cases...
         if (array_key_exists('roleselection', $params)) {
