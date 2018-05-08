@@ -72,12 +72,13 @@ class block_quickmail_plugin {
     /**
      * Reports whether or not the given user can send the given type of message in the given context
      * 
-     * @param  string  $send_type  broadcast|compose
+     * @param  string  $send_type                broadcast|compose
      * @param  object  $user
-     * @param  object  $context   an instance of a SYSTEM or COURSE context
+     * @param  object  $context                  an instance of a SYSTEM or COURSE context
+     * @param  bool    $include_student_access   if true (default), will check a course's "allowstudents" config as a last resort for access
      * @return bool
      */
-    public static function user_can_send($send_type, $user, $context)
+    public static function user_can_send($send_type, $user, $context, $include_student_access = true)
     {
         // must be a valid send_type
         if ( ! in_array($send_type, ['broadcast', 'compose'])) {
@@ -104,8 +105,8 @@ class block_quickmail_plugin {
             return true;
         }
         
-        // if this course allows students to send
-        if (block_quickmail_config::course($context->instanceid, 'allowstudents')) {
+        // if we're checking for student access AND this course allows students to send
+        if ($include_student_access && block_quickmail_config::course($context->instanceid, 'allowstudents')) {
             global $CFG;
             
             // iterate over system's "student" roles

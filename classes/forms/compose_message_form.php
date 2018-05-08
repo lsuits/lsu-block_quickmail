@@ -27,6 +27,7 @@ namespace block_quickmail\forms;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\forms\concerns\is_quickmail_form;
+use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
@@ -48,6 +49,7 @@ class compose_message_form extends \moodleform {
     public $draft_message;
     public $included_draft_recipients;
     public $excluded_draft_recipients;
+    public $allow_mentor_copy;
 
     /**
      * Instantiates and returns a compose message form
@@ -85,6 +87,9 @@ class compose_message_form extends \moodleform {
         // if this is a draft message, get any included/excluded draft recipients formatted as key arrays
         $included_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('include', true) : [];
         $excluded_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('exclude', true) : [];
+        
+        // only allow users with hard set capabilities (not students) to copy mentors
+        $allow_mentor_copy = block_quickmail_plugin::user_can_send('compose', $user, $context, false);
 
         return new self($target_url, [
             'context' => $context,
@@ -98,6 +103,7 @@ class compose_message_form extends \moodleform {
             'draft_message' => $draft_message,
             'included_draft_recipients' => $included_draft_recipients,
             'excluded_draft_recipients' => $excluded_draft_recipients,
+            'allow_mentor_copy' => $allow_mentor_copy,
         ], 'post', '', ['id' => 'mform-compose']);
     }
 
@@ -119,6 +125,7 @@ class compose_message_form extends \moodleform {
         $this->draft_message = $this->_customdata['draft_message'];
         $this->included_draft_recipients = $this->_customdata['included_draft_recipients'];
         $this->excluded_draft_recipients = $this->_customdata['excluded_draft_recipients'];
+        $this->allow_mentor_copy = $this->_customdata['allow_mentor_copy'];
 
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
@@ -523,7 +530,7 @@ class compose_message_form extends \moodleform {
      * @return bool
      */
     private function should_show_copy_mentor() {
-        return (bool) $this->course_config_array['allow_mentor_copy'];
+        return (bool) ($this->allow_mentor_copy && $this->course_config_array['allow_mentor_copy']);
     }
 
     /**
