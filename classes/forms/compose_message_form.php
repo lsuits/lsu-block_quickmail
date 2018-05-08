@@ -341,6 +341,10 @@ class compose_message_form extends \moodleform {
                 'message_type', 
                 $this->course_config_array['default_message_type']
             );
+            $mform->setType(
+                'message_type',
+                PARAM_TEXT
+            );
         }
 
         ////////////////////////////////////////////////////////////
@@ -521,7 +525,7 @@ class compose_message_form extends \moodleform {
      * @return bool
      */
     private function should_show_message_type_selection() {
-        return (bool) $this->course_config_array['message_types_available'] == 'all';
+        return $this->course_config_array['message_types_available'] == 'all';
     }
 
     /**
