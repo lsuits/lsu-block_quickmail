@@ -254,6 +254,7 @@ $string['receipt_email_body'] = '
 <br>Course: {$a->course_name}
 <br>Message Subject: {$a->subject}
 <br>Recipients: {$a->recipient_count}
+<br>Sent To Mentors: {$a->sent_to_mentors}
 <br>Additional Recipient Emails: {$a->additional_email_count}
 <br>File Attachment Count: {$a->attachment_count}
 </p>
