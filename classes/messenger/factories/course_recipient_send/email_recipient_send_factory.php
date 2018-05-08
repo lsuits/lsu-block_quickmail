@@ -5,6 +5,7 @@ namespace block_quickmail\messenger\factories\course_recipient_send;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory_interface;
 use block_quickmail\persistents\alternate_email;
+use block_quickmail_string;
 
 class email_recipient_send_factory extends recipient_send_factory implements recipient_send_factory_interface {
 
@@ -48,9 +49,10 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
      * If no user is given, sends to this recipient user
      * 
      * @param  object  $user
+     * @param  array   $options
      * @return bool
      */
-    private function send_email_to_user($user = null)
+    private function send_email_to_user($user = null, $options = [])
     {
         // if no user was specified, use the recipient user
         if (is_null($user)) {
@@ -60,9 +62,9 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
         $success = email_to_user(
             $user,
             $this->message_params->userfrom,
-            $this->message_params->subject,
-            $this->message_params->fullmessage,
-            $this->message_params->fullmessagehtml,
+            $this->get_subject_prefix($options) . $this->message_params->subject,
+            $this->get_message_prefix($options) . $this->message_params->fullmessage,
+            $this->get_message_prefix($options) . $this->message_params->fullmessagehtml,
             $this->message_params->attachment,
             $this->message_params->attachname,
             $this->message_params->usetrueaddress,
@@ -75,6 +77,21 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     }
 
     /**
+     * Sends a "mentor-formatted" email to the given mentor user
+     *
+     * @param  object  $mentor_user
+     * @param  object  $mentee_user
+     * @return bool
+     */
+    private function send_email_to_mentor_user($mentor_user, $mentee_user)
+    {
+        return $this->send_email_to_user($mentor_user, [
+            'subject_prefix' => block_quickmail_string::get('mentor_copy_subject_prefix'),
+            'message_prefix' => block_quickmail_string::get('mentor_copy_message_prefix', fullname($mentee_user))
+        ]);
+    }
+
+    /**
      * Sends this formatted message to any existing mentors of this recipient user
      * 
      * @return void
@@ -83,8 +100,10 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     {
         $mentor_users = $this->get_recipient_mentors();
 
+        $mentee_user = $this->recipient->get_user();
+
         foreach ($mentor_users as $mentor_user) {
-            $this->send_email_to_user($mentor_user);
+            $this->send_email_to_mentor_user($mentor_user, $mentee_user);
         }
     }
 

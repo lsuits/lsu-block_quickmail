@@ -5,6 +5,7 @@ namespace block_quickmail\messenger\factories\course_recipient_send;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory_interface;
 use core\message\message as moodle_message;
+use block_quickmail_string;
 
 class message_recipient_send_factory extends recipient_send_factory implements recipient_send_factory_interface {
 
@@ -46,9 +47,10 @@ class message_recipient_send_factory extends recipient_send_factory implements r
      * If no user is given, sends to this recipient user
      * 
      * @param  object  $user
+     * @param  array   $options
      * @return mixed  (either the int ID of the new message or false is unsuccessful)
      */
-    private function send_message_to_user($user = null)
+    private function send_message_to_user($user = null, $options = [])
     {
         // if no user was specified, use the recipient user
         if (is_null($user)) {
@@ -62,10 +64,10 @@ class message_recipient_send_factory extends recipient_send_factory implements r
         $moodlemessage->name = $this->message_params->name;
         $moodlemessage->userto = $user;
         $moodlemessage->userfrom = $this->message_params->userfrom;
-        $moodlemessage->subject = $this->message_params->subject;
-        $moodlemessage->fullmessage = $this->message_params->fullmessage;
+        $moodlemessage->subject = $this->get_subject_prefix($options) . $this->message_params->subject;
+        $moodlemessage->fullmessage = $this->get_message_prefix($options) . $this->message_params->fullmessage;
         $moodlemessage->fullmessageformat = $this->message_params->fullmessageformat;
-        $moodlemessage->fullmessagehtml = $this->message_params->fullmessagehtml;
+        $moodlemessage->fullmessagehtml = $this->get_message_prefix($options) . $this->message_params->fullmessagehtml;
         $moodlemessage->smallmessage = $this->message_params->smallmessage;
         $moodlemessage->notification = $this->message_params->notification;
 
@@ -73,6 +75,21 @@ class message_recipient_send_factory extends recipient_send_factory implements r
         $result = message_send($moodlemessage);
 
         return $result;
+    }
+
+    /**
+     * Sends a "mentor-formatted" message to the given mentor user
+     *
+     * @param  object  $mentor_user
+     * @param  object  $mentee_user
+     * @return bool
+     */
+    private function send_message_to_mentor_user($mentor_user, $mentee_user)
+    {
+        return $this->send_message_to_user($mentor_user, [
+            'subject_prefix' => block_quickmail_string::get('mentor_copy_subject_prefix'),
+            'message_prefix' => block_quickmail_string::get('mentor_copy_message_prefix', fullname($mentee_user))
+        ]);
     }
 
     /**
@@ -84,8 +101,10 @@ class message_recipient_send_factory extends recipient_send_factory implements r
     {
         $mentor_users = $this->get_recipient_mentors();
 
+        $mentee_user = $this->recipient->get_user();
+
         foreach ($mentor_users as $mentor_user) {
-            $this->send_message_to_user($mentor_user);
+            $this->send_message_to_mentor_user($mentor_user, $mentee_user);
         }
     }
 

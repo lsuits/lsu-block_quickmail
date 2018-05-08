@@ -116,4 +116,30 @@ abstract class recipient_send_factory {
         return $mentor_users;
     }
 
+    /**
+     * Returns a subject prefix, if any, from the given options. Defaults to empty string.
+     * 
+     * @param  array  $options
+     * @return string
+     */
+    public function get_subject_prefix($options = [])
+    {
+        return array_key_exists('subject_prefix', $options)
+            ? $options['subject_prefix'] . ' '
+            : '';
+    }
+
+    /**
+     * Returns a message prefix, if any, from the given options. Defaults to empty string.
+     * 
+     * @param  array  $options
+     * @return string
+     */
+    public function get_message_prefix($options = [])
+    {
+        return array_key_exists('message_prefix', $options)
+            ? $options['message_prefix'] . ' '
+            : '';
+    }
+
 }
