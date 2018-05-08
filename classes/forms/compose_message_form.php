@@ -258,6 +258,11 @@ class compose_message_form extends \moodleform {
             PARAM_RAW
         );
 
+        if ($this->show_show_allowed_user_fields()) {
+            $mform->addElement('html', '<div class="col-md-3"></div>');
+            $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
+        }
+
         ////////////////////////////////////////////////////////////
         ///  attachments (filemanager)
         ////////////////////////////////////////////////////////////
@@ -493,6 +498,39 @@ class compose_message_form extends \moodleform {
      */
     private function should_show_additional_email_input() {
         return (bool) $this->course_config_array['additionalemail'];
+    }
+
+    /**
+     * Reports whether or not this form should display the "allowed user fields" helper display
+     * 
+     * @return bool
+     */
+    private function show_show_allowed_user_fields() {
+        return (bool) count($this->get_allowed_user_fields());
+    }
+
+    /**
+     * Returns an array of user-relative data fields that may be injected into the message body
+     * 
+     * @return array
+     */
+    private function get_allowed_user_fields() {
+        return $this->course_config_array['allowed_user_fields'];
+    }
+
+    /**
+     * Returns the HTML that should be displayed as the content of the "allowed user fields" helper display
+     * 
+     * @return string
+     */
+    private function get_user_fields_html() {
+        $html = '<p style="margin-bottom: 4px;"><i>' . block_quickmail_string::get('select_allowed_user_fields') . ':</i></p>';
+
+        foreach ($this->get_allowed_user_fields() as $field) {
+            $html .= '<div class="label user-field-label">[:' . $field . ':]</div>';
+        }
+
+        return $html;
     }
 
     /**

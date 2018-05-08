@@ -3,6 +3,8 @@
   color: dimgray; }
 #page-block-quickmail label[for=id_select_signature_id] {
   display: block !important; }
+#page-block-quickmail .label.user-field-label {
+  margin: 0 4px 2px 0; font-size: 12px; font-weight: 400; }
 #page-block-quickmail #create-alternative-modal-container .form-control.has-error {
   border: 1px solid red; }
 #page-block-quickmail div.compose_message_component .mform input {
