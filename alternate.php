@@ -17,10 +17,24 @@ $page_params = [
 ////////////////////////////////////////
 
 require_login();
-$page_context = context_user::instance($USER->id);
-$PAGE->set_context($page_context);
+
+// if we're scoping to a specific course
+if ($page_params['courseid']) {
+    // if we're scoping to the site level course
+    if ($page_params['courseid'] == SITEID) {
+        // throw an exception if user does not have site-level capability for this block
+        block_quickmail_plugin::require_user_has_course_message_access($USER, $page_params['courseid']);
+    
+    // otherwise, we're scoping to a course
+    } else {
+        // throw an exception if user does not have capability of having alternates
+        block_quickmail_plugin::require_user_capability('allowalternate', $USER, context_course::instance($page_params['courseid']));
+    }
+}
+
+$user_context = context_user::instance($USER->id);
+$PAGE->set_context($user_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
-block_quickmail_plugin::require_user_capability('allowalternate', $page_context);
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
@@ -42,7 +56,7 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 ////////////////////////////////////////
 
 $manage_alternates_form = \block_quickmail\forms\manage_alternates_form::make(
-    $page_context, 
+    $user_context, 
     $USER, 
     $page_params['courseid']
 );
@@ -117,7 +131,7 @@ $rendered_alternate_index = $renderer->alternate_index_component([
 
 // get the rendered form
 $rendered_manage_alternates_form = $renderer->manage_alternates_component([
-    'context' => $page_context,
+    'context' => $user_context,
     'user' => $USER,
     'course_id' => $page_params['courseid'],
     'manage_alternates_form' => $manage_alternates_form,

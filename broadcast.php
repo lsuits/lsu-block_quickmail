@@ -19,13 +19,12 @@ $page_params = [
 ////////////////////////////////////////
 
 require_login();
-$page_context = context_system::instance();
-$PAGE->set_context($page_context);
+$system_context = context_system::instance();
+$PAGE->set_context($system_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
 
-if ( ! is_siteadmin($USER)) {
-    block_quickmail_plugin::require_user_capability('myaddinstance', $page_context);
-}
+// throw an exception if user does not have capability to broadcast messages
+block_quickmail_plugin::require_user_can_send('broadcast', $USER, $system_context);
 
 // get (site) course
 $course = get_course($page_params['courseid']);
@@ -81,7 +80,7 @@ $broadcast_recipient_filter = block_quickmail_broadcast_recipient_filter::make($
 // // prepare the draft area with any existing, relevant files
 // file_prepare_draft_area(
 //     $attachments_draftitem_id, 
-//     $page_context->id, 
+//     $system_context->id, 
 //     'block_quickmail', 
 //     'attachments', 
 //     $page_params['draftid'] ?: null, 
@@ -93,7 +92,7 @@ $broadcast_recipient_filter = block_quickmail_broadcast_recipient_filter::make($
 ////////////////////////////////////////
 
 $broadcast_form = \block_quickmail\forms\broadcast_message_form::make(
-    $page_context, 
+    $system_context, 
     $USER, 
     $course,
     $draft_message
@@ -154,7 +153,7 @@ try {
 ////////////////////////////////////////
 
 $rendered_broadcast_form = $renderer->broadcast_message_component([
-    'context' => $page_context,
+    'context' => $system_context,
     'user' => $USER,
     'course' => $course,
     'broadcast_form' => $broadcast_form,

@@ -16,10 +16,12 @@ $course = get_course($page_params['courseid']);
 ////////////////////////////////////////
 
 require_login();
-$page_context = context_course::instance($course->id);
-$PAGE->set_context($page_context);
+$course_context = context_course::instance($course->id);
+$PAGE->set_context($course_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
-block_quickmail_plugin::require_user_capability('canconfig', $page_context);
+
+// throw an exception if user does not have capability to configure a course
+block_quickmail_plugin::require_user_capability('canconfig', $USER, $course_context);
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
@@ -41,7 +43,7 @@ $renderer = $PAGE->get_renderer('block_quickmail');
 ////////////////////////////////////////
 
 $course_config_form = \block_quickmail\forms\course_config_form::make(
-    $page_context, 
+    $course_context, 
     $USER, 
     $course
 );
@@ -86,7 +88,7 @@ try {
 
 // get the rendered form
 $rendered_config_form = $renderer->course_config_component([
-    'context' => $page_context,
+    'context' => $course_context,
     'course' => $course,
     'user' => $USER,
     'course_config_form' => $course_config_form,

@@ -11,10 +11,10 @@ $string['manage_signatures'] = 'My Signatures';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
-// permissions
-$string['quickmail:cansend'] = 'Allows users to send email through Quickmail';
-$string['quickmail:canconfig'] = 'Allows users to configure Quickmail instance.';
-$string['quickmail:allowalternate'] = 'Allows users to add an alternate email for courses.';
+// capabilities
+$string['quickmail:cansend'] = 'Send Quickmail messages in a course';
+$string['quickmail:canconfig'] = 'Configure Quickmail settings in a course';
+$string['quickmail:allowalternate'] = 'Create alternate Quickmail email addresses in a course';
 $string['quickmail:addinstance'] = 'Add a new Quickmail block to a course page';
 $string['quickmail:myaddinstance'] = 'Add a new Quickmail block to the /my page';
 $string['quickmail:viewgroupusers'] = 'View all users in every group';

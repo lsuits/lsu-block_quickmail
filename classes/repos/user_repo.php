@@ -32,7 +32,7 @@ class user_repo extends repo implements user_repo_interface {
         $course_context = $course_context ?: \context_course::instance($course->id);
 
         // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! \block_quickmail_plugin::user_can_access_all_groups($course_context, $user) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+        if ( ! \block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
             // get all users with non-"group limited role"'s
             $allaccess_users = get_enrolled_users($course_context, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
 

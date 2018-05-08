@@ -15,67 +15,128 @@ class block_quickmail_plugin {
     ////////////////////////////////////////////////////
 
     /**
-     * Reports whether or not the authenticated user has the given permission within the given context
+     * Checks if the given user can send the given type of message in the given context, throwing an exception if not
      * 
-     * @param  string $permission  allowalternate|canconfig|myaddinstance
-     * @param  object $context
-     * @param  object $user
+     * @param  string  $send_type  broadcast|compose
+     * @param  object  $user
+     * @param  object  $context   an instance of a SYSTEM or COURSE context
+     * @return void
+     * @throws required_capability_exception
+     */
+    public static function require_user_can_send($send_type, $user, $context)
+    {
+        if ( ! self::user_can_send($send_type, $user, $context)) {
+            $capability = $send_type == 'broadcast' ? 'myaddinstance' : 'cansend';
+
+            throw new required_capability_exception($context, 'block/quickmail:' . $capability, 'nopermissions', '');
+        }
+    }
+
+    /**
+     * Checks if the given user has the given capability in the given context, throwing an exception if not
+     * 
+     * @param  string $capability
+     * @param  mixed  $user
+     * @param  object $context  an instance of a context
+     * @return void
+     * @throws required_capability_exception
+     */
+    public static function require_user_capability($capability, $user, $context)
+    {
+        if ( ! self::user_has_capability($capability, $user, $context)) {
+            throw new required_capability_exception($context, 'block/quickmail:' . $capability, 'nopermissions', '');
+        }
+    }
+
+    /**
+     * Checks if the given user has the ability to message within the given course id
+     * 
+     * @param  object  $user
+     * @param  int     $course_id
+     * @return void
+     * @throws required_capability_exception
+     */
+    public static function require_user_has_course_message_access($user, $course_id)
+    {
+        $send_type = $course_id == SITEID
+            ? 'broadcast'
+            : 'compose';
+
+        $context = $send_type == 'broadcast'
+            ? context_system::instance()
+            : context_course::instance($course_id);
+
+        self::require_user_can_send($send_type, $user, $context);
+    }
+
+    /**
+     * Reports whether or not the given user can send the given type of message in the given context
+     * 
+     * @param  string  $send_type  broadcast|compose
+     * @param  object  $user
+     * @param  object  $context   an instance of a SYSTEM or COURSE context
      * @return bool
      */
-    public static function user_has_capability($permission, $context, $user = null) {
-        global $USER;
+    public static function user_can_send($send_type, $user, $context)
+    {
+        // must be a valid send_type
+        if ( ! in_array($send_type, ['broadcast', 'compose'])) {
+            return false;
+        }
 
-        // if no user was passed, set as the auth user
-        $user = empty($user) ? $USER : $user;
+        // if we're broadcasting, only allow admins
+        if ($send_type == 'broadcast') {
+            // make sure we have the correct context (system)
+            if (get_class($context) !== 'context_system') {
+                return false;
+            }
 
+            return self::user_has_capability('myaddinstance', $user, $context);
+        }
+
+        // otherwise, we're composing
+        // make sure we have the correct context (course)
+        if (get_class($context) !== 'context_course') {
+            return false;
+        }
+
+        if (self::user_has_capability('cansend', $user, $context)) {
+            return true;
+        }
+        
+        // if this course allows students to send
+        if (block_quickmail_config::course($context->instanceid, 'allowstudents')) {
+            global $CFG;
+            
+            // iterate over system's "student" roles
+            foreach (explode(',', $CFG->gradebookroles) as $role_id) {
+                // if the user is associated with one of these roles in the (course) context
+                if (user_has_role_assignment($user->id, $role_id, $context->id)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Reports whether or not the authenticated user has the given capability within the given context
+     * 
+     * @param  string $capability
+     * @param  object $user
+     * @param  object $context
+     * @return bool
+     */
+    public static function user_has_capability($capability, $user, $context)
+    {
         // always allow site admins
+        // TODO: change this to a role capability?
         if (is_siteadmin($user)) {
             return true;
         }
 
-        return has_capability('block/quickmail:' . $permission, $context, $user);
-    }
-
-    /**
-     * Reports whether or not the given user has the permission to access groups in the given context
-     *
-     * Note: User defaults to auth user
-     * 
-     * @param  object $context
-     * @param  object $user
-     * @return bool
-     */
-    public static function user_can_access_all_groups($context, $user = null) {
-        return self::user_has_capability('viewgroupusers', $context, $user);
-    }
-
-    /**
-     * Helper for checking if the given user has the given Quickmail permission within the given context
-     *
-     * Defaults to checking the auth user if no user is given
-     * 
-     * @param  string $permission  cansend|allowalternate|canconfig|myaddinstance
-     * @param  object $context
-     * @param  mixed  $user
-     * @param  bool   $throw_exception   if false, returns a boolean response, otherwise, throws an exception (default)
-     * @return mixed  always 'true' for admin users, boolean if not throwing exception
-     * @throws Exception if unauthorized and set to throw exceptions
-     */
-    public static function require_user_capability($permission, $context, $user = null, $throw_exception = true) {
-        // first, check for special cases...
-        if ($permission == 'cansend' && block_quickmail_config::block('allowstudents')) {
-            return true;
-        }
-
-        if ( ! $throw_exception) {
-            try {
-                return require_capability('block/quickmail:' . $permission, $context, $user);
-            } catch (\Exception $e) {
-                return false;
-            }
-        } else {
-            return require_capability('block/quickmail:' . $permission, $context, $user);
-        }
+        return has_capability('block/quickmail:' . $capability, $context, $user);
     }
 
     ////////////////////////////////////////////////////

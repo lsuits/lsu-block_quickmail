@@ -29,7 +29,7 @@ class group_repo extends repo implements group_repo_interface {
         $course_context = $course_context ?: \context_course::instance($course->id);
 
         // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! \block_quickmail_plugin::user_can_access_all_groups($course_context, $user) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+        if ( ! \block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
             // get this user's group associations, by groupings
             $grouping_array = groups_get_user_groups($course->id, $user->id);
             

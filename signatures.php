@@ -15,10 +15,16 @@ $page_params = [
 ////////////////////////////////////////
 
 require_login();
+
+// if we're scoping to a specific course
+if ($page_params['courseid']) {
+    // check that the user can message in this course
+    block_quickmail_plugin::require_user_has_course_message_access($USER, $page_params['courseid']);
+}
+
 $page_context = context_system::instance();
 $PAGE->set_context($page_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
-block_quickmail_plugin::require_user_capability('cansend', $page_context);
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE

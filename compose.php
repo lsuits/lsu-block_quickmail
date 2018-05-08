@@ -17,10 +17,12 @@ $course = get_course($page_params['courseid']);
 ////////////////////////////////////////
 
 require_course_login($course, false);
-$page_context = context_course::instance($course->id);
-$PAGE->set_context($page_context);
+$course_context = context_course::instance($course->id);
+$PAGE->set_context($course_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
-block_quickmail_plugin::require_user_capability('cansend', $page_context);
+
+// throw an exception if user does not have capability to compose messages
+block_quickmail_plugin::require_user_can_send('compose', $USER, $course_context);
 
 ////////////////////////////////////////
 /// GET COURSE USER/ROLE/GROUP DATA FOR SELECTION
@@ -29,7 +31,7 @@ block_quickmail_plugin::require_user_capability('cansend', $page_context);
 $course_user_data = block_quickmail_plugin::get_compose_message_recipients(
     $course, 
     $USER,
-    $page_context
+    $course_context
 );
 
 ////////////////////////////////////////
@@ -77,7 +79,7 @@ $attachments_draftitem_id = file_get_submitted_draft_itemid('attachments');
 // prepare the draft area with any existing, relevant files
 file_prepare_draft_area(
     $attachments_draftitem_id, 
-    $page_context->id, 
+    $course_context->id, 
     'block_quickmail', 
     'attachments', 
     $page_params['draftid'] ?: null, 
@@ -89,7 +91,7 @@ file_prepare_draft_area(
 ////////////////////////////////////////
 
 $compose_form = \block_quickmail\forms\compose_message_form::make(
-    $page_context, 
+    $course_context, 
     $USER, 
     $course,
     $course_user_data,
@@ -143,7 +145,7 @@ try {
 ////////////////////////////////////////
 
 $rendered_compose_form = $renderer->compose_message_component([
-    'context' => $page_context,
+    'context' => $course_context,
     'user' => $USER,
     'course' => $course,
     'compose_form' => $compose_form,
