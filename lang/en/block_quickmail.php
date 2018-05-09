@@ -166,7 +166,7 @@ $string['additional_emails_help'] = 'Other email addresses you would like the me
 
  email1@example.com, email2@example.com
  ';
-$string['receipt_help'] = 'Receive an emailed report with the details of this message send';
+$string['receipt_help'] = 'Send a confirmation email to the message sender when the message has been sent by default. This setting is overridable by course configuration.';
 $string['mentor_copy_help'] = 'If selected, any mentors of your recipients will receive a copy of the message.';
 $string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
@@ -184,7 +184,7 @@ $string['allowstudents_desc'] = 'Allow students to use Quickmail. If you choose 
 $string['selectable_roles'] = 'Selectable roles';
 $string['selectable_roles_desc'] = 'These roles will be available for selection when composing a message.';
 $string['prepend_class'] = 'Prepend Course name';
-$string['prepend_class_desc'] = 'Prepend the course shortname to the subject of the email.';
+$string['prepend_class_desc'] = 'Prepend course identifying information to the subject of the email. This setting is overridable by course configuration.';
 $string['ferpa'] = 'FERPA Mode';
 $string['ferpa_desc'] = 'Allows the system to behave either according to the course groupmode setting, ignoring the groupmode setting but separating groups, or ignoring groups altogether.';
 $string['strictferpa'] = 'Always Separate Groups';
