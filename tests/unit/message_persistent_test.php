@@ -561,7 +561,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 1,
             'to_send_at' => 1518124011,
             'no_reply' => 0,
-            'send_to_mentors' => 0,
+            'mentor_copy' => 0,
         ];
 
         $updated_message = $message->update_draft((object) $update_params);
@@ -577,7 +577,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($update_params['receipt'], $updated_message->get('send_receipt'));
         $this->assertEquals($update_params['to_send_at'], $updated_message->get('to_send_at'));
         $this->assertEquals($update_params['no_reply'], $updated_message->get('no_reply'));
-        $this->assertEquals($update_params['send_to_mentors'], $updated_message->get('send_to_mentors'));
+        $this->assertEquals($update_params['mentor_copy'], $updated_message->get('send_to_mentors'));
         $this->assertEquals(1, $updated_message->get('is_draft'));
 
         $second_update_params = [
@@ -589,7 +589,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'receipt' => 1,
             'to_send_at' => 1518124011,
             'no_reply' => 0,
-            'send_to_mentors' => 0,
+            'mentor_copy' => 0,
         ];
 
         $second_updated_message = $message->update_draft((object) $second_update_params, false);
