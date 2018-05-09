@@ -194,9 +194,9 @@ class block_quickmail_config {
             'ferpa'                     => (string) $params['ferpa'],
             'downloads'                 => (int) $params['downloads'],
             'additionalemail'           => (int) $params['additionalemail'],
-            'message_types_available' => (string) $params['message_types_available'],
-            'default_message_type'    => (string) $params['default_message_type'],
-            'allowed_user_fields'       => explode(',', $params['allowed_user_fields'])
+            'message_types_available'   => (string) $params['message_types_available'],
+            'default_message_type'      => (string) $params['default_message_type'],
+            'allowed_user_fields'       => $params['allowed_user_fields'] == '' ? [] : explode(',', $params['allowed_user_fields'])
         ];
 
         return $key ? $transformed[$key] : $transformed;
