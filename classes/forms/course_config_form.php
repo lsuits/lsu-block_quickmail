@@ -114,6 +114,11 @@ class course_config_form extends \moodleform {
             null, 
             'required'
         );
+        $mform->addHelpButton(
+            'roleselection', 
+            'selectable_roles_configuration', 
+            'block_quickmail'
+        );
 
         ////////////////////////////////////////////////////////////
         ///  prepend class (select)
@@ -127,6 +132,11 @@ class course_config_form extends \moodleform {
         $mform->setDefault(
             'prepend_class', 
             $this->course_config['prepend_class']
+        );
+        $mform->addHelpButton(
+            'prepend_class', 
+            'prepend_class_configuration', 
+            'block_quickmail'
         );
 
         ////////////////////////////////////////////////////////////
@@ -142,6 +152,11 @@ class course_config_form extends \moodleform {
             'receipt', 
             $this->course_config['receipt']
         );
+        $mform->addHelpButton(
+            'receipt', 
+            'receipt_configuration', 
+            'block_quickmail'
+        );
 
         ////////////////////////////////////////////////////////////
         ///  default message type (based on global setting)
@@ -156,6 +171,11 @@ class course_config_form extends \moodleform {
             $mform->setDefault(
                 'default_message_type', 
                 $this->course_config['default_message_type']
+            );
+            $mform->addHelpButton(
+                'default_message_type', 
+                'default_message_type_configuration', 
+                'block_quickmail'
             );
         } else {
             $mform->addElement(

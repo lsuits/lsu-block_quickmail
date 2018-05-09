@@ -167,6 +167,8 @@ $string['additional_emails_help'] = 'Other email addresses you would like the me
  email1@example.com, email2@example.com
  ';
 $string['receipt_help'] = 'Send a confirmation email to the message sender when the message has been sent by default. This setting is overridable by course configuration.';
+$string['receipt_configuration'] = 'Send a confirmation email to the message sender when the message has been sent. This setting will be the default preference for the sender.';
+$string['receipt_configuration_help'] = 'Send a confirmation email to the message sender when the message has been sent. This setting will be the default preference for the sender.';
 $string['mentor_copy_help'] = 'If selected, any mentors of your recipients will receive a copy of the message.';
 $string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
@@ -183,8 +185,12 @@ $string['allowstudents'] = 'Allow students to use Quickmail';
 $string['allowstudents_desc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
 $string['selectable_roles'] = 'Selectable roles';
 $string['selectable_roles_desc'] = 'These roles will be available for selection when composing a message. This setting is overridable by course configuration.';
+$string['selectable_roles_configuration'] = 'These roles will be available for selection when composing a message.';
+$string['selectable_roles_configuration_help'] = 'These roles will be available for selection when composing a message.';
 $string['prepend_class'] = 'Prepend Course name';
-$string['prepend_class_desc'] = 'Prepend course identifying information to the subject of the email. This setting is overridable by course configuration.';
+$string['prepend_class_desc'] = 'Prepend course identifying information to the subject of the message. This setting is overridable by course configuration.';
+$string['prepend_class_configuration'] = 'Prepend course identifying information to the subject of the message.';
+$string['prepend_class_configuration_help'] = 'Prepend course identifying information to the subject of the message.';
 $string['ferpa'] = 'FERPA Mode';
 $string['ferpa_desc'] = 'Allows the system to behave either according to the course groupmode setting, ignoring the groupmode setting but separating groups, or ignoring groups altogether.';
 $string['strictferpa'] = 'Always Separate Groups';
@@ -197,6 +203,8 @@ $string['additionalemail_desc'] = 'If this option is enabled, the sender will ha
 $string['message_type'] = 'Send Quickmail messages as';
 $string['message_type_desc'] = 'Allows Quickmail messages to be sent as a Moodle message, traditional email, or sender preference.';
 $string['default_message_type'] = 'Preferred message sending method';
+$string['default_message_type_configuration'] = 'This setting will be the default sending method for anyone composing a message in this course. The sender will be able to override when composing the message.';
+$string['default_message_type_configuration_help'] = 'This setting will be the default sending method for anyone composing a message in this course. The sender will be able to override when composing the message.';
 $string['default_message_type_desc'] = 'Send your messages as Moodle Messages or traditional email.';
 $string['message_types_available'] = 'Message message type restrictions';
 $string['message_types_available_desc'] = 'Restrict Quickmail messages to be sent as Moodle Messages, traditional emails, or sender preference.';
@@ -204,7 +212,7 @@ $string['message_type_available_all'] = 'No restrictions, sender preference';
 $string['message_type_available_message'] = 'Restrict to Moodle messages only';
 $string['message_type_available_email'] = 'Restrict to traditional email only';
 $string['select_allowed_user_fields'] = 'Supported user data fields';
-$string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make email content dynamic and specific to the recipient. Ex: "[:firstname:]"';
+$string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make message content dynamic and specific to the recipient. Ex: "[:firstname:]"';
 
 // redirect messages
 $string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
