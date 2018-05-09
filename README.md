@@ -12,6 +12,8 @@ It is highly recommended that you review the features below and make sure this p
 
 ## Installation
 
+**Note:** In order for this block to send messages you need to have CRON working and running properly on your server. If you don't have CRON running regularly, **do not install** (or upgrade) this block!
+
 Quickmail should be installed like any other block. See the [Moodle Docs page on plugin installation](https://docs.moodle.org/34/en/Installing_plugins#Installing_a_plugin) for more info. You can also find Quickmail on the official [Moodle Plugin Directory](https://moodle.org/plugins/block_quickmail).
 
 If you are upgrading from v1 to v2, a data migration script is included in this plugin which will format your existing data to the new structure. **Note:** Signatures and Alternate Emails are not carried over, however, and will have to be re-created manually.
