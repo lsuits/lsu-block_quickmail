@@ -1,5 +1,6 @@
 <?php
-// This file is part of UCLA Control panel block for Moodle - http://moodle.org/
+
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Alternate 'added' logging event handler.
- *
  * @package    block_quickmail
- * @copyright  2014 UC Regents
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -17,14 +17,10 @@
 
 /**
  * @package    block_quickmail
- * @copyright  2008-2017 Louisiana State University
- * @copyright  2008-2017 Adam Zapletal, Chad Mazilly, Philip Cali, Robert Russo
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-// require_once 'classes/forms/compose_message_form.php';
-// require_once 'classes/forms/manage_signatures_form.php';
-// require_once 'classes/forms/course_config_form.php';
 
 use block_quickmail\components\broadcast_message_component;
 use block_quickmail\components\broadcast_recipient_filter_results_component;

@@ -18,26 +18,6 @@ If you are upgrading from v1 to v2, a data migration script is included in this 
 
 ## Features
 
-# Quickmail (v2)
-
-Quickmail is a Moodle block plugin that provides selective, bulk messaging for Moodle courses and sites. Developed by Louisiana State University :tiger:, Geaux Tigers!!!
-
-## Overview
-
-Quickmail is a convenient way to select enrolled users in your Moodle course and message them. You can select (or exclude) recipients individually, by role, or even by group. Additionally, you can use Quickmail at the administrative level to select and message users within the entire site.
-
-**Please note that these are the docs for Quickmail v2**. This second version is much different than the original version in the way it operates and saves data. If you are wanting to install the original version, please see the [Quickmail v1 branch](https://github.com/lsuits/block_quickmail/tree/dev-30)  of this plugin.
-
-It is highly recommended that you review the features below and make sure this plugin will work for you, and that you backup any existing data before installing!!
-
-## Installation
-
-Quickmail should be installed like any other block. See the [Moodle Docs page on plugin installation](https://docs.moodle.org/34/en/Installing_plugins#Installing_a_plugin) for more info. You can also find Quickmail on the official [Moodle Plugin Directory](https://moodle.org/plugins/block_quickmail).
-
-If you are upgrading from v1 to v2, a data migration script is included in this plugin which will format your existing data to the new structure. **Note:** Signatures and Alternate Emails are not carried over, however, and will have to be re-created manually.
-
-## Features
-
 * **Multiple Message Types**
 
   Send messages via email OR as [Moodle Messages](http://docs.moodle.org/en/Messaging).

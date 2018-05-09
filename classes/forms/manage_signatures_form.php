@@ -17,8 +17,8 @@
 
 /**
  * @package    block_quickmail
- * @copyright  2008-2017 Louisiana State University
- * @copyright  2008-2017 Adam Zapletal, Chad Mazilly, Philip Cali, Robert Russo
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
