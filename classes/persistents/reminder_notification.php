@@ -27,6 +27,7 @@ namespace block_quickmail\persistents;
 use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_notification;
+use block_quickmail\persistents\concerns\can_have_a_schedule;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
  
@@ -34,6 +35,7 @@ class reminder_notification extends persistent implements notification_type_inte
  
 	use enhanced_persistent,
 		belongs_to_a_notification,
+		can_have_a_schedule,
 		can_be_soft_deleted;
 
 	/** Table name for the persistent. */
