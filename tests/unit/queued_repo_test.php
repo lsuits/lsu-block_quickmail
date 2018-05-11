@@ -168,13 +168,13 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
             'sort' => 'id',
             'dir' => 'asc'
         ]);
-        $this->assertEquals(143000, $queueds->data[0]->get('id'));
+        $this->assertEquals(144000, $queueds->data[0]->get('id'));
 
         $queueds = queued_repo::get_for_user(1, 0, [
             'sort' => 'id',
             'dir' => 'desc'
         ]);
-        $this->assertEquals(143006, $queueds->data[0]->get('id'));
+        $this->assertEquals(144006, $queueds->data[0]->get('id'));
 
         // sort by course
         $queueds = queued_repo::get_for_user(1, 0, [
@@ -245,13 +245,13 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
             'sort' => 'id',
             'dir' => 'asc'
         ]);
-        $this->assertEquals(143000, $queueds->data[0]->get('id'));
+        $this->assertEquals(144000, $queueds->data[0]->get('id'));
 
         $queueds = queued_repo::get_for_user(1, 1, [
             'sort' => 'id',
             'dir' => 'desc'
         ]);
-        $this->assertEquals(143006, $queueds->data[0]->get('id'));
+        $this->assertEquals(144006, $queueds->data[0]->get('id'));
 
         // sort by course
         $queueds = queued_repo::get_for_user(1, 1, [
@@ -424,7 +424,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
 
         $queueds = [];
 
-        // id: 143000
+        // id: 144000
         $queued1 = $this->create_message(true);
         $queued1->set('course_id', 1);
         $queued1->set('subject', 'date');
@@ -435,7 +435,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $DB->update_record('block_quickmail_messages', $queued);
         $queueds[] = $queued;
 
-        // id: 143001
+        // id: 144001
         $queued2 = $this->create_message(true);
         $queued2->set('course_id', 5);
         $queued2->set('subject', 'elderberry');
@@ -446,7 +446,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $DB->update_record('block_quickmail_messages', $queued);
         $queueds[] = $queued;
 
-        // id: 143002
+        // id: 144002
         $queued3 = $this->create_message(true);
         $queued3->set('course_id', 3);
         $queued3->set('subject', 'coconut');
@@ -457,7 +457,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $DB->update_record('block_quickmail_messages', $queued);
         $queueds[] = $queued;
 
-        // id: 143003
+        // id: 144003
         $queued4 = $this->create_message(true);
         $queued4->set('course_id', 1);
         $queued4->set('subject', 'apple');
@@ -468,7 +468,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $DB->update_record('block_quickmail_messages', $queued);
         $queueds[] = $queued;
 
-        // id: 143004
+        // id: 144004
         $queued5 = $this->create_message(true);
         $queued5->set('course_id', 1);
         $queued5->set('subject', 'banana');
@@ -479,7 +479,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $DB->update_record('block_quickmail_messages', $queued);
         $queueds[] = $queued;
 
-        // id: 143005
+        // id: 144005
         $queued6 = $this->create_message(true);
         $queued6->set('course_id', 2);
         $queued6->set('subject', 'grape');
@@ -490,7 +490,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $DB->update_record('block_quickmail_messages', $queued);
         $queueds[] = $queued;
 
-        // id: 143006
+        // id: 144006
         $queued7 = $this->create_message(true);
         $queued7->set('course_id', 1);
         $queued7->set('subject', 'fig');

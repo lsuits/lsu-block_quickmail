@@ -70,6 +70,10 @@ class message extends persistent {
 				'type' => PARAM_INT,
 				'default' => 0,
 			],
+			'notification_id' => [
+				'type' => PARAM_INT,
+				'default' => 0,
+			],
 			'subject' => [
 				'type' => PARAM_TEXT,
 				'default' => null,
