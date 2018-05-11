@@ -184,6 +184,7 @@
     <TABLE NAME="block_quickmail_event_notifs" COMMENT="Event based notification type instances extending a parent notification record.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this event notification."/>
         <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the event notification type."/>
         <FIELD NAME="time_delay" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that this event notification will be delayed once triggered to send."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
@@ -198,6 +199,7 @@
     <TABLE NAME="block_quickmail_rem_notifs" COMMENT="Reminder based notification type instances extending a parent notification record.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this reminder notification."/>
         <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the reminder notification type."/>
         <FIELD NAME="object_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the specific object that this reminder notification was created for."/>
         <FIELD NAME="begin_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification will begin."/>

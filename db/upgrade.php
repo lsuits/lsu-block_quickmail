@@ -559,6 +559,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('notification_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $table->add_field('time_delay', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -568,6 +569,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('notification_id', XMLDB_KEY_FOREIGN, array('notification_id'), 'block_quickmail_notifs', array('id'));
 
         // make table
         if (!$dbman->table_exists($table)) {
@@ -584,6 +586,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // define fields
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('notification_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $table->add_field('object_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('begin_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
@@ -599,6 +602,7 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // define keys
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('notification_id', XMLDB_KEY_FOREIGN, array('notification_id'), 'block_quickmail_notifs', array('id'));
         $table->add_key('schedule_id', XMLDB_KEY_FOREIGN, array('schedule_id'), 'block_quickmail_schedules', array('id'));
 
         // make table
