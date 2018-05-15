@@ -37,3 +37,4 @@ require_once(dirname(__FILE__) . '/sets_up_courses.php');
 require_once(dirname(__FILE__) . '/submits_compose_message_form.php');
 require_once(dirname(__FILE__) . '/submits_create_alternate_form.php');
 require_once(dirname(__FILE__) . '/assigns_mentors.php');
+require_once(dirname(__FILE__) . '/sets_up_notifications.php');

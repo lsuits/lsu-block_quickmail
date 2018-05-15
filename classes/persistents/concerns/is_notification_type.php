@@ -24,9 +24,10 @@
 
 namespace block_quickmail\persistents\concerns;
 
-use block_quickmail\persistents\schedule;
+use block_quickmail\persistents\notification;
+use block_quickmail\notifier\models\notification_model;
 
-trait can_have_a_schedule {
+trait is_notification_type {
 
     ///////////////////////////////////////////////
     ///
@@ -35,12 +36,28 @@ trait can_have_a_schedule {
     ///////////////////////////////////////////////
 
     /**
-     * Returns the schedule object for this schedulable persistent, if any
+     * Returns the parent notification object of this notification type interface
      *
      * @return stdClass
      */
-    public function get_schedule() {
-        return schedule::find_or_null($this->get('schedule_id'));
+    public function get_notification() {
+        return notification::find_or_null($this->get('notification_id'));
+    }
+
+    ///////////////////////////////////////////////
+    ///
+    ///  NOTIFICATION MODELS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Returns the notification_model implementation for this notification_type_interface
+     * 
+     * @return notification_model_interface
+     */
+    public function get_notification_model()
+    {
+        return notification_model::make($this);
     }
 
 }

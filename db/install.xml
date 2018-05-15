@@ -202,12 +202,11 @@
         <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this reminder notification."/>
         <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the reminder notification type."/>
         <FIELD NAME="object_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the specific object that this reminder notification was created for."/>
-        <FIELD NAME="begin_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification will begin."/>
-        <FIELD NAME="end_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification will end."/>
         <FIELD NAME="max_per_interval" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of reminder notifications to be sent to a specific user within a single interval."/>
         <FIELD NAME="schedule_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the schedule for this reminder notification."/>
         <FIELD NAME="last_run_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification was last run."/>
         <FIELD NAME="next_run_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this reminder notification will run next."/>
+        <FIELD NAME="is_running" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether or not this reminder notification is being run at the moment."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
@@ -223,6 +222,8 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="unit" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The unit of time for which this scheduled is based."/>
         <FIELD NAME="amount" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The amount of time of the unit of time for which this schedule is based."/>
+        <FIELD NAME="begin_at" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp for which this schedule will begin."/>
+        <FIELD NAME="end_at" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp for which this schedule will end."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>

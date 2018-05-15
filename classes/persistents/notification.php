@@ -26,6 +26,7 @@ namespace block_quickmail\persistents;
 
 use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
+use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
@@ -35,12 +36,31 @@ use block_quickmail\persistents\reminder_notification;
 class notification extends persistent {
  
 	use enhanced_persistent,
+		sanitizes_input,
 		belongs_to_a_course,
 		belongs_to_a_user,
 		can_be_soft_deleted;
 
 	/** Table name for the persistent. */
 	const TABLE = 'block_quickmail_notifs';
+
+	public static $required_creation_keys = [
+		'name', 
+		'message_type', 
+		'subject', 
+		'body'
+	];
+
+	public static $default_creation_params = [
+        'is_enabled' => false,
+        'conditions' => '',
+        'alternate_email_id' => 0,
+        'signature_id' => 0,
+        'editor_format' => 1,
+        'send_receipt' => false,
+        'send_to_mentors' => false,
+        'no_reply' => true,
+    ];
 
 	/**
 	 * Return the definition of the properties of this model.
@@ -129,11 +149,15 @@ class notification extends persistent {
 	 */
 	public function get_notification_type_interface()
 	{
-		if ($this->get('type') == 'event') {
-			return event_notification::find_or_null($this->get('id'));
-		} else if ($this->get('type') == 'reminder') {
-			return reminder_notification::find_or_null($this->get('id'));
-		} else {
+		try {
+			if ($this->get('type') == 'event') {
+				return event_notification::get_record(['notification_id' => $this->get('id')]);
+			} else if ($this->get('type') == 'reminder') {
+				return reminder_notification::get_record(['notification_id' => $this->get('id')]);
+			} else {
+				throw new \Exception;
+			}
+		} catch (\Exception $e) {
 			return null;
 		}
 	}
@@ -152,6 +176,48 @@ class notification extends persistent {
 	public function is_notification_enabled()
 	{
 		return (bool) $this->get('is_enabled');
+	}
+
+	///////////////////////////////////////////////
+	///
+	///  CREATION METHODS
+	/// 
+	///////////////////////////////////////////////
+
+	/**
+	 * Creates a notification of a given type for a given course and user
+	 * 
+	 * @param  string  $type   event|reminder
+	 * @param  object  $course
+	 * @param  object  $user
+	 * @param  array   $params
+	 *         name         (required)
+	 *         message_type (required)
+	 *         subject      (required)
+	 *         body         (required)
+	 *         is_enabled
+	 *         conditions
+	 *         alternate_email_id
+	 *         signature_id
+	 *         editor_format
+	 *         send_receipt
+	 *         send_to_mentors
+	 *         no_reply
+	 * @return notification
+	 */
+	public static function create_for_course_user($type, $course, $user, $params)
+	{
+		$params = self::sanitize_creation_params($params);
+
+		$data = array_merge($params, [
+			'type' => $type,
+			'course_id' => $course->id,
+			'user_id' => $user->id,
+		]);
+
+		$notification = self::create_new($data);
+
+		return $notification;
 	}
 
 }

@@ -86,7 +86,49 @@ trait has_general_helpers {
                 'value' => $new_value,
             ]);
         }
+    }
 
+    public function override_params($values, $overrides)
+    {
+        foreach (array_keys($values) as $key) {
+            if (array_key_exists($key, $overrides)) {
+                $values[$key] = $overrides[$key];
+            }
+        }
+
+        return $values;
+    }
+
+    public function get_timestamp_for_date($string)
+    {
+        $datetime = new \DateTime($string);
+        
+        return $datetime->getTimestamp();
+    }
+
+    public function get_past_time()
+    {
+        return $this->get_timestamp_for_date('mar 1 2017');
+    }
+    
+    public function get_recent_time()
+    {
+        return $this->get_timestamp_for_date('may 12 2018');
+    }
+    
+    public function get_now_time()
+    {
+        return $this->get_timestamp_for_date('now');
+    }
+    
+    public function get_soon_time()
+    {
+        return $this->get_timestamp_for_date('july 4 2018');
+    }
+    
+    public function get_future_time()
+    {
+        return $this->get_timestamp_for_date('nov 30 2018');
     }
 
 }

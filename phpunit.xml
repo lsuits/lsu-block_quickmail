@@ -43,7 +43,7 @@
             <exclude>tests/unit/message_persistent_test.php</exclude>
             <exclude>tests/unit/signature_persistent_test.php</exclude>
             <exclude>tests/unit/alternate_persistent_test.php</exclude>
-            
+
             <!-- repos -->
             <exclude>tests/unit/draft_repo_test.php</exclude>
             <exclude>tests/unit/sent_repo_test.php</exclude>
@@ -73,6 +73,22 @@
             <!-- messaging tasks -->
             <exclude>tests/unit/send_message_adhoc_task_test.php</exclude>
             <exclude>tests/unit/send_all_ready_messages_task_test.php</exclude>
+
+
+            <!-- NEW TESTS... -->
+            
+            <!-- persistents -->
+            <exclude>tests/unit/event_notification_persistent_test.php</exclude>
+            <exclude>tests/unit/reminder_notification_persistent_test.php</exclude>
+            <exclude>tests/unit/schedule_persistent_test.php</exclude>
+            <exclude>tests/unit/schedulable_test.php</exclude>
+
+            <!-- repos (NOT DONE) -->
+            <exclude>tests/unit/scheduable_repo_test.php</exclude>
+
+            <!-- notifications -->
+            <!-- <exclude>tests/unit/non_participation_reminder_notification_model_test.php</exclude> -->
+
         </testsuite>
     </testsuites>
 

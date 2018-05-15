@@ -26,15 +26,27 @@ namespace block_quickmail\persistents;
 
 use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
+use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
  
 class schedule extends persistent {
  
 	use enhanced_persistent,
+		sanitizes_input,
 		can_be_soft_deleted;
 
 	/** Table name for the persistent. */
 	const TABLE = 'block_quickmail_schedules';
+
+	public static $required_creation_keys = [
+		'unit', 
+		'amount',
+		'begin_at',
+	];
+
+	public static $default_creation_params = [
+		'end_at' => null,
+	];
 
 	/**
 	 * Return the definition of the properties of this model.
@@ -49,11 +61,102 @@ class schedule extends persistent {
 			'amount' => [
 				'type' => PARAM_INT,
 			],
+			'begin_at' => [
+				'type' => PARAM_INT,
+			],
+			'end_at' => [
+				'type' => PARAM_INT,
+				'default' => null,
+				'null' => NULL_ALLOWED,
+			],
 			'timedeleted' => [
 				'type' => PARAM_INT,
 				'default' => 0,
 			],
 		];
+	}
+
+	/**
+	 * Returns the begin_at time as an int
+	 * 
+	 * @return int
+	 */
+	public function get_begin_time()
+	{
+		return (int) $this->get('begin_at');
+	}
+
+	/**
+     * Returns the end_at time as an int
+     * 
+     * @return mixed  (returns int, or null if not set)
+     */
+    public function get_end_time()
+    {
+        return empty($this->get('end_at'))
+            ? null
+            : (int) $this->get('end_at');
+    }
+
+    /**
+     * Returns this schedule's "increment" in a datetime-modify-friendly string format
+     * 
+     * @return string
+     */
+    public function get_increment_string()
+    {
+    	return '+' . $this->get('amount') . ' ' . $this->get('unit');
+    }
+
+    /**
+     * Returns a timestamp representing the next time this schedule should run
+     *
+     * Note: if the calculated time is after this schedule's end time (if any), then null will be returned
+     * 
+     * @param  int  $last_run_timestamp
+     * @return mixed  int|null
+     */
+    public function calculate_next_time_from($last_run_timestamp)
+    {
+        // return next run time according to schedule
+    	$date = \DateTime::createFromFormat('U', $last_run_timestamp, \core_date::get_server_timezone_object());
+        $date->modify($this->get_increment_string());
+
+        $next_run_time = $date->getTimestamp();
+
+    	// if this schedule has no end time
+        if (empty($this->get_end_time())) {
+        	return $next_run_time;
+        
+        // otherwise, calculate the next run time according to schedule
+        } else {
+            if ($next_run_time > $this->get_end_time()) {
+                // schedule has expired, set to null
+                return null;
+            } else {
+                return $next_run_time;
+            }
+        }
+    }
+
+	/**
+	 * Creates and returns a schedule from the given params
+	 * 
+	 * @param  array   $params
+	 * @return schedule
+	 */
+	public static function create_from_params($params)
+	{
+		$params = self::sanitize_creation_params($params);
+
+		$schedule = self::create_new([
+			'unit' => $params['unit'],
+			'amount' => $params['amount'],
+			'begin_at' => $params['begin_at'],
+			'end_at' => $params['end_at'],
+		]);
+
+		return $schedule;
 	}
 
 }

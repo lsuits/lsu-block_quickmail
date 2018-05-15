@@ -21,13 +21,26 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+ 
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-namespace block_quickmail\persistents\interfaces;
+use block_quickmail\repos\scheduable_repo;
+// use block_quickmail\persistents\message;
+use block_quickmail\repos\pagination\paginated;
 
-interface notification_type_interface {
+class block_quickmail_scheduable_repo_testcase extends advanced_testcase {
+    
+    use has_general_helpers,
+        sets_up_courses,
+        sets_up_notifications;
 
-    public function get_notification();
+    public function test_something()
+    {
+        // WIP!
 
-    public function get_notification_model();
+        // $scheduables = scheduable_repo::get_all_ready_to_run();
+
+        // $this->dd($scheduables);
+    }
 
 }

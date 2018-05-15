@@ -26,20 +26,38 @@ namespace block_quickmail\persistents;
 
 use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
-use block_quickmail\persistents\concerns\belongs_to_a_notification;
-use block_quickmail\persistents\concerns\can_have_a_schedule;
+use block_quickmail\persistents\concerns\sanitizes_input;
+use block_quickmail\persistents\concerns\is_notification_type;
+use block_quickmail\persistents\concerns\is_schedulable;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
+use block_quickmail\persistents\interfaces\schedulable_interface;
+use block_quickmail\notifier\models\reminder_notification_model;
+use block_quickmail\persistents\schedule;
  
-class reminder_notification extends persistent implements notification_type_interface {
+class reminder_notification extends persistent implements notification_type_interface, schedulable_interface {
  
 	use enhanced_persistent,
-		belongs_to_a_notification,
-		can_have_a_schedule,
+		sanitizes_input,
+		is_notification_type,
+		is_schedulable,
 		can_be_soft_deleted;
 
 	/** Table name for the persistent. */
 	const TABLE = 'block_quickmail_rem_notifs';
+
+	public static $required_creation_keys = [
+		'object_id', 
+		'schedule_unit', 
+		'schedule_amount', 
+		'schedule_begin_at',
+	];
+
+	public static $default_creation_params = [
+		'max_per_interval' => 0,
+		'schedule_id' => 0,
+		'schedule_end_at' => null,
+    ];
 
 	/**
 	 * Return the definition of the properties of this model.
@@ -57,16 +75,6 @@ class reminder_notification extends persistent implements notification_type_inte
 			'object_id' => [
 				'type' => PARAM_INT,
 				'default' => 0,
-			],
-			'begin_at' => [
-				'type' => PARAM_INT,
-				'default' => null,
-				'null' => NULL_ALLOWED,
-			],
-			'end_at' => [
-				'type' => PARAM_INT,
-				'default' => null,
-				'null' => NULL_ALLOWED,
 			],
 			'max_per_interval' => [
 				'type' => PARAM_INT,
@@ -87,11 +95,87 @@ class reminder_notification extends persistent implements notification_type_inte
 				'default' => null,
 				'null' => NULL_ALLOWED,
 			],
+			'is_running' => [
+				'type' => PARAM_BOOL,
+				'default' => false,
+			],
 			'timedeleted' => [
 				'type' => PARAM_INT,
 				'default' => 0,
 			],
 		];
+	}
+
+	/**
+	 * Creates and returns a reminder notification of the given type and object for the given course and user
+	 * 
+	 * @param  string  $type    a reminder_notification_type key
+	 * @param  object  $object  the object that is to be evaluated by this reminder notification
+	 * @param  object  $course
+	 * @param  object  $user
+	 * @param  array   $params
+	 * @return reminder_notification
+	 */
+	public static function create_type($type, $object = null, $course, $user, $params)
+	{
+		$notification = notification::create_for_course_user('reminder', $course, $user, $params);
+
+		$reminder_notification = self::create_for_notification($notification, array_merge([
+			'type' => $type,
+			'object_id' => ! empty($object) ? $object->id : 0, // may need to write helper class to get this id
+		], $params));
+
+		return $reminder_notification;
+	}
+
+	/**
+	 * Creates and returns a reminder notification to be associated with the given notification
+	 *
+	 * Note: creates the reminder notification's schedule before creating the notification
+	 * 
+	 * @param  notification  $notification
+	 * @param  array         $params
+	 * @return reminder_notification
+	 * @throws \Exception
+	 */
+	private static function create_for_notification($notification, $params)
+	{
+		$params = self::sanitize_creation_params($params, [
+			'schedule_unit', 
+			'schedule_amount',
+			'schedule_begin_at',
+			'schedule_end_at',
+		]);
+
+		try {
+			$schedule = null;
+			
+			$schedule = schedule::create_from_params([
+				'unit' => $params['schedule_unit'],
+				'amount' => $params['schedule_amount'],
+				'begin_at' => $params['schedule_begin_at'],
+				'end_at' => $params['schedule_end_at'],
+			]);
+
+			$reminder_notification = self::create_new([
+				'notification_id' => $notification->get('id'),
+				'type' => $params['type'],
+				'object_id' => $params['object_id'],
+				'schedule_id' => $schedule->get('id'),
+			]);
+
+		// if there was an error during creation, delete potentially-created associative data
+		} catch (\Exception $e) {
+			$notification->hard_delete();
+
+			if ( ! empty($schedule)) {
+				$schedule->hard_delete();
+			}
+
+			throw new \Exception;
+		}
+
+		return $reminder_notification;
 	}
 
 }

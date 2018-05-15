@@ -589,12 +589,11 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('notification_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null);
         $table->add_field('object_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('begin_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('end_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('max_per_interval', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('schedule_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('last_run_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('next_run_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('is_running', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
@@ -622,6 +621,8 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('unit', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('amount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('begin_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('end_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');

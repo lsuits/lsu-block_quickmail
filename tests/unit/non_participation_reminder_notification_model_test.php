@@ -21,13 +21,29 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+ 
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-namespace block_quickmail\persistents\interfaces;
+class block_quickmail_non_participation_reminder_notification_model_testcase extends advanced_testcase {
+    
+    use has_general_helpers,
+        sets_up_courses,
+        sets_up_notifications;
 
-interface notification_type_interface {
+    public function test_something()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
 
-    public function get_notification();
+        $this->dd('asasasas');
+    }
 
-    public function get_notification_model();
+    ///////////////////////////////////////////////
+    ///
+    /// HELPERS
+    /// 
+    //////////////////////////////////////////////
+    
+    // 
 
 }

@@ -22,12 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\persistents\interfaces;
+namespace block_quickmail\repos\interfaces;
 
-interface notification_type_interface {
-
-    public function get_notification();
-
-    public function get_notification_model();
+interface scheduable_repo_interface {
+	
+	public static function get_all_ready_to_run();
 
 }

@@ -22,25 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\persistents\concerns;
+namespace block_quickmail\persistents\interfaces;
 
-use block_quickmail\persistents\notification;
+interface schedulable_interface {
 
-trait belongs_to_a_notification {
-
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
-
-    /**
-     * Returns the parent notification object of this notification type interface
-     *
-     * @return stdClass
-     */
-    public function get_notification() {
-        return notification::find_or_null($this->get('notification_id'));
-    }
+    // PROPS
+    // last_run_at
+    // next_run_at
+    // is_running
+    
+    public function get_schedule();
+    // protected function after_create();
+    public function get_last_run_time();
+    public function get_next_run_time();
+    public function set_next_run_time();
+    public function is_running();
+    public function increment_next_run_time();
+    public function run_scheduled();
 
 }
