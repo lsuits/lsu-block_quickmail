@@ -41,6 +41,9 @@ class event_notification extends persistent implements notification_type_interfa
 	/** Table name for the persistent. */
 	const TABLE = 'block_quickmail_event_notifs';
 
+	/** notification_type_interface */
+	public static $notification_type_key = 'event';
+
 	public static $required_creation_keys = [];
 
 	public static $default_creation_params = [

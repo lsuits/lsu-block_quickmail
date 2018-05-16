@@ -7,9 +7,9 @@ use block_quickmail\notifier\models\reminder_notification_model;
 
 class non_participation_model extends reminder_notification_model implements reminder_notification_model_interface {
 
-    public static $component = 'course';
+    // public static $component = 'course';
 
-    public static $object = 'course';
+    // public static $object = 'course';
 
     public static $required_conditions = [
         'time-since-course-access',

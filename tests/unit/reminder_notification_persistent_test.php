@@ -36,6 +36,11 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         sets_up_courses,
         sets_up_notifications;
 
+    public function test_has_a_notification_type_key()
+    {
+        $this->assertEquals('reminder', reminder_notification::$notification_type_key);
+    }
+
     public function test_creates_a_reminder_notification()
     {
         // reset all changes automatically after this test

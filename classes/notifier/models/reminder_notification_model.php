@@ -9,12 +9,20 @@ use block_quickmail\persistents\interfaces\notification_type_interface;
 
 abstract class reminder_notification_model extends notification_model implements notification_model_interface {
 
-    public $notification_type_interface;
-    public $notification;
-
     public function __construct(notification_type_interface $notification_type_interface, notification $notification) {
-        $this->notification_type_interface = $notification_type_interface;
-        $this->notification = $notification;
+        parent::__construct($notification_type_interface, $notification);
+
+        // $this->set_object();
+    }
+
+    private function set_object()
+    {
+        // get 'component' and 'object' from this reminder_notification_model
+        // get 'object_id' from  $this->notification_type_interface
+        
+        // pull object
+        
+        // $this->object = $object
     }
 
 }

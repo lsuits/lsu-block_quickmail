@@ -46,6 +46,9 @@ class reminder_notification extends persistent implements notification_type_inte
 	/** Table name for the persistent. */
 	const TABLE = 'block_quickmail_rem_notifs';
 
+	/** notification_type_interface */
+	public static $notification_type_key = 'reminder';
+
 	public static $required_creation_keys = [
 		'object_id', 
 		'schedule_unit', 

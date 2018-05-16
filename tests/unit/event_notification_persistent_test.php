@@ -34,6 +34,11 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         sets_up_courses,
         sets_up_notifications;
 
+    public function test_has_a_notification_type_key()
+    {
+        $this->assertEquals('event', event_notification::$notification_type_key);
+    }
+
     public function test_creates_an_event_notification()
     {
         // reset all changes automatically after this test

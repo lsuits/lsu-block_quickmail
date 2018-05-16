@@ -26,6 +26,8 @@ namespace block_quickmail\persistents\interfaces;
 
 interface notification_type_interface {
 
+    // public static $notification_type_key;
+
     public function get_notification();
 
     public function get_notification_model();
