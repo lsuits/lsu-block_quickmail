@@ -38,6 +38,9 @@ interface schedulable_interface {
     public function set_next_run_time();
     public function is_running();
     public function increment_next_run_time();
+    public function toggle_running_status($is_running);
     public function run_scheduled();
+    public function handle_schedule_pre_run_actions();
+    public function handle_schedule_post_run_actions();
 
 }

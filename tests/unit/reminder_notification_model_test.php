@@ -21,21 +21,29 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+ 
+require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-////////////////////////////////////////
-///
-/// REGISTER ALL TRAITS HERE
-/// 
-///////////////////////////////////////
+class block_quickmail_reminder_notification_model_testcase extends advanced_testcase {
+    
+    use has_general_helpers,
+        sets_up_courses,
+        sets_up_notifications;
 
-require_once(dirname(__FILE__) . '/creates_message_records.php');
-require_once(dirname(__FILE__) . '/fires_events.php');
-require_once(dirname(__FILE__) . '/has_general_helpers.php');
-require_once(dirname(__FILE__) . '/sends_emails.php');
-require_once(dirname(__FILE__) . '/sends_messages.php');
-require_once(dirname(__FILE__) . '/sets_up_courses.php');
-require_once(dirname(__FILE__) . '/submits_compose_message_form.php');
-require_once(dirname(__FILE__) . '/submits_create_alternate_form.php');
-require_once(dirname(__FILE__) . '/assigns_mentors.php');
-require_once(dirname(__FILE__) . '/sets_up_notifications.php');
-require_once(dirname(__FILE__) . '/sets_up_notification_models.php');
+    public function test_something()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+
+        $this->dd('asasasas');
+    }
+
+    ///////////////////////////////////////////////
+    ///
+    /// HELPERS
+    /// 
+    //////////////////////////////////////////////
+    
+    // 
+
+}

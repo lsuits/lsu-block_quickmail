@@ -86,7 +86,9 @@
             <!-- repos (NOT DONE) -->
             <exclude>tests/unit/scheduable_repo_test.php</exclude>
 
-            <!-- notifications -->
+            <!-- notification models -->
+            <exclude>tests/unit/notification_model_test.php</exclude>
+            <exclude>tests/unit/reminder_notification_model_test.php</exclude>
             <!-- <exclude>tests/unit/non_participation_reminder_notification_model_test.php</exclude> -->
 
         </testsuite>

@@ -8,14 +8,14 @@ use block_quickmail\persistents\interfaces\notification_type_interface;
 abstract class notification_model implements notification_model_interface {
 
     /**
-     * Returns a notification model class name given a notification_type_interface's type
+     * Returns a notification model class name given a notification_type_interface's model
      * 
-     * @param  string  $type
+     * @param  string  $model
      * @return string
      */
-    protected static function get_model_class_name($type)
+    protected static function get_model_class_name($model)
     {
-        return str_replace('-', '_', $type) . '_model';
+        return str_replace('-', '_', $model) . '_model';
     }
 
     /**
@@ -28,7 +28,7 @@ abstract class notification_model implements notification_model_interface {
     {
         $notification = $notification_type_interface->get_notification();
 
-        $class = 'block_quickmail\notifier\models\\' . $notification->get('type') . '\\' . self::get_model_class_name($notification_type_interface->get('type'));
+        $class = 'block_quickmail\notifier\models\\' . $notification->get('type') . '\\' . self::get_model_class_name($notification_type_interface->get('model'));
 
         return new $class($notification_type_interface, $notification);
     }

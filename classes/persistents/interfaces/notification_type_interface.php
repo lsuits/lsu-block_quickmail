@@ -30,4 +30,6 @@ interface notification_type_interface {
 
     public function get_notification_model();
 
+    public function notify();
+
 }

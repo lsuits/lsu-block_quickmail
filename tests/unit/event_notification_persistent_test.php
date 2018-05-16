@@ -46,7 +46,7 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         $event_notification = event_notification::create_type('assignment-submitted', $course, $user_teacher, $this->get_event_notification_params());
 
         $this->assertInstanceOf(event_notification::class, $event_notification);
-        $this->assertEquals('assignment-submitted', $event_notification->get('type'));
+        $this->assertEquals('assignment-submitted', $event_notification->get('model'));
         $this->assertEquals($this->get_event_notification_params('time_delay'), $event_notification->get('time_delay'));
 
         // get notification from event_notification

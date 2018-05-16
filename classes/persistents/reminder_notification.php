@@ -69,7 +69,7 @@ class reminder_notification extends persistent implements notification_type_inte
 			'notification_id' => [
 				'type' => PARAM_INT,
 			],
-			'type' => [
+			'model' => [
 				'type' => PARAM_TEXT,
 			],
 			'object_id' => [
@@ -107,21 +107,21 @@ class reminder_notification extends persistent implements notification_type_inte
 	}
 
 	/**
-	 * Creates and returns a reminder notification of the given type and object for the given course and user
+	 * Creates and returns a reminder notification of the given model and object for the given course and user
 	 * 
-	 * @param  string  $type    a reminder_notification_type key
+	 * @param  string  $model    a reminder_notification_model key
 	 * @param  object  $object  the object that is to be evaluated by this reminder notification
 	 * @param  object  $course
 	 * @param  object  $user
 	 * @param  array   $params
 	 * @return reminder_notification
 	 */
-	public static function create_type($type, $object = null, $course, $user, $params)
+	public static function create_type($model, $object = null, $course, $user, $params)
 	{
 		$notification = notification::create_for_course_user('reminder', $course, $user, $params);
 
 		$reminder_notification = self::create_for_notification($notification, array_merge([
-			'type' => $type,
+			'model' => $model,
 			'object_id' => ! empty($object) ? $object->id : 0, // may need to write helper class to get this id
 		], $params));
 
@@ -159,7 +159,7 @@ class reminder_notification extends persistent implements notification_type_inte
 
 			$reminder_notification = self::create_new([
 				'notification_id' => $notification->get('id'),
-				'type' => $params['type'],
+				'model' => $params['model'],
 				'object_id' => $params['object_id'],
 				'schedule_id' => $schedule->get('id'),
 			]);
@@ -176,6 +176,81 @@ class reminder_notification extends persistent implements notification_type_inte
 		}
 
 		return $reminder_notification;
+	}
+
+	///////////////////////////////////////////////
+    ///
+    ///  GETTERS
+    /// 
+    ///////////////////////////////////////////////
+
+	/**
+	 * Returns this reminder_notification's max_per_interval as an int
+	 * 
+	 * @return int
+	 */
+	public function max_per_interval()
+	{
+		return (int) $this->get('max_per_interval');
+	}
+
+	///////////////////////////////////////////////
+    ///
+    ///  METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+	/**
+	 * Returns an array of user ids whom have already been notified at least the "max_per_interval" times since last run
+	 * 
+	 * @return array
+	 */
+	public function get_user_ids_to_ignore()
+	{
+		//
+	}
+
+	///////////////////////////////////////////////
+    ///
+    ///  SCHEDULABLE INTERFACE
+    /// 
+    ///////////////////////////////////////////////
+
+    public function run_scheduled()
+    {
+        $this->handle_schedule_pre_run_actions();
+
+        $this->notify();
+
+        $this->handle_schedule_post_run_actions();
+    }
+
+    ///////////////////////////////////////////////
+    ///
+    ///  NOTIFICATION TYPE INTERFACE
+    /// 
+    ///////////////////////////////////////////////
+
+	public function notify()
+	{
+		// instantiate this notification_type_interface's notification model
+		$model = $this->get_notification_model();
+
+		// pull all users to be notified
+		$user_ids = $model->get_user_ids_to_notify();
+
+		// if this reminder_notification has a max_per_interval has
+		if ($this->max_per_interval()) {
+			// pull all users to be ignored based on this reminder_notification's configuration
+			$ignore_user_ids = $this->get_user_ids_to_ignore();
+
+			// filter out all of the user ids to ignore from the user ids to be notified
+			$user_ids = array_filter($user_ids, function ($id) use ($ignore_user_ids) {
+	            return in_array($id, $ignore_user_ids);
+	        });
+		}
+		
+		return $user_ids;
 	}
 
 }

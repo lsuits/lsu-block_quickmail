@@ -8,6 +8,6 @@ interface notification_model_interface {
     // public $object;
     // public $required_conditions;
 
-    public function get_substitution_codes();
+    public static function get_substitution_codes();
 
 }

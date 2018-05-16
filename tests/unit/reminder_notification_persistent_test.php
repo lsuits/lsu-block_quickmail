@@ -48,9 +48,10 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         $reminder_notification = reminder_notification::create_type('non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params());
 
         $this->assertInstanceOf(reminder_notification::class, $reminder_notification);
-        $this->assertEquals('non-participation', $reminder_notification->get('type'));
+        $this->assertEquals('non-participation', $reminder_notification->get('model'));
         $this->assertEquals($course->id, $reminder_notification->get('object_id'));
         $this->assertEquals($this->get_reminder_notification_params('max_per_interval'), $reminder_notification->get('max_per_interval'));
+        $this->assertEquals($this->get_reminder_notification_params('max_per_interval'), $reminder_notification->max_per_interval());
         $this->assertEquals(null, $reminder_notification->get('last_run_at'));
 
         // get notification from reminder_notification

@@ -57,7 +57,7 @@ class event_notification extends persistent implements notification_type_interfa
 			'notification_id' => [
 				'type' => PARAM_INT,
 			],
-			'type' => [
+			'model' => [
 				'type' => PARAM_TEXT,
 			],
 			'time_delay' => [
@@ -72,20 +72,20 @@ class event_notification extends persistent implements notification_type_interfa
 	}
 
 	/**
-	 * Creates and returns an event notification of the given type for the given course and user
+	 * Creates and returns an event notification of the given model for the given course and user
 	 * 
-	 * @param  string  $type  an event_notification_type key
+	 * @param  string  $model  an event_notification_model key
 	 * @param  object  $course
 	 * @param  object  $user
 	 * @param  array   $params
 	 * @return event_notification
 	 */
-	public static function create_type($type, $course, $user, $params)
+	public static function create_type($model, $course, $user, $params)
 	{
 		$notification = notification::create_for_course_user('event', $course, $user, $params);
 
 		$event_notification = self::create_for_notification($notification, array_merge([
-			'type' => $type,
+			'model' => $model,
 		], $params));
 
 		return $event_notification;
@@ -105,7 +105,7 @@ class event_notification extends persistent implements notification_type_interfa
 		try {
 			$event_notification = self::create_new([
 				'notification_id' => $notification->get('id'),
-				'type' => $params['type'],
+				'model' => $params['model'],
 				'time_delay' => $params['time_delay'],
 			]);
 		
@@ -115,6 +115,17 @@ class event_notification extends persistent implements notification_type_interfa
 		}
 
 		return $event_notification;
+	}
+
+	///////////////////////////////////////////////
+    ///
+    ///  NOTIFICATION TYPE INTERFACE
+    /// 
+    ///////////////////////////////////////////////
+
+	public function notify()
+	{
+		// this is where the magic happens
 	}
 
 }

@@ -185,7 +185,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this event notification."/>
-        <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the event notification type."/>
+        <FIELD NAME="model" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the event notification model."/>
         <FIELD NAME="time_delay" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that this event notification will be delayed once triggered to send."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
@@ -200,7 +200,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this reminder notification."/>
-        <FIELD NAME="type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the reminder notification type."/>
+        <FIELD NAME="model" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the reminder notification model."/>
         <FIELD NAME="object_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the specific object that this reminder notification was created for."/>
         <FIELD NAME="max_per_interval" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of reminder notifications to be sent to a specific user within a single interval."/>
         <FIELD NAME="schedule_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the schedule for this reminder notification."/>

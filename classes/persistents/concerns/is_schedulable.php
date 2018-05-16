@@ -157,9 +157,37 @@ trait is_schedulable {
         $this->update();
     }
 
-    public function run_scheduled()
+    /**
+     * Updates the sending status of this schedulable
+     * 
+     * @param  bool  $is_running  running status
+     * @return void
+     */
+    public function toggle_running_status($is_running)
     {
-        //
+        $this->set('is_running', (int) $is_running);
+        $this->update();
+    }
+
+    /**
+     * Executes standard "pre-run" actions for a schedulable
+     * 
+     * @return void
+     */
+    public function handle_schedule_pre_run_actions()
+    {
+        $this->toggle_running_status(true);
+    }
+
+    /**
+     * Executes standard "post-run" actions for a schedulable
+     * 
+     * @return void
+     */
+    public function handle_schedule_post_run_actions()
+    {
+        $this->set_next_run_time();
+        $this->toggle_running_status(false);
     }
 
 }
