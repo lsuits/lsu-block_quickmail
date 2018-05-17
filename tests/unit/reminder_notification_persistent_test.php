@@ -68,7 +68,7 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         $this->assertEquals('reminder', $notification->get('type'));
         $this->assertEquals($this->get_reminder_notification_params('name'), $notification->get('name'));
         $this->assertEquals($this->get_reminder_notification_params('is_enabled'), $notification->get('is_enabled'));
-        $this->assertEquals($this->get_reminder_notification_params('conditions'), $notification->get('conditions'));
+        $this->assertEquals('time_amount:4,time_unit:day', $notification->get('conditions'));
         $this->assertEquals($this->get_reminder_notification_params('message_type'), $notification->get('message_type'));
         $this->assertEquals($this->get_reminder_notification_params('alternate_email_id'), $notification->get('alternate_email_id'));
         $this->assertEquals($this->get_reminder_notification_params('signature_id'), $notification->get('signature_id'));

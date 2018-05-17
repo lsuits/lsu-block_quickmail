@@ -35,7 +35,7 @@ class block_quickmail_notification_model_testcase extends advanced_testcase {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
 
-        $this->dd('asasasas');
+        $this->assertTrue(true);
     }
 
     ///////////////////////////////////////////////

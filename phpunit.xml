@@ -78,6 +78,7 @@
             <!-- NEW TESTS... -->
             
             <!-- persistents -->
+            <exclude>tests/unit/notification_persistent_test.php</exclude>
             <exclude>tests/unit/event_notification_persistent_test.php</exclude>
             <exclude>tests/unit/reminder_notification_persistent_test.php</exclude>
             <exclude>tests/unit/schedule_persistent_test.php</exclude>
@@ -89,7 +90,10 @@
             <!-- notification models -->
             <exclude>tests/unit/notification_model_test.php</exclude>
             <exclude>tests/unit/reminder_notification_model_test.php</exclude>
-            <!-- <exclude>tests/unit/non_participation_reminder_notification_model_test.php</exclude> -->
+            <exclude>tests/unit/non_participation_reminder_notification_model_test.php</exclude>
+
+            <!-- notification conditions -->
+            <exclude>tests/unit/notification_condition_test.php</exclude>
 
         </testsuite>
     </testsuites>

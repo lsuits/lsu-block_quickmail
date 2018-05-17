@@ -91,13 +91,16 @@ trait sets_up_notifications {
             'subject' => 'This is the subject',
             'body' => 'This is the body',
             'is_enabled' => 1,
-            'conditions' => '',
             'alternate_email_id' => 0,
             'signature_id' => 0,
             'editor_format' => 1,
             'send_receipt' => 0,
             'send_to_mentors' => 0,
             'no_reply' => 1,
+            //
+            'conditions' => '',
+            'condition_time_amount' => 4,
+            'condition_time_unit' => 'day',
         ];
     }
 

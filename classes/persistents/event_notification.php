@@ -85,11 +85,13 @@ class event_notification extends persistent implements notification_type_interfa
 	 */
 	public static function create_type($model, $course, $user, $params)
 	{
+		$params = array_merge([
+			'model' => $model,
+		], $params);
+
 		$notification = notification::create_for_course_user('event', $course, $user, $params);
 
-		$event_notification = self::create_for_notification($notification, array_merge([
-			'model' => $model,
-		], $params));
+		$event_notification = self::create_for_notification($notification, $params);
 
 		return $event_notification;
 	}

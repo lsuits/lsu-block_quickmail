@@ -24,18 +24,21 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-class block_quickmail_reminder_notification_model_testcase extends advanced_testcase {
+use block_quickmail\persistents\notification;
+
+class block_quickmail_notification_persistent_testcase extends advanced_testcase {
     
     use has_general_helpers,
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_something()
+    public function test_gets_required_conditions_for_type()
     {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
+        $condition_keys = notification::get_required_conditions_for_type('reminder', 'non-participation');
 
-        $this->assertTrue(true);
+        $this->assertCount(2, $condition_keys);
+        $this->assertContains('time_amount', $condition_keys);
+        $this->assertContains('time_unit', $condition_keys);
     }
 
     ///////////////////////////////////////////////

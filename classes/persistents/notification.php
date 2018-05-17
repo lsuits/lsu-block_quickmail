@@ -32,6 +32,7 @@ use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\event_notification;
 use block_quickmail\persistents\reminder_notification;
+use block_quickmail\notifier\notification_condition;
 
 class notification extends persistent {
  
@@ -48,7 +49,7 @@ class notification extends persistent {
 		'name', 
 		'message_type', 
 		'subject', 
-		'body'
+		'body',
 	];
 
 	public static $default_creation_params = [
@@ -143,23 +144,13 @@ class notification extends persistent {
 	/**
 	 * Returns the notification type interface instance of this notification
 	 *
-	 * Based off of "type" property, defaults to null (should not happen)
-	 * 
 	 * @return \block_quickmail\persistents\interfaces\notification_type_interface (event/reminder)
 	 */
 	public function get_notification_type_interface()
 	{
-		try {
-			if ($this->get('type') == 'event') {
-				return event_notification::get_record(['notification_id' => $this->get('id')]);
-			} else if ($this->get('type') == 'reminder') {
-				return reminder_notification::get_record(['notification_id' => $this->get('id')]);
-			} else {
-				throw new \Exception;
-			}
-		} catch (\Exception $e) {
-			return null;
-		}
+		$class = 'block_quickmail\persistents\\' . $this->get('type') . '_notification';
+
+		return $class::get_record(['notification_id' => $this->get('id')]);
 	}
 
 	///////////////////////////////////////////////
@@ -186,6 +177,8 @@ class notification extends persistent {
 
 	/**
 	 * Creates a notification of a given type for a given course and user
+	 *
+	 * Throws an exception if any missing param keys, see below
 	 * 
 	 * @param  string  $type   event|reminder
 	 * @param  object  $course
@@ -195,29 +188,89 @@ class notification extends persistent {
 	 *         message_type (required)
 	 *         subject      (required)
 	 *         body         (required)
+	 *         condition_ ...
 	 *         is_enabled
-	 *         conditions
 	 *         alternate_email_id
 	 *         signature_id
 	 *         editor_format
 	 *         send_receipt
 	 *         send_to_mentors
 	 *         no_reply
+	 *         model (key)
 	 * @return notification
+	 * @throws \Exception
 	 */
 	public static function create_for_course_user($type, $course, $user, $params)
 	{
+		// check for required conditions, if any, and get sanitized for storage
+		$conditions = self::sanitize_condition_params($params, $type, $params['model']);
+
 		$params = self::sanitize_creation_params($params);
 
 		$data = array_merge($params, [
 			'type' => $type,
 			'course_id' => $course->id,
 			'user_id' => $user->id,
+			'conditions' => $conditions
 		]);
 
 		$notification = self::create_new($data);
 
 		return $notification;
 	}
+
+	///////////////////////////////////////////////
+	///
+	///  CONDITIONS
+	/// 
+	///////////////////////////////////////////////
+
+	/**
+	 * Returns an array of required condition keys for the given type of notification, and model key
+	 * 
+	 * @param  string  $type
+	 * @param  string  $model_key
+	 * @param  string  $prepend   optional, if set will prepend output keys with $prepend followed by underscore
+	 * @return array
+	 */
+	public static function get_required_conditions_for_type($type, $model_key, $prepend = '')
+	{
+		return notification_condition::get_required_condition_keys($type, $model_key, $prepend);
+	}
+
+	/**
+	 * Throws an exception if required conditions for the given type and model for the given params and returns
+	 * a condition string formatted for storage
+	 *
+	 * Filters out any extraneous keys outside of the required keys
+	 *
+	 * @param  array  $params  (with condition keys prepended with "condition_")
+	 * @param  string $type
+	 * @param  string $model_key
+	 * @return string
+	 * @throws \Exception
+	 */
+	public static function sanitize_condition_params($params, $type, $model_key)
+    {
+    	// get required keys for this type and model as an array, prepended with "condition_"
+    	$required_keys = self::get_required_conditions_for_type($type, $model_key, 'condition');
+
+        // throw exception if any required condition key is missing from input params
+        self::check_required_params($required_keys, $params);
+
+        // filter out any unnecessary condition keys
+        $filtered_conditions = array_filter(array_keys($params), function($key) use ($required_keys) {
+        	return in_array($key, $required_keys) && strpos($key, 'condition_') == 0;
+        });
+
+        $conditions = [];
+
+        foreach ($filtered_conditions as $c) {
+        	$key = str_replace('condition_', '', $c);
+        	$conditions[$key] = $params[$c];
+        }
+
+        return notification_condition::format_for_storage($conditions);
+    }
 
 }

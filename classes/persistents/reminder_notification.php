@@ -110,21 +110,28 @@ class reminder_notification extends persistent implements notification_type_inte
 	}
 
 	/**
-	 * Creates and returns a reminder notification of the given model and object for the given course and user
+	 * Creates and returns a reminder notification of the given model key and object for the given course and user
+	 *
+	 * Throws an exception if any missing param keys
 	 * 
-	 * @param  string  $model    a reminder_notification_model key
-	 * @param  object  $object  the object that is to be evaluated by this reminder notification
+	 * @param  string  $model_key    a reminder_notification_model key
+	 * @param  object  $object       the object that is to be evaluated by this reminder notification
 	 * @param  object  $course
 	 * @param  object  $user
 	 * @param  array   $params
 	 * @return reminder_notification
+	 * @throws \Exception
 	 */
-	public static function create_type($model, $object = null, $course, $user, $params)
+	public static function create_type($model_key, $object = null, $course, $user, $params)
 	{
+		// add the model key to the params
+		$params = array_merge($params, ['model' => $model_key]);
+
+		// create the parent notification
 		$notification = notification::create_for_course_user('reminder', $course, $user, $params);
 
+		// create the reminder notification
 		$reminder_notification = self::create_for_notification($notification, array_merge([
-			'model' => $model,
 			'object_id' => ! empty($object) ? $object->id : 0, // may need to write helper class to get this id
 		], $params));
 
