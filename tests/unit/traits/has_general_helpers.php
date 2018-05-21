@@ -28,6 +28,8 @@
 /// 
 ////////////////////////////////////////////////////
 
+use block_quickmail\messenger\substitution_code;
+
 trait has_general_helpers {
 
     public function dd($thing)
@@ -53,7 +55,7 @@ trait has_general_helpers {
 
         $default_default_message_type = $default_message_type == 'all' ? 'email' : $default_message_type;
 
-        $supported_user_fields_string = implode(',', block_quickmail_config::get_supported_data_injection_fields());
+        $supported_user_fields_string = implode(',', substitution_code::get('user'));
 
         $params = [];
 
@@ -67,7 +69,6 @@ trait has_general_helpers {
         $params['additionalemail'] = array_key_exists('additionalemail', $override_params) ? $override_params['additionalemail'] : (int) get_config('moodle', 'block_quickmail_additionalemail');
         $params['message_types_available'] = array_key_exists('message_types_available', $override_params) ? $override_params['message_types_available'] : $default_message_type;
         $params['default_message_type'] = array_key_exists('default_message_type', $override_params) ? $override_params['default_message_type'] : $default_default_message_type;
-        $params['allowed_user_fields'] = array_key_exists('allowed_user_fields', $override_params) ? $override_params['allowed_user_fields'] : $supported_user_fields_string;
 
         return $params;
     }

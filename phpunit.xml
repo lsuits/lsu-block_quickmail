@@ -95,6 +95,9 @@
             <!-- notification conditions -->
             <exclude>tests/unit/notification_condition_test.php</exclude>
 
+            <!-- substitution codes -->
+            <!-- <exclude>tests/unit/substitution_code_test.php</exclude> -->
+
         </testsuite>
     </testsuites>
 

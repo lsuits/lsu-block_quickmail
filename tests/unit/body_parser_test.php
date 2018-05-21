@@ -70,6 +70,7 @@ class block_quickmail_body_parser_testcase extends advanced_testcase {
     {
         $this->resetAfterTest(true);
         
+        // @TODO : FIX THIS!!!
         $this->update_system_config_value('block_quickmail_allowed_user_fields', 'this,that');
 
         $body = 'Hello world! Here is [:this:], [:that:], and the [:other:]!';

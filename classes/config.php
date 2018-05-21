@@ -24,20 +24,6 @@
 
 class block_quickmail_config {
 
-    public static $supported_data_fields = [
-        'firstname',
-        'middlename',
-        'lastname',
-        'email',
-        'alternatename',
-        'coursefullname',
-        'courseshortname',
-        'courseidnumber',
-        'coursesummary',
-        'coursestartdate',
-        'courseenddate',
-    ];
-
     public static $course_configurable_fields = [
         'allowstudents',
         'roleselection',
@@ -85,7 +71,6 @@ class block_quickmail_config {
             'default_message_type'    => $default_message_type == 'all' 
                 ? 'email' 
                 : $default_message_type,
-            'allowed_user_fields'       => get_config('moodle', 'block_quickmail_allowed_user_fields')
         ];
 
         if ($transformed) {
@@ -151,7 +136,6 @@ class block_quickmail_config {
             'additionalemail'           => $block_config['additionalemail'],
             'message_types_available' => $block_config['message_types_available'],
             'default_message_type'    => $course_default_message_type,
-            'allowed_user_fields'       => $block_config['allowed_user_fields']
         ];
 
         if ($transformed) {
@@ -196,19 +180,9 @@ class block_quickmail_config {
             'additionalemail'           => (int) $params['additionalemail'],
             'message_types_available'   => (string) $params['message_types_available'],
             'default_message_type'      => (string) $params['default_message_type'],
-            'allowed_user_fields'       => $params['allowed_user_fields'] == '' ? [] : explode(',', $params['allowed_user_fields'])
         ];
 
         return $key ? $transformed[$key] : $transformed;
-    }
-
-    /**
-     * Returns the user table field names that may be configured to be injected dynamically into messages
-     * 
-     * @return array
-     */
-    public static function get_supported_data_injection_fields() {
-        return self::$supported_data_fields;
     }
 
     /**

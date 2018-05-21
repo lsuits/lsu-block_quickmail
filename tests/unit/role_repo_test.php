@@ -63,7 +63,6 @@ class block_quickmail_role_repo_testcase extends advanced_testcase {
             'additionalemail' => '1',
             'default_message_type' => 'email',
             'message_types_available' => 'email',
-            'allowed_user_fields' => 'firstname',
         ];
 
         // update the courses config

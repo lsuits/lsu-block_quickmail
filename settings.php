@@ -221,24 +221,4 @@ if($ADMIN->fulltree) {
         )
     );
 
-    ///////////////////////////////////////////////////////////
-    ///
-    ///  CUSTOM USER DATA INJECTION
-    ///  
-    ///////////////////////////////////////////////////////////
-
-    // get all supported user fields (currently hard-coded)
-    // TODO: change to allow for more fields?
-    $supported_user_fields = block_quickmail_config::get_supported_data_injection_fields();
-
-    $settings->add(
-        new admin_setting_configmultiselect(
-            'block_quickmail_allowed_user_fields',
-            block_quickmail_string::get('select_allowed_user_fields'), 
-            block_quickmail_string::get('select_allowed_user_fields_desc'),
-            [], // <-- default
-            array_combine($supported_user_fields, $supported_user_fields)
-        )
-    );
-
 }

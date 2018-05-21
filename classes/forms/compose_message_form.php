@@ -32,6 +32,7 @@ use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
+use block_quickmail\messenger\substitution_code;
 
 class compose_message_form extends \moodleform {
 
@@ -258,10 +259,8 @@ class compose_message_form extends \moodleform {
             PARAM_RAW
         );
 
-        if ($this->show_show_allowed_user_fields()) {
-            $mform->addElement('html', '<div class="col-md-3"></div>');
-            $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
-        }
+        $mform->addElement('html', '<div class="col-md-3"></div>');
+        $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
 
         ////////////////////////////////////////////////////////////
         ///  attachments (filemanager)
@@ -501,25 +500,16 @@ class compose_message_form extends \moodleform {
     }
 
     /**
-     * Reports whether or not this form should display the "allowed user fields" helper display
-     * 
-     * @return bool
-     */
-    private function show_show_allowed_user_fields() {
-        return (bool) count($this->get_allowed_user_fields());
-    }
-
-    /**
      * Returns an array of user-relative data fields that may be injected into the message body
      * 
      * @return array
      */
     private function get_allowed_user_fields() {
-        return $this->course_config_array['allowed_user_fields'];
+        return substitution_code::get('user');
     }
 
     /**
-     * Returns the HTML that should be displayed as the content of the "allowed user fields" helper display
+     * Returns the HTML that should be displayed as the content of the "user substitution codes" helper display
      * 
      * @return string
      */

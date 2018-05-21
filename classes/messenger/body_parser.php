@@ -52,6 +52,7 @@ class body_parser {
      */
     private function set_supported_keys()
     {
+        // @TODO : FIX THIS!!
         $this->supported_keys = block_quickmail_config::get('allowed_user_fields');
     }
 

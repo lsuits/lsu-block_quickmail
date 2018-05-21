@@ -96,7 +96,6 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'additionalemail' => '1',
             'default_message_type' => 'email',
             'message_types_available' => 'email',
-            'allowed_user_fields' => 'firstname',
         ];
 
         // update the courses config
@@ -129,13 +128,6 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         // $course = $this->getDataGenerator()->create_course(['groupmode' => 0]);
     }
 
-    public function test_transforms_allowed_user_fields_into_array()
-    {
-        $transformed = block_quickmail_config::get_transformed($this->get_course_config_params());
-
-        $this->assertInternalType('array', $transformed['allowed_user_fields']);
-    }
-
     public function test_updates_a_courses_config()
     {
         $this->resetAfterTest(true);
@@ -156,7 +148,6 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'additionalemail' => '1',
             'default_message_type' => 'message',
             'message_types_available' => 'all',
-            'allowed_user_fields' => 'firstname',
         ];
 
         // update the courses config
@@ -178,7 +169,6 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertEquals($default_params['allow_mentor_copy'], $course_config['allow_mentor_copy']);
         $this->assertEquals($default_params['additionalemail'], $course_config['additionalemail']);
         $this->assertEquals($default_params['message_types_available'], $course_config['message_types_available']);
-        $this->assertEquals($default_params['allowed_user_fields'], $course_config['allowed_user_fields']);
     }
 
     public function test_restores_a_courses_config_to_default()
@@ -200,7 +190,6 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'additionalemail' => '1',
             'default_message_type' => 'email',
             'message_types_available' => 'email',
-            'allowed_user_fields' => 'firstname',
         ];
 
         // update the courses config
@@ -232,7 +221,6 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertEquals($default_params['allow_mentor_copy'], $course_config['allow_mentor_copy']);
         $this->assertEquals($default_params['additionalemail'], $course_config['additionalemail']);
         $this->assertEquals($default_params['message_types_available'], $course_config['message_types_available']);
-        $this->assertEquals($default_params['allowed_user_fields'], $course_config['allowed_user_fields']);
     }
 
 }

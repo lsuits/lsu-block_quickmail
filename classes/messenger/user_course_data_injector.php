@@ -25,6 +25,7 @@
 namespace block_quickmail\messenger;
 
 use block_quickmail\messenger\body_parser;
+use block_quickmail\messenger\substitution_code;
 use block_quickmail_config;
 
 class user_course_data_injector {
@@ -67,7 +68,7 @@ class user_course_data_injector {
             return;
         }
 
-        $supported_keys = block_quickmail_config::get_supported_data_injection_fields();
+        $supported_keys = substitution_code::get('user');
 
         foreach ($this->keys as $key) {
             if ( ! in_array($key, $supported_keys)) {
