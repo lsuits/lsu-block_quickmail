@@ -148,9 +148,14 @@ class notification extends persistent {
 	 */
 	public function get_notification_type_interface()
 	{
-		$class = 'block_quickmail\persistents\\' . $this->get('type') . '_notification';
+		$class = $this->get_notification_type_interface_persistent_class_name();
 
 		return $class::get_record(['notification_id' => $this->get('id')]);
+	}
+
+	public function get_notification_type_interface_persistent_class_name()
+	{
+		return 'block_quickmail\persistents\\' . $this->get('type') . '_notification';
 	}
 
 	///////////////////////////////////////////////

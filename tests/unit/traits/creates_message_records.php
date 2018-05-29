@@ -31,7 +31,7 @@
 trait creates_message_records {
 
     // additional_data (recipient_users)
-    public function create_course_message($course, $sending_user, array $additional_data = [], array $override_params = [])
+    public function create_compose_message($course, $sending_user, array $additional_data = [], array $override_params = [])
     {
         $params = $this->get_create_course_message_params($override_params);
 

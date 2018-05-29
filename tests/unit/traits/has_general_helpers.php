@@ -28,7 +28,7 @@
 /// 
 ////////////////////////////////////////////////////
 
-use block_quickmail\messenger\substitution_code;
+use block_quickmail\messenger\message\substitution_code;
 
 trait has_general_helpers {
 

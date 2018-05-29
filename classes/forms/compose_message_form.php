@@ -32,7 +32,7 @@ use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\persistents\signature;
 use block_quickmail\persistents\alternate_email;
-use block_quickmail\messenger\substitution_code;
+use block_quickmail\messenger\message\substitution_code;
 
 class compose_message_form extends \moodleform {
 

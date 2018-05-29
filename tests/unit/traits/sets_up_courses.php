@@ -256,4 +256,16 @@ trait sets_up_courses {
         $DB->insert_records('block_quickmail_config', $dataobjects);
     }
 
+    public function report_user_access_in_course($user, $course, $time)
+    {
+        global $DB;
+
+        $record = new stdClass();
+        $record->userid = $user->id;
+        $record->courseid = $course->id;
+        $record->timeaccess = $time;
+        
+        $DB->insert_record('user_lastaccess', $record);
+    }
+
 }

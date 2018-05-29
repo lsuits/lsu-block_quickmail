@@ -25,7 +25,7 @@
 namespace block_quickmail\messenger;
 
 use block_quickmail\messenger\body_parser;
-use block_quickmail\messenger\substitution_code;
+use block_quickmail\messenger\message\substitution_code;
 use block_quickmail_config;
 
 class user_course_data_injector {

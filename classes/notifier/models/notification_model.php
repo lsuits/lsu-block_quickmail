@@ -65,6 +65,16 @@ abstract class notification_model implements notification_model_interface {
         return str_replace('-', '_', $model) . '_model';
     }
 
+    /**
+     * Returns the type of object in which this notification model uses
+     * 
+     * @return string
+     */
+    public function get_object_type()
+    {
+        return self::$object_type;
+    }
+
     ///////////////////////////////////////////////
     ///
     ///  GETTERS

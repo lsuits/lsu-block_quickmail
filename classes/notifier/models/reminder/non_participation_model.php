@@ -9,7 +9,7 @@ class non_participation_model extends reminder_notification_model implements rem
 
     // public static $component = 'course';
 
-    // public static $object = 'course';
+    public static $object_type = 'course';
 
     public static $condition_keys = [
         'time_amount',

@@ -67,7 +67,7 @@
             <exclude>tests/unit/signature_appender_test.php</exclude>
             <exclude>tests/unit/body_parser_test.php</exclude>
             <exclude>tests/unit/user_course_data_injector_test.php</exclude>
-            <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
+            <!-- <exclude>tests/unit/course_recipient_send_factory_test.php</exclude> -->
             <exclude>tests/unit/save_draft_message_validator_test.php</exclude>
             
             <!-- messaging tasks -->
@@ -96,7 +96,9 @@
             <exclude>tests/unit/notification_condition_test.php</exclude>
 
             <!-- substitution codes -->
-            <!-- <exclude>tests/unit/substitution_code_test.php</exclude> -->
+            <exclude>tests/unit/substitution_code_test.php</exclude>
+            <exclude>tests/unit/body_substitution_code_parser_test.php</exclude>
+            <exclude>tests/unit/formats_message_recipient_compose_message_body_test.php</exclude>
 
         </testsuite>
     </testsuites>

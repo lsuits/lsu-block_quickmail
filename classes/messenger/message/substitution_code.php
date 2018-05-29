@@ -22,7 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\messenger;
+namespace block_quickmail\messenger\message;
+
+use block_quickmail\persistents\message;
 
 class substitution_code {
 
@@ -30,9 +32,8 @@ class substitution_code {
         'user' => [
             'firstname',
             'lastname',
-            'firstname',
+            'fullname',
             'middlename',
-            'lastname',
             'email',
             'alternatename',
         ],
@@ -44,13 +45,13 @@ class substitution_code {
             'coursestartdate',
             'courseenddate',
             'courselink',
-            'seensince',
+            'courselastaccess',
         ],
         'activity' => [
             'activityname',
             'activityduedate',
             'activitylink',
-            'gradelink',
+            'activitygradelink',
         ],
     ];
 
@@ -78,6 +79,29 @@ class substitution_code {
     }
 
     /**
+     * Returns an array of substitution code classes which are used in a given message
+     * 
+     * @param  message $message
+     * @return array
+     */
+    public static function get_code_classes_from_message(message $message)
+    {
+        // user class is always included
+        $codes = ['user'];
+        
+        // if this is a course-based message, add the course class
+        if ($message->get_message_scope() == 'compose') {
+            $codes[] = 'course';
+        }
+
+        if ($notification_type_interface = $message->get_notification_type_interface()) {
+            $codes[] = $notification_type_interface->get_notification_model()->get_object_type();
+        }
+
+        return array_unique($codes);
+    }
+
+    /**
      * Returns an array of codes for the given types
      * 
      * @param  array  $types  type keys
@@ -94,6 +118,28 @@ class substitution_code {
         }
 
         return $codes;
+    }
+
+    /**
+     * Returns the delimiter that should be typed in front of the substution code
+     * @TODO: make this configurable!!
+     * 
+     * @return string
+     */
+    public static function first_delimiter()
+    {
+        return '[:';
+    }
+
+    /**
+     * Returns the delimiter that should be typed behind the substution code
+     * @TODO: make this configurable!!
+     * 
+     * @return string
+     */
+    public static function last_delimiter()
+    {
+        return ':]';
     }
 
 }

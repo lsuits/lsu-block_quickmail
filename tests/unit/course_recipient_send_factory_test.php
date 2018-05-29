@@ -42,7 +42,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'message_type' => 'email'
         ]);
 
@@ -63,7 +63,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'message_type' => 'message'
         ]);
 
@@ -84,7 +84,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'message_type' => 'email'
         ]);
 
@@ -108,7 +108,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'message_type' => 'email'
         ]);
 
@@ -129,7 +129,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'message_type' => 'message'
         ]);
 
@@ -153,7 +153,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'subject' => 'This is the subject',
             'body' => 'This is the body.',
         ]);
@@ -177,7 +177,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'subject' => 'This is the subject',
             'body' => 'This is the body.',
         ]);
@@ -199,7 +199,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'body' => 'Hey there [:firstname:] [:middlename:] [:lastname:], your email address is [:email:]!',
         ]);
 
@@ -222,7 +222,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'body' => 'Hey there [:firstname:] [:middlename:] [:lastname:], your email address is [:email:]!',
         ]);
 
@@ -247,7 +247,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'subject' => 'This is the subject',
             'body' => 'This is the body.',
             'no_reply' => true,
@@ -274,7 +274,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_course_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $user_teacher, [], [
             'subject' => 'This is the subject',
             'body' => 'This is the body.',
             'no_reply' => false,

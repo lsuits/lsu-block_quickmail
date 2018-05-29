@@ -78,7 +78,8 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         $this->assertEquals($this->get_reminder_notification_params('send_receipt'), $notification->get('send_receipt'));
         $this->assertEquals($this->get_reminder_notification_params('send_to_mentors'), $notification->get('send_to_mentors'));
         $this->assertEquals($this->get_reminder_notification_params('no_reply'), $notification->get('no_reply'));
-        
+        $this->assertEquals(reminder_notification::class, $notification->get_notification_type_interface_persistent_class_name());
+
         // get notification interface (reminder) from notification
         $notification_type_interface = $notification->get_notification_type_interface();
 

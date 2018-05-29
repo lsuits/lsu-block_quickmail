@@ -30,17 +30,20 @@ use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
+use block_quickmail\persistents\concerns\can_have_a_notification;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_additional_email;
 use block_quickmail\persistents\message_attachment;
+use block_quickmail\messenger\message\substitution_code;
  
 class message extends persistent {
  
 	use enhanced_persistent,
 		belongs_to_a_course,
 		belongs_to_a_user,
+		can_have_a_notification,
 		can_be_soft_deleted;
 
 	/** Table name for the persistent. */
@@ -329,6 +332,11 @@ class message extends persistent {
 		return $this->get('course_id') == SITEID
 			? 'broadcast'
 			: 'compose';
+	}
+
+	public function get_substitution_code_classes()
+	{
+		return substitution_code::get_code_classes_from_message($this);
 	}
 
 	/**
