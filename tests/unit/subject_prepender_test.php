@@ -24,7 +24,7 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\messenger\subject_prepender;
+use block_quickmail\messenger\message\subject_prepender;
 
 class block_quickmail_subject_prepender_testcase extends advanced_testcase {
     

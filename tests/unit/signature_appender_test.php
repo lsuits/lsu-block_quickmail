@@ -24,7 +24,7 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\messenger\signature_appender;
+use block_quickmail\messenger\message\signature_appender;
 use block_quickmail\persistents\signature;
 
 class block_quickmail_signature_appender_testcase extends advanced_testcase {

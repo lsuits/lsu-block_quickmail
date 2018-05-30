@@ -71,7 +71,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($params['no_reply'], $message->get('no_reply'));
         $this->assertEquals($params['mentor_copy'], $message->get('send_to_mentors'));
         $this->assertEquals(1, $message->get('is_draft'));
-        $this->assertCount(3, $message->get_substitution_code_classes());
+        $this->assertCount(2, $message->get_substitution_code_classes());
     }
 
     public function test_getters()

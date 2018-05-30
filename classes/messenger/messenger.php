@@ -41,7 +41,7 @@ use block_quickmail\messenger\factories\course_recipient_send\recipient_send_fac
 use block_quickmail\filemanager\message_file_handler;
 use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
 use core\task\manager as task_manager;
-use block_quickmail\messenger\subject_prepender;
+use block_quickmail\messenger\message\subject_prepender;
 use block_quickmail\repos\user_repo;
 use moodle_url;
 use html_writer;

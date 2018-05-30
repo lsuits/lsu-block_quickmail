@@ -24,10 +24,10 @@
 
 namespace block_quickmail\messenger\factories\course_recipient_send;
 
-use block_quickmail\messenger\subject_prepender;
-use block_quickmail\messenger\user_course_data_injector;
+use block_quickmail\messenger\message\subject_prepender;
+use block_quickmail\messenger\message\message_body_constructor;
+use block_quickmail\messenger\message\signature_appender;
 use block_quickmail\filemanager\attachment_appender;
-use block_quickmail\messenger\signature_appender;
 use block_quickmail\repos\user_repo;
 
 /**
@@ -102,12 +102,9 @@ abstract class recipient_send_factory {
         );
         
         // format the message body to include any injected user/course data
-        $formatted_body = user_course_data_injector::get_message_body(
-            $this->message_params->userto, 
-            $course, 
-            $this->message->get('body')
-        );
+        $formatted_body = message_body_constructor::get_formatted_body($this->recipient);
 
+        // append a signature to the formatted body, if appropriate
         $formatted_body = signature_appender::append_user_signature_to_body(
             $formatted_body, 
             $this->message_params->userfrom->id,

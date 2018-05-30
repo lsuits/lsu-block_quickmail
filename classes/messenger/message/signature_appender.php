@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\messenger;
+namespace block_quickmail\messenger\message;
 
 use block_quickmail\persistents\signature;
 

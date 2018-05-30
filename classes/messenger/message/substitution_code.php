@@ -28,6 +28,7 @@ use block_quickmail\persistents\message;
 
 class substitution_code {
 
+    // code class => [codes]
     public static $codes = [
         'user' => [
             'firstname',
@@ -56,26 +57,26 @@ class substitution_code {
     ];
 
     /**
-     * Returns an array of codes for the given type
+     * Returns an array of codes for the given code class
      * 
-     * If a string is passed, will return all codes for that type
-     * If an array is passed, will return all codes for those types
+     * If a string is passed, will return all codes for that code class
+     * If an array is passed, will return all codes for those code classes
      * If null is passed (default), will return all codes
      * 
-     * @param  mixed  $type  string, array, defaults to null
+     * @param  mixed  $class  string, array, defaults to null
      * @return array
      */
-    public static function get($type = null)
+    public static function get($class = null)
     {
-        if (is_string($type)) {
-            return self::$codes[$type];
+        if (is_string($class)) {
+            return self::$codes[$class];
         } 
 
-        $types = is_null($type)
+        $code_classes = is_null($class)
             ? array_keys(self::$codes)
-            : $type;
+            : $class;
 
-        return self::get_for_types($types);
+        return self::get_for_classes($code_classes);
     }
 
     /**
@@ -102,18 +103,18 @@ class substitution_code {
     }
 
     /**
-     * Returns an array of codes for the given types
+     * Returns an array of codes for the given code classes
      * 
-     * @param  array  $types  type keys
+     * @param  array  $code_classes  user|course|activity
      * @return array
      */
-    private static function get_for_types($types)
+    private static function get_for_classes($code_classes)
     {
         $codes = [];
 
-        foreach (array_keys(self::$codes) as $type) {
-            if (in_array($type, $types)) {
-                $codes = array_merge($codes, self::$codes[$type]);
+        foreach (array_keys(self::$codes) as $code) {
+            if (in_array($code, $code_classes)) {
+                $codes = array_merge($codes, self::$codes[$code]);
             }
         }
 

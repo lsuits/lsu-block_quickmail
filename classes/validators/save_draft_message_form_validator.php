@@ -25,10 +25,12 @@
 namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
-use block_quickmail\messenger\body_parser;
-use block_quickmail\requests\broadcast_request;
 use block_quickmail\requests\compose_request;
+use block_quickmail\requests\broadcast_request;
 use block_quickmail_string;
+use block_quickmail\messenger\message\body_substitution_code_parser;
+use block_quickmail\exceptions\body_parser_exception;
+
 
 class save_draft_message_form_validator extends validator {
 
@@ -43,7 +45,7 @@ class save_draft_message_form_validator extends validator {
             ? broadcast_request::get_transformed_post_data($this->form_data)
             : compose_request::get_transformed_post_data($this->form_data);
 
-        $this->validate_message_body();
+        $this->validate_message_body_codes();
 
         $this->validate_additional_emails();
 
@@ -53,20 +55,30 @@ class save_draft_message_form_validator extends validator {
     }
 
     /**
-     * Checks that the message body exists and that it does not contain any unsupported custom user data keys, adding any errors to the stack
+     * Checks that the message body does not contain any unsupported custom user data keys, adding any errors to the stack
      * 
      * @return void
      */
-    private function validate_message_body()
+    private function validate_message_body_codes()
     {
-        $body = $this->transformed_data->message;
+        // always allow user code class
+        $substitution_code_classes = ['user'];
 
-        $parser = new body_parser($body);
+        // if this is NOT a broadcase message, assume it is a compose message and allow course code class
+        if ( ! $this->check_extra_params_value('is_broadcast_message', true)) {
+            array_push($substitution_code_classes, 'course');
+        }
 
-        if ($parser->has_errors()) {
-            foreach($parser->errors as $parse_error) {
-                $this->add_error($parse_error);
+        // attempt to validate the message body to make sure any substitution codes are
+        // formatted properly and are all allowed
+        try {
+            $errors = body_substitution_code_parser::validate_body($this->transformed_data->message, $substitution_code_classes);
+            
+            foreach($errors as $error) {
+                $this->add_error($error);
             }
+        } catch (body_parser_exception $e) {
+            $this->add_error($e->getMessage());
         }
     }
 
