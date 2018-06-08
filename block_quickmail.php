@@ -189,6 +189,23 @@ class block_quickmail extends block_list {
                     'query_string' => ['courseid' => $this->course->id]
                 ]);
             }
+
+            // NOTIFICATIONS
+            if (block_quickmail_plugin::user_can_create_notifications($this->user, $this->course_context)) {
+                $this->add_item_to_content([
+                    'lang_key' => block_quickmail_string::get('notifications'),
+                    'icon_key' => 'i/calendar',
+                    'page' => 'notifications',
+                    'query_string' => ['courseid' => $this->course->id]
+                ]);
+
+                $this->add_item_to_content([
+                    'lang_key' => block_quickmail_string::get('create_notification'),
+                    'icon_key' => 'i/calendar',
+                    'page' => 'create_notification',
+                    'query_string' => ['courseid' => $this->course->id]
+                ]);
+            }
         
         ///////////////////////////////////////////
         /// 

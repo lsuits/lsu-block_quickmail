@@ -31,6 +31,7 @@ $string['view_queued'] = 'View Scheduled';
 $string['view_sent'] = 'View Sent Messages';
 $string['manage_signatures'] = 'My Signatures';
 $string['manage_alternates'] = 'Alternate Emails';
+$string['create_notification'] = 'Create Notification';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // capabilities
@@ -103,6 +104,23 @@ $string['send_now_scheduled_confirm_message'] = 'This will forget the schedule a
 $string['send_receipt_subject_addendage'] = 'Sent Message';
 $string['found_filtered_users'] = 'Found {$a} user(s)';
 $string['courseneveraccessed'] = 'Never Accessed';
+
+// notifications
+$string['notifications'] = 'Notifications';
+$string['notification_type'] = 'Notification Type';
+$string['notification_type_help'] = 'A "Reminder" is a recurring message that will automatically be sent on a scheduled basis. Reminders can be used to alert recipients of upcoming activities, due dates, class participation, and more.
+
+An "Event" is an automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
+$string['notification_type_reminder'] = 'Reminder';
+$string['notification_type_event'] = 'Event';
+$string['notification_name'] = 'Title';
+$string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
+$string['invalid_notification_type'] = 'Notification type must be "Reminder" or "Event".';
+$string['notification_model'] = 'Notification Model';
+$string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
+$string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
+$string['invalid_notification_model'] = 'Invalid notification model selection.';
+$string['select_notification_model'] = 'Selection Notification Model';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
@@ -214,12 +232,15 @@ $string['message_type_available_message'] = 'Restrict to Moodle messages only';
 $string['message_type_available_email'] = 'Restrict to traditional email only';
 $string['select_allowed_user_fields'] = 'Supported user data fields';
 $string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make message content dynamic and specific to the recipient. Ex: "[:firstname:]"';
+$string['notifications_enabled'] = 'Enable Quickmail Notifications';
+$string['notifications_enabled_desc'] = 'Allow courses to create automated notifications including reminders and event responses.';
 
 // redirect messages
 $string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
 $string['redirect_back_to_course_from_message_after_send'] = 'Your message will be sent shortly.';
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
+$string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
 
 // validation
 $string['missing_subject'] = 'Missing subject line.';
@@ -247,6 +268,7 @@ $string['cachedef_qm_msg_recip_count'] = 'Cached message recipient counts.';
 $string['cachedef_qm_msg_deliv_count'] = 'Cached message delievered counts.';
 $string['cachedef_qm_msg_attach_count'] = 'Cached message attachment counts.';
 $string['cachedef_qm_msg_addl_email_count'] = 'Cached message additional email counts.';
+$string['cachedef_qm_controller_store_'] = 'Cache store for controller instances.';
 
 // backup/restore
 $string['backup_history'] = 'Include Quickmail History';

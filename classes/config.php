@@ -67,8 +67,9 @@ class block_quickmail_config {
             'ferpa'                     => get_config('moodle', 'block_quickmail_ferpa'),
             'downloads'                 => get_config('moodle', 'block_quickmail_downloads'),
             'additionalemail'           => get_config('moodle', 'block_quickmail_additionalemail'),
-            'message_types_available' => $default_message_type,
-            'default_message_type'    => $default_message_type == 'all' 
+            'notifications_enabled'     => get_config('moodle', 'block_quickmail_notifications_enabled'),
+            'message_types_available'   => $default_message_type,
+            'default_message_type'      => $default_message_type == 'all' 
                 ? 'email' 
                 : $default_message_type,
         ];
@@ -134,8 +135,9 @@ class block_quickmail_config {
             'downloads'                 => $block_config['downloads'],
             'allow_mentor_copy'         => $block_config['allow_mentor_copy'],
             'additionalemail'           => $block_config['additionalemail'],
-            'message_types_available' => $block_config['message_types_available'],
-            'default_message_type'    => $course_default_message_type,
+            'message_types_available'   => $block_config['message_types_available'],
+            'default_message_type'      => $course_default_message_type,
+            'notifications_enabled'     => $block_config['notifications_enabled'],
         ];
 
         if ($transformed) {
@@ -180,6 +182,7 @@ class block_quickmail_config {
             'additionalemail'           => (int) $params['additionalemail'],
             'message_types_available'   => (string) $params['message_types_available'],
             'default_message_type'      => (string) $params['default_message_type'],
+            'notifications_enabled'     => (int) $params['notifications_enabled'],
         ];
 
         return $key ? $transformed[$key] : $transformed;

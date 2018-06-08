@@ -34,8 +34,35 @@ use block_quickmail\components\alternate_index_component;
 use block_quickmail\components\manage_alternates_component;
 use block_quickmail\components\manage_drafts_component;
 use block_quickmail\components\manage_queued_component;
+//
+use block_quickmail\controllers\components\create_notification_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
+
+    ////////////////////////////////////////
+    /// CONTROLLER COMPONENT - CREATE NOTIFICATION
+    ////////////////////////////////////////
+    
+    public function controller_component($component) {
+        return $this->render($component);
+    }
+
+    // TODO type hint here with controller component class
+    protected function render_controller_component($component) {
+        $out = '';
+        
+        // render heading, if it exists
+        if (property_exists($component, 'heading')) {
+            $out .= $this->output->heading(format_string($component->heading), 2);
+        }
+
+        // render any forms
+        $out .= $component->form->render();
+
+        return $this->output->container($out, 'controller_component');
+    }
+
+    ///////////////////////////// OLD STUFF....
 
     ////////////////////////////////////////
     /// BROADCAST FORM

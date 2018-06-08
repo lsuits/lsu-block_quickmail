@@ -221,4 +221,20 @@ if($ADMIN->fulltree) {
         )
     );
 
+    ///////////////////////////////////////////////////////////
+    ///
+    ///  ENABLE NOTIFICATIONS ?
+    ///  
+    ///////////////////////////////////////////////////////////
+
+    $settings->add(
+        new admin_setting_configselect(
+            'block_quickmail_notifications_enabled',
+            block_quickmail_string::get('notifications_enabled'), 
+            block_quickmail_string::get('notifications_enabled_desc'),
+            0,  // <-- default
+            $no_or_yes_options
+        )
+    );
+
 }

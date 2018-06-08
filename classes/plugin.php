@@ -55,6 +55,28 @@ class block_quickmail_plugin {
     }
 
     /**
+     * Checks if the given user can create notifications in the given context, throwing an exception if not
+     *
+     * NOTE: this first checks if notifications are enabled in the block config, if NOT, 
+     * then any user will be redirected to the course view
+     * 
+     * @param  object  $user
+     * @param  object  $context   an instance of a COURSE context
+     * @return void
+     * @throws required_capability_exception
+     */
+    public static function require_user_can_create_notifications($user, $context)
+    {
+        if ( ! block_quickmail_config::block('notifications_enabled')) {
+            $moodle_url = new \moodle_url('/course/view.php', ['id' => $context->instanceid]);
+
+            redirect($moodle_url, block_quickmail_string::get('redirect_back_to_course_from_notifications_not_enabled'), 2, \core\output\notification::NOTIFY_INFO);
+        }
+
+        self::require_user_capability('createnotifications', $user, $context);
+    }
+
+    /**
      * Checks if the given user has the given capability in the given context, throwing an exception if not
      * 
      * @param  string $capability
@@ -141,6 +163,24 @@ class block_quickmail_plugin {
         }
 
         return false;
+    }
+
+    /**
+     * Reports whether or not the given user can create notifications in the given context
+     *
+     * NOTE: this first checks if notifications are enabled in the block config and returns false if not
+     * 
+     * @param  object  $user
+     * @param  object  $context   an instance of a COURSE context
+     * @return bool
+     */
+    public static function user_can_create_notifications($user, $context)
+    {
+        if ( ! block_quickmail_config::block('notifications_enabled')) {
+            return false;
+        }
+
+        return self::user_has_capability('createnotifications', $user, $context);
     }
 
     /**
