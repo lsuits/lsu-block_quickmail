@@ -53,6 +53,8 @@ $PAGE->navbar->add($heading);
 
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->set_pagetype(quickmail::PAGE_TYPE);
+$PAGE->set_pagelayout('standard');
 
 if (!method_exists('quickmail_alternate', $action)) {
     // Always fallback on view

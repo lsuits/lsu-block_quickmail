@@ -55,6 +55,8 @@ if(has_capability('block/quickmail:myaddinstance', $context) || is_siteadmin($US
     $PAGE->navbar->add($blockname);
     $PAGE->navbar->add($header);
     $PAGE->set_heading($SITE->shortname.': '.$blockname);
+    $PAGE->set_pagetype(quickmail::PAGE_TYPE);
+    $PAGE->set_pagelayout('standard');
 
     if($type == 'log'){
         $log_message = $DB->get_record('block_quickmail_' . $type, array('id' => $typeid));

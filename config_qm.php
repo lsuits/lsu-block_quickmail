@@ -49,6 +49,7 @@ $PAGE->set_heading($blockname. ': '. $header);
 $PAGE->navbar->add($blockname);
 $PAGE->navbar->add($header);
 $PAGE->set_pagetype(quickmail::PAGE_TYPE);
+$PAGE->set_pagelayout('standard');
 
 $changed = false;
 
