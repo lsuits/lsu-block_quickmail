@@ -2,7 +2,7 @@
 
 namespace block_quickmail\notifier;
 
-use block_quickmail\notifier\models\notification_model;
+use block_quickmail\notifier\models\notification_model_helper;
 
 class notification_condition {
 
@@ -79,7 +79,7 @@ class notification_condition {
      */
     public static function get_required_condition_keys($notification_type, $model_key, $prepend = '')
     {
-        $model_class = notification_model::get_full_model_class_name($notification_type, $model_key);
+        $model_class = notification_model_helper::get_full_model_class_name($notification_type, $model_key);
 
         $keys = $model_class::$condition_keys;
 
@@ -145,6 +145,24 @@ class notification_condition {
         return $relation == 'after' 
             ? '+' 
             : '-';
+    }
+
+    // @TODO: working on this...
+    public static function get_summary_from_params($params = [])
+    {
+        if (empty($params)) {
+            return '';
+        }
+
+        if (array_key_exists('time_unit', $params) && array_key_exists('time_amount', $params)) {
+            //
+        }
+
+        // time_unit
+        // time_amount
+        // time_relation
+        // grade_greater_than
+        // grade_less_than
     }
 
 }

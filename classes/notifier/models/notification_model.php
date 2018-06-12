@@ -5,6 +5,7 @@ namespace block_quickmail\notifier\models;
 use block_quickmail\notifier\models\interfaces\notification_model_interface;
 use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\notifier\notification_condition;
+use block_quickmail\notifier\models\notification_model_helper;
 
 abstract class notification_model implements notification_model_interface {
 
@@ -39,30 +40,7 @@ abstract class notification_model implements notification_model_interface {
      */
     public static function get_notification_type_interface_model_class_name($notification_type_interface)
     {
-        return self::get_full_model_class_name($notification_type_interface::$notification_type_key, $notification_type_interface->get('model'));
-    }
-
-    /**
-     * Returns a fully namespaced notification_model class name from a notification type and a model key
-     * 
-     * @param  string  $type_key  remind|event
-     * @param  string  $model_key  ex: 'non-participation'
-     * @return string
-     */
-    public static function get_full_model_class_name($type_key, $model_key)
-    {
-        return 'block_quickmail\notifier\models\\' . $type_key . '\\' . self::get_model_class_name($model_key);
-    }
-
-    /**
-     * Returns a notification model class name given a notification_type_interface's model
-     * 
-     * @param  string  $model
-     * @return string
-     */
-    public static function get_model_class_name($model)
-    {
-        return str_replace('-', '_', $model) . '_model';
+        return notification_model_helper::get_full_model_class_name($notification_type_interface::$notification_type_key, $notification_type_interface->get('model'));
     }
 
     /**

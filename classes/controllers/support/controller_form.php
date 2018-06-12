@@ -40,13 +40,24 @@ class controller_form extends \moodleform {
     }
 
     /**
+     * Returns this form's custom data by key
+     * 
+     * @param  string  $key
+     * @return mixed
+     */
+    public function get_custom_data($key)
+    {
+        return $this->_customdata[$key];
+    }
+    
+    /**
      * Returns this form's "view name"
      * 
      * @return string
      */
     public function get_view_form_name()
     {
-        return $this->_customdata['view_form_name'];
+        return $this->get_custom_data('view_form_name');
     }
 
     /**
@@ -57,7 +68,7 @@ class controller_form extends \moodleform {
      */
     public function get_session_input($key = null)
     {
-        $input = $this->_customdata['input'];
+        $input = $this->get_custom_data('input');
 
         if (empty($key)) {
             return $input;

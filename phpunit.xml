@@ -89,12 +89,12 @@
 
             <!-- notification models -->
             <exclude>tests/unit/notification_model_test.php</exclude>
-            <!-- <exclude>tests/unit/notification_model_helper_test.php</exclude> -->
+            <exclude>tests/unit/notification_model_helper_test.php</exclude>
             <exclude>tests/unit/reminder_notification_model_test.php</exclude>
             <exclude>tests/unit/non_participation_reminder_notification_model_test.php</exclude>
 
             <!-- notification conditions -->
-            <exclude>tests/unit/notification_condition_test.php</exclude>
+            <!-- <exclude>tests/unit/notification_condition_test.php</exclude> -->
 
         </testsuite>
     </testsuites>

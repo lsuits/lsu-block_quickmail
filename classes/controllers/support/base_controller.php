@@ -24,19 +24,11 @@ class base_controller {
         // $page->navbar->add('add a nav node here...');
     }
 
-    /**
-     * Returns the static controller implementation's "session key"
-     *
-     * Note: this is the controller's class name
-     * 
-     * @return string
-     */
-    private function get_store_key()
-    {
-        $parts = explode('\\', get_called_class());
-
-        return end($parts);
-    }
+    ////////////////////////////////////////////
+    ///
+    ///  CONTROLLER INSTANTIATION
+    /// 
+    ////////////////////////////////////////////
 
     /**
      * Handles a request to the static controller implementation
@@ -76,38 +68,34 @@ class base_controller {
         return $controller->call_view($view_name, $request);
     }
 
+    ////////////////////////////////////////////
+    ///
+    ///  METHOD DIRECTIVES
+    /// 
+    ////////////////////////////////////////////
+
     /**
-     * Returns rendered HTML for the given form as a component
+     * Calls the given "view_name" which should be a controller method
      * 
-     * @param  controller_form  $form
-     * @param  array            $params   optional, any additional data to be passed to the renderer
-     * @return string
+     * @param  controller_request  $request
+     * @param  string  $view_name
+     * @return mixed
      */
-    public function render(controller_form $form, $params = [])
+    public function view(controller_request $request, $view_name)
     {
-        global $PAGE;
-        
-        $renderer = $PAGE->get_renderer('block_quickmail');
-
-        $rendered = $renderer->controller_component(new controller_component($form, $params));
-
-        // @TODO: include general notifications in the rendered output
-        // $compose_form->render_error_notification();
-        
-        echo $rendered;
+        return $this->$view_name($request);
     }
 
     /**
-     * Returns default form url params
-     *
-     * This method should be included on the static controller implementation if any custom query strings
-     * are necessary (ex: courseid)
+     * Calls the given post_"view_name" which should be a controller method
      * 
-     * @return array
+     * @param  controller_request  $request
+     * @param  string  $view_name
+     * @return mixed
      */
-    public function get_form_url_params()
+    public function post(controller_request $request, $view_name)
     {
-        return [];
+        return $this->{ 'post_' . $view_name }($request);
     }
 
     /**
@@ -133,6 +121,51 @@ class base_controller {
 
         echo $OUTPUT->footer();
     }
+
+    /**
+     * Returns the default view name of the static controller implementation
+     *
+     * Note: this is the first view name in the controller implementation's list array
+     * 
+     * @return string
+     */
+    public static function get_default_view()
+    {
+        return reset(static::$views);
+    }
+
+    ////////////////////////////////////////////
+    ///
+    ///  RENDERING
+    /// 
+    ////////////////////////////////////////////
+
+    /**
+     * Returns rendered HTML for the given form as a component
+     * 
+     * @param  controller_form  $form
+     * @param  array            $params   optional, any additional data to be passed to the renderer
+     * @return string
+     */
+    public function render(controller_form $form, $params = [])
+    {
+        global $PAGE;
+        
+        $renderer = $PAGE->get_renderer('block_quickmail');
+
+        $rendered = $renderer->controller_component(new controller_component($form, $params));
+
+        // @TODO: include general notifications in the rendered output
+        // $compose_form->render_error_notification();
+        
+        echo $rendered;
+    }
+
+    ////////////////////////////////////////////
+    ///
+    ///  FORM INSTANTIATION
+    /// 
+    ////////////////////////////////////////////
 
     /**
      * Instantiates and return a controller_form instance of the given name
@@ -192,6 +225,58 @@ class base_controller {
 
         return end($parts);
     }
+    
+    /**
+     * Returns default form url params
+     *
+     * This method should be included on the static controller implementation if any custom query strings
+     * are necessary (ex: courseid)
+     * 
+     * @return array
+     */
+    public function get_form_url_params()
+    {
+        return [];
+    }
+
+    ////////////////////////////////////////////
+    ///
+    ///  SESSION INPUT
+    /// 
+    ////////////////////////////////////////////
+
+    /**
+     * Returns this controller's session input for a given key
+     * 
+     * @param  string  $key  optional, if null, will return an array of all data
+     * @return mixed
+     */
+    public function input($key = null)
+    {
+        return $this->session->get_data($key);
+    }
+
+    /**
+     * Stores the given input array's specified keys in the session input
+     * 
+     * @param  array  $input
+     * @param  array  $keeps  key names to keep, others will be ignored
+     * @return void
+     */
+    public function store($input, $keeps = [])
+    {
+        $data = array_filter((array) $input, function ($v, $k) use ($keeps) {
+            return in_array($k, $keeps);
+        }, ARRAY_FILTER_USE_BOTH);
+
+        $this->session->add_data($data);
+    }
+
+    ////////////////////////////////////////////
+    ///
+    ///  HELPERS
+    /// 
+    ////////////////////////////////////////////
 
     /**
      * Sets the controllers properties upon instantiation
@@ -216,51 +301,17 @@ class base_controller {
     }
 
     /**
-     * Returns the default view name of the static controller implementation
+     * Returns the static controller implementation's "session key"
      *
-     * Note: this is the first view name in the controller implementation's list array
+     * Note: this is the controller's class name
      * 
      * @return string
      */
-    public static function get_default_view()
+    private function get_store_key()
     {
-        return reset(static::$views);
-    }
+        $parts = explode('\\', get_called_class());
 
-    /**
-     * Select notification type and name
-     * 
-     * @param  controller_request  $request
-     * @param  string  $view_name
-     * @return mixed
-     */
-    public function direct_to_view(controller_request $request, $view_name)
-    {
-        return $this->$view_name($request);
-    }
-
-
-
-    public function store_input($input, $keeps = [])
-    {
-        $data = array_filter((array) $input, function ($v, $k) use ($keeps) {
-            return in_array($k, $keeps);
-        }, ARRAY_FILTER_USE_BOTH);
-
-        $this->session->add_data($data);
-    }
-
-
-    public function dump_store()
-    {
-        var_dump($this->session->get_data());
-    }
-
-
-
-    public static function get_views()
-    {
-        return static::$views;
+        return end($parts);
     }
 
     public function dd($thing) { var_dump($thing);die; }

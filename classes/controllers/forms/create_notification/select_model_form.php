@@ -28,7 +28,6 @@ require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\controllers\support\controller_form;
 use block_quickmail_string;
-use block_quickmail\notifier\models\notification_model_helper;
 
 class select_model_form extends controller_form {
 
@@ -68,7 +67,7 @@ class select_model_form extends controller_form {
 
         $mform->addRule('notification_model', block_quickmail_string::get('invalid_notification_model'), 'required', '', 'server');
         // get keys for validation below
-        $valid_values = $this->get_valid_notification_model_keys();
+        $valid_values = $this->get_custom_data('available_model_keys');
         $mform->addRule('notification_model', block_quickmail_string::get('invalid_notification_model'), 'callback', function($value) use ($valid_values) { return in_array($value, $valid_values);}, 'server');
 
         ////////////////////////////////////////////////////////////
@@ -92,18 +91,8 @@ class select_model_form extends controller_form {
     {
         return array_merge(
             ['' => get_string('select')], 
-            notification_model_helper::get_available_model_selection_by_type($this->get_session_input('notification_type'))
+            $this->get_custom_data('available_model_selection')
         );
-    }
-
-    /**
-     * Returns the model keys available for this notification type
-     * 
-     * @return array
-     */
-    private function get_valid_notification_model_keys()
-    {
-        return notification_model_helper::get_available_model_keys_by_type($this->get_session_input('notification_type'));
     }
 
 }

@@ -120,7 +120,21 @@ $string['notification_model'] = 'Notification Model';
 $string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
 $string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
 $string['invalid_notification_model'] = 'Invalid notification model selection.';
-$string['select_notification_model'] = 'Selection Notification Model';
+$string['select_notification_model'] = 'Select Notification Model';
+$string['set_notification_conditions'] = 'Set Notification Conditions';
+$string['set_notification_schedule'] = 'Set Notification Schedule';
+$string['time_unit'] = 'Unit of time';
+$string['invalid_time_unit'] = 'Invalid unit of time.';
+$string['time_amount'] = 'Amount of time';
+$string['invalid_time_amount'] = 'Invalid amount of time.';
+$string['time_relation'] = 'Before or After';
+$string['invalid_time_relation'] = 'Must be "before" or "after".';
+$string['condition_grade_greater_than'] = 'Grade greater than';
+$string['invalid_condition_grade_greater_than'] = 'Invalid grade greater than value.';
+$string['condition_grade_less_than'] = 'Grade less than';
+$string['invalid_condition_grade_less_than'] = 'Invalid grade less than value.';
+$string['schedule_begin_at'] = 'Begin date';
+$string['schedule_end_at'] = 'End date';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';
