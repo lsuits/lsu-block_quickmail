@@ -344,6 +344,7 @@ if (empty($users)) {
                         $fakeuser = new stdClass();
                         $fakeuser->id = 99999900 + $i;
                         $fakeuser->email = $additional_email;
+                        $fakeuser->username = $additional_email;
                         // TODO make this into a menu option
                         $fakeuser->mailformat = 1;
                         $additional_email_success = email_to_user($fakeuser, $user, $subject, $messagetext, $messagehtml);
