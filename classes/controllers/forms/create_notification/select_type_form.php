@@ -55,6 +55,11 @@ class select_type_form extends controller_form {
             $this->get_notification_type_options()
         );
 
+        $mform->setDefault(
+            'notification_type', 
+            $this->has_session_stored('notification_type') ? $this->get_session_stored('notification_type') : ''
+        );
+
         $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'required', '', 'server');
         $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'callback', function($value) { return in_array($value, ['reminder', 'event']); }, 'server');
 
@@ -81,7 +86,7 @@ class select_type_form extends controller_form {
 
         $mform->setDefault(
             'notification_name', 
-            ''
+            $this->has_session_stored('notification_name') ? $this->get_session_stored('notification_name') : ''
         );
 
         $mform->addRule('notification_name', get_string('required'), 'required', '', 'server');
@@ -98,7 +103,7 @@ class select_type_form extends controller_form {
         ////////////////////////////////////////////////////////////
         $buttons = [
             $mform->createElement('cancel', 'cancel', get_string('cancel')),
-            $mform->createElement('submit', 'back', 'Back'),
+            // $mform->createElement('submit', 'back', 'Back'),
             $mform->createElement('submit', 'next', 'Next'),
         ];
         

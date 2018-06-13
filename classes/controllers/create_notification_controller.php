@@ -9,28 +9,68 @@ use block_quickmail\notifier\models\notification_model_helper;
 
 class create_notification_controller extends base_controller {
 
+    public static $base_uri = '/blocks/quickmail/create_notification.php';
+
     public static $views = [
-        'select_type',
-        'select_model',
-        'select_object',
-        'set_conditions',
-        'create_schedule',
-        'set_event_details',
-        'create_message',
-        'review',
+        'select_type' => [
+            'notification_type',
+            'notification_name',
+        ],
+        'select_model' => [
+            'notification_model',
+        ],
+        'select_object' => [
+            'notification_object_id',
+        ],
+        'set_conditions' => [
+            'condition_time_unit',
+            'condition_time_relation',
+            'condition_time_amount',
+            'condition_grade_greater_than',
+            'condition_grade_less_than',
+        ],
+        'create_schedule' => [
+            'schedule_time_amount',
+            'schedule_time_unit',
+            'schedule_begin_at',
+            'schedule_end_at',
+            'schedule_max_per_interval',
+        ],
+        'set_event_details' => [
+            'event_delay_time_unit',
+            'event_delay_time_amount',
+        ],
+        'create_message' => [
+            'message_type',
+            'message_alternate_email_id',
+            'message_subject',
+            'message_signature_id',
+            'message_body',
+            'message_send_to_mentors',
+            'message_no_reply',
+        ],
+        'review' => [
+            'notification_is_enabled'
+        ],
     ];
 
-    // dataz..
-    // notification_type
-    // notification_name
-    // notification_model
-    // condition_time_unit
-    // condition_time_relation
-    // condition_time_amount
-    // condition_grade_greater_than
-    // condition_grade_less_than
+    /**
+     * Returns the query string which this controller's forms will append to target URLs
+     *
+     * NOTE: this overrides the base controller method
+     * 
+     * @return array
+     */
+    public function get_form_url_params()
+    {
+        return ['courseid' => $this->props->course->id];
+    }
 
-    public static $base_uri = '/blocks/quickmail/create_notification.php';
+    //////////////////////////////////
+    ///
+    ///  SELECT TYPE
+    /// 
+    //////////////////////////////////
 
     /**
      * Select notification type and name
@@ -43,7 +83,7 @@ class create_notification_controller extends base_controller {
         $form = $this->make_form('create_notification\select_type_form');
 
         if ($form->is_validated()) {
-            return $this->post($request, 'select_type');
+            return $this->post($request, 'select_type', 'next');
         }
 
         $this->render($form, [
@@ -52,22 +92,28 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_type view
+     * Handles post of select_type view, next action
      * 
      * @param  controller_request  $request
      * @return mixed
      */
-    public function post_select_type(controller_request $request)
+    public function post_select_type_next(controller_request $request)
     {
+        // if notification_type has changed,
+            // reset data for all subsequent views
+
         // persist inputs in session
-        $this->store($request->input, [
-            'notification_type',
-            'notification_name',
-        ]);
+        $this->store($request->input, $this->view_data_keys('select_type'));
 
         // go to select model
         return $this->view($request, 'select_model');
     }
+
+    //////////////////////////////////
+    ///
+    ///  SELECT MODEL
+    /// 
+    //////////////////////////////////
 
     /**
      * Select notification model type
@@ -79,12 +125,15 @@ class create_notification_controller extends base_controller {
     {
         // include model selection/keys available for the selected notification type
         $form = $this->make_form('create_notification\select_model_form', [
-            'available_model_selection' => notification_model_helper::get_available_model_selection_by_type($this->input('notification_type')),
-            'available_model_keys' => notification_model_helper::get_available_model_keys_by_type($this->input('notification_type'))
+            'available_model_selection' => notification_model_helper::get_available_model_selection_by_type($this->stored('notification_type')),
+            'available_model_keys' => notification_model_helper::get_available_model_keys_by_type($this->stored('notification_type'))
         ]);
 
-        if ($form->is_validated()) {
-            return $this->post($request, 'select_model');
+        // route the form submission, if any
+        if ($form->is_validated_next()) {
+            return $this->post($request, 'select_model', 'next');
+        } else if ($form->is_submitted_back()) {
+            return $this->post($request, 'select_model', 'back');
         }
 
         $this->render($form, [
@@ -93,34 +142,32 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_model view
+     * Handles post of select_model view, next action
      * 
      * @param  controller_request  $request
      * @return mixed
      */
-    public function post_select_model(controller_request $request)
+    public function post_select_model_next(controller_request $request)
     {
         // persist inputs in session
-        $this->store($request->input, [
-            'notification_model',
-        ]);
+        $this->store($request->input, $this->view_data_keys('select_model'));
 
         // if the selected model requires an object other than "user" or "course" (which are already available)
-        if (notification_model_helper::model_requires_object($this->input('notification_type'), $this->input('notification_model'))) {
+        if (notification_model_helper::model_requires_object($this->stored('notification_type'), $this->stored('notification_model'))) {
             return $this->view($request, 'select_object');
         }
 
         // no object required...
         
         // if the selected model requires conditions to be set
-        if (notification_model_helper::model_requires_conditions($this->input('notification_type'), $this->input('notification_model'))) {
+        if (notification_model_helper::model_requires_conditions($this->stored('notification_type'), $this->stored('notification_model'))) {
             // go to set conditions view
             return $this->view($request, 'set_conditions');
         }
         
         // no conditions required...
         
-        switch ($this->input('notification_type')) {
+        switch ($this->stored('notification_type')) {
             case 'reminder':
                 // go to create schedule
                 return $this->view($request, 'create_schedule');
@@ -139,7 +186,30 @@ class create_notification_controller extends base_controller {
         }
     }
 
+    /**
+     * Handles post of select_model view, back action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_select_model_back(controller_request $request)
+    {
+        return $this->view($request, 'select_type');
+    }
+
+    //////////////////////////////////
+    ///
+    ///  SELECT OBJECT
+    /// 
+    //////////////////////////////////
+
     // select_object
+
+    //////////////////////////////////
+    ///
+    ///  SET CONDITIONS
+    /// 
+    //////////////////////////////////
 
     /**
      * Set conditions for this notification
@@ -151,7 +221,7 @@ class create_notification_controller extends base_controller {
     {
         // include which condition keys should be required for the selected notification type/model
         $form = $this->make_form('create_notification\set_conditions_form', [
-            'condition_keys' => notification_model_helper::get_condition_keys_for_model($this->input('notification_type'), $this->input('notification_model')),
+            'condition_keys' => notification_model_helper::get_condition_keys_for_model($this->stored('notification_type'), $this->stored('notification_model')),
         ]);
 
         if ($form->is_validated()) {
@@ -172,15 +242,9 @@ class create_notification_controller extends base_controller {
     public function post_set_conditions(controller_request $request)
     {
         // persist inputs in session
-        $this->store($request->input, [
-            'condition_time_unit',
-            'condition_time_relation',
-            'condition_time_amount',
-            'condition_grade_greater_than',
-            'condition_grade_less_than',
-        ]);
+        $this->store($request->input, $this->view_data_keys('set_conditions'));
 
-        switch ($this->input('notification_type')) {
+        switch ($this->stored('notification_type')) {
             case 'reminder':
                 // go to create schedule
                 return $this->view($request, 'create_schedule');
@@ -199,6 +263,12 @@ class create_notification_controller extends base_controller {
         }
     }
 
+    //////////////////////////////////
+    ///
+    ///  CREATE SCHEDULE
+    /// 
+    //////////////////////////////////
+
     /**
      * Create schedule for this notification
      * 
@@ -216,23 +286,6 @@ class create_notification_controller extends base_controller {
         $this->render($form, [
             'heading' => block_quickmail_string::get('set_notification_schedule')
         ]);
-    }
-
-
-
-
-    
-    
-    /**
-     * Returns the base URL which this controller's forms will target
-     *
-     * NOTE: this overrides the base controller method
-     * 
-     * @return array
-     */
-    public function get_form_url_params()
-    {
-        return ['courseid' => $this->props->course->id];
     }
     
 }

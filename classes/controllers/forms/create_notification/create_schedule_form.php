@@ -50,13 +50,13 @@ class create_schedule_form extends controller_form {
         ////////////////////////////////////////////////////////////
         
         // notification_type
-        $mform->addElement('static', 'notification_type', block_quickmail_string::get('notification_type'), block_quickmail_string::get('notification_type_' . $this->get_session_input('notification_type')));
+        $mform->addElement('static', 'notification_type', block_quickmail_string::get('notification_type'), block_quickmail_string::get('notification_type_' . $this->get_session_stored('notification_type')));
 
         // notification_name
-        $mform->addElement('static', 'notification_name', block_quickmail_string::get('notification_name'), $this->get_session_input('notification_name'));
+        $mform->addElement('static', 'notification_name', block_quickmail_string::get('notification_name'), $this->get_session_stored('notification_name'));
 
         // notification_model
-        $mform->addElement('static', 'notification_model', block_quickmail_string::get('notification_model'), block_quickmail_string::get('notification_model_'. $this->get_session_input('notification_type') . '_' . $this->get_session_input('notification_model')));
+        $mform->addElement('static', 'notification_model', block_quickmail_string::get('notification_model'), block_quickmail_string::get('notification_model_'. $this->get_session_stored('notification_type') . '_' . $this->get_session_stored('notification_model')));
 
         // @TODO: condition summary ???
 

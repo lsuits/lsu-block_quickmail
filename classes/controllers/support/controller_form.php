@@ -40,6 +40,55 @@ class controller_form extends \moodleform {
     }
 
     /**
+     * Reports whether or not this form was submitted and validated with the "next" action
+     * 
+     * @return bool
+     */
+    public function is_validated_next()
+    {
+        return $this->is_validated() && $this->is_action('next');
+    }
+
+    /**
+     * Reports whether or not this form was submitted and with the "back" action
+     * 
+     * @return bool
+     */
+    public function is_submitted_back()
+    {
+        return $this->is_submitted() && $this->is_action('back');
+    }
+
+    /**
+     * Reports whether or not this form was submitted with the given action
+     * 
+     * @param  string   $type  back|next
+     * @return boolean       [description]
+     */
+    private function is_action($type)
+    {
+        return $this->get_action() == $type;
+    }
+
+    /**
+     * Returns which action was submitted in this form
+     * 
+     * @return mixed  next|back|null
+     */
+    private function get_action()
+    {
+        $data = $this->get_submitted_data();
+
+        foreach (['next', 'back'] as $action) {
+            if (property_exists($data, $action)) {
+                return $action;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns this form's custom data by key
      * 
      * @param  string  $key
@@ -61,20 +110,33 @@ class controller_form extends \moodleform {
     }
 
     /**
-     * Returns the current session input data, or a given key's value
+     * Returns the current session store data, or a given key's value
      * 
      * @param  string  $key  optional
      * @return mixed
      */
-    public function get_session_input($key = null)
+    public function get_session_stored($key = null)
     {
-        $input = $this->get_custom_data('input');
+        $stored = $this->get_custom_data('stored');
 
         if (empty($key)) {
-            return $input;
+            return $stored;
         }
 
-        return array_key_exists($key, $input) ? $input[$key] : '';
+        return array_key_exists($key, $stored) ? $stored[$key] : '';
+    }
+
+    /**
+     * Reports whether or not data of a given key exists in the controller session store
+     * 
+     * @param  string  $key
+     * @return mixed
+     */
+    public function has_session_stored($key)
+    {
+        $stored = $this->get_custom_data('stored');
+
+        return array_key_exists($key, $stored);
     }
 
 }

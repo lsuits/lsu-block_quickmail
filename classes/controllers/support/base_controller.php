@@ -70,7 +70,7 @@ class base_controller {
 
     ////////////////////////////////////////////
     ///
-    ///  METHOD DIRECTIVES
+    ///  VIEW METHOD DIRECTIVES
     /// 
     ////////////////////////////////////////////
 
@@ -87,15 +87,16 @@ class base_controller {
     }
 
     /**
-     * Calls the given post_"view_name" which should be a controller method
+     * Calls the given post_{view_name}_{action} which should be a controller method
      * 
      * @param  controller_request  $request
      * @param  string  $view_name
+     * @param  string  $action   back|next
      * @return mixed
      */
-    public function post(controller_request $request, $view_name)
+    public function post(controller_request $request, $view_name, $action)
     {
-        return $this->{ 'post_' . $view_name }($request);
+        return $this->{ 'post_' . $view_name . '_' . $action }($request);
     }
 
     /**
@@ -131,7 +132,18 @@ class base_controller {
      */
     public static function get_default_view()
     {
-        return reset(static::$views);
+        return key(static::$views);
+    }
+
+    ////////////////////////////////////////////
+    ///
+    ///  VIEW DATA
+    /// 
+    ////////////////////////////////////////////
+
+    public function view_data_keys($view)
+    {
+        return static::$views[$view];
     }
 
     ////////////////////////////////////////////
@@ -170,7 +182,7 @@ class base_controller {
     /**
      * Instantiates and return a controller_form instance of the given name
      *
-     * Note: this will automatically include the current session input data as a "_customdata" prop on the form with key "input"
+     * Note: this will automatically include the current session input data as a "_customdata" prop on the form with key "stored"
      * 
      * @param  string  $name  a form class name path (\controllers\forms = base path)
      * @param  array   $data  any additional data to be passed to the form
@@ -209,7 +221,7 @@ class base_controller {
         // merge in the current session input data
         return array_merge($data, [
             'view_form_name' => $this->get_form_view_name_from_path($name),
-            'input' => $this->session->get_data()
+            'stored' => $this->session->get_data()
         ]);
     }
 
@@ -251,7 +263,7 @@ class base_controller {
      * @param  string  $key  optional, if null, will return an array of all data
      * @return mixed
      */
-    public function input($key = null)
+    public function stored($key = null)
     {
         return $this->session->get_data($key);
     }
