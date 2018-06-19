@@ -38,7 +38,7 @@ class alternate_email_added extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return block_quickmail_string::get('eventalternateemailadded');
+        return \block_quickmail_string::get('eventalternateemailadded');
     }
  
     /**
@@ -51,7 +51,7 @@ class alternate_email_added extends \core\event\base {
         $a->user_id = $this->userid;
         $a->email = $this->other['address'];
         
-        return block_quickmail_string::get('eventalternateemailadded_desc');
+        return \block_quickmail_string::get('eventalternateemailadded_desc');
     }
  
     /**
@@ -72,6 +72,6 @@ class alternate_email_added extends \core\event\base {
      */
     public function get_legacy_logdata() {
         return array($this->courseid, 'quickmail', 'add', $this->get_url(),
-            block_quickmail_string::get('alternate') . ' ' . $this->other['address']);
+            \block_quickmail_string::get('alternate') . ' ' . $this->other['address']);
     }
 }
