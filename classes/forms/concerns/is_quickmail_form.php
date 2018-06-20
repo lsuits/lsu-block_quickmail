@@ -76,7 +76,7 @@ trait is_quickmail_form {
      */
     public function render_error_notification()
     {
-        if (count($this->errors)) {
+        if ( ! empty($this->errors) && count($this->errors)) {
             $html = '<ul style="margin-bottom: 0px;">';
             
             foreach ($this->errors as $error) {
