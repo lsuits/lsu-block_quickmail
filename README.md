@@ -68,6 +68,10 @@ If you are upgrading from v1 to v2, a data migration script is included in this 
 
 Contributions of any form are welcome. GitHub pull requests are preferred. Report any bugs or requests through our GitHub [issue tracker](https://github.com/lsuits/quickmail/issues).
 
+## Tests
+
+To run PHPUnit tests: `vendor/bin/phpunit -c blocks/quickmail/phpunit.xml`
+
 ## License
 
 Quickmail adopts the same license that Moodle does.
