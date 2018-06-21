@@ -12,7 +12,7 @@ class base_controller {
 
     public static $forms_path = 'block_quickmail\controllers\forms';
     
-    public static $views = [];
+    public static $view_data = [];
 
     public $context;
     public $props;
@@ -132,7 +132,7 @@ class base_controller {
      */
     public static function get_default_view()
     {
-        return key(static::$views);
+        return key(static::$view_data);
     }
 
     ////////////////////////////////////////////
@@ -141,9 +141,14 @@ class base_controller {
     /// 
     ////////////////////////////////////////////
 
+    public function view_keys()
+    {
+        return array_keys(static::$view_data);
+    }
+
     public function view_data_keys($view)
     {
-        return static::$views[$view];
+        return static::$view_data[$view];
     }
 
     ////////////////////////////////////////////
@@ -258,17 +263,6 @@ class base_controller {
     ////////////////////////////////////////////
 
     /**
-     * Returns this controller's session input for a given key
-     * 
-     * @param  string  $key  optional, if null, will return an array of all data
-     * @return mixed
-     */
-    public function stored($key = null)
-    {
-        return $this->session->get_data($key);
-    }
-
-    /**
      * Stores the given input array's specified keys in the session input
      * 
      * @param  array  $input
@@ -282,6 +276,64 @@ class base_controller {
         }, ARRAY_FILTER_USE_BOTH);
 
         $this->session->add_data($data);
+    }
+
+    /**
+     * Returns this controller's session input for a given key
+     * 
+     * @param  string  $key  optional, if null, will return an array of all data
+     * @return mixed
+     */
+    public function stored($key = null)
+    {
+        return $this->session->get_data($key);
+    }
+
+    /**
+     * Reports whether or not any of the given request input data is different for the given keys
+     * 
+     * @param  stdClass  $request_input
+     * @param  array     $keys             keys to check for change
+     * @return bool
+     */
+    public function stored_has_changed($request_input, $keys = [])
+    {
+        foreach ($keys as $key) {
+            if ($this->session->has_data($key)) {
+                if ($request_input->$key !== $this->stored($key)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Removes all data from the current session that is associated with views after the given view
+     * 
+     * @param  string  $view
+     * @return void
+     */
+    public function clear_store_after_view($view)
+    {
+        $reset = false;
+
+        // iterate through this controller's view keys
+        foreach ($this->view_keys() as $view_key) {
+            // if this is the key, flag to remove all data from this point on
+            if ($view_key == $view) {
+                $reset = true;
+                continue;
+            }
+
+            // if resetting, remove all values for each data key
+            if ($reset) {
+                foreach ($this->view_data_keys($view_key) as $view_data_key) {
+                    $this->session->forget_data($view_data_key);
+                }
+            }
+        }
     }
 
     ////////////////////////////////////////////

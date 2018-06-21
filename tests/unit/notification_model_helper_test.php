@@ -47,21 +47,6 @@ class block_quickmail_notification_model_helper_testcase extends advanced_testca
         $this->assertContains('assignment_submitted', $event_types);
     }
 
-    public function test_gets_available_model_selection_by_type()
-    {
-        $reminder_selection_array = notification_model_helper::get_available_model_selection_by_type('reminder');
-
-        $this->assertInternalType('array', $reminder_selection_array);
-        $this->assertCount(1, $reminder_selection_array);
-        $this->assertArrayHasKey('non_participation', $reminder_selection_array);
-
-        $event_selection_array = notification_model_helper::get_available_model_selection_by_type('event');
-
-        $this->assertInternalType('array', $event_selection_array);
-        $this->assertCount(1, $event_selection_array);
-        $this->assertArrayHasKey('assignment_submitted', $event_selection_array);
-    }
-
     public function test_gets_model_class_name_from_key()
     {
         $non_participation_model_class_name = notification_model_helper::get_model_class_name('non_participation');

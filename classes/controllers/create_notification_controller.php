@@ -11,7 +11,7 @@ class create_notification_controller extends base_controller {
 
     public static $base_uri = '/blocks/quickmail/create_notification.php';
 
-    public static $views = [
+    public static $view_data = [
         'select_type' => [
             'notification_type',
             'notification_name',
@@ -92,15 +92,18 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_type view, next action
+     * Handles post of select_type form, next action
      * 
      * @param  controller_request  $request
      * @return mixed
      */
     public function post_select_type_next(controller_request $request)
     {
-        // if notification_type has changed,
+        // if notification_type has changed
+        if ($this->stored_has_changed($request->input, ['notification_type'])) {
             // reset data for all subsequent views
+            $this->clear_store_after_view('select_type');
+        }
 
         // persist inputs in session
         $this->store($request->input, $this->view_data_keys('select_type'));
@@ -123,9 +126,8 @@ class create_notification_controller extends base_controller {
      */
     public function select_model(controller_request $request)
     {
-        // include model selection/keys available for the selected notification type
+        // include model keys available for the selected notification type
         $form = $this->make_form('create_notification\select_model_form', [
-            'available_model_selection' => notification_model_helper::get_available_model_selection_by_type($this->stored('notification_type')),
             'available_model_keys' => notification_model_helper::get_available_model_keys_by_type($this->stored('notification_type'))
         ]);
 
@@ -137,12 +139,12 @@ class create_notification_controller extends base_controller {
         }
 
         $this->render($form, [
-            'heading' => block_quickmail_string::get('select_notification_model')
+            'heading' => block_quickmail_string::get('select_notification_model', block_quickmail_string::get('notification_type_' . $this->stored('notification_type')))
         ]);
     }
 
     /**
-     * Handles post of select_model view, next action
+     * Handles post of select_model form, next action
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -187,7 +189,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_model view, back action
+     * Handles post of select_model form, back action
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -224,22 +226,28 @@ class create_notification_controller extends base_controller {
             'condition_keys' => notification_model_helper::get_condition_keys_for_model($this->stored('notification_type'), $this->stored('notification_model')),
         ]);
 
-        if ($form->is_validated()) {
-            return $this->post($request, 'set_conditions');
+        // route the form submission, if any
+        if ($form->is_validated_next()) {
+            return $this->post($request, 'set_conditions', 'next');
+        } else if ($form->is_submitted_back()) {
+            return $this->post($request, 'set_conditions', 'back');
         }
 
         $this->render($form, [
-            'heading' => block_quickmail_string::get('set_notification_conditions')
+            'heading' => block_quickmail_string::get('set_notification_conditions', (object) [
+                'model' => block_quickmail_string::get('notification_model_reminder_' . $this->stored('notification_model')),
+                'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
+            ])
         ]);
     }
 
     /**
-     * Handles post of set_conditions view
+     * Handles post of set_conditions form, next action
      * 
      * @param  controller_request  $request
      * @return mixed
      */
-    public function post_set_conditions(controller_request $request)
+    public function post_set_conditions_next(controller_request $request)
     {
         // persist inputs in session
         $this->store($request->input, $this->view_data_keys('set_conditions'));
@@ -263,6 +271,23 @@ class create_notification_controller extends base_controller {
         }
     }
 
+    /**
+     * Handles post of set_conditions form, back action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_set_conditions_back(controller_request $request)
+    {
+        // if the selected model requires object to be set
+        if (notification_model_helper::model_requires_object($this->stored('notification_type'), $this->stored('notification_model'))) {
+            // go to select object view
+            return $this->view($request, 'select_object');
+        }
+        
+        return $this->view($request, 'select_model');
+    }
+
     //////////////////////////////////
     ///
     ///  CREATE SCHEDULE
@@ -279,13 +304,47 @@ class create_notification_controller extends base_controller {
     {
         $form = $this->make_form('create_notification\create_schedule_form');
 
-        if ($form->is_validated()) {
-            return $this->post($request, 'create_schedule');
+        // route the form submission, if any
+        if ($form->is_validated_next()) {
+            return $this->post($request, 'create_schedule', 'next');
+        } else if ($form->is_submitted_back()) {
+            return $this->post($request, 'create_schedule', 'back');
         }
 
         $this->render($form, [
-            'heading' => block_quickmail_string::get('set_notification_schedule')
+            'heading' => block_quickmail_string::get('set_notification_schedule', (object) [
+                'model' => block_quickmail_string::get('notification_model_reminder_' . $this->stored('notification_model')),
+                'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
+            ])
         ]);
+    }
+
+    /**
+     * Handles post of create_schedule form, next action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_create_schedule_next(controller_request $request)
+    {
+        // persist inputs in session
+        $this->store($request->input, $this->view_data_keys('create_schedule'));
+
+        return $this->view($request, 'create_message');
+    }
+
+    /**
+     * Handles post of create_schedule form, back action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_create_schedule_back(controller_request $request)
+    {
+        // persist inputs in session
+        $this->store($request->input, $this->view_data_keys('create_schedule'));
+
+        return $this->view($request, 'create_message');
     }
     
 }

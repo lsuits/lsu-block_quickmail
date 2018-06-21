@@ -50,24 +50,6 @@ class notification_model_helper {
     }
 
     /**
-     * Returns an associative array of "notification model" selections available for the given notification type
-     * 
-     * @param  string  $notification_type  reminder|event
-     * @return array [model key => model string display]
-     */
-    public static function get_available_model_selection_by_type($notification_type)
-    {
-        $keys = self::get_available_model_keys_by_type($notification_type);
-
-        $selection_array = array_reduce($keys, function($carry, $key) use ($notification_type) {
-            $carry[$key] = block_quickmail_string::get('notification_model_'. $notification_type . '_' . $key);
-            return $carry;
-        }, []);
-
-        return $selection_array;
-    }
-
-    /**
      * Returns a model's 'object type' given a notification type and key
      * 
      * @param  string  $notification_type  reminder|event

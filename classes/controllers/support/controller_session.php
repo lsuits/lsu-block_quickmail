@@ -47,6 +47,34 @@ class controller_session {
     }
 
     /**
+     * Reports whether or not the given key exists in the current session input data
+     * 
+     * @param  string  $key
+     * @return bool
+     */
+    public function has_data($key)
+    {
+        return in_array($key, array_keys($this->store->get($this->controller_key, [])));
+    }
+
+    /**
+     * Removes the given key's value from current session input data if it exists
+     * 
+     * @param  string  $key
+     * @return void
+     */
+    public function forget_data($key)
+    {
+        $current = $this->get_data();
+
+        if (array_key_exists($key, $current)) {
+            unset($current[$key]);
+        }
+
+        $this->store->put($this->controller_key, $current);
+    }
+
+    /**
      * Deletes this controller session's currently set data
      * 
      * @return void

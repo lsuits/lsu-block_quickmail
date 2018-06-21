@@ -46,17 +46,10 @@ class create_schedule_form extends controller_form {
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
         ////////////////////////////////////////////////////////////
-        ///  current input summary
+        ///  descriptive text
         ////////////////////////////////////////////////////////////
         
-        // notification_type
-        $mform->addElement('static', 'notification_type', block_quickmail_string::get('notification_type'), block_quickmail_string::get('notification_type_' . $this->get_session_stored('notification_type')));
-
-        // notification_name
-        $mform->addElement('static', 'notification_name', block_quickmail_string::get('notification_name'), $this->get_session_stored('notification_name'));
-
-        // notification_model
-        $mform->addElement('static', 'notification_model', block_quickmail_string::get('notification_model'), block_quickmail_string::get('notification_model_'. $this->get_session_stored('notification_type') . '_' . $this->get_session_stored('notification_model')));
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
 
         // @TODO: condition summary ???
 

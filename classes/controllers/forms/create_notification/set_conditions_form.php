@@ -46,18 +46,26 @@ class set_conditions_form extends controller_form {
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
         ////////////////////////////////////////////////////////////
-        ///  current input summary
+        ///  descriptive text
         ////////////////////////////////////////////////////////////
         
-        // notification_type
-        $mform->addElement('static', 'notification_type', block_quickmail_string::get('notification_type'), block_quickmail_string::get('notification_type_' . $this->get_session_stored('notification_type')));
+        // condition_description
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('notification_model_' . $this->get_session_stored('notification_type') . '_' . $this->get_session_stored('notification_model') . '_condition_description') . '</div>');
 
-        // notification_name
-        $mform->addElement('static', 'notification_name', block_quickmail_string::get('notification_name'), $this->get_session_stored('notification_name'));
+        ////////////////////////////////////////////////////////////
+        ///  condition_time_unit (select)
+        ////////////////////////////////////////////////////////////
+        if ($this->requires_condition('time_unit')) {
+            $mform->addElement(
+                'select', 
+                'condition_time_unit', 
+                block_quickmail_string::get('time_unit'), 
+                $this->get_time_unit_options()
+            );
 
-        // notification_model
-        $mform->addElement('static', 'notification_model', block_quickmail_string::get('notification_model'), block_quickmail_string::get('notification_model_'. $this->get_session_stored('notification_type') . '_' . $this->get_session_stored('notification_model')));
-
+            $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
+        }
+        
         ////////////////////////////////////////////////////////////
         ///  condition_time_amount (text)
         ////////////////////////////////////////////////////////////
@@ -82,20 +90,6 @@ class set_conditions_form extends controller_form {
             $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
             $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
             $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nonzero', '', 'server');
-        }
-
-        ////////////////////////////////////////////////////////////
-        ///  condition_time_unit (select)
-        ////////////////////////////////////////////////////////////
-        if ($this->requires_condition('time_unit')) {
-            $mform->addElement(
-                'select', 
-                'condition_time_unit', 
-                block_quickmail_string::get('time_unit'), 
-                $this->get_time_unit_options()
-            );
-
-            $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
         }
 
         ////////////////////////////////////////////////////////////

@@ -107,22 +107,28 @@ $string['courseneveraccessed'] = 'Never Accessed';
 
 // notifications
 $string['notifications'] = 'Notifications';
-$string['notification_type'] = 'Notification Type';
-$string['notification_type_help'] = 'A "Reminder" is a recurring message that will automatically be sent on a scheduled basis. Reminders can be used to alert recipients of upcoming activities, due dates, class participation, and more.
-
-An "Event" is an automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
-$string['notification_type_reminder'] = 'Reminder';
-$string['notification_type_event'] = 'Event';
 $string['notification_name'] = 'Title';
 $string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
+
+// notification types
+$string['notification_type'] = 'Notification Type';
+$string['notification_type_reminder'] = 'Reminder';
+$string['notification_type_event'] = 'Event';
 $string['invalid_notification_type'] = 'Notification type must be "Reminder" or "Event".';
+$string['notification_type_reminder_description'] = 'A recurring message that will automatically be sent on a scheduled basis. Reminders can be used to alert recipients of upcoming activities, due dates, class participation, and more.';
+$string['notification_type_event_description'] = 'An automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
+
+// notification models
+$string['select_notification_model'] = 'Select {$a} Notification Model';
 $string['notification_model'] = 'Notification Model';
 $string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
+$string['notification_model_reminder_non_participation_description'] = 'Notify all course participants that have not accessed the course in a given amount of time on a scheduled basis.';
 $string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
+$string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
 $string['invalid_notification_model'] = 'Invalid notification model selection.';
-$string['select_notification_model'] = 'Select Notification Model';
-$string['set_notification_conditions'] = 'Set Notification Conditions';
-$string['set_notification_schedule'] = 'Set Notification Schedule';
+
+// notification conditions
+$string['set_notification_conditions'] = 'Set {$a->model} {$a->type} Notification Conditions';
 $string['time_unit'] = 'Unit of time';
 $string['invalid_time_unit'] = 'Invalid unit of time.';
 $string['time_amount'] = 'Amount of time';
@@ -133,6 +139,13 @@ $string['condition_grade_greater_than'] = 'Grade greater than';
 $string['invalid_condition_grade_greater_than'] = 'Invalid grade greater than value.';
 $string['condition_grade_less_than'] = 'Grade less than';
 $string['invalid_condition_grade_less_than'] = 'Invalid grade less than value.';
+
+// notification model condition descriptions
+$string['notification_model_reminder_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
+
+// reminder notification schedules
+$string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification Schedule';
+$string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';
 $string['schedule_begin_at'] = 'Begin date';
 $string['schedule_end_at'] = 'End date';
 

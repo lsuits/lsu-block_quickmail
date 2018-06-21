@@ -46,37 +46,13 @@ class select_type_form extends controller_form {
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
         ////////////////////////////////////////////////////////////
-        ///  notification_type (select)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'notification_type', 
-            block_quickmail_string::get('notification_type'), 
-            $this->get_notification_type_options()
-        );
-
-        $mform->setDefault(
-            'notification_type', 
-            $this->has_session_stored('notification_type') ? $this->get_session_stored('notification_type') : ''
-        );
-
-        $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'required', '', 'server');
-        $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'callback', function($value) { return in_array($value, ['reminder', 'event']); }, 'server');
-
-        $mform->addHelpButton(
-            'notification_type', 
-            'notification_type', 
-            'block_quickmail'
-        );
-
-        ////////////////////////////////////////////////////////////
         ///  name (text)
         ////////////////////////////////////////////////////////////
         $mform->addElement(
             'text', 
             'notification_name', 
             block_quickmail_string::get('notification_name'),
-            ['size' => 40]
+            ['size' => 40, 'placeholder' => 'My New Notification Title']
         );
 
         $mform->setType(
@@ -98,12 +74,32 @@ class select_type_form extends controller_form {
             'block_quickmail'
         );
 
+        $mform->addElement('static', 'reminder_description', '', '<strong>Reminder</strong>: ' . block_quickmail_string::get('notification_type_reminder_description'));
+        $mform->addElement('static', 'event_description', '', '<strong>Event</strong>: ' . block_quickmail_string::get('notification_type_event_description'));
+
+        ////////////////////////////////////////////////////////////
+        ///  notification_type (select)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'select', 
+            'notification_type', 
+            block_quickmail_string::get('notification_type'), 
+            $this->get_notification_type_options()
+        );
+
+        $mform->setDefault(
+            'notification_type', 
+            $this->has_session_stored('notification_type') ? $this->get_session_stored('notification_type') : ''
+        );
+
+        $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'required', '', 'server');
+        $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'callback', function($value) { return in_array($value, ['reminder', 'event']); }, 'server');
+
         ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
             $mform->createElement('cancel', 'cancel', get_string('cancel')),
-            // $mform->createElement('submit', 'back', 'Back'),
             $mform->createElement('submit', 'next', 'Next'),
         ];
         
