@@ -70,7 +70,7 @@ class create_schedule_form extends controller_form {
 
         $mform->setDefault(
             'schedule_time_amount', 
-            ''
+            $this->has_session_stored('schedule_time_amount') ? $this->get_session_stored('schedule_time_amount') : ''
         );
 
         $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
@@ -85,6 +85,11 @@ class create_schedule_form extends controller_form {
             'schedule_time_unit', 
             block_quickmail_string::get('time_unit'), 
             $this->get_time_unit_options()
+        );
+
+        $mform->setDefault(
+            'schedule_time_unit', 
+            $this->has_session_stored('schedule_time_unit') ? $this->get_session_stored('schedule_time_unit') : ''
         );
 
         $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');

@@ -4,8 +4,12 @@ namespace block_quickmail\controllers;
 
 use block_quickmail\controllers\support\base_controller;
 use block_quickmail\controllers\support\controller_request;
+use block_quickmail_plugin;
+use block_quickmail_config;
 use block_quickmail_string;
 use block_quickmail\notifier\models\notification_model_helper;
+use block_quickmail\persistents\alternate_email;
+use block_quickmail\persistents\signature;
 
 class create_notification_controller extends base_controller {
 
@@ -41,13 +45,12 @@ class create_notification_controller extends base_controller {
             'event_delay_time_amount',
         ],
         'create_message' => [
-            'message_type',
             'message_alternate_email_id',
             'message_subject',
-            'message_signature_id',
             'message_body',
+            'message_type',
+            'message_signature_id',
             'message_send_to_mentors',
-            'message_no_reply',
         ],
         'review' => [
             'notification_is_enabled'
@@ -82,8 +85,10 @@ class create_notification_controller extends base_controller {
     {
         $form = $this->make_form('create_notification\select_type_form');
 
-        if ($form->is_validated()) {
+        if ($form->is_validated_next()) {
             return $this->post($request, 'select_type', 'next');
+        } else if ($form->is_cancelled()) {
+            return $this->cancel();
         }
 
         $this->render($form, [
@@ -136,6 +141,8 @@ class create_notification_controller extends base_controller {
             return $this->post($request, 'select_model', 'next');
         } else if ($form->is_submitted_back()) {
             return $this->post($request, 'select_model', 'back');
+        } else if ($form->is_cancelled()) {
+            return $this->cancel();
         }
 
         $this->render($form, [
@@ -235,7 +242,7 @@ class create_notification_controller extends base_controller {
 
         $this->render($form, [
             'heading' => block_quickmail_string::get('set_notification_conditions', (object) [
-                'model' => block_quickmail_string::get('notification_model_reminder_' . $this->stored('notification_model')),
+                'model' => block_quickmail_string::get('notification_model_' . $this->stored('notification_type') . '_' . $this->stored('notification_model')),
                 'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
             ])
         ]);
@@ -341,10 +348,153 @@ class create_notification_controller extends base_controller {
      */
     public function post_create_schedule_back(controller_request $request)
     {
-        // persist inputs in session
-        $this->store($request->input, $this->view_data_keys('create_schedule'));
+        // if the selected model requires conditions to be set
+        if (notification_model_helper::model_requires_conditions($this->stored('notification_type'), $this->stored('notification_model'))) {
+            // go to set conditions view
+            return $this->view($request, 'set_conditions');
+        }
 
-        return $this->view($request, 'create_message');
+        // if the selected model requires object to be set
+        if (notification_model_helper::model_requires_object($this->stored('notification_type'), $this->stored('notification_model'))) {
+            // go to select object view
+            return $this->view($request, 'select_object');
+        }
+        
+        return $this->view($request, 'select_model');
     }
+
+    //////////////////////////////////
+    ///
+    ///  CREATE MESSAGE
+    /// 
+    //////////////////////////////////
+
+    /**
+     * Create message details for this notification
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function create_message(controller_request $request)
+    {
+        // get the user's default signature id, if any, defaulting to 0
+        if ($signature = signature::get_default_signature_for_user($this->props->user->id)) {
+            $user_default_signature_id = $signature->get('id');
+        } else {
+            $user_default_signature_id = 0;
+        }
+
+        $form = $this->make_form('create_notification\create_message_form', [
+            'editor_options' => block_quickmail_config::get_editor_options($this->context),
+            // get config variables for this course, defaulting to block level
+            'course_config_array' => block_quickmail_config::get('', $this->props->course),
+            // get the user's available alternate emails for this course
+            'user_alternate_email_array' => alternate_email::get_flat_array_for_course_user($this->props->course->id, $this->props->user),
+            // get the user's current signatures as array (id => title)
+            'user_signature_array' => signature::get_flat_array_for_user($this->props->user->id),
+            'user_default_signature_id' => $user_default_signature_id,
+            // only allow users with hard set capabilities (not students) to copy mentors
+            'allow_mentor_copy' => block_quickmail_plugin::user_can_send('compose', $this->props->user, $this->context, false)
+        ]);
+
+        // route the form submission, if any
+        if ($form->is_validated_next()) {
+            return $this->post($request, 'create_message', 'next');
+        } else if ($form->is_submitted_back()) {
+            return $this->post($request, 'create_message', 'back');
+        }
+
+        $this->render($form, [
+            'heading' => block_quickmail_string::get('create_notification_message', (object) [
+                'model' => block_quickmail_string::get('notification_model_' . $this->stored('notification_type') . '_' . $this->stored('notification_model')),
+                'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
+            ])
+        ]);
+    }
+
+    /**
+     * Handles post of create_message form, next action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_create_message_next(controller_request $request)
+    {
+        // persist inputs in session
+        $this->store($request->input, $this->view_data_keys('create_message'));
+
+        return $this->view($request, 'review');
+    }
+
+    /**
+     * Handles post of create_message form, back action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_create_message_back(controller_request $request)
+    {
+        if ($this->stored('notification_type') == 'reminder') {
+            // go to set conditions view
+            return $this->view($request, 'create_schedule');
+        }
+
+        if ($this->stored('notification_type') == 'reminder') {
+            // go to set conditions view
+            return $this->view($request, 'set_event_details');
+        }
+
+        return $this->view($request, 'select_model');
+    }
+
+    //////////////////////////////////
+    ///
+    ///  REVIEW
+    /// 
+    //////////////////////////////////
+
+    /**
+     * Show summary page for this notification yet to be created
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function review(controller_request $request)
+    {
+        $form = $this->make_form('create_notification\review_form', [
+            'has_conditions' => notification_model_helper::model_requires_conditions($this->stored('notification_type'), $this->stored('notification_model'))
+        ]);
+
+        $actions = [
+            'edit_select_type',
+            // 'edit_select_type',
+        ];
+
+        // route the form submission, if any
+        // if ($form->is_validated_next()) {
+        //     return $this->post($request, 'review', 'next');
+        // } else 
+
+        if ($form->is_submitted_action('edit_select_type', $actions)) {
+            return $this->post($request, 'review', 'edit_select_type');
+        }
+
+        $this->render($form, [
+            'heading' => block_quickmail_string::get('notification_review')
+        ]);
+    }
+
+    /**
+     * Handles post of review form, edit_select_type action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_review_edit_select_type(controller_request $request)
+    {
+        return $this->view($request, 'select_type');
+    }
+
+    // edit_set_conditions
     
 }

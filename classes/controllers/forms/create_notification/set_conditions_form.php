@@ -64,6 +64,11 @@ class set_conditions_form extends controller_form {
             );
 
             $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
+
+            $mform->setDefault(
+                'condition_time_unit', 
+                $this->has_session_stored('condition_time_unit') ? $this->get_session_stored('condition_time_unit') : ''
+            );
         }
         
         ////////////////////////////////////////////////////////////
@@ -84,7 +89,7 @@ class set_conditions_form extends controller_form {
 
             $mform->setDefault(
                 'condition_time_amount', 
-                ''
+                $this->has_session_stored('condition_time_amount') ? $this->get_session_stored('condition_time_amount') : ''
             );
 
             $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
@@ -101,6 +106,11 @@ class set_conditions_form extends controller_form {
                 'condition_time_relation', 
                 block_quickmail_string::get('time_relation'), 
                 $this->get_time_relation_options()
+            );
+
+            $mform->setDefault(
+                'condition_time_relation', 
+                $this->has_session_stored('condition_time_relation') ? $this->get_session_stored('condition_time_relation') : ''
             );
 
             $mform->addRule('condition_time_relation', block_quickmail_string::get('invalid_time_relation'), 'required', '', 'server');
@@ -125,7 +135,7 @@ class set_conditions_form extends controller_form {
 
             $mform->setDefault(
                 'condition_grade_greater_than', 
-                ''
+                $this->has_session_stored('condition_grade_greater_than') ? $this->get_session_stored('condition_grade_greater_than') : ''
             );
 
             $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'required', '', 'server');
@@ -150,7 +160,7 @@ class set_conditions_form extends controller_form {
 
             $mform->setDefault(
                 'condition_grade_less_than', 
-                ''
+                $this->has_session_stored('condition_grade_less_than') ? $this->get_session_stored('condition_grade_less_than') : ''
             );
 
             $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'required', '', 'server');

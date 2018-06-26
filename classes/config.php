@@ -219,7 +219,7 @@ class block_quickmail_config {
         return [
             'trusttext' => true,
             'subdirs' => true,
-            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'maxfiles' => -1,
             // 'accepted_types' => '*',
             'context' => $context
         ];

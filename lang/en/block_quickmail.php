@@ -109,6 +109,7 @@ $string['courseneveraccessed'] = 'Never Accessed';
 $string['notifications'] = 'Notifications';
 $string['notification_name'] = 'Title';
 $string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
+$string['notification_review'] = 'Review Your Notification';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -148,6 +149,10 @@ $string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification 
 $string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';
 $string['schedule_begin_at'] = 'Begin date';
 $string['schedule_end_at'] = 'End date';
+
+// create notification message
+$string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
+$string['create_notification_message_description'] = 'Now create the message that you\'d like to be sent when this notification goes out.';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';

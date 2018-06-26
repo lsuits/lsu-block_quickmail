@@ -137,6 +137,31 @@ class base_controller {
 
     ////////////////////////////////////////////
     ///
+    ///  CANCEL METHOD DIRECTIVE
+    /// 
+    ////////////////////////////////////////////
+
+    /**
+     * Calls the given "view_name" which should be a controller method
+     * 
+     * @return mixed
+     */
+    public function cancel()
+    {
+        $this->dd('cancel!');
+
+        $this->session->clear();
+
+        // set the view to the controller's default
+        $view_name = self::get_default_view();
+
+        $request = controller_request::make();
+        
+        return $this->$view_name($request);
+    }
+
+    ////////////////////////////////////////////
+    ///
     ///  VIEW DATA
     /// 
     ////////////////////////////////////////////

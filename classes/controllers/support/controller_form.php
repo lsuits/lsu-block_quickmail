@@ -56,30 +56,46 @@ class controller_form extends \moodleform {
      */
     public function is_submitted_back()
     {
-        return $this->is_submitted() && $this->is_action('back');
+        return $this->is_submitted_action('back');
+    }
+
+    /**
+     * Reports whether or not this form was submitted and with the given action
+     * 
+     * @param  string  $action
+     * @param  array   $actions  optional array of additional actions to listen for
+     * @return bool
+     */
+    public function is_submitted_action($action, $actions = [])
+    {
+        return $this->is_submitted() && $this->is_action($action, $actions);
     }
 
     /**
      * Reports whether or not this form was submitted with the given action
      * 
      * @param  string   $type  back|next
-     * @return boolean       [description]
+     * @param  array   $actions  optional array of additional actions to listen for
+     * @return bool
      */
-    private function is_action($type)
+    private function is_action($type, $actions = [])
     {
-        return $this->get_action() == $type;
+        return $this->get_action($actions) == $type;
     }
 
     /**
      * Returns which action was submitted in this form
      * 
-     * @return mixed  next|back|null
+     * @param  array   $actions  optional array of additional actions to listen for
+     * @return mixed  string|null
      */
-    private function get_action()
+    private function get_action($actions = [])
     {
         $data = $this->get_submitted_data();
 
-        foreach (['next', 'back'] as $action) {
+        $actions = array_merge(['next', 'back'], $actions);
+
+        foreach ($actions as $action) {
             if (property_exists($data, $action)) {
                 return $action;
             }
