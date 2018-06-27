@@ -144,6 +144,10 @@ $string['invalid_condition_grade_less_than'] = 'Invalid grade less than value.';
 // notification model condition descriptions
 $string['notification_model_reminder_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
 
+// notification model condition summaries
+// @IMPORTANT - be sure to keep all parameters intact, no more, no less...
+$string['condition_summary_reminder_non_participation'] = 'All whom have not accessed the course in {$a->time_amount} {$a->time_unit}';
+
 // reminder notification schedules
 $string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification Schedule';
 $string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';

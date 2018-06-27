@@ -18,7 +18,7 @@ class notification_model_helper {
     /**
      * Returns a fully namespaced notification_model class name from a notification type and a model key
      * 
-     * @param  string  $notification_type  remind|event
+     * @param  string  $notification_type  reminder|event
      * @param  string  $model_key  ex: 'non-participation'
      * @return string
      */
@@ -103,6 +103,18 @@ class notification_model_helper {
         $condition_keys = self::get_condition_keys_for_model($notification_type, $model_key);
 
         return (bool) count($condition_keys);
+    }
+
+    /**
+     * Returns a lang string key for a model's condition summary, given a notification type and key
+     * 
+     * @param  string  $notification_type  reminder|event
+     * @param  string  $model_key
+     * @return string
+     */
+    public static function get_condition_summary_lang_string($notification_type, $model_key)
+    {
+        return 'condition_summary_' . $notification_type . '_' . $model_key;
     }
 
 }

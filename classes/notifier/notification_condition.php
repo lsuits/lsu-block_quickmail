@@ -147,22 +147,4 @@ class notification_condition {
             : '-';
     }
 
-    // @TODO: working on this...
-    public static function get_summary_from_params($params = [])
-    {
-        if (empty($params)) {
-            return '';
-        }
-
-        if (array_key_exists('time_unit', $params) && array_key_exists('time_amount', $params)) {
-            //
-        }
-
-        // time_unit
-        // time_amount
-        // time_relation
-        // grade_greater_than
-        // grade_less_than
-    }
-
 }
