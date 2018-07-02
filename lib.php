@@ -186,6 +186,22 @@ abstract class quickmail {
         });
     }
 
+    /**
+     * Check if a role exist in a list of roles.
+     *
+     * @param array $roles A list of roles
+     * @param string $name The shortname of the role to find
+     * @return boolean If the role exist in the list
+     */
+    public static function role_exists($roles, $name) {
+        foreach ($roles as $role) {
+            if ($role->shortname == $name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static function load_config($courseid) {
         global $DB;
 
@@ -498,6 +514,49 @@ abstract class quickmail {
          return array($mailto, $additional_emails);
      }
    
+
+    /**
+     * Get all users having a role relative to users of the current course.
+     * This is useful for display a list of parents/mentors/tutors of the users of the course.
+     * Note: it is possible for a user to be several times in this list if
+     * it is associated with more than one user of the course.
+     *
+     * @param context_course $context The context of the course.
+     * @return array The List of user
+     */
+    public static function get_user_context_users($context){
+        global $DB, $CFG;
+
+        list($esql, $params) = get_enrolled_sql($context, NULL, 0, true);
+        $joins = array("FROM {user} child");
+
+        // Performance hacks - we preload user contexts together with accounts.
+        $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = child.id AND ctx.contextlevel = :contextlevel)";
+        $params['contextlevel'] = CONTEXT_USER;
+        $joins[] = $ccjoin;
+
+        $getnamestring = 'u.firstname, u.lastname';
+
+        if($CFG->version >= 2013111800){
+               $getnamestring = get_all_user_name_fields(true, 'u');
+        }
+        $select = "SELECT u.id, " . $getnamestring . " , u.email, u.mailformat, u.suspended, u.maildisplay, r.shortname AS role,
+                  child.id AS childid,".$DB->sql_fullname('child.firstname','child.lastname')." AS childfullname";
+        $joins[] = "JOIN ($esql) e ON e.id = child.id";
+        $joins[] = "JOIN {user_enrolments} AS ue ON child.id = ue.userid";
+        $joins[] = "LEFT JOIN {role_assignments} ra ON (ra.contextid = ctx.id)";
+        $joins[] = "LEFT JOIN {role} r ON (ra.roleid = r.id)";
+        $joins[] = "JOIN {user} u ON (ra.userid = u.id)";
+
+        $select .= $ccselect;
+
+        $from = implode("\n", $joins);
+
+        $sort = ' ORDER BY u.firstname';
+
+        return $DB->get_recordset_sql("$select $from $sort", $params);
+    }
 }
 
 function block_quickmail_pluginfile($course, $record, $context, $filearea, $args, $forcedownload) {

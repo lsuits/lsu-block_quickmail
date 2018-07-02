@@ -10,7 +10,6 @@
 
 #page-block-quickmail select[multiple] {
    min-width: 250px;
-   max-width: 250px;
 }
 
 #page-block-quickmail .mform {
@@ -40,6 +39,7 @@
 #page-block-quickmail .emailtable .r1 .c1 {
     text-align: center;
     vertical-align: middle;
+    padding: 0 10px;
 }
 
 #page-block-quickmail .emailtable .r1 .c2 div {

@@ -65,10 +65,11 @@ $PAGE->requires->jquery();
 $PAGE->requires->js('/blocks/quickmail/js/selection.js');
 
 $course_roles = get_roles_used_in_context($context);
+$user_roles = $DB->get_records_select('role', sprintf('id IN (%s)', implode(',', get_roles_for_contextlevels(CONTEXT_USER))));
 
 $filter_roles = $DB->get_records_select('role', sprintf('id IN (%s)', $config['roleselection']));
 
-$roles = quickmail::filter_roles($course_roles, $filter_roles);
+$roles = quickmail::filter_roles(array_merge($course_roles, $user_roles), $filter_roles);
 
 $allgroups = groups_get_all_groups($courseid);
 
@@ -103,6 +104,7 @@ $users_to_roles = array();
 $users_to_groups = array();
 
 $everyone = quickmail::get_non_suspended_users($context, $courseid);
+$usercontextusers = quickmail::get_user_context_users($context);
 
 foreach ($everyone as $userid => $user) {
     $usergroups = groups_get_user_groups($courseid, $userid);
@@ -126,6 +128,56 @@ foreach ($everyone as $userid => $user) {
     if (!$user->suspended) {
         $users[$userid] = $user;
     }
+}
+
+// Scan all user context users to merge duplicates together.
+foreach ($usercontextusers as $userid => $user) {
+
+    if (!isset($users[$user->childid])) {
+        continue;
+    }
+
+    // As the mentor user is not in the course, the groups should be the same as their mentees.
+    $usergroups = $users_to_groups[$user->childid];
+    if (isset($users_to_groups[$userid])) {
+        $usergroups = array_merge($users_to_groups[$userid], $usergroups);
+        $usergroups = array_map("unserialize", array_unique(array_map("serialize", $usergroups)));
+    }
+
+    // The role of the mentor user is the user context role relative to the mentee.
+    $usercontext = context_user::instance($user->childid);
+    $userroles = get_user_roles($usercontext, $userid);
+
+    // If the user have more than one roles for distincts mentees, merge the roles.
+    if (isset($users_to_roles[$userid])) {
+        $userroles = array_merge($users_to_roles[$userid], $userroles);
+        $userroles = array_map("unserialize", array_unique(array_map("serialize", $userroles)));
+    }
+
+    // Keep only distinct roles allowed in the plugin configuration.
+    $filterd = quickmail::filter_roles($userroles, $roles);
+
+    // Skip the user if no roles remaining or the user role is not on the list.
+    if (count($filterd) == 0 || !quickmail::role_exists($filterd, $user->role)) {
+        continue;
+    }
+
+    // Combine the name of all childs relative to the role. This will be used to display the relation between them.
+    $user->childsfullname = array();
+    if (isset($users[$userid]->childsfullname)) {
+        $user->childsfullname = $users[$userid]->childsfullname;
+    }
+    $user->childsfullname[$user->role][$user->childid] = $user->childfullname;
+
+    // No longer needed at this point.
+    unset($user->childid);
+    unset($user->childfullname);
+
+    $users_to_groups[$userid] = $usergroups;
+    $users_to_roles[$userid] = $filterd;
+    $users[$userid] = $user;
+
+    $everyone[$userid] = $user;
 }
 
 if (empty($users)) {
