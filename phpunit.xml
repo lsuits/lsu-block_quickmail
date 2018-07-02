@@ -95,7 +95,8 @@
 
             <!-- notification conditions -->
             <exclude>tests/unit/notification_condition_test.php</exclude>
-            <!-- <exclude>tests/unit/notification_condition_summary_test.php</exclude> -->
+            <exclude>tests/unit/notification_condition_summary_test.php</exclude>
+            <exclude>tests/unit/notification_schedule_summary_test.php</exclude>
 
         </testsuite>
     </testsuites>

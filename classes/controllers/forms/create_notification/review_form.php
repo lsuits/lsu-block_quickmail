@@ -78,11 +78,16 @@ class review_form extends controller_form {
         }
 
         ////////////////////////////////////////////////////////////
-        ///  edit conditions
+        ///  edit conditions (if has conditions)
         ////////////////////////////////////////////////////////////
 
-        if ($this->get_custom_data('has_conditions')) {
-            // show condition summary here...
+        if ($this->get_custom_data('condition_summary')) {
+            $mform->addElement(
+                'static', 
+                'condition_summary', 
+                block_quickmail_string::get('notification_conditions'),
+                $this->get_custom_data('condition_summary')
+            );
 
             $mform->addGroup([
                 $mform->createElement('submit', 'edit_set_conditions', 'Edit Conditions')
@@ -91,15 +96,107 @@ class review_form extends controller_form {
             $mform->addElement('html', '<hr>');
         }
 
+        ////////////////////////////////////////////////////////////
+        ///  edit schedule (if reminder notification)
+        ////////////////////////////////////////////////////////////
 
+        if ($this->is_notification_type('reminder')) {
+            $mform->addElement(
+                'static', 
+                'schedule_summary', 
+                block_quickmail_string::get('notification_schedule'),
+                $this->get_custom_data('schedule_summary')
+            );
+
+            $mform->addGroup([
+                $mform->createElement('submit', 'edit_create_schedule', 'Edit Schedule')
+            ], 'actions', '&nbsp;', array(' '), false);
+
+            $mform->addElement('html', '<hr>');
+        }
+
+        ////////////////////////////////////////////////////////////
+        ///  edit create message
+        ////////////////////////////////////////////////////////////
+        
+        // 'message_alternate_email_id',
+        // 'message_signature_id',
+
+        $mform->addElement(
+            'static', 
+            'message_type_description', 
+            block_quickmail_string::get('notified_by'),
+            block_quickmail_string::get('message_type_' . $this->get_session_stored('message_type'))
+        );
+        
+        $mform->addElement(
+            'static', 
+            'message_subject', 
+            block_quickmail_string::get('subject'),
+            $this->get_session_stored('message_subject')
+        );
+
+        $mform->addElement(
+            'static', 
+            'message_body', 
+            block_quickmail_string::get('body'),
+            $this->get_session_stored('message_body')
+        );
+
+        if ($this->get_session_stored('message_send_to_mentors')) {
+            $mform->addElement(
+                'static', 
+                'message_mentors', 
+                block_quickmail_string::get('mentors_copied'),
+                get_string('yes')
+            );
+        }
+
+        $mform->addGroup([
+            $mform->createElement('submit', 'edit_create_message', 'Edit Message')
+        ], 'actions', '&nbsp;', array(' '), false);
+
+        $mform->addElement('html', '<hr>');
+
+        ////////////////////////////////////////////////////////////
+        ///  submit notification
+        ////////////////////////////////////////////////////////////
+        
+        // notification_is_enabled
+
+        $enabled_options = [
+            $mform->createElement('radio', 'notification_is_enabled', '', get_string('yes'), 1),
+            $mform->createElement('radio', 'notification_is_enabled', '', get_string('no'), 0)
+        ];
+
+        $mform->addGroup(
+            $enabled_options, 
+            'notification_is_enabled_action', 
+            block_quickmail_string::get('enable_notification'),
+            [' '], 
+            false
+        );
+        $mform->addHelpButton(
+            'notification_is_enabled_action', 
+            'notification_is_enabled', 
+            'block_quickmail'
+        );
+
+        $mform->setDefault(
+            'notification_is_enabled', 
+            1 // default to enabled
+        );
+
+        $mform->addGroup([
+            $mform->createElement('submit', 'next', 'Create Notification')
+        ], 'actions', '&nbsp;', array(' '), false);
+
+        $mform->addElement('html', '<hr>');
     }
 
-    private function has_set_condition_details() {        
-        // 'condition_time_unit',
-        // 'condition_time_relation',
-        // 'condition_time_amount',
-        // 'condition_grade_greater_than',
-        // 'condition_grade_less_than',
+    private function is_notification_type($type)
+    {
+        return $this->get_session_stored('notification_type') == $type;
     }
 
 }

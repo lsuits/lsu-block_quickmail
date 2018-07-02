@@ -24,34 +24,49 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\notifier\notification_condition_summary;
+use block_quickmail\notifier\notification_schedule_summary;
 use block_quickmail_string;
 
-class block_quickmail_notification_condition_summary_testcase extends advanced_testcase {
+class block_quickmail_notification_schedule_summary_testcase extends advanced_testcase {
     
     use has_general_helpers;
 
-    public function test_gets_summary_for_reminder_non_participation_notification()
+    public function test_gets_schedule_summary_from_params()
     {
+        $params = [];
+
+        $summary = notification_schedule_summary::get_from_params($params);
+
+        $this->assertInternalType('string', $summary);
+        $this->assertEquals('', $summary);
+
+        $begin = $this->get_timestamp_for_date('jun 26 2018 08:30:00');
+        $end = $this->get_timestamp_for_date('nov 30 2018 08:30:00');
+
         $params = [
-            'time_unit' => 'day',
             'time_amount' => '3',
+            'time_unit' => 'day',
+            'begin_at' => $begin,
+            'end_at' => $end,
         ];
 
-        $summary = notification_condition_summary::get_model_condition_summary('reminder', 'non_participation', $params);
+        $summary = notification_schedule_summary::get_from_params($params);
 
         $this->assertInternalType('string', $summary);
-        $this->assertEquals('All who have not accessed the course in 3 days', $summary);
+        $this->assertEquals('Every 3 Days, Beginning Jun 26 2018, 12:30am, Ending Nov 30 2018, 12:30am', $summary);
+
+        $begin = $this->get_timestamp_for_date('jun 26 2018 08:30:00');
 
         $params = [
-            'time_unit' => 'week',
             'time_amount' => '1',
+            'time_unit' => 'week',
+            'begin_at' => $begin,
         ];
 
-        $summary = notification_condition_summary::get_model_condition_summary('reminder', 'non_participation', $params);
+        $summary = notification_schedule_summary::get_from_params($params);
 
         $this->assertInternalType('string', $summary);
-        $this->assertEquals('All who have not accessed the course in 1 week', $summary);
+        $this->assertEquals('Once a Week, Beginning Jun 26 2018, 12:30am', $summary);
     }
 
     ///////////////////////////////////////////////

@@ -26,7 +26,9 @@ class notification_condition_summary {
     public static function get_model_condition_summary($notification_type, $model_key, $params = [])
     {
         // get this model's supported keys
-        $keys = notification_model_helper::get_condition_keys_for_model($notification_type, $model_key);
+        if ( ! $keys = notification_model_helper::get_condition_keys_for_model($notification_type, $model_key)) {
+            return '';
+        }
 
         // get this model's condition summary lang string key
         $lang_string_key = notification_model_helper::get_condition_summary_lang_string($notification_type, $model_key);
@@ -75,9 +77,9 @@ class notification_condition_summary {
             case 'time_unit':
                 if (array_key_exists('time_amount', $values)) {
                     // check if needs to be pluralized
-                    if (is_numeric($values['time_amount']) && $values['time_amount'] > 1) {
-                        return $values[$key] . 's';
-                    }
+                    return is_numeric($values['time_amount']) && $values['time_amount'] > 1
+                        ? $values[$key] . 's'
+                        : $values[$key];
                 }
                 break;
             

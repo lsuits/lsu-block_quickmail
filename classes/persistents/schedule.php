@@ -149,12 +149,12 @@ class schedule extends persistent {
 	{
 		$params = self::sanitize_creation_params($params);
 
-		$schedule = self::create_new([
-			'unit' => $params['unit'],
-			'amount' => $params['amount'],
-			'begin_at' => $params['begin_at'],
-			'end_at' => $params['end_at'],
-		]);
+        $schedule = self::create_new([
+            'unit' => $params['unit'],
+            'amount' => (int) $params['amount'],
+            'begin_at' => (int) $params['begin_at'],
+            'end_at' => (int) $params['end_at'],
+        ]);
 
 		return $schedule;
 	}

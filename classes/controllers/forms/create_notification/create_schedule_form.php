@@ -51,7 +51,22 @@ class create_schedule_form extends controller_form {
         
         $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
 
-        // @TODO: condition summary ???
+        ////////////////////////////////////////////////////////////
+        ///  schedule_time_unit (select)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'select', 
+            'schedule_time_unit', 
+            block_quickmail_string::get('time_unit'), 
+            $this->get_time_unit_options()
+        );
+
+        $mform->setDefault(
+            'schedule_time_unit', 
+            $this->has_session_stored('schedule_time_unit') ? $this->get_session_stored('schedule_time_unit') : ''
+        );
+
+        $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
 
         ////////////////////////////////////////////////////////////
         ///  schedule_time_amount (text)
@@ -78,23 +93,6 @@ class create_schedule_form extends controller_form {
         $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nonzero', '', 'server');
 
         ////////////////////////////////////////////////////////////
-        ///  schedule_time_unit (select)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'schedule_time_unit', 
-            block_quickmail_string::get('time_unit'), 
-            $this->get_time_unit_options()
-        );
-
-        $mform->setDefault(
-            'schedule_time_unit', 
-            $this->has_session_stored('schedule_time_unit') ? $this->get_session_stored('schedule_time_unit') : ''
-        );
-
-        $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
-
-        ////////////////////////////////////////////////////////////
         ///  schedule_begin_at (date/time)
         ////////////////////////////////////////////////////////////
         $mform->addElement(
@@ -104,10 +102,12 @@ class create_schedule_form extends controller_form {
             $this->get_schedule_time_options(false)
         );
 
-        // $mform->setDefault(
-        //     'schedule_begin_at',
-        //     $this->get_draft_default_send_time()
-        // );
+        if ($this->has_session_stored('schedule_begin_at')) {
+            $mform->setDefault(
+                'schedule_begin_at',
+                $this->get_session_stored('schedule_begin_at')
+            );
+        }
         
         ////////////////////////////////////////////////////////////
         ///  schedule_end_at (date/time)
@@ -119,12 +119,12 @@ class create_schedule_form extends controller_form {
             $this->get_schedule_time_options()
         );
 
-        // $mform->setDefault(
-        //     'schedule_end_at',
-        //     $this->get_draft_default_send_time()
-        // );
-
-
+        if ($this->has_session_stored('schedule_end_at')) {
+            $mform->setDefault(
+                'schedule_end_at',
+                $this->get_session_stored('schedule_end_at')
+            );
+        }
 
         ////////////////////////////////////////////////////////////
         ///  buttons

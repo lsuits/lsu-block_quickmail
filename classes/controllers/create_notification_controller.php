@@ -8,8 +8,12 @@ use block_quickmail_plugin;
 use block_quickmail_config;
 use block_quickmail_string;
 use block_quickmail\notifier\models\notification_model_helper;
+use block_quickmail\notifier\notification_condition_summary;
+use block_quickmail\notifier\notification_schedule_summary;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\persistents\signature;
+use block_quickmail\persistents\reminder_notification;
+use block_quickmail\persistents\event_notification;
 
 class create_notification_controller extends base_controller {
 
@@ -85,15 +89,14 @@ class create_notification_controller extends base_controller {
     {
         $form = $this->make_form('create_notification\select_type_form');
 
+        // route the form submission, if any
         if ($form->is_validated_next()) {
             return $this->post($request, 'select_type', 'next');
         } else if ($form->is_cancelled()) {
             return $this->cancel();
         }
 
-        $this->render($form, [
-            // 'heading' => 'a heading could go here!'
-        ]);
+        $this->render($form);
     }
 
     /**
@@ -313,7 +316,13 @@ class create_notification_controller extends base_controller {
 
         // route the form submission, if any
         if ($form->is_validated_next()) {
-            return $this->post($request, 'create_schedule', 'next');
+            // grab the manipulated moodle post to handle timestamp conversion
+            $form_data = $form->get_data();
+
+            return $this->post($request, 'create_schedule', 'next', [
+                'schedule_begin_at' => ! empty($form_data->schedule_begin_at) ? $form_data->schedule_begin_at : '',
+                'schedule_end_at' => ! empty($form_data->schedule_end_at) ? $form_data->schedule_end_at : '',
+            ]);
         } else if ($form->is_submitted_back()) {
             return $this->post($request, 'create_schedule', 'back');
         }
@@ -421,7 +430,9 @@ class create_notification_controller extends base_controller {
     public function post_create_message_next(controller_request $request)
     {
         // persist inputs in session
-        $this->store($request->input, $this->view_data_keys('create_message'));
+        $this->store($request->input, $this->view_data_keys('create_message'), [
+            'message_body' => $request->input->message_body['text']
+        ]);
 
         return $this->view($request, 'review');
     }
@@ -461,22 +472,41 @@ class create_notification_controller extends base_controller {
      */
     public function review(controller_request $request)
     {
+        // build condition params
+        $condition_params = [];
+        foreach ($this->view_data_keys('set_conditions') as $key) {
+            $condition_params[str_replace('condition_', '', $key)] = $this->stored($key);
+        }
+
         $form = $this->make_form('create_notification\review_form', [
-            'has_conditions' => notification_model_helper::model_requires_conditions($this->stored('notification_type'), $this->stored('notification_model'))
+            'condition_summary' => notification_condition_summary::get_model_condition_summary($this->stored('notification_type'), $this->stored('notification_model'), $condition_params),
+            'schedule_summary' => notification_schedule_summary::get_from_params([
+                'time_amount' => $this->stored('schedule_time_amount'),
+                'time_unit' => $this->stored('schedule_time_unit'),
+                'begin_at' => $this->stored('schedule_begin_at'),
+                'end_at' => $this->stored('schedule_end_at'),
+            ])
         ]);
 
+        // list of form submission actions that may be handled in addition to "back" or "next"
         $actions = [
             'edit_select_type',
-            // 'edit_select_type',
+            'edit_set_conditions',
+            'edit_create_schedule',
+            'edit_create_message',
         ];
 
         // route the form submission, if any
-        // if ($form->is_validated_next()) {
-        //     return $this->post($request, 'review', 'next');
-        // } else 
-
         if ($form->is_submitted_action('edit_select_type', $actions)) {
             return $this->post($request, 'review', 'edit_select_type');
+        } else if ($form->is_submitted_action('edit_set_conditions', $actions)) {
+            return $this->post($request, 'review', 'edit_set_conditions');
+        } else if ($form->is_submitted_action('edit_create_schedule', $actions)) {
+            return $this->post($request, 'review', 'edit_create_schedule');
+        } else if ($form->is_submitted_action('edit_create_message', $actions)) {
+            return $this->post($request, 'review', 'edit_create_message');
+        } else if ($form->is_validated_next()) {
+            return $this->post($request, 'review', 'next');
         }
 
         $this->render($form, [
@@ -495,6 +525,128 @@ class create_notification_controller extends base_controller {
         return $this->view($request, 'select_type');
     }
 
-    // edit_set_conditions
+    /**
+     * Handles post of review form, edit_set_conditions action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_review_edit_set_conditions(controller_request $request)
+    {
+        return $this->view($request, 'set_conditions');
+    }
+
+    /**
+     * Handles post of review form, edit_create_schedule action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_review_edit_create_schedule(controller_request $request)
+    {
+        return $this->view($request, 'create_schedule');
+    }
+
+    /**
+     * Handles post of review form, edit_create_message action
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_review_edit_create_message(controller_request $request)
+    {
+        return $this->view($request, 'create_message');
+    }
+
+    /**
+     * Handles post of review form, next action (final submit)
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_review_next(controller_request $request)
+    {
+        // persist inputs in session
+        $this->store($request->input, $this->view_data_keys('review'));
+
+        try {
+            // create a notification
+            $this->stored('notification_type') == 'reminder'
+                ? $this->create_reminder_notification()
+                : $this->create_event_notification();
+
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());die;
+        }
+
+        $request->redirect_as_success('Notification created!', '/course/view.php', ['id' => $this->props->course->id]);
+    }
+
+    /**
+     * Creates and returns a reminder notification model from this controller's session data
+     * 
+     * @return reminder_notification
+     */
+    private function create_reminder_notification()
+    {
+        return reminder_notification::create_type(
+            str_replace('_', '-', $this->stored('notification_model')), 
+            $this->props->course, // need to pull the object here!
+            $this->props->course, 
+            $this->props->user, 
+            array_merge($this->get_notification_params(), [
+                'schedule_unit' => $this->stored('schedule_time_unit'),
+                'schedule_amount' => (int) $this->stored('schedule_time_amount'),
+                'schedule_begin_at' => (int) $this->stored('schedule_begin_at'),
+                'schedule_end_at' => (int) $this->stored('schedule_end_at'),
+                'max_per_interval' => (int) $this->stored('schedule_max_per_interval'),
+            ])
+        );
+    }
+
+    /**
+     * Creates and returns an event notification model from this controller's session data
+     * 
+     * @return event_notification
+     */
+    private function create_event_notification()
+    {
+        return event_notification::create_type(
+            str_replace('_', '-', $this->stored('notification_model')), 
+            $this->props->course, 
+            $this->props->course, // need to pull the object here!
+            $this->props->user, 
+            array_merge($this->get_notification_params(), [
+                // 'time_delay' => $this->stored('event_time_delay'),
+            ])
+        );
+    }
+
+    /**
+     * Returns an array of general notification creation params from this controller's session data
+     * 
+     * @return array
+     */
+    private function get_notification_params()
+    {
+        return [
+            'name' => $this->stored('notification_name'),
+            'message_type' => $this->stored('message_type'),
+            'subject' => $this->stored('message_subject'),
+            'body' => $this->stored('message_body'),
+            'is_enabled' => (int) $this->stored('notification_is_enabled'),
+            'alternate_email_id' => (int) $this->stored('message_alternate_email_id'),
+            'signature_id' => (int) $this->stored('message_signature_id'),
+            'editor_format' => 1,
+            'send_receipt' => 0,
+            'send_to_mentors' => (int) $this->stored('message_send_to_mentors'),
+            'no_reply' => 1,
+            'condition_time_unit' => $this->stored('condition_time_unit'),
+            'condition_time_amount' => (int) $this->stored('condition_time_amount'),
+            'condition_time_relation' => $this->stored('condition_time_relation'),
+            'condition_grade_greater_than' => $this->stored('condition_grade_greater_than'),
+            'condition_grade_less_than' => $this->stored('condition_grade_less_than'),
+        ];
+    }
     
 }

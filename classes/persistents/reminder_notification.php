@@ -155,11 +155,11 @@ class reminder_notification extends persistent implements notification_type_inte
 			'schedule_amount',
 			'schedule_begin_at',
 			'schedule_end_at',
+			'model',
+			'object_id',
 		]);
 
 		try {
-			$schedule = null;
-			
 			$schedule = schedule::create_from_params([
 				'unit' => $params['schedule_unit'],
 				'amount' => $params['schedule_amount'],

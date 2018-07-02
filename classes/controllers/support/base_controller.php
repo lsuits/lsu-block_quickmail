@@ -92,10 +92,15 @@ class base_controller {
      * @param  controller_request  $request
      * @param  string  $view_name
      * @param  string  $action   back|next
+     * @param  array   $override_inputs       additional params to be included in the request input (useful for handling moodle-form-specific inputs)
      * @return mixed
      */
-    public function post(controller_request $request, $view_name, $action)
+    public function post(controller_request $request, $view_name, $action, $override_inputs = [])
     {
+        foreach ($override_inputs as $key => $value) {
+            $request->input->$key = $value;
+        }
+
         return $this->{ 'post_' . $view_name . '_' . $action }($request);
     }
 
@@ -291,14 +296,25 @@ class base_controller {
      * Stores the given input array's specified keys in the session input
      * 
      * @param  array  $input
-     * @param  array  $keeps  key names to keep, others will be ignored
+     * @param  array  $keeps       key names to keep, others will be ignored
+     * @param  array  $overrides   optional keyed array of params to override any input given
      * @return void
      */
-    public function store($input, $keeps = [])
+    public function store($input, $keeps = [], $overrides = [])
     {
+        // filter out any unwanted params from input
         $data = array_filter((array) $input, function ($v, $k) use ($keeps) {
             return in_array($k, $keeps);
         }, ARRAY_FILTER_USE_BOTH);
+
+        // fill any wanted data keys that do not exist in the filtered params with a default
+        foreach ($keeps as $k) {
+            if ( ! in_array($k, array_keys($data))) {
+                $data[$k] = '';
+            }
+        }
+
+        $data = array_merge($data, $overrides);
 
         $this->session->add_data($data);
     }

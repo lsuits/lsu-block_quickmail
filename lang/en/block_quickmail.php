@@ -80,6 +80,7 @@ $string['message_no_record'] = 'Could not find that message.';
 $string['queued_no_record'] = 'Could not find that queued message.';
 $string['receipt'] = 'Receive a send report';
 $string['mentor_copy'] = 'Send copies to mentors of recipients?';
+$string['mentors_copied'] = 'Send copies to mentors';
 $string['mentor_copy_subject_prefix'] = '[Mentor Copy]';
 $string['mentor_copy_message_prefix'] = '<p><strong>You are receiving this message because you are assigned as the mentor of</strong>: {$a}. The following is a copy of the message that was also sent to your mentee.</p>';
 $string['select_message_type'] = 'Send message as';
@@ -110,6 +111,8 @@ $string['notifications'] = 'Notifications';
 $string['notification_name'] = 'Title';
 $string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
 $string['notification_review'] = 'Review Your Notification';
+$string['notified_by'] = 'Notified By';
+$string['enable_notification'] = 'Enable Notification';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -120,6 +123,7 @@ $string['notification_type_reminder_description'] = 'A recurring message that wi
 $string['notification_type_event_description'] = 'An automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
 
 // notification models
+$string['notification_conditions'] = 'Conditions';
 $string['select_notification_model'] = 'Select {$a} Notification Model';
 $string['notification_model'] = 'Notification Model';
 $string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
@@ -146,17 +150,31 @@ $string['notification_model_reminder_non_participation_condition_description'] =
 
 // notification model condition summaries
 // @IMPORTANT - be sure to keep all parameters intact, no more, no less...
-$string['condition_summary_reminder_non_participation'] = 'All whom have not accessed the course in {$a->time_amount} {$a->time_unit}';
+$string['condition_summary_reminder_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
 
 // reminder notification schedules
+$string['notification_schedule'] = 'Schedule';
 $string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification Schedule';
 $string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';
 $string['schedule_begin_at'] = 'Begin date';
 $string['schedule_end_at'] = 'End date';
+$string['time_unit_day'] = 'Day';
+$string['time_unit_days'] = 'Days';
+$string['time_unit_week'] = 'Week';
+$string['time_unit_weeks'] = 'Weeks';
+$string['time_unit_month'] = 'Month';
+$string['time_unit_months'] = 'Months';
+
+$string['time_once_a'] = 'Once a';
+$string['time_every'] = 'Every';
+$string['time_beginning'] = 'Beginning';
+$string['time_ending'] = 'Ending';
 
 // create notification message
 $string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
 $string['create_notification_message_description'] = 'Now create the message that you\'d like to be sent when this notification goes out.';
+$string['notification_is_enabled'] = 'Notification Enabled';
+$string['notification_is_enabled_help'] = 'If enabled, this notification will be active, otherwise, the notification will be disabled until you enable it.';
 
 // history
 $string['no_sents'] = 'You have no sent message history.';

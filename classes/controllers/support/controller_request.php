@@ -85,4 +85,75 @@ class controller_request {
         return $input;
     }
 
+    ////////////////////////////////////////
+    ///
+    /// REDIRECTS
+    /// 
+    ////////////////////////////////////////
+
+    /**
+     * Convenience wrapper for redirecting to moodle URLs
+     * 
+     * @param  string  $url
+     * @param  array   $url_params   array of parameters for the given URL
+     * @param  int     $delay        delay, in seconds, before redirecting
+     * @return (http redirect header)
+     */
+    public function redirect_to_url($url, $url_params = [], $delay = 2) {
+        $moodle_url = new \moodle_url($url, $url_params);
+
+        redirect($moodle_url, '', $delay);
+    }
+
+    /**
+     * Convenience wrapper for redirecting to moodle URLs while including a status type and message
+     * 
+     * @param  string  $type         success|info|warning|error
+     * @param  string  $message      a pre-rendered string message
+     * @param  string  $url
+     * @param  array   $url_params   array of parameters for the given URL
+     * @param  int     $delay        delay, in seconds, before redirecting
+     * @return (http redirect header)
+     */
+    public function redirect_as_type($type, $message, $url, $url_params = [], $delay = 2) {
+        $types = [
+            'success' => \core\output\notification::NOTIFY_SUCCESS,
+            'info'    => \core\output\notification::NOTIFY_INFO,
+            'warning' => \core\output\notification::NOTIFY_WARNING,
+            'error'   => \core\output\notification::NOTIFY_ERROR,
+        ];
+
+        $moodle_url = new \moodle_url($url, $url_params);
+
+        redirect($moodle_url, $message, $delay, $types[$type]);
+    }
+
+    /**
+     * Helper function to redirect as type success
+     */
+    public function redirect_as_success($message, $url, $url_params = [], $delay = 2) {
+        $this->redirect_as_type('success', $message, $url, $url_params, $delay);
+    }
+
+    /**
+     * Helper function to redirect as type info
+     */
+    public function redirect_as_info($message, $url, $url_params = [], $delay = 2) {
+        $this->redirect_as_type('info', $message, $url, $url_params, $delay);
+    }
+
+    /**
+     * Helper function to redirect as type warning
+     */
+    public function redirect_as_warning($message, $url, $url_params = [], $delay = 2) {
+        $this->redirect_as_type('warning', $message, $url, $url_params, $delay);
+    }
+
+    /**
+     * Helper function to redirect as type error
+     */
+    public function redirect_as_error($message, $url, $url_params = [], $delay = 2) {
+        $this->redirect_as_type('error', $message, $url, $url_params, $delay);
+    }
+
 }
