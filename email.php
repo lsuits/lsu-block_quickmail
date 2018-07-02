@@ -348,7 +348,7 @@ if (empty($email->attachments)) {
     if (!empty($type)) {
         $attachid = file_get_submitted_draft_itemid('attachment');
         file_prepare_draft_area(
-            $attachid, $context->id, 'block_quickmail', 'attachment_' . $type, $typeid
+            $attachid, $context->id, 'block_quickmail', 'attachment_' . $type, $typeid, $editor_options
         );
         $email->attachments = $attachid;
     }
