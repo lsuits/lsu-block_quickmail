@@ -58,14 +58,9 @@ $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('create_notification'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 
-
 // Now start controlling...
 block_quickmail\controllers\create_notification_controller::handle($PAGE, [
     'context' => $course_context,
     'user' => $USER,
     'course' => $course
 ]);
-
-
-var_dump('this is the end');die;
-
