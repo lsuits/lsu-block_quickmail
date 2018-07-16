@@ -161,13 +161,13 @@ class manage_signatures_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
-        $buttons[] = $mform->createElement('submit', 'save', $this->get_plugin_string('save_signature'));
+        $buttons[] = $mform->createElement('cancel', 'cancel', $this->get_cancel_button_text());
             
+        $buttons[] = $mform->createElement('submit', 'save', $this->get_plugin_string('save_signature'));
+        
         if ($this->signature) {
             $buttons[] = $mform->createElement('button', 'delete', $this->get_plugin_string('delete_signature'));
         }
-            
-        $buttons[] = $mform->createElement('cancel', 'cancel', $this->get_cancel_button_text());
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
     }

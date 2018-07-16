@@ -25,10 +25,14 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
-$page_url = '/blocks/quickmail/create_notification.php';
+$page_url = '/blocks/quickmail/notifications.php';
 
 $page_params = [
     'courseid' => required_param('courseid', PARAM_INT),
+    'sort' => optional_param('sort', 'sent', PARAM_TEXT), // (field name)  - name, type, nextrun, enabled
+    'dir' => optional_param('dir', 'desc', PARAM_TEXT), // asc|desc
+    'page' => optional_param('page', 1, PARAM_INT),
+    'per_page' => 10, // adjust as necessary, maybe turn into real param?
 ];
 
 $course = get_course($page_params['courseid']);
@@ -37,7 +41,7 @@ $course = get_course($page_params['courseid']);
 /// AUTHENTICATION
 ////////////////////////////////////////
 
-require_course_login($course, false);
+require_login();
 $course_context = context_course::instance($course->id);
 $PAGE->set_context($course_context);
 $PAGE->set_url(new moodle_url($page_url, $page_params));
@@ -51,15 +55,33 @@ block_quickmail_plugin::require_user_can_create_notifications($USER, $course_con
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('create_notification'));
-$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('create_notification'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('notifications'));
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
-$PAGE->navbar->add(block_quickmail_string::get('create_notification'));
+$PAGE->navbar->add(block_quickmail_string::get('notifications'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('notifications'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
+// $PAGE->requires->js_call_amd('block_quickmail/sent-index', 'init');
 
-// Now start controlling...
-block_quickmail\controllers\create_notification_controller::handle($PAGE, [
-    'context' => $course_context,
-    'user' => $USER,
-    'course' => $course
+$renderer = $PAGE->get_renderer('block_quickmail');
+
+// get all notifications belonging to this course
+$notifications = block_quickmail\repos\notification_repo::get_for_course($page_params['courseid'], [
+    'sort' => $page_params['sort'], 
+    'dir' => $page_params['dir'],
+    'paginate' => true,
+    'page' => $page_params['page'], 
+    'per_page' => $page_params['per_page'],
+    'uri' => $_SERVER['REQUEST_URI']
 ]);
+
+$rendered_notification_index = $renderer->notification_index_component([
+    'notifications' => $notifications->data,
+    'notification_pagination' => $notifications->pagination,
+    'course_id' => $page_params['courseid'],
+    'sort_by' => $page_params['sort'],
+    'sort_dir' => $page_params['dir'],
+]);
+
+echo $OUTPUT->header();
+echo $rendered_notification_index;
+echo $OUTPUT->footer();

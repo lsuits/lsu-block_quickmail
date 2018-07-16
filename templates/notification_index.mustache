@@ -1,0 +1,108 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_quickmail_notification_index">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {{#nameIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=name&dir=desc">{{# str }} title, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=name&dir=asc">{{# str }} title, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/nameIsSorted}}
+                {{^nameIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=name&dir=asc">{{# str }} title, block_quickmail {{/ str }}</a></th>
+                {{/nameIsSorted}}
+
+                {{#modelIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=model&dir=desc">{{# str }} notification_model, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=model&dir=asc">{{# str }} notification_model, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/modelIsSorted}}
+                {{^modelIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=model&dir=asc">{{# str }} notification_model, block_quickmail {{/ str }}</a></th>
+                {{/modelIsSorted}}
+
+                <th>{{# str }} notification_schedule, block_quickmail {{/ str }}</th>
+                
+                {{#enabledIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=enabled&dir=desc">{{# str }} is_enabled, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=enabled&dir=asc">{{# str }} is_enabled, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/enabledIsSorted}}
+                {{^enabledIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=enabled&dir=asc">{{# str }} is_enabled, block_quickmail {{/ str }}</a></th>
+                {{/enabledIsSorted}}
+
+                {{#createdAtIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=created&dir=desc">{{# str }} created, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">{{# str }} created, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/createdAtIsSorted}}
+                {{^createdAtIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">{{# str }} created, block_quickmail {{/ str }}</a></th>
+                {{/createdAtIsSorted}}
+            </tr>
+        </thead>
+        <tbody>
+            {{# tableRows }}
+                <tr>
+                    <td>{{ name }}</td>
+                    <td>{{ modelDescription }}</td>
+                    <td>fsf</td>
+                    <td>{{ isEnabled }}</td>
+                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                </tr>
+            {{/ tableRows }}
+
+            {{^ tableRows }}
+                <tr>
+                    <td colspan="5" align="center">{{# str }} no_sents, block_quickmail {{/ str }}</td>
+                </tr>
+            {{/ tableRows }}
+        </tbody>
+    </table>
+
+    {{< block_quickmail/pagination }}
+    {{/ block_quickmail/pagination }}
+    
+    <a href="{{ urlBack }}" class="btn btn-secondary">{{ urlBackLabel }}</a>
+    <a href="{{ urlCreateNew }}" class="btn btn-primary">{{ urlCreateNewLabel }}</a>
+</div>

@@ -34,6 +34,7 @@ use block_quickmail\components\alternate_index_component;
 use block_quickmail\components\manage_alternates_component;
 use block_quickmail\components\manage_drafts_component;
 use block_quickmail\components\manage_queued_component;
+use block_quickmail\components\notification_index_component;
 //
 use block_quickmail\controllers\components\create_notification_component;
 
@@ -284,6 +285,22 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $data = $sent_message_index_component->export_for_template($this);
 
         return $this->render_from_template('block_quickmail/sent_message_index', $data);
+    }
+
+    ////////////////////////////////////////
+    /// NOTIFICATION INDEX
+    ////////////////////////////////////////
+    
+    public function notification_index_component($params = []) {
+        $notification_index_component = new notification_index_component($params);
+        
+        return $this->render($notification_index_component);
+    }
+
+    protected function render_notification_index_component(notification_index_component $notification_index_component) {
+        $data = $notification_index_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/notification_index', $data);
     }
 
 }

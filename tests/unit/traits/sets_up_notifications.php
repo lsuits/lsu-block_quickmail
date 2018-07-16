@@ -28,7 +28,20 @@
 /// 
 ////////////////////////////////////////////////////
 
+use block_quickmail\persistents\reminder_notification;
+
 trait sets_up_notifications {
+
+    //// NOTIFICATION CREATION
+    
+    public function create_reminder_notification_for_course_user($model_key, $course, $user, $object = null, $overrides = [])
+    {
+        $params = $this->get_reminder_notification_params([], $overrides);
+
+        $notification = reminder_notification::create_type($model_key, $object, $course, $user, $params);
+
+        return $notification;
+    }
 
     //// NOTIFICATION SCAFFOLDING
 

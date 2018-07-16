@@ -32,6 +32,7 @@ $string['view_sent'] = 'View Sent Messages';
 $string['manage_signatures'] = 'My Signatures';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['create_notification'] = 'Create Notification';
+$string['notifications'] = 'Notifications';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // capabilities
@@ -107,12 +108,12 @@ $string['found_filtered_users'] = 'Found {$a} user(s)';
 $string['courseneveraccessed'] = 'Never Accessed';
 
 // notifications
-$string['notifications'] = 'Notifications';
 $string['notification_name'] = 'Title';
 $string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
 $string['notification_review'] = 'Review Your Notification';
 $string['notified_by'] = 'Notified By';
 $string['enable_notification'] = 'Enable Notification';
+$string['no_notifications'] = 'You have no created notifications.';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -173,6 +174,7 @@ $string['time_ending'] = 'Ending';
 // create notification message
 $string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
 $string['create_notification_message_description'] = 'Now create the message that you\'d like to be sent when this notification goes out.';
+$string['is_enabled'] = 'Enabled';
 $string['notification_is_enabled'] = 'Notification Enabled';
 $string['notification_is_enabled_help'] = 'If enabled, this notification will be active, otherwise, the notification will be disabled until you enable it.';
 
