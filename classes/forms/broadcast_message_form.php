@@ -369,7 +369,7 @@ class broadcast_message_form extends \moodleform {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('cancel'))
+            $mform->createElement('cancel', 'cancel', get_string('cancel')),
             $mform->createElement('submit', 'save', block_quickmail_string::get('save_draft')),
             $mform->createElement('submit', 'send', block_quickmail_string::get('send_message')),
         ];
