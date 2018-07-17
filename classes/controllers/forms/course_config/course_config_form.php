@@ -22,44 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\forms;
+namespace block_quickmail\controllers\forms\course_config;
 
 require_once $CFG->libdir . '/formslib.php';
 
-use block_quickmail\forms\concerns\is_quickmail_form;
+use block_quickmail\controllers\support\controller_form;
 use block_quickmail_string;
 use block_quickmail_config;
 
-class course_config_form extends \moodleform {
-
-    use is_quickmail_form;
-
-    public $errors;
-    public $context;
-    public $user;
-    public $course;
-    public $course_config;
-
-    /**
-     * Instantiates and returns a course configuration form
-     * 
-     * @param  object        $context
-     * @param  object        $user                   auth user
-     * @param  object        $course
-     * @return \block_quickmail\forms\course_config_form
-     */
-    public static function make($context, $user, $course)
-    {
-        $target_url = self::generate_target_url([
-            'courseid' => $course->id,
-        ]);
-
-        return new self($target_url, [
-            'context' => $context,
-            'user' => $user,
-            'course' => $course,
-        ], 'post', '', ['id' => 'mform-course-config']);
-    }
+class course_config_form extends controller_form {
 
     /*
      * Moodle form definition
@@ -68,17 +39,12 @@ class course_config_form extends \moodleform {
 
         $mform =& $this->_form;
 
-        $this->context = $this->_customdata['context'];
-        $this->user = $this->_customdata['user'];
-        $this->course = $this->_customdata['course'];
-        $this->course_config = block_quickmail_config::get('', $this->course);
-
         ////////////////////////////////////////////////////////////
-        ///  restore flag
+        ///  view_form_name directive: TO BE INCLUDED ON ALL FORMS :/
         ////////////////////////////////////////////////////////////
-        $mform->addElement('hidden', 'restore_flag');
-        $mform->setType('restore_flag', PARAM_INT);
-        $mform->setDefault('restore_flag', 0);
+        $mform->addElement('hidden', 'view_form_name');
+        $mform->setType('view_form_name', PARAM_TEXT);
+        $mform->setDefault('view_form_name', $this->get_view_form_name());
 
         ////////////////////////////////////////////////////////////
         ///  allow students (select, based on global setting)
@@ -91,7 +57,7 @@ class course_config_form extends \moodleform {
                 $this->get_yes_or_no_options());
             $mform->setDefault(
                 'allowstudents', 
-                $this->course_config['allowstudents']
+                $this->get_custom_data('course_config')['allowstudents']
             );
         } else {
             $mform->addElement('hidden', 'allowstudents');
@@ -131,7 +97,7 @@ class course_config_form extends \moodleform {
         );
         $mform->setDefault(
             'prepend_class', 
-            $this->course_config['prepend_class']
+            $this->get_custom_data('course_config')['prepend_class']
         );
         $mform->addHelpButton(
             'prepend_class', 
@@ -150,7 +116,7 @@ class course_config_form extends \moodleform {
         );
         $mform->setDefault(
             'receipt', 
-            $this->course_config['receipt']
+            $this->get_custom_data('course_config')['receipt']
         );
         $mform->addHelpButton(
             'receipt', 
@@ -170,7 +136,7 @@ class course_config_form extends \moodleform {
             );
             $mform->setDefault(
                 'default_message_type', 
-                $this->course_config['default_message_type']
+                $this->get_custom_data('course_config')['default_message_type']
             );
             $mform->addHelpButton(
                 'default_message_type', 
@@ -228,7 +194,7 @@ class course_config_form extends \moodleform {
      */
     private function get_all_available_roles()
     {
-        return role_fix_names(get_all_roles($this->context), $this->context, ROLENAME_ALIAS, true);
+        return role_fix_names(get_all_roles($this->get_custom_data('context')), $this->get_custom_data('context'), ROLENAME_ALIAS, true);
     }
 
     /**
@@ -238,7 +204,7 @@ class course_config_form extends \moodleform {
      */
     private function get_selected_role_ids_array()
     {
-        return explode(',', $this->course_config['roleselection']);
+        return explode(',', $this->get_custom_data('course_config')['roleselection']);
     }
 
     /**
@@ -285,7 +251,7 @@ class course_config_form extends \moodleform {
 
         return $options;
     }
-    
+
     /**
      * Returns the string for current forced message type
      * 
