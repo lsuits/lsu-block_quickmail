@@ -106,6 +106,20 @@ class controller_request {
     }
 
     /**
+     * Helper for redirecting to a course, or defaulting to the "my" page
+     * 
+     * @param  int  $course_id
+     * @return (http redirect header)
+     */
+    public function redirect_to_course_or_my($course_id = 0) {
+        if ($course_id) {
+            $this->redirect_to_url('/course/view.php', ['id' => $course_id]);
+        } else {
+            $this->redirect_to_url('/my');
+        }
+    }
+
+    /**
      * Convenience wrapper for redirecting to moodle URLs while including a status type and message
      * 
      * @param  string  $type         success|info|warning|error

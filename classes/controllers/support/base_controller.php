@@ -270,7 +270,11 @@ class base_controller {
     {
         $class = implode('\\', [self::$forms_path, $name]);
 
-        return new $class($this->get_form_url(), $this->get_form_custom_data($name, $data), 'post', '', null, true, null);
+        $query_string = ! empty($this->get_form_url_params())
+            ? '?' . http_build_query($this->get_form_url_params(), '', '&')
+            : '';
+
+        return new $class($query_string, $this->get_form_custom_data($name, $data), 'post', '', null, true, null);
     }
 
     /**

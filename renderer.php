@@ -32,7 +32,6 @@ use block_quickmail\components\draft_message_index_component;
 use block_quickmail\components\queued_message_index_component;
 use block_quickmail\components\sent_message_index_component;
 
-use block_quickmail\components\manage_signatures_component;
 use block_quickmail\components\alternate_index_component;
 use block_quickmail\components\manage_alternates_component;
 use block_quickmail\components\notification_index_component;
@@ -184,28 +183,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $component->form->render();
 
         return $this->output->container($out, 'manage_alternates_component');
-    }
-
-    ////////////////////////////////////////
-    /// MANAGE SIGNATURES (USER) FORM
-    ////////////////////////////////////////
-    
-    public function manage_signatures_component($params = []) {
-        $component = new manage_signatures_component($params);
-        
-        return $this->render($component);
-    }
-
-    protected function render_manage_signatures_component(manage_signatures_component $component) {
-        $out = '';
-        
-        // render heading
-        $out .= $this->output->heading(format_string($component->heading), 2);
-
-        // render form
-        $out .= $component->form->render();
-
-        return $this->output->container($out, 'manage_signatures_component');
     }
 
     ////////////////////////////////////////

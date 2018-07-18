@@ -63,11 +63,16 @@ class controller_form extends \moodleform {
      * Reports whether or not this form was submitted and with the given action
      * 
      * @param  string  $action
-     * @param  array   $actions  optional array of additional actions to listen for
+     * @param  array   $actions            optional array of additional actions to listen for
+     * @param  bool    $validation_check   optional, if true will check validity
      * @return bool
      */
-    public function is_submitted_action($action, $actions = [])
+    public function is_submitted_action($action, $actions = [], $validation_check = false)
     {
+        if ($validation_check && ! $this->is_validated()) {
+            return false;
+        }
+
         return $this->is_submitted() && $this->is_action($action, $actions);
     }
 
