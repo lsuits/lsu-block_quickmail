@@ -32,25 +32,23 @@ use block_quickmail\repos\course_repo;
 
 class draft_message_index_component extends component implements \renderable {
 
-    public $draft_messages;
+    public $messages;
     public $pagination;
     public $user;
     public $course_id;
     public $sort_by;
     public $sort_dir;
-    public $course_draft_messages;
     public $user_course_array;
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->draft_messages = $this->get_param('draft_messages');
-        $this->pagination = $this->get_param('draft_pagination');
+        $this->messages = $this->get_param('messages');
+        $this->pagination = $this->get_param('pagination');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
-        $this->course_draft_messages = message::filter_messages_by_course($this->draft_messages, $this->course_id);
-        $this->user_course_array = course_repo::get_user_course_array($this->user);
+        $this->user_course_array = $this->get_param('user_course_array');
     }
 
     /**
@@ -75,7 +73,7 @@ class draft_message_index_component extends component implements \renderable {
 
         $data->tableRows = [];
         
-        foreach ($this->course_draft_messages as $message) {
+        foreach ($this->messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
                 'courseName' => $message->get_course()->shortname,

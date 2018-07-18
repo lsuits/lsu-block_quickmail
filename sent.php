@@ -67,7 +67,6 @@ $PAGE->requires->js('/blocks/quickmail/js/sent-index.js');
 
 $renderer = $PAGE->get_renderer('block_quickmail');
 
-// Now start controlling...
 block_quickmail\controllers\sent_message_index_controller::handle($PAGE, [
     'context' => $user_context,
     'user' => $USER,

@@ -100,8 +100,8 @@
                     <td>{{#userdate}} {{lastModifiedAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td>
                         <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} edit {{/ str }}</a>
-                        <button role="button" class="btn btn-info btn-sm btn-duplicate-draft" data-draft-id="{{ id }}">{{# str }} duplicate {{/ str }}</button>
-                        <button role="button" class="btn btn-danger btn-sm btn-delete-draft" data-draft-id="{{ id }}">{{# str }} delete {{/ str }}</button>
+                        <a href="?action=duplicate&id={{ id }}" class="btn btn-info btn-sm btn-duplicate-draft">{{# str }} duplicate {{/ str }}</a>
+                        <a href="?action=delete&id={{ id }}" class="btn btn-danger btn-sm btn-delete-draft">{{# str }} delete {{/ str }}</a>
                     </td>
                 </tr>
             {{/ tableRows }}

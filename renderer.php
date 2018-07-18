@@ -24,19 +24,17 @@
 
 use block_quickmail\controllers\support\controller_form_component;
 
-
-
 use block_quickmail\components\broadcast_message_component;
 use block_quickmail\components\broadcast_recipient_filter_results_component;
 use block_quickmail\components\compose_message_component;
+
 use block_quickmail\components\draft_message_index_component;
 use block_quickmail\components\queued_message_index_component;
 use block_quickmail\components\sent_message_index_component;
+
 use block_quickmail\components\manage_signatures_component;
 use block_quickmail\components\alternate_index_component;
 use block_quickmail\components\manage_alternates_component;
-use block_quickmail\components\manage_drafts_component;
-use block_quickmail\components\manage_queued_component;
 use block_quickmail\components\notification_index_component;
 //
 use block_quickmail\controllers\components\create_notification_component;
@@ -80,15 +78,15 @@ class block_quickmail_renderer extends plugin_renderer_base {
     }
 
     protected function render_sent_message_index_component(sent_message_index_component $sent_message_index_component) {
-        $data = $sent_message_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/sent_message_index', $data);
+        return $this->render_from_template('block_quickmail/sent_message_index', $sent_message_index_component->export_for_template($this));
     }
 
     protected function render_queued_message_index_component(queued_message_index_component $queued_message_index_component) {
-        $data = $queued_message_index_component->export_for_template($this);
+        return $this->render_from_template('block_quickmail/queued_message_index', $queued_message_index_component->export_for_template($this));
+    }
 
-        return $this->render_from_template('block_quickmail/queued_message_index', $data);
+    protected function render_draft_message_index_component(draft_message_index_component $draft_message_index_component) {
+        return $this->render_from_template('block_quickmail/draft_message_index', $draft_message_index_component->export_for_template($this));
     }
 
     ///////////////////////////// OLD STUFF....
@@ -208,41 +206,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $component->form->render();
 
         return $this->output->container($out, 'manage_signatures_component');
-    }
-
-    ////////////////////////////////////////
-    /// DRAFT MESSAGE INDEX (DISPLAY)
-    ////////////////////////////////////////
-    
-    public function draft_message_index_component($params = []) {
-        $draft_message_index_component = new draft_message_index_component($params);
-        
-        return $this->render($draft_message_index_component);
-    }
-
-    protected function render_draft_message_index_component(draft_message_index_component $draft_message_index_component) {
-        $data = $draft_message_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/draft_message_index', $data);
-    }
-
-    ////////////////////////////////////////
-    /// MANAGE DRAFTS FORM
-    ////////////////////////////////////////
-    
-    public function manage_drafts_component($params = []) {
-        $component = new manage_drafts_component($params);
-        
-        return $this->render($component);
-    }
-
-    protected function render_manage_drafts_component(manage_drafts_component $component) {
-        $out = '';
-        
-        // render form
-        $out .= $component->form->render();
-
-        return $this->output->container($out, 'manage_drafts_component');
     }
 
     ////////////////////////////////////////

@@ -6,20 +6,20 @@ use block_quickmail\controllers\support\base_controller;
 use block_quickmail\controllers\support\controller_request;
 use block_quickmail_string;
 use block_quickmail\repos\course_repo;
-use block_quickmail\repos\queued_repo;
+use block_quickmail\repos\draft_repo;
 use block_quickmail\persistents\message;
 
-class queued_message_index_controller extends base_controller {
+class draft_message_index_controller extends base_controller {
 
-    public static $base_uri = '/blocks/quickmail/queued.php';
+    public static $base_uri = '/blocks/quickmail/drafts.php';
 
     public static $views = [
-        'queued_message_index' => [],
+        'draft_message_index' => [],
     ];
 
     public static $actions = [
-        'send',
-        'unqueue'
+        'duplicate',
+        'delete',
     ];
 
     /**
@@ -35,15 +35,15 @@ class queued_message_index_controller extends base_controller {
     }
 
     /**
-     * Manage queued messages
+     * Manage draft messages
      * 
      * @param  controller_request  $request
      * @return mixed
      */
-    public function queued_message_index(controller_request $request)
+    public function draft_message_index(controller_request $request)
     {
-        // get all (queued) messages belonging to this user and course
-        $messages = queued_repo::get_for_user($this->props->user->id, $this->props->course_id, [
+        // get all (draft) messages belonging to this user and course
+        $messages = draft_repo::get_for_user($this->props->user->id, $this->props->course_id, [
             'sort' => $this->props->page_params['sort'], 
             'dir' => $this->props->page_params['dir'],
             'paginate' => true,
@@ -58,7 +58,7 @@ class queued_message_index_controller extends base_controller {
         // get this user's courses
         $user_course_array = course_repo::get_user_course_array($this->props->user);
 
-        $this->render_component('queued_message_index', [
+        $this->render_component('draft_message_index', [
             'messages' => $filtered_messages,
             'user_course_array' => $user_course_array,
             'course_id' => $this->props->course_id,
@@ -70,12 +70,12 @@ class queued_message_index_controller extends base_controller {
     }
 
     /**
-     * Unqueue message action
+     * Delete draft message action
      * 
      * @param  controller_request  $request
      * @return mixed
      */
-    public function action_unqueue(controller_request $request)
+    public function action_delete(controller_request $request)
     {
         // validate params
         if ( ! $this->props->page_params['message_id']) {
@@ -86,25 +86,25 @@ class queued_message_index_controller extends base_controller {
             $request->redirect_as_error('No message was specified!', static::$base_uri, $this->props->page_params);
         }
 
-        // attempt to fetch the message to unqueue
-        if ( ! $message = queued_repo::find_for_user_or_null($this->props->page_params['message_id'], $this->props->user->id)) {
+        // attempt to fetch the draft message
+        if ( ! $message = draft_repo::find_for_user_or_null($this->props->page_params['message_id'], $this->props->user->id)) {
             // redirect and notify of error
-            $request->redirect_as_error(block_quickmail_string::get('queued_no_record'), static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('draft_no_record'), static::$base_uri, $this->get_form_url_params());
         }
 
-        // attempt to unqueue
-        $message->unqueue();
+        // attempt to hard delete draft
+        $message->hard_delete();
 
-        $request->redirect_as_success('Message unqueued!', static::$base_uri, $this->get_form_url_params());
+        $request->redirect_as_success('Message deleted!', static::$base_uri, $this->get_form_url_params());
     }
 
     /**
-     * Send message action
+     * Duplicate draft message action
      * 
      * @param  controller_request  $request
      * @return mixed
      */
-    public function action_send(controller_request $request)
+    public function action_duplicate(controller_request $request)
     {
         // validate params
         if ( ! $this->props->page_params['message_id']) {
@@ -116,15 +116,15 @@ class queued_message_index_controller extends base_controller {
         }
 
         // attempt to fetch the message to send now
-        if ( ! $message = queued_repo::find_for_user_or_null($this->props->page_params['message_id'], $this->props->user->id)) {
+        if ( ! $message = draft_repo::find_for_user_or_null($this->props->page_params['message_id'], $this->props->user->id)) {
             // redirect and notify of error
-            $request->redirect_as_error(block_quickmail_string::get('queued_no_record'), static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('draft_no_record'), static::$base_uri, $this->get_form_url_params());
         }
 
-        // attempt to force the queued message to be sent now
-        $message->changed_queued_to_now();
+        // attempt to duplicate the draft
+        \block_quickmail\messenger\messenger::duplicate_draft($message->get('id'), $this->props->user);
 
-        $request->redirect_as_success('Message will be sent now!', static::$base_uri, $this->get_form_url_params());
+        $request->redirect_as_success(block_quickmail_string::get('redirect_back_to_course_from_message_after_duplicate'), static::$base_uri, $this->get_form_url_params());
     }
 
 }

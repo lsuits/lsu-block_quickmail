@@ -67,7 +67,6 @@ $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css
 $PAGE->requires->jquery();
 $PAGE->requires->js('/blocks/quickmail/js/queued-index.js');
 
-// Now start controlling...
 block_quickmail\controllers\queued_message_index_controller::handle($PAGE, [
     'context' => $user_context,
     'user' => $USER,
