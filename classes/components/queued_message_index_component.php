@@ -27,28 +27,26 @@ namespace block_quickmail\components;
 use block_quickmail\components\component;
 use block_quickmail_string;
 use moodle_url;
-use block_quickmail\persistents\message;
-use block_quickmail\repos\course_repo;
 
 class queued_message_index_component extends component implements \renderable {
 
-    public $queued_messages;
+    public $messages;
     public $pagination;
     public $user;
     public $course_id;
-    public $course_queued_messages;
+    public $sort_by;
+    public $sort_dir;
     public $user_course_array;
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->queued_messages = $this->get_param('queued_messages');
-        $this->pagination = $this->get_param('queued_pagination');
+        $this->messages = $this->get_param('messages');
+        $this->pagination = $this->get_param('pagination');
         $this->user = $this->get_param('user');
         $this->course_id = $this->get_param('course_id');
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
-        $this->course_queued_messages = message::filter_messages_by_course($this->queued_messages, $this->course_id);
-        $this->user_course_array = course_repo::get_user_course_array($this->user);
+        $this->user_course_array = $this->get_param('user_course_array');
     }
 
     /**
@@ -73,10 +71,10 @@ class queued_message_index_component extends component implements \renderable {
 
         $data->tableRows = [];
         
-        foreach ($this->course_queued_messages as $message) {
+        foreach ($this->messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
-                'courseName' => $this->user_course_array[$message->get('course_id')],
+                'courseName' => $message->get_course()->shortname,
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
                 'createdAt' => $message->get('timecreated'),

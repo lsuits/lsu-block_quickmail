@@ -19,7 +19,7 @@ class create_notification_controller extends base_controller {
 
     public static $base_uri = '/blocks/quickmail/create_notification.php';
 
-    public static $view_data = [
+    public static $views = [
         'select_type' => [
             'notification_type',
             'notification_name',
@@ -96,7 +96,7 @@ class create_notification_controller extends base_controller {
             return $this->cancel();
         }
 
-        $this->render($form);
+        $this->render_form($form);
     }
 
     /**
@@ -148,7 +148,7 @@ class create_notification_controller extends base_controller {
             return $this->cancel();
         }
 
-        $this->render($form, [
+        $this->render_form($form, [
             'heading' => block_quickmail_string::get('select_notification_model', block_quickmail_string::get('notification_type_' . $this->stored('notification_type')))
         ]);
     }
@@ -243,7 +243,7 @@ class create_notification_controller extends base_controller {
             return $this->post($request, 'set_conditions', 'back');
         }
 
-        $this->render($form, [
+        $this->render_form($form, [
             'heading' => block_quickmail_string::get('set_notification_conditions', (object) [
                 'model' => block_quickmail_string::get('notification_model_' . $this->stored('notification_type') . '_' . $this->stored('notification_model')),
                 'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
@@ -327,7 +327,7 @@ class create_notification_controller extends base_controller {
             return $this->post($request, 'create_schedule', 'back');
         }
 
-        $this->render($form, [
+        $this->render_form($form, [
             'heading' => block_quickmail_string::get('set_notification_schedule', (object) [
                 'model' => block_quickmail_string::get('notification_model_reminder_' . $this->stored('notification_model')),
                 'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
@@ -413,7 +413,7 @@ class create_notification_controller extends base_controller {
             return $this->post($request, 'create_message', 'back');
         }
 
-        $this->render($form, [
+        $this->render_form($form, [
             'heading' => block_quickmail_string::get('create_notification_message', (object) [
                 'model' => block_quickmail_string::get('notification_model_' . $this->stored('notification_type') . '_' . $this->stored('notification_model')),
                 'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
@@ -509,7 +509,7 @@ class create_notification_controller extends base_controller {
             return $this->post($request, 'review', 'next');
         }
 
-        $this->render($form, [
+        $this->render_form($form, [
             'heading' => block_quickmail_string::get('notification_review')
         ]);
     }

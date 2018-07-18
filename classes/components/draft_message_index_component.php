@@ -78,7 +78,7 @@ class draft_message_index_component extends component implements \renderable {
         foreach ($this->course_draft_messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
-                'courseName' => $this->user_course_array[$message->get('course_id')],
+                'courseName' => $message->get_course()->shortname,
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
                 'createdAt' => $message->get('timecreated'),

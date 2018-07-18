@@ -99,8 +99,8 @@
                     <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td>{{#userdate}} {{scheduledSendAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
                     <td>
-                        <button role="button" class="btn btn-success btn-sm btn-send-now" data-message-id="{{ id }}">{{# str }} send_now, block_quickmail {{/ str }}</button>
-                        <button role="button" class="btn btn-info btn-sm btn-unqueue-message" data-queued-id="{{ id }}">{{# str }} unqueue, block_quickmail {{/ str }}</button>
+                        <a href="?action=send&id={{ id }}" class="btn btn-success btn-sm">{{# str }} send_now, block_quickmail {{/ str }}</a>
+                        <a href="?action=unqueue&id={{ id }}" class="btn btn-info btn-sm">{{# str }} unqueue, block_quickmail {{/ str }}</a>
                     </td>
                 </tr>
             {{/ tableRows }}

@@ -33,6 +33,8 @@ $page_params = [
     'dir' => optional_param('dir', 'asc', PARAM_TEXT), // asc|desc
     'page' => optional_param('page', 1, PARAM_INT),
     'per_page' => 10, // adjust as necessary, maybe turn into real param?
+    'action' => optional_param('action', '', PARAM_TEXT), // unqueue|send
+    'message_id' => optional_param('id', 0, PARAM_INT),
 ];
 
 ////////////////////////////////////////
@@ -62,85 +64,13 @@ $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('queued'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('queued'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-$PAGE->requires->js_call_amd('block_quickmail/queued-index', 'init');
+$PAGE->requires->jquery();
+$PAGE->requires->js('/blocks/quickmail/js/queued-index.js');
 
-$renderer = $PAGE->get_renderer('block_quickmail');
-
-////////////////////////////////////////
-/// INSTANTIATE FORM
-////////////////////////////////////////
-
-$manage_queued_form = \block_quickmail\forms\manage_queued_form::make(
-    $user_context, 
-    $USER, 
-    $page_params['courseid']
-);
-
-////////////////////////////////////////
-/// HANDLE REQUEST
-////////////////////////////////////////
-
-$request = block_quickmail_request::for_route('queued')->with_form($manage_queued_form);
-
-////////////////////////////////////////
-/// HANDLE REQUEST
-////////////////////////////////////////
-
-
-try {
-    // UNQUEUE
-    if ($request->to_unqueue_message()) {
-        // attempt to fetch the message to unqueue
-        if ( ! $message = block_quickmail\repos\queued_repo::find_for_user_or_null($request->data->unqueue_message_id, $USER->id)) {
-            // redirect and notify of error
-            $request->redirect_as_error(block_quickmail_string::get('queued_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
-        }
-
-        // attempt to unqueue
-        $message->unqueue();
-    
-    // SEND NOW
-    } else if ($request->to_send_message_now()) {
-        // attempt to fetch the message to send now
-        if ( ! $message = block_quickmail\repos\queued_repo::find_for_user_or_null($request->data->send_now_message_id, $USER->id)) {
-            // redirect and notify of error
-            $request->redirect_as_error(block_quickmail_string::get('queued_no_record'), $page_url, ['courseid' => $page_params['courseid']]);
-        }
-
-        // attempt to force the queued message to be sent now
-        $message->changed_queued_to_now();
-    }
-} catch (\block_quickmail\exceptions\validation_exception $e) {
-    $manage_queued_form->set_error_exception($e);
-} catch (\block_quickmail\exceptions\critical_exception $e) {
-    print_error('critical_error', 'block_quickmail');
-}
-
-// get all (queued) messages belonging to this user and course
-$queued_messages = block_quickmail\repos\queued_repo::get_for_user($USER->id, $page_params['courseid'], [
-    'sort' => $page_params['sort'], 
-    'dir' => $page_params['dir'],
-    'paginate' => true,
-    'page' => $page_params['page'], 
-    'per_page' => $page_params['per_page'],
-    'uri' => $_SERVER['REQUEST_URI']
-]);
-
-$rendered_queued_message_index = $renderer->queued_message_index_component([
-    'queued_messages' => $queued_messages->data,
-    'queued_pagination' => $queued_messages->pagination,
+// Now start controlling...
+block_quickmail\controllers\queued_message_index_controller::handle($PAGE, [
+    'context' => $user_context,
     'user' => $USER,
     'course_id' => $page_params['courseid'],
-    'sort_by' => $page_params['sort'],
-    'sort_dir' => $page_params['dir'],
-]);
-
-$rendered_manage_queued_form = $renderer->manage_queued_component([
-    'manage_queued_form' => $manage_queued_form,
-]);
-
-echo $OUTPUT->header();
-$manage_queued_form->render_error_notification();
-echo $rendered_queued_message_index;
-echo $rendered_manage_queued_form;
-echo $OUTPUT->footer();
+    'page_params' => $page_params
+], $page_params['action']);

@@ -2,7 +2,7 @@
 
 namespace block_quickmail\controllers\support;
 
-class controller_component implements \renderable {
+class controller_form_component implements \renderable {
 
     public $form;
     public $props;

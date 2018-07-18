@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_quickmail\controllers\support\controller_form_component;
+
 use block_quickmail\components\broadcast_message_component;
 use block_quickmail\components\broadcast_recipient_filter_results_component;
 use block_quickmail\components\compose_message_component;
@@ -29,7 +31,6 @@ use block_quickmail\components\draft_message_index_component;
 use block_quickmail\components\queued_message_index_component;
 use block_quickmail\components\sent_message_index_component;
 use block_quickmail\components\manage_signatures_component;
-use block_quickmail\components\course_config_component;
 use block_quickmail\components\alternate_index_component;
 use block_quickmail\components\manage_alternates_component;
 use block_quickmail\components\manage_drafts_component;
@@ -41,15 +42,14 @@ use block_quickmail\controllers\components\create_notification_component;
 class block_quickmail_renderer extends plugin_renderer_base {
 
     ////////////////////////////////////////
-    /// CONTROLLER COMPONENT - CREATE NOTIFICATION
+    /// CONTROLLER FORM COMPONENTS
     ////////////////////////////////////////
     
-    public function controller_component($component) {
+    public function controller_form_component(controller_form_component $component) {
         return $this->render($component);
     }
 
-    // TODO type hint here with controller component class
-    protected function render_controller_component($component) {
+    protected function render_controller_form_component(controller_form_component $component) {
         $out = '';
         
         // render heading, if it exists
@@ -60,10 +60,73 @@ class block_quickmail_renderer extends plugin_renderer_base {
         // render any forms
         $out .= $component->form->render();
 
-        return $this->output->container($out, 'controller_component');
+        return $this->output->container($out, 'controller_form_component');
     }
 
+    ////////////////////////////////////////
+    /// THINGS...
+    ////////////////////////////////////////
+
+    public function controller_component_template($component_name, $params = []) {
+        // get class full component class name
+        $component_class = 'block_quickmail\components\\' . $component_name . '_component';
+
+        // instantiate component including params
+        $component = new $component_class($params);
+
+        // set the template name (component name for now)
+        $template_name = $component_name;
+
+        return $this->render($component, $template_name);
+    }
+
+    protected function render_controller_component_template($component, $template_name) {
+        $data = $component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/' . $template_name, $data);
+    }
+
+
+
     ///////////////////////////// OLD STUFF....
+
+    ////////////////////////////////////////
+    /// QUEUED MESSAGE INDEX (DISPLAY)
+    ////////////////////////////////////////
+    
+    public function queued_message_index_component($params = []) {
+        $queued_message_index_component = new queued_message_index_component($params);
+        
+        return $this->render($queued_message_index_component);
+    }
+
+    protected function render_queued_message_index_component(queued_message_index_component $queued_message_index_component) {
+        $data = $queued_message_index_component->export_for_template($this);
+
+        return $this->render_from_template('block_quickmail/queued_message_index', $data);
+    }
+
+    ////////////////////////////////////////
+    /// MANAGE QUEUED FORM
+    ////////////////////////////////////////
+    
+    public function manage_queued_component($params = []) {
+        $component = new manage_queued_component($params);
+        
+        return $this->render($component);
+    }
+
+    protected function render_manage_queued_component(manage_queued_component $component) {
+        $out = '';
+        
+        // render form
+        $out .= $component->form->render();
+
+        return $this->output->container($out, 'manage_queued_component');
+    }
+
+
+
 
     ////////////////////////////////////////
     /// BROADCAST FORM
@@ -123,25 +186,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $compose_message_component->compose_form->render();
 
         return $this->output->container($out, 'compose_message_component');
-    }
-
-    ////////////////////////////////////////
-    /// CONFIGURATION (COURSE) FORM
-    ////////////////////////////////////////
-    
-    public function course_config_component($params = []) {
-        $course_config_component = new course_config_component($params);
-        
-        return $this->render($course_config_component);
-    }
-
-    protected function render_course_config_component(course_config_component $course_config_component) {
-        $out = '';
-        
-        // render config form
-        $out .= $course_config_component->course_config_form->render();
-
-        return $this->output->container($out, 'course_config_component');
     }
 
     ////////////////////////////////////////
@@ -234,41 +278,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $component->form->render();
 
         return $this->output->container($out, 'manage_drafts_component');
-    }
-
-    ////////////////////////////////////////
-    /// QUEUED MESSAGE INDEX (DISPLAY)
-    ////////////////////////////////////////
-    
-    public function queued_message_index_component($params = []) {
-        $queued_message_index_component = new queued_message_index_component($params);
-        
-        return $this->render($queued_message_index_component);
-    }
-
-    protected function render_queued_message_index_component(queued_message_index_component $queued_message_index_component) {
-        $data = $queued_message_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/queued_message_index', $data);
-    }
-
-    ////////////////////////////////////////
-    /// MANAGE QUEUED FORM
-    ////////////////////////////////////////
-    
-    public function manage_queued_component($params = []) {
-        $component = new manage_queued_component($params);
-        
-        return $this->render($component);
-    }
-
-    protected function render_manage_queued_component(manage_queued_component $component) {
-        $out = '';
-        
-        // render form
-        $out .= $component->form->render();
-
-        return $this->output->container($out, 'manage_queued_component');
     }
 
     ////////////////////////////////////////

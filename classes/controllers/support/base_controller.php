@@ -4,15 +4,15 @@ namespace block_quickmail\controllers\support;
 
 use block_quickmail\controllers\support\controller_request;
 use block_quickmail\controllers\support\controller_form;
-use block_quickmail\controllers\support\controller_component;
+use block_quickmail\controllers\support\controller_form_component;
 use block_quickmail\controllers\support\controller_session;
 use moodle_url;
 
 class base_controller {
 
     public static $forms_path = 'block_quickmail\controllers\forms';
-    
-    public static $view_data = [];
+    public static $views = [];
+    public static $actions = [];
 
     public $context;
     public $props;
@@ -33,11 +33,12 @@ class base_controller {
     /**
      * Handles a request to the static controller implementation
      * 
-     * @param  object  &$page  the PAGE global, for manipulation of nav, etc.
-     * @param  array   $data   optional, additional data to be included in controller
+     * @param  object  &$page   the PAGE global, for manipulation of nav, etc.
+     * @param  array   $data    optional, additional data to be included in controller
+     * @param  string  $action  optional, explicit controller action
      * @return mixed
      */
-    public static function handle(&$page, $data = [])
+    public static function handle(&$page, $data = [], $action = '')
     {
         $controller = new static($page, $data);
         
@@ -58,6 +59,11 @@ class base_controller {
         } else {
 
             $view_name = $request->view_name;
+        }
+
+        // if action is relevant to controller
+        if (in_array($action, static::$actions)) {
+            return $controller->call_action($action, $request);
         }
 
         // determine which view we are calling
@@ -105,6 +111,24 @@ class base_controller {
     }
 
     /**
+     * Calls the given "action" method on the static controller implementation
+     *
+     * @param  string              $name
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    private function call_action($name, controller_request $request)
+    {
+        $action_name = 'action_' . $name;
+
+        if ( ! method_exists($this, $action_name)) {
+            throw new \Exception('controller action "' . $name . '"does not exist!');
+        }
+
+        call_user_func([$this, $action_name], $request);
+    }
+
+    /**
      * Calls the given "view name" method on the static controller implementation which should subsequently render the view
      *
      * Additionally renders the page header and footer
@@ -137,7 +161,7 @@ class base_controller {
      */
     public static function get_default_view()
     {
-        return key(static::$view_data);
+        return key(static::$views);
     }
 
     ////////////////////////////////////////////
@@ -153,8 +177,6 @@ class base_controller {
      */
     public function cancel()
     {
-        $this->dd('cancel!');
-
         $this->session->clear();
 
         // set the view to the controller's default
@@ -173,12 +195,12 @@ class base_controller {
 
     public function view_keys()
     {
-        return array_keys(static::$view_data);
+        return array_keys(static::$views);
     }
 
     public function view_data_keys($view)
     {
-        return static::$view_data[$view];
+        return static::$views[$view];
     }
 
     ////////////////////////////////////////////
@@ -194,13 +216,34 @@ class base_controller {
      * @param  array            $params   optional, any additional data to be passed to the renderer
      * @return string
      */
-    public function render(controller_form $form, $params = [])
+    public function render_form(controller_form $form, $params = [])
     {
         global $PAGE;
         
         $renderer = $PAGE->get_renderer('block_quickmail');
 
-        $rendered = $renderer->controller_component(new controller_component($form, $params));
+        $rendered = $renderer->controller_form_component(new controller_form_component($form, $params));
+
+        // @TODO: include general notifications in the rendered output
+        // $compose_form->render_error_notification();
+        
+        echo $rendered;
+    }
+
+    /**
+     * Returns rendered HTML for the given component
+     * 
+     * @param  string    $component_name
+     * @param  array     $params             optional, any additional data to be passed to the renderer
+     * @return string
+     */
+    public function render_component($component_name, $params = [])
+    {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('block_quickmail');
+
+        $rendered = $renderer->controller_component_template($component_name, $params);
 
         // @TODO: include general notifications in the rendered output
         // $compose_form->render_error_notification();
@@ -417,6 +460,16 @@ class base_controller {
         $parts = explode('\\', get_called_class());
 
         return end($parts);
+    }
+
+    /**
+     * Returns the static controller's short name
+     * 
+     * @return string
+     */
+    public static function get_controller_short_name()
+    {
+        return str_replace('_controller', '', explode('\\', static::class)[2]);
     }
 
     public function dd($thing) { var_dump($thing);die; }

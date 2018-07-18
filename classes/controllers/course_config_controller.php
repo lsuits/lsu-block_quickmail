@@ -10,7 +10,7 @@ class course_config_controller extends base_controller {
 
     public static $base_uri = '/blocks/quickmail/configuration.php';
 
-    public static $view_data = [
+    public static $views = [
         'course_config' => [],
     ];
 
