@@ -62,29 +62,15 @@ $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('sent_messages'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('sent_messages'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-$PAGE->requires->js_call_amd('block_quickmail/sent-index', 'init');
+$PAGE->requires->jquery();
+$PAGE->requires->js('/blocks/quickmail/js/sent-index.js');
 
 $renderer = $PAGE->get_renderer('block_quickmail');
 
-// get all sent messages belonging to this user (and course)
-$sent_messages = block_quickmail\repos\sent_repo::get_for_user($USER->id, $page_params['courseid'], [
-    'sort' => $page_params['sort'], 
-    'dir' => $page_params['dir'],
-    'paginate' => true,
-    'page' => $page_params['page'], 
-    'per_page' => $page_params['per_page'],
-    'uri' => $_SERVER['REQUEST_URI']
-]);
-
-$rendered_sent_message_index = $renderer->sent_message_index_component([
-    'sent_messages' => $sent_messages->data,
-    'sent_pagination' => $sent_messages->pagination,
+// Now start controlling...
+block_quickmail\controllers\sent_message_index_controller::handle($PAGE, [
+    'context' => $user_context,
     'user' => $USER,
     'course_id' => $page_params['courseid'],
-    'sort_by' => $page_params['sort'],
-    'sort_dir' => $page_params['dir'],
+    'page_params' => $page_params
 ]);
-
-echo $OUTPUT->header();
-echo $rendered_sent_message_index;
-echo $OUTPUT->footer();

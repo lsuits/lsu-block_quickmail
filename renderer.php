@@ -24,6 +24,8 @@
 
 use block_quickmail\controllers\support\controller_form_component;
 
+
+
 use block_quickmail\components\broadcast_message_component;
 use block_quickmail\components\broadcast_recipient_filter_results_component;
 use block_quickmail\components\compose_message_component;
@@ -64,7 +66,7 @@ class block_quickmail_renderer extends plugin_renderer_base {
     }
 
     ////////////////////////////////////////
-    /// THINGS...
+    /// CONTROLLER TEMPLATES
     ////////////////////////////////////////
 
     public function controller_component_template($component_name, $params = []) {
@@ -74,30 +76,13 @@ class block_quickmail_renderer extends plugin_renderer_base {
         // instantiate component including params
         $component = new $component_class($params);
 
-        // set the template name (component name for now)
-        $template_name = $component_name;
-
-        return $this->render($component, $template_name);
+        return $this->render($component);
     }
 
-    protected function render_controller_component_template($component, $template_name) {
-        $data = $component->export_for_template($this);
+    protected function render_sent_message_index_component(sent_message_index_component $sent_message_index_component) {
+        $data = $sent_message_index_component->export_for_template($this);
 
-        return $this->render_from_template('block_quickmail/' . $template_name, $data);
-    }
-
-
-
-    ///////////////////////////// OLD STUFF....
-
-    ////////////////////////////////////////
-    /// QUEUED MESSAGE INDEX (DISPLAY)
-    ////////////////////////////////////////
-    
-    public function queued_message_index_component($params = []) {
-        $queued_message_index_component = new queued_message_index_component($params);
-        
-        return $this->render($queued_message_index_component);
+        return $this->render_from_template('block_quickmail/sent_message_index', $data);
     }
 
     protected function render_queued_message_index_component(queued_message_index_component $queued_message_index_component) {
@@ -106,27 +91,7 @@ class block_quickmail_renderer extends plugin_renderer_base {
         return $this->render_from_template('block_quickmail/queued_message_index', $data);
     }
 
-    ////////////////////////////////////////
-    /// MANAGE QUEUED FORM
-    ////////////////////////////////////////
-    
-    public function manage_queued_component($params = []) {
-        $component = new manage_queued_component($params);
-        
-        return $this->render($component);
-    }
-
-    protected function render_manage_queued_component(manage_queued_component $component) {
-        $out = '';
-        
-        // render form
-        $out .= $component->form->render();
-
-        return $this->output->container($out, 'manage_queued_component');
-    }
-
-
-
+    ///////////////////////////// OLD STUFF....
 
     ////////////////////////////////////////
     /// BROADCAST FORM
@@ -278,22 +243,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $component->form->render();
 
         return $this->output->container($out, 'manage_drafts_component');
-    }
-
-    ////////////////////////////////////////
-    /// SENT MESSAGE INDEX
-    ////////////////////////////////////////
-    
-    public function sent_message_index_component($params = []) {
-        $sent_message_index_component = new sent_message_index_component($params);
-        
-        return $this->render($sent_message_index_component);
-    }
-
-    protected function render_sent_message_index_component(sent_message_index_component $sent_message_index_component) {
-        $data = $sent_message_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/sent_message_index', $data);
     }
 
     ////////////////////////////////////////
