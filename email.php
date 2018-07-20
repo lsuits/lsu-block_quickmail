@@ -26,6 +26,7 @@ require_once('../../enrol/externallib.php');
 require_once('lib.php');
 require_once('email_form.php');
 require_once('../../lib/weblib.php');
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 require_login();
 
@@ -332,6 +333,54 @@ if (empty($users)) {
                         if (!$success) {
                             $warnings[] = get_string("no_email", 'block_quickmail', $everyone[$userid]);
                             $data->failuserids[] = $userid;
+                        }
+
+                        $realuser = $DB->get_record('user', array('id' => $userid));
+                        profile_load_custom_fields($realuser);
+                        $guardianemailone = $realuser->profile['guardianemailone'];
+                        $guardianemailtwo = $realuser->profile['guardianemailtwo'];
+                        $guardianemailthree = $realuser->profile['guardianemailthree'];
+                        
+                        if (!empty($guardianemailone) && $data->guardianemail) {
+                            $fakeuser = new stdClass();
+                            $fakeuser->id = 99999900;
+                            $fakeuser->email = $guardianemailone;
+                            $fakeuser->username = $guardianemailone;
+                            $fakeuser->mailformat = 1;
+                            $parentemail_success = email_to_user($fakeuser, $user, $subject, $messagetext, $messagehtml);
+                            if (!$parentemail_success) {
+                                $data->failuserids[] = $additional_email;
+                                // will need to notify that an email is incorrect
+                                $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
+                            }
+                        }
+
+                        if (!empty($guardianemailtwo) && $data->guardianemail) {
+                            $fakeuser = new stdClass();
+                            $fakeuser->id = 99999900;
+                            $fakeuser->email = $guardianemailtwo;
+                            $fakeuser->username = $guardianemailtwo;
+                            $fakeuser->mailformat = 1;
+                            $parentemail_success = email_to_user($fakeuser, $user, $subject, $messagetext, $messagehtml);
+                            if (!$parentemail_success) {
+                                $data->failuserids[] = $additional_email;
+                                // will need to notify that an email is incorrect
+                                $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
+                            }
+                        }
+
+                        if (!empty($guardianemailthree) && $data->guardianemail) {
+                            $fakeuser = new stdClass();
+                            $fakeuser->id = 99999900;
+                            $fakeuser->email = $guardianemailthree;
+                            $fakeuser->username = $guardianemailthree;
+                            $fakeuser->mailformat = 1;
+                            $parentemail_success = email_to_user($fakeuser, $user, $subject, $messagetext, $messagehtml);
+                            if (!$parentemail_success) {
+                                $data->failuserids[] = $additional_email;
+                                // will need to notify that an email is incorrect
+                                $warnings[] = get_string("no_email_address", 'block_quickmail', $fakeuser->email);
+                            }
                         }
                     }
                 }

@@ -101,4 +101,11 @@ if($ADMIN->fulltree) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configcheckbox('block_quickmail_guardianemail',
+            quickmail::_s('guardianemail'), quickmail::_s('guardianemail_desc'),
+            0
+        )
+    );
+
 }

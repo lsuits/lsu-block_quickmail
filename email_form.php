@@ -218,6 +218,7 @@ class email_form extends moodleform {
         $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'block_quickmail_mycallback', 'client');
         $mform->addHelpButton('additional_emails', 'additional_emails', 'block_quickmail');
         }
+
         $mform->addElement(
             'filemanager', 'attachments', quickmail::_s('attachment'),
             null, array('subdirs' => 1, 'accepted_types' => '*')
@@ -240,6 +241,18 @@ class email_form extends moodleform {
         $mform->addGroup($radio, 'receipt_action', quickmail::_s('receipt'), array(' '), false);
         $mform->addHelpButton('receipt_action', 'receipt', 'block_quickmail');
         $mform->setDefault('receipt', !empty($config['receipt']));
+
+
+        if (!empty($CFG->block_quickmail_guardianemail)) {
+            $guardianemail = array(
+                $mform->createElement('radio', 'guardianemail', '', get_string('yes'), 1),
+                $mform->createElement('radio', 'guardianemail', '', get_string('no'), 0)
+            );
+    
+            $mform->addGroup($guardianemail, 'guardianemail_action', "Send email to guardians", array(' '), false);
+            $mform->addHelpButton('guardianemail_action', 'guardianemail', 'block_quickmail');
+            $mform->setDefault('guardianemail', !empty($config['guardianemail']));
+        }
 
         $buttons = array();
         $buttons[] =& $mform->createElement('submit', 'send', quickmail::_s('send_email'));
