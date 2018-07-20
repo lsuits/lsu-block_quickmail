@@ -99,6 +99,8 @@ $string['courselayout'] = 'Course Layout';
 $string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
 $string['addionalemail'] = 'Allow emails to external email addresses';
 $string['addionalemail_desc'] = 'If this option is enabled quickmail emails are also sent so external email adresses the user entered within the form.';
+$string['guardianemail'] = 'Allows emails to also be sent to guardian(s)';
+$string['guardianemail_desc'] = 'If this option is enabled quickmail emails will also be sent to guardians. Quickmail will get guardian emails from custom fields on a user profile with the shortname guardianemailone or guardianemailtwo or guardianemailthree.';
 
 $string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
 cannot be reversed.';
