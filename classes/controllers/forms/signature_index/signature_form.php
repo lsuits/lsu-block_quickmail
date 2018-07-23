@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\controllers\forms\signature;
+namespace block_quickmail\controllers\forms\signature_index;
 
 require_once $CFG->libdir . '/formslib.php';
 
@@ -130,7 +130,7 @@ class signature_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('cancel')),
+            $mform->createElement('cancel', 'cancel', get_string('back')),
         ];
 
         if ($this->get_selected_signature('id')) {

@@ -24,19 +24,15 @@
 
 use block_quickmail\controllers\support\controller_form_component;
 
-use block_quickmail\components\broadcast_message_component;
-use block_quickmail\components\broadcast_recipient_filter_results_component;
-use block_quickmail\components\compose_message_component;
-
 use block_quickmail\components\draft_message_index_component;
 use block_quickmail\components\queued_message_index_component;
 use block_quickmail\components\sent_message_index_component;
-
 use block_quickmail\components\alternate_index_component;
-use block_quickmail\components\manage_alternates_component;
 use block_quickmail\components\notification_index_component;
-//
-use block_quickmail\controllers\components\create_notification_component;
+
+use block_quickmail\components\broadcast_message_component;
+use block_quickmail\components\broadcast_recipient_filter_results_component;
+use block_quickmail\components\compose_message_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
 
@@ -88,7 +84,9 @@ class block_quickmail_renderer extends plugin_renderer_base {
         return $this->render_from_template('block_quickmail/draft_message_index', $draft_message_index_component->export_for_template($this));
     }
 
-    ///////////////////////////// OLD STUFF....
+    protected function render_alternate_index_component(alternate_index_component $alternate_index_component) {
+        return $this->render_from_template('block_quickmail/alternate_index', $alternate_index_component->export_for_template($this));
+    }
 
     ////////////////////////////////////////
     /// BROADCAST FORM
@@ -148,41 +146,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $compose_message_component->compose_form->render();
 
         return $this->output->container($out, 'compose_message_component');
-    }
-
-    ////////////////////////////////////////
-    /// ALTERNATE EMAILS INDEX (DISPLAY)
-    ////////////////////////////////////////
-    
-    public function alternate_index_component($params = []) {
-        $alternate_index_component = new alternate_index_component($params);
-        
-        return $this->render($alternate_index_component);
-    }
-
-    protected function render_alternate_index_component(alternate_index_component $alternate_index_component) {
-        $data = $alternate_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/alternate_index', $data);
-    }
-
-    ////////////////////////////////////////
-    /// MANAGE ALTERNATE EMAILS FORM
-    ////////////////////////////////////////
-    
-    public function manage_alternates_component($params = []) {
-        $component = new manage_alternates_component($params);
-        
-        return $this->render($component);
-    }
-
-    protected function render_manage_alternates_component(manage_alternates_component $component) {
-        $out = '';
-        
-        // render form
-        $out .= $component->form->render();
-
-        return $this->output->container($out, 'manage_alternates_component');
     }
 
     ////////////////////////////////////////

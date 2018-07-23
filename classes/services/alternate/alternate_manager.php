@@ -225,7 +225,8 @@ class alternate_manager {
 
         // build the confirmation "landing" url
         $approval_url = new moodle_url('/blocks/quickmail/alternate.php', [
-            'confirmid' => $alternate_email->get('id'), 
+            'action' => 'confirm',
+            'id' => $alternate_email->get('id'), 
             'token' => $token
         ]);
 

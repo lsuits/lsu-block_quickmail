@@ -39,9 +39,9 @@
                     <td>{{ scope }}</td>
                     <td>{{ status }}</td>
                     <td>
-                        <button role="button" class="btn btn-danger btn-sm btn-delete-alt" data-alternate-id="{{ id }}">{{# str }} delete {{/ str }}</button>
+                        <a href="?action=delete&id={{ id }}" class="btn btn-danger btn-sm btn-delete-alt">{{# str }} delete {{/ str }}</a>
                         {{^ isValidated }}
-                            <a href="?courseid={{ courseId }}&resendid={{ id }}" class="btn btn-success btn-sm btn-resend-alt">{{# str }} alternate_resend_confirmation, block_quickmail {{/ str }}</a>
+                            <a href="?action=resend&id={{ id }}" class="btn btn-info btn-sm btn-resend-alt">{{# str }} alternate_resend_confirmation, block_quickmail {{/ str }}</a>
                         {{/ isValidated }}
                     </td>
                 </tr>
@@ -56,6 +56,5 @@
     </table>
 
     <a href="{{ urlBack }}" class="btn btn-secondary">{{ urlBackLabel }}</a>
-    
-    <button role="button" class="btn btn-primary btn-create-alt">{{# str }} create_new, block_quickmail {{/ str }}</button>
+    <a href="?action=create" class="btn btn-primary">{{# str }} create_new, block_quickmail {{/ str }}</a>
 </div>

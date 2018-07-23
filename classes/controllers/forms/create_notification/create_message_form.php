@@ -266,6 +266,15 @@ class create_message_form extends controller_form {
     }
 
     /**
+     * Returns the current user's signatures for selection, plus a "none" option
+     * 
+     * @return array
+     */
+    private function get_user_signature_options() {
+        return [0 => 'None'] + $this->get_custom_data('user_signature_array');
+    }
+
+    /**
      * Reports whether or not this form should display the "copy mentor" input
      * 
      * @return bool

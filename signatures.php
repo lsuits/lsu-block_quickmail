@@ -63,14 +63,7 @@ $PAGE->requires->jquery();
 $PAGE->requires->js('/blocks/quickmail/js/signature-form.js');
 $PAGE->requires->data_for_js('signaturedata', ['courseid' => $page_params['courseid']]);
 
-// $PAGE->requires->js_call_amd('block_quickmail/manage-signatures', 'init', ['courseid' => $page_params['courseid']]);
-
-////////////////////////////////////////
-/// INSTANTIATE PAGE RENDERER
-////////////////////////////////////////
-$renderer = $PAGE->get_renderer('block_quickmail');
-
-block_quickmail\controllers\signature_controller::handle($PAGE, [
+block_quickmail\controllers\signature_index_controller::handle($PAGE, [
     'context' => $system_context,
     'user' => $USER,
     'course_id' => $page_params['courseid'],

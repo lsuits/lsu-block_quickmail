@@ -28,9 +28,9 @@ require_once 'lib.php';
 $page_url = '/blocks/quickmail/alternate.php';
 
 $page_params = [
-    'courseid' => optional_param('courseid', 0, PARAM_INT),
-    'confirmid' => optional_param('confirmid', 0, PARAM_INT),
-    'resendid' => optional_param('resendid', 0, PARAM_INT),
+    'course_id' => optional_param('courseid', 0, PARAM_INT),
+    'action' => optional_param('action', '', PARAM_TEXT), // create|resend|confirm|delete
+    'alternate_id' => optional_param('id', 0, PARAM_INT),
     'token' => optional_param('token', '', PARAM_TEXT),
 ];
 
@@ -41,16 +41,16 @@ $page_params = [
 require_login();
 
 // if we're scoping to a specific course
-if ($page_params['courseid']) {
+if ($page_params['course_id']) {
     // if we're scoping to the site level course
-    if ($page_params['courseid'] == SITEID) {
+    if ($page_params['course_id'] == SITEID) {
         // throw an exception if user does not have site-level capability for this block
-        block_quickmail_plugin::require_user_has_course_message_access($USER, $page_params['courseid']);
+        block_quickmail_plugin::require_user_has_course_message_access($USER, $page_params['course_id']);
     
     // otherwise, we're scoping to a course
     } else {
         // throw an exception if user does not have capability of having alternates
-        block_quickmail_plugin::require_user_capability('allowalternate', $USER, context_course::instance($page_params['courseid']));
+        block_quickmail_plugin::require_user_capability('allowalternate', $USER, context_course::instance($page_params['course_id']));
     }
 }
 
@@ -69,103 +69,12 @@ $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('alternate'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('alternate'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-$PAGE->requires->js_call_amd('block_quickmail/alternate-index', 'init');
+$PAGE->requires->jquery();
+$PAGE->requires->js('/blocks/quickmail/js/alternate-form.js');
 
-$renderer = $PAGE->get_renderer('block_quickmail');
-
-////////////////////////////////////////
-/// INSTANTIATE FORM
-////////////////////////////////////////
-
-$manage_alternates_form = \block_quickmail\forms\manage_alternates_form::make(
-    $user_context, 
-    $USER, 
-    $page_params['courseid']
-);
-
-////////////////////////////////////////
-/// HANDLE REQUEST
-////////////////////////////////////////
-
-$request = block_quickmail_request::for_route('alternate')->with_form($manage_alternates_form);
-
-// if a POST was submitted, attempt to take appropriate actions
-try {
-    // CONFIRM
-    if ($page_params['confirmid'] && $page_params['token']) {
-        
-        // attempt to confirm the alternate email for this user
-        $alternate_email = \block_quickmail\services\alternate\alternate_manager::confirm_alternate_for_user(
-            $page_params['confirmid'], 
-            $page_params['token'], 
-            $USER
-        );
-
-        $request->redirect_as_success(block_quickmail_string::get('alternate_activated', $alternate_email->get('email')), $page_url, ['courseid' => $page_params['courseid']]);
-
-    // RESEND
-    } else if ($page_params['resendid']) {
-
-        // attempt to resend the confirmation email
-        \block_quickmail\services\alternate\alternate_manager::resend_confirmation_email_for_user($page_params['resendid'], $USER);
-
-        // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_string::get('alternate_confirmation_email_resent'), $page_url, ['courseid' => $page_params['courseid']]);
-
-    // DELETE
-    } else if ($request->to_delete_alternate()) {
-
-        // attempt to delete the alternate email
-        \block_quickmail\services\alternate\alternate_manager::delete_alternate_email_for_user($request->data->delete_alternate_id, $USER);
-
-        // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_string::get('alternate_deleted'), $page_url, ['courseid' => $page_params['courseid']]);
-
-    // CREATE
-    } else if ($request->to_create_alternate()) {
-        
-        // attempt to create the alternate and send a confirmation email
-        \block_quickmail\services\alternate\alternate_manager::create_alternate_for_user($USER, $page_params['courseid'], [
-            'availability' => $request->data->availability,
-            'firstname' => $request->data->firstname,
-            'lastname' => $request->data->lastname,
-            'email' => $request->data->email,
-        ]);
-
-        // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_string::get('alternate_created'), $page_url, ['courseid' => $page_params['courseid']]);
-    }
-} catch (\block_quickmail\exceptions\validation_exception $e) {
-    $manage_alternates_form->set_error_exception($e);
-} catch (\block_quickmail\exceptions\critical_exception $e) {
-    print_error('critical_error', 'block_quickmail');
-}
-
-// get all alternate emails belonging to this user
-$alternate_emails = block_quickmail\persistents\alternate_email::get_all_for_user($USER->id);
-
-// get the rendered index
-$rendered_alternate_index = $renderer->alternate_index_component([
-    'alternate_emails' => $alternate_emails,
-    'user' => $USER,
-    'course_id' => $page_params['courseid'],
-]);
-
-// get the rendered form
-$rendered_manage_alternates_form = $renderer->manage_alternates_component([
+block_quickmail\controllers\alternate_index_controller::handle($PAGE, [
     'context' => $user_context,
     'user' => $USER,
-    'course_id' => $page_params['courseid'],
-    'manage_alternates_form' => $manage_alternates_form,
-]);
-
-
-////////////////////////////////////////
-/// RENDER PAGE
-////////////////////////////////////////
-
-echo $OUTPUT->header();
-$manage_alternates_form->render_error_notification();
-echo $rendered_alternate_index;
-echo $rendered_manage_alternates_form;
-echo $OUTPUT->footer();
+    'course_id' => $page_params['course_id'],
+    'page_params' => $page_params
+], $page_params['action']);

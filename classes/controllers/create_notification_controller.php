@@ -100,7 +100,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_type form, next action
+     * Handles post of select_type form, next subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -154,7 +154,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_model form, next action
+     * Handles post of select_model form, next subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -199,7 +199,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of select_model form, back action
+     * Handles post of select_model form, back subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -252,7 +252,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of set_conditions form, next action
+     * Handles post of set_conditions form, next subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -282,7 +282,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of set_conditions form, back action
+     * Handles post of set_conditions form, back subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -336,7 +336,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of create_schedule form, next action
+     * Handles post of create_schedule form, next subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -350,7 +350,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of create_schedule form, back action
+     * Handles post of create_schedule form, back subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -422,7 +422,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of create_message form, next action
+     * Handles post of create_message form, next subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -438,7 +438,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of create_message form, back action
+     * Handles post of create_message form, back subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -488,8 +488,8 @@ class create_notification_controller extends base_controller {
             ])
         ]);
 
-        // list of form submission actions that may be handled in addition to "back" or "next"
-        $actions = [
+        // list of form submission subactions that may be handled in addition to "back" or "next"
+        $subactions = [
             'edit_select_type',
             'edit_set_conditions',
             'edit_create_schedule',
@@ -497,13 +497,13 @@ class create_notification_controller extends base_controller {
         ];
 
         // route the form submission, if any
-        if ($form->is_submitted_action('edit_select_type', $actions)) {
+        if ($form->is_submitted_subaction('edit_select_type', $subactions)) {
             return $this->post($request, 'review', 'edit_select_type');
-        } else if ($form->is_submitted_action('edit_set_conditions', $actions)) {
+        } else if ($form->is_submitted_subaction('edit_set_conditions', $subactions)) {
             return $this->post($request, 'review', 'edit_set_conditions');
-        } else if ($form->is_submitted_action('edit_create_schedule', $actions)) {
+        } else if ($form->is_submitted_subaction('edit_create_schedule', $subactions)) {
             return $this->post($request, 'review', 'edit_create_schedule');
-        } else if ($form->is_submitted_action('edit_create_message', $actions)) {
+        } else if ($form->is_submitted_subaction('edit_create_message', $subactions)) {
             return $this->post($request, 'review', 'edit_create_message');
         } else if ($form->is_validated_next()) {
             return $this->post($request, 'review', 'next');
@@ -515,7 +515,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of review form, edit_select_type action
+     * Handles post of review form, edit_select_type subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -526,7 +526,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of review form, edit_set_conditions action
+     * Handles post of review form, edit_set_conditions subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -537,7 +537,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of review form, edit_create_schedule action
+     * Handles post of review form, edit_create_schedule subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -548,7 +548,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of review form, edit_create_message action
+     * Handles post of review form, edit_create_message subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -559,7 +559,7 @@ class create_notification_controller extends base_controller {
     }
 
     /**
-     * Handles post of review form, next action (final submit)
+     * Handles post of review form, next subaction (final submit)
      * 
      * @param  controller_request  $request
      * @return mixed

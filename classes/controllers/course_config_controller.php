@@ -39,16 +39,16 @@ class course_config_controller extends base_controller {
             'context' => $this->context
         ]);
 
-        // list of form submission actions that may be handled in addition to "back" or "next"
-        $actions = [
+        // list of form submission subactions that may be handled in addition to "back" or "next"
+        $subactions = [
             'reset',
             'save',
         ];
 
         // route the form submission, if any
-        if ($form->is_submitted_action('reset', $actions)) {
+        if ($form->is_submitted_subaction('reset', $subactions)) {
             return $this->post($request, 'course_config', 'reset');
-        } else if ($form->is_submitted_action('save', $actions)) {
+        } else if ($form->is_submitted_subaction('save', $subactions)) {
             return $this->post($request, 'course_config', 'save');
         } else if ($form->is_cancelled()) {
             $request->redirect_to_url('/course/view.php', ['id' => $this->props->course->id]);
@@ -58,7 +58,7 @@ class course_config_controller extends base_controller {
     }
 
     /**
-     * Handles post of course_config form, reset action
+     * Handles post of course_config form, reset subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -72,7 +72,7 @@ class course_config_controller extends base_controller {
     }
 
     /**
-     * Handles post of course_config form, save action
+     * Handles post of course_config form, save subaction
      * 
      * @param  controller_request  $request
      * @return mixed

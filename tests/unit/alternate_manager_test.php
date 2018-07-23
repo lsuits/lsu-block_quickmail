@@ -42,7 +42,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         
         $this->expectException(validation_exception::class);
 
-        $form_data = (object) [
+        $form_data = [
             'email' => '',
             'firstname' => '',
             'lastname' => '',
@@ -60,7 +60,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         
         $this->expectException(validation_exception::class);
 
-        $form_data = (object) [
+        $form_data = [
             'email' => '',
             'firstname' => '',
             'lastname' => '',
@@ -78,7 +78,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         
         $this->expectException(validation_exception::class);
 
-        $form_data = (object) [
+        $form_data = [
             'email' => '',
             'firstname' => '',
             'lastname' => '',

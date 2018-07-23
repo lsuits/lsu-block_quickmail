@@ -30,8 +30,8 @@ class controller_form extends \moodleform {
 
     public $errors;
 
-    public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true) {
-        parent::__construct($action, $customdata, $method, $target, $attributes, $editable);
+    public function __construct($subaction = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true) {
+        parent::__construct($subaction, $customdata, $method, $target, $attributes, $editable);
     }
 
     public function definition()
@@ -40,69 +40,69 @@ class controller_form extends \moodleform {
     }
 
     /**
-     * Reports whether or not this form was submitted and validated with the "next" action
+     * Reports whether or not this form was submitted and validated with the "next" subaction
      * 
      * @return bool
      */
     public function is_validated_next()
     {
-        return $this->is_validated() && $this->is_action('next');
+        return $this->is_validated() && $this->is_subaction('next');
     }
 
     /**
-     * Reports whether or not this form was submitted and with the "back" action
+     * Reports whether or not this form was submitted and with the "back" subaction
      * 
      * @return bool
      */
     public function is_submitted_back()
     {
-        return $this->is_submitted_action('back');
+        return $this->is_submitted_subaction('back');
     }
 
     /**
-     * Reports whether or not this form was submitted and with the given action
+     * Reports whether or not this form was submitted and with the given subaction
      * 
-     * @param  string  $action
-     * @param  array   $actions            optional array of additional actions to listen for
+     * @param  string  $subaction
+     * @param  array   $subactions            optional array of additional subactions to listen for
      * @param  bool    $validation_check   optional, if true will check validity
      * @return bool
      */
-    public function is_submitted_action($action, $actions = [], $validation_check = false)
+    public function is_submitted_subaction($subaction, $subactions = [], $validation_check = false)
     {
         if ($validation_check && ! $this->is_validated()) {
             return false;
         }
 
-        return $this->is_submitted() && $this->is_action($action, $actions);
+        return $this->is_submitted() && $this->is_subaction($subaction, $subactions);
     }
 
     /**
-     * Reports whether or not this form was submitted with the given action
+     * Reports whether or not this form was submitted with the given subaction
      * 
      * @param  string   $type  back|next
-     * @param  array   $actions  optional array of additional actions to listen for
+     * @param  array   $subactions  optional array of additional subactions to listen for
      * @return bool
      */
-    private function is_action($type, $actions = [])
+    private function is_subaction($type, $subactions = [])
     {
-        return $this->get_action($actions) == $type;
+        return $this->get_subaction($subactions) == $type;
     }
 
     /**
-     * Returns which action was submitted in this form
+     * Returns which subaction was submitted in this form
      * 
-     * @param  array   $actions  optional array of additional actions to listen for
+     * @param  array   $subactions  optional array of additional subactions to listen for
      * @return mixed  string|null
      */
-    private function get_action($actions = [])
+    private function get_subaction($subactions = [])
     {
         $data = $this->get_submitted_data();
 
-        $actions = array_merge(['next', 'back'], $actions);
+        $subactions = array_merge(['next', 'back'], $subactions);
 
-        foreach ($actions as $action) {
-            if (property_exists($data, $action)) {
-                return $action;
+        foreach ($subactions as $subaction) {
+            if (property_exists($data, $subaction)) {
+                return $subaction;
             }
         }
 

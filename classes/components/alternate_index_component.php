@@ -30,13 +30,12 @@ use moodle_url;
 
 class alternate_index_component extends component implements \renderable {
 
-    public $alternate_emails;
-
+    public $alternates;
     public $course_id;
 
     public function __construct($params = []) {
         parent::__construct($params);
-        $this->alternate_emails = $this->get_param('alternate_emails');
+        $this->alternates = $this->get_param('alternates');
         $this->course_id = $this->get_param('course_id');
     }
 
@@ -60,7 +59,7 @@ class alternate_index_component extends component implements \renderable {
 
         $data->tableRows = [];
         
-        foreach ($this->alternate_emails as $alternate) {
+        foreach ($this->alternates as $alternate) {
             $data->tableRows[] = [
                 'id' => $alternate->get('id'),
                 'email' => $alternate->get('email'),

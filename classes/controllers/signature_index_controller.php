@@ -7,7 +7,7 @@ use block_quickmail\controllers\support\controller_request;
 use block_quickmail_string;
 use block_quickmail\persistents\signature;
 
-class signature_controller extends base_controller {
+class signature_index_controller extends base_controller {
 
     public static $base_uri = '/blocks/quickmail/signatures.php';
 
@@ -41,25 +41,25 @@ class signature_controller extends base_controller {
         // fetch the requested signature, if any, which must belong to the auth user
         $signature = signature::find_user_signature_or_null($this->props->signature_id, $this->props->user->id);
 
-        $form = $this->make_form('signature\signature_form', [
+        $form = $this->make_form('signature_index\signature_form', [
             'context' => $this->context,
             'selected_signature' => $signature,
             'user_signature_array' => signature::get_flat_array_for_user($this->props->user->id)
         ]);
 
-        // list of form submission actions that may be handled in addition to "back" or "next"
-        $actions = [
+        // list of form submission subactions that may be handled in addition to "back" or "next"
+        $subactions = [
             'save',
             'update',
             'delete',
         ];
 
         // route the form submission, if any
-        if ($form->is_submitted_action('save', $actions, true)) {
+        if ($form->is_submitted_subaction('save', $subactions, true)) {
             return $this->post($request, 'signature', 'save');
-        } else if ($form->is_submitted_action('update', $actions, true)) {
+        } else if ($form->is_submitted_subaction('update', $subactions, true)) {
             return $this->post($request, 'signature', 'update');
-        } else if ($form->is_submitted_action('delete', $actions, true)) {
+        } else if ($form->is_submitted_subaction('delete', $subactions, true)) {
             return $this->post($request, 'signature', 'delete');
         } else if ($form->is_cancelled()) {
             $request->redirect_to_course_or_my($this->props->course_id);
@@ -69,7 +69,7 @@ class signature_controller extends base_controller {
     }
 
     /**
-     * Handles post of signature form, save action
+     * Handles post of signature form, save subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -91,7 +91,7 @@ class signature_controller extends base_controller {
     }
 
     /**
-     * Handles post of signature form, update action
+     * Handles post of signature form, update subaction
      * 
      * @param  controller_request  $request
      * @return mixed
@@ -114,7 +114,7 @@ class signature_controller extends base_controller {
     }
 
     /**
-     * Handles post of signature form, delete action
+     * Handles post of signature form, delete subaction
      * 
      * @param  controller_request  $request
      * @return mixed

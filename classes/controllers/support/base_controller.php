@@ -113,6 +113,8 @@ class base_controller {
     /**
      * Calls the given "action" method on the static controller implementation
      *
+     * Additionally renders the page header and footer
+     *
      * @param  string              $name
      * @param  controller_request  $request
      * @return mixed
@@ -125,7 +127,13 @@ class base_controller {
             throw new \Exception('controller action "' . $name . '"does not exist!');
         }
 
+        global $OUTPUT;
+
+        echo $OUTPUT->header();
+
         call_user_func([$this, $action_name], $request);
+
+        echo $OUTPUT->footer();
     }
 
     /**
@@ -139,11 +147,11 @@ class base_controller {
      */
     private function call_view($name, controller_request $request)
     {
-        global $OUTPUT;
-
         if ( ! method_exists($this, $name)) {
             throw new \Exception('controller view "' . $name . '"does not exist!');
         }
+
+        global $OUTPUT;
 
         echo $OUTPUT->header();
         
@@ -262,16 +270,21 @@ class base_controller {
      *
      * Note: this will automatically include the current session input data as a "_customdata" prop on the form with key "stored"
      * 
-     * @param  string  $name  a form class name path (\controllers\forms = base path)
-     * @param  array   $data  any additional data to be passed to the form
+     * @param  string  $name            a form class name path (\controllers\forms = base path)
+     * @param  array   $data            any additional data to be passed to the form
+     * @param  string  $target_action   optional, action directive to include on form target URL
      * @return controller_form
      */
-    public function make_form($name, $data = [])
+    public function make_form($name, $data = [], $target_action = '')
     {
         $class = implode('\\', [self::$forms_path, $name]);
 
-        $query_string = ! empty($this->get_form_url_params())
-            ? '?' . http_build_query($this->get_form_url_params(), '', '&')
+        $target_params = in_array($target_action, static::$actions)
+            ? array_merge(['action' => $target_action], $this->get_form_url_params())
+            : $this->get_form_url_params();
+
+        $query_string = ! empty($target_params)
+            ? '?' . http_build_query($target_params, '', '&')
             : '';
 
         return new $class($query_string, $this->get_form_custom_data($name, $data), 'post', '', null, true, null);
