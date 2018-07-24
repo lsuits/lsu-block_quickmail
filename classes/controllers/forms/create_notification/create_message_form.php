@@ -28,6 +28,7 @@ require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\controllers\support\controller_form;
 use block_quickmail_string;
+use block_quickmail\messenger\message\substitution_code;
 
 class create_message_form extends controller_form {
 
@@ -109,8 +110,8 @@ class create_message_form extends controller_form {
 
         $mform->addRule('message_body', block_quickmail_string::get('missing_body'), 'required', '', 'server');
 
-        // $mform->addElement('html', '<div class="col-md-3"></div>');
-        // $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
+        $mform->addElement('html', '<div class="col-md-3"></div>');
+        $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
 
         ////////////////////////////////////////////////////////////
         ///  message_type (select)
@@ -281,6 +282,30 @@ class create_message_form extends controller_form {
      */
     private function should_show_copy_mentor() {
         return (bool) ($this->get_custom_data('allow_mentor_copy') && $this->get_custom_data('course_config_array')['allow_mentor_copy']);
+    }
+
+    /**
+     * Returns an array of user-relative data fields that may be injected into the message body
+     * 
+     * @return array
+     */
+    private function get_allowed_user_fields() {
+        return substitution_code::get($this->get_custom_data('notification_object_type'));
+    }
+
+    /**
+     * Returns the HTML that should be displayed as the content of the "user substitution codes" helper display
+     * 
+     * @return string
+     */
+    private function get_user_fields_html() {
+        $html = '<p style="margin-bottom: 4px;"><i>' . block_quickmail_string::get('select_allowed_user_fields') . ':</i></p>';
+
+        foreach ($this->get_allowed_user_fields() as $field) {
+            $html .= '<div class="label user-field-label">[:' . $field . ':]</div>';
+        }
+
+        return $html;
     }
 
 }

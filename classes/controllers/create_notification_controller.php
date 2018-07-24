@@ -403,7 +403,8 @@ class create_notification_controller extends base_controller {
             'user_signature_array' => signature::get_flat_array_for_user($this->props->user->id),
             'user_default_signature_id' => $user_default_signature_id,
             // only allow users with hard set capabilities (not students) to copy mentors
-            'allow_mentor_copy' => block_quickmail_plugin::user_can_send('compose', $this->props->user, $this->context, false)
+            'allow_mentor_copy' => block_quickmail_plugin::user_can_send('compose', $this->props->user, $this->context, false),
+            'notification_object_type' => notification_model_helper::get_object_type_for_model($this->stored('notification_type'), $this->stored('notification_model'))
         ]);
 
         // route the form submission, if any
