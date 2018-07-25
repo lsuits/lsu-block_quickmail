@@ -66,7 +66,7 @@ trait is_schedulable {
     ///////////////////////////////////////////////
 
     /**
-     * Take appropriate actions after creating a new scheduable, including:
+     * Take appropriate actions after creating a new schedulable, including:
      *   
      *   - calculate and set next run time
      * 

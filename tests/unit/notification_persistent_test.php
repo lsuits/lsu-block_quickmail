@@ -32,6 +32,28 @@ class block_quickmail_notification_persistent_testcase extends advanced_testcase
         sets_up_courses,
         sets_up_notifications;
 
+    public function test_get_all_ready_scheduled()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // create some notifications...
+        
+        $this->create_reminder_notifications_with_names($course, $user_teacher, [
+            ['name' => 'Reminder One', 'is_enabled' => 0],
+            ['name' => 'Reminder Two', 'schedule_begin_at' => 1932448390],
+            ['name' => 'Reminder Three'],
+            ['name' => 'Reminder Four'],
+        ]);
+
+        $notifications = notification::get_all_ready_schedulables();
+
+        $this->assertCount(2, $notifications);
+        $this->assertInstanceOf(notification::class, $notifications[0]);
+        $this->assertEquals('Reminder Three', $notifications[0]->get('name'));
+    }
+
     public function test_gets_required_conditions_for_type()
     {
         $condition_keys = notification::get_required_conditions_for_type('reminder', 'non-participation');
@@ -47,6 +69,11 @@ class block_quickmail_notification_persistent_testcase extends advanced_testcase
     /// 
     //////////////////////////////////////////////
     
-    // 
+    private function create_reminder_notifications_with_names($course, $user, $instance_params = [])
+    {
+        foreach ($instance_params as $params) {
+            $this->create_reminder_notification_for_course_user('non-participation', $course, $user, null, $params);
+        }
+    }
 
 }

@@ -278,4 +278,61 @@ class notification extends persistent {
         return notification_condition::format_for_storage($conditions);
     }
 
+    ///////////////////////////////////////////////
+	///
+	///  QUERIES
+	/// 
+	///////////////////////////////////////////////
+
+    /**
+     * Returns an array of all "schedulable" notifications that should be sent at the
+     * current time which means: 1) next run time is in the past, 2) the notification 
+     * is not currently being run, 3) the parent notification is enabled
+     *
+     * Currently the only schedulable class are reminder_notifications...
+     * 
+     * @return array (notification)
+     */
+    public static function get_all_ready_schedulables()
+    {
+        // get timestamp for right now
+        $now = \DateTime::createFromFormat('U', time(), \core_date::get_server_timezone_object())->getTimestamp();
+
+        global $DB;
+
+        // fetch all valid reminder notifications
+        $rem_sql = "SELECT rn.notification_id 
+                FROM {block_quickmail_rem_notifs} rn
+                WHERE rn.is_running = 0 
+                AND rn.timedeleted = 0 
+                AND rn.next_run_at IS NOT NULL
+                AND rn.next_run_at != 0
+                AND rn.next_run_at <= :now";
+
+        $notification_ids = $DB->get_fieldset_sql($rem_sql, ['now' => $now]);
+
+        // if no results here, return empty array
+        if (empty($notification_ids)) {
+            return [];
+        }
+
+        list($sql, $params) = $DB->get_in_or_equal($notification_ids);
+
+        $recordset = $DB->get_recordset_sql("
+            SELECT * FROM {block_quickmail_notifs}
+            WHERE type = 'reminder' 
+            AND is_enabled = 1 
+            AND timedeleted = 0
+            AND id " . $sql, $params);
+
+        // iterate through recordset, instantiate persistents, add to array
+        $data = [];
+        foreach ($recordset as $record) {
+            $data[] = new self(0, $record);
+        }
+        $recordset->close();
+
+        return $data;
+    }
+
 }
