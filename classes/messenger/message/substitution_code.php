@@ -78,7 +78,7 @@ class substitution_code {
             ? array_keys(self::$codes)
             : $class;
 
-        return self::get_for_classes($code_classes);
+        return self::get_for_classes(array_unique($code_classes));
     }
 
     /**

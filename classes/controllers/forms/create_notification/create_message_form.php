@@ -290,7 +290,7 @@ class create_message_form extends controller_form {
      * @return array
      */
     private function get_allowed_user_fields() {
-        return substitution_code::get($this->get_custom_data('notification_object_type'));
+        return substitution_code::get(['user', $this->get_custom_data('notification_object_type')]);
     }
 
     /**

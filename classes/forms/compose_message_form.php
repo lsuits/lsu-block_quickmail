@@ -505,7 +505,7 @@ class compose_message_form extends \moodleform {
      * @return array
      */
     private function get_allowed_user_fields() {
-        return substitution_code::get('user');
+        return substitution_code::get(['user', 'course']);
     }
 
     /**

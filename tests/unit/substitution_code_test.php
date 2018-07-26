@@ -73,6 +73,13 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
         $this->assertContains('activitygradelink', $codes);
     }
 
+    public function test_gets_codes_for_multiple_classes()
+    {
+        $codes = substitution_code::get(['user', 'course', 'user']);
+
+        $this->assertCount(16, $codes);
+    }
+
     public function test_gets_all_codes()
     {
         $codes = substitution_code::get();
