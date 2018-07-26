@@ -39,7 +39,11 @@ use block_quickmail\persistents\message_attachment;
 use block_quickmail\persistents\notification;
 use block_quickmail\messenger\message\substitution_code;
  
-class message extends persistent {
+if ( ! class_exists('\core\persistent')) {
+    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+}
+
+class message extends \core\persistent {
  
 	use enhanced_persistent,
 		belongs_to_a_course,

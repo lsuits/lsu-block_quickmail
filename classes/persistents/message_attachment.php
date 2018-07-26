@@ -24,12 +24,16 @@
 
 namespace block_quickmail\persistents;
 
-use core\persistent;
+use \core\persistent;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
+
+if ( ! class_exists('\core\persistent')) {
+    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+}
  
-class message_attachment extends persistent {
+class message_attachment extends \core\persistent {
  
     use enhanced_persistent, 
         belongs_to_a_message;

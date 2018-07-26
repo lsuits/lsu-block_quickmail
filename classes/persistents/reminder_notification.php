@@ -36,7 +36,11 @@ use block_quickmail\notifier\models\reminder_notification_model;
 use block_quickmail\persistents\schedule;
 use block_quickmail\messenger\messenger;
  
-class reminder_notification extends persistent implements notification_type_interface, schedulable_interface {
+if ( ! class_exists('\core\persistent')) {
+    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+}
+
+class reminder_notification extends \core\persistent implements notification_type_interface, schedulable_interface {
  
 	use enhanced_persistent,
 		sanitizes_input,

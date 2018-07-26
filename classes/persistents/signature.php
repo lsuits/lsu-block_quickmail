@@ -24,13 +24,17 @@
 
 namespace block_quickmail\persistents;
 
-use core\persistent;
+use \core\persistent;
 use lang_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
+
+if ( ! class_exists('\core\persistent')) {
+    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+}
  
-class signature extends persistent {
+class signature extends \core\persistent {
  
     use enhanced_persistent,
         belongs_to_a_user,

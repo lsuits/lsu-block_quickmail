@@ -24,14 +24,18 @@
 
 namespace block_quickmail\persistents;
 
-use core\persistent;
+use \core\persistent;
 use core_user;
 use core\ip_utils;
 use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
+
+if ( ! class_exists('\core\persistent')) {
+    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+}
  
-class alternate_email extends persistent {
+class alternate_email extends \core\persistent {
  
     use enhanced_persistent,
         can_be_soft_deleted;

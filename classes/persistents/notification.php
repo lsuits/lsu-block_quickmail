@@ -34,7 +34,11 @@ use block_quickmail\persistents\event_notification;
 use block_quickmail\persistents\reminder_notification;
 use block_quickmail\notifier\notification_condition;
 
-class notification extends persistent {
+if ( ! class_exists('\core\persistent')) {
+    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+}
+
+class notification extends \core\persistent {
  
 	use enhanced_persistent,
 		sanitizes_input,
