@@ -24,6 +24,7 @@
 
 namespace block_quickmail\messenger;
 
+use block_quickmail\messenger\messenger_interface;
 use block_quickmail_config;
 use block_quickmail_string;
 use block_quickmail_emailer;
@@ -46,7 +47,7 @@ use block_quickmail\repos\user_repo;
 use moodle_url;
 use html_writer;
 
-class messenger {
+class messenger implements messenger_interface {
 
     public $message;
 
@@ -140,6 +141,30 @@ class messenger {
         $recipient_user_ids = $broadcast_recipient_filter->get_result_user_ids();
 
         return self::send_message_to_recipients($message, $form_data, $recipient_user_ids, $transformed_data->additional_emails, $send_as_tasks);
+    }
+
+    /**
+     * Creates a message from the given notification, syncs the given recipient user ids, and flags
+     * the message to be sent at the given time (defaulting to now)
+     * 
+     * @param  object   $notification         the source notification
+     * @param  array    $recipient_user_ids   array of user ids to receive this notification message
+     * @param  int      $time_to_send         unix timestamp of time this message should be sent, defaults to now
+     * @return message
+     * @throws \Exception
+     * @throws critical_exception
+     */
+    public static function via_notification($notification, $recipient_user_ids = [], $time_to_send = null)
+    {
+        // validate notification data again here?? shouldn't be necessary...
+        $message = message::create_from_notification($notification, $recipient_user_ids, $time_to_send);
+
+        // if not scheduled for delivery later, send now as task
+        if ( ! $message->get_to_send_in_future()) {
+            self::deliver($message, true);
+        }
+
+        return $message;
     }
 
     /**
@@ -275,6 +300,13 @@ class messenger {
         return $message;
     }
 
+    /**
+     * Creates and returns a new message given a draft message id
+     * 
+     * @param  int    $draft_id
+     * @param  object $user       the user duplicating the draft
+     * @return message
+     */
     public static function duplicate_draft($draft_id, $user)
     {
         // get the draft to be duplicated

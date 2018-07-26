@@ -47,7 +47,6 @@
             <exclude>tests/unit/event_notification_persistent_test.php</exclude>
             <exclude>tests/unit/reminder_notification_persistent_test.php</exclude>
             <exclude>tests/unit/schedule_persistent_test.php</exclude>
-            
 
             <!-- repos -->
             <exclude>tests/unit/draft_repo_test.php</exclude>
@@ -58,7 +57,6 @@
             <exclude>tests/unit/user_repo_test.php</exclude>
             <exclude>tests/unit/course_repo_test.php</exclude>
             <exclude>tests/unit/notification_repo_test.php</exclude>
-            <exclude>tests/unit/scheduable_repo_test.php</exclude> <!-- NOT DONE -->
 
             <!-- forms -->
             <exclude>tests/unit/message_form_validator_test.php</exclude>
@@ -69,7 +67,6 @@
             <exclude>tests/unit/configuration_test.php</exclude>
             
             <!-- messaging -->
-            <exclude>tests/unit/messenger_test.php</exclude>
             <exclude>tests/unit/subject_prepender_test.php</exclude>
             <exclude>tests/unit/substitution_code_test.php</exclude>
             <exclude>tests/unit/body_substitution_code_parser_test.php</exclude>
@@ -77,9 +74,13 @@
             <exclude>tests/unit/signature_appender_test.php</exclude>
             <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
             
+            <exclude>tests/unit/messenger_compose_test.php</exclude>
+            <exclude>tests/unit/messenger_drafting_test.php</exclude>
+            <exclude>tests/unit/messenger_notification_test.php</exclude>
+
             <!-- messaging tasks -->
-            <exclude>tests/unit/send_message_adhoc_task_test.php</exclude>
             <exclude>tests/unit/send_all_ready_messages_task_test.php</exclude>
+            <exclude>tests/unit/send_message_adhoc_task_test.php</exclude>
 
             <!-- notification models -->
             <exclude>tests/unit/notification_model_test.php</exclude>
@@ -89,6 +90,10 @@
 
             <!-- schedulable -->
             <exclude>tests/unit/schedulable_test.php</exclude>
+
+            <!-- schedulable notification tasks -->
+            <exclude>tests/unit/run_all_ready_scheduled_notifications_task_test.php</exclude>
+            <exclude>tests/unit/run_schedulable_notification_adhoc_task_test.php</exclude>
             
             <!-- notification conditions -->
             <exclude>tests/unit/notification_condition_test.php</exclude>

@@ -126,34 +126,31 @@ trait is_schedulable {
     /**
      * Sets the next_run_at for this schedulable
      *
+     * If schedulable has not run yet, sets to begin time of schedule
+     * If schedulable has been run already, calculates next time according to schedule
+     *
      * @return void
      */
     public function set_next_run_time()
     {
         $schedule = $this->get_schedule();
 
-        // if schedulable has not run yet
-        if (empty($this->get_last_run_time())) {
-            // set schedulable's next_run_at to the schedule's begin time
-            $this->set('next_run_at', $schedule->get_begin_time());
-            $this->update();
-        } else {
-            $this->increment_next_run_time();
-        }
+        $next_run_time = empty($this->get_last_run_time())
+            ? $schedule->get_begin_time()
+            : $schedule->calculate_next_time_from($this->get_next_run_time());
+
+        $this->set('next_run_at', $next_run_time);
+        $this->update();
     }
 
     /**
-     * Updates this schedulable's next_run_at according to it's schedule
-     * 
+     * Sets the last_run_at for this schedulable to the current time
+     *
      * @return void
      */
-    public function increment_next_run_time()
+    public function set_last_run_time()
     {
-        $schedule = $this->get_schedule();
-
-        $next_run_time = $schedule->calculate_next_time_from($this->get_next_run_time());
-
-        $this->set('next_run_at', $next_run_time);
+        $this->set('last_run_at', time());
         $this->update();
     }
 
@@ -186,7 +183,10 @@ trait is_schedulable {
      */
     public function handle_schedule_post_run_actions()
     {
+        $this->set_last_run_time();
+        
         $this->set_next_run_time();
+
         $this->toggle_running_status(false);
     }
 

@@ -32,9 +32,8 @@ use block_quickmail\persistents\message_additional_email;
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
     
     use has_general_helpers,
-        sets_up_courses;
-
-    // @TODO: test gets notifications!!
+        sets_up_courses,
+        sets_up_notifications;
 
     public function test_create_composed_with_recipients_as_draft()
     {
@@ -639,6 +638,58 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
 
         $this->assertFalse($queued_message->is_queued_message());
         $this->assertEquals(block_quickmail_string::get('drafted'), $queued_message->get_status());
+    }
+
+    public function test_creates_message_from_reminder_notification()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $params = [
+            'name' => 'My Reminder Notification',
+            'schedule_unit' => 'week',
+            'schedule_amount' => 1,
+            'schedule_begin_at' => time(),
+            'schedule_end_at' => null,
+            'max_per_interval' => 0,
+            'message_type' => 'email',
+            'subject' => 'This is the subject',
+            'body' => 'This is the body',
+            'is_enabled' => 1,
+            'alternate_email_id' => 0,
+            'signature_id' => 0,
+            'editor_format' => 1,
+            'send_receipt' => 0,
+            'send_to_mentors' => 0,
+            'no_reply' => 1,
+            'conditions' => '',
+            'condition_time_amount' => 4,
+            'condition_time_unit' => 'day',
+        ];
+
+        $reminder_notification = $this->create_reminder_notification_for_course_user('non-participation', $course, $user_teacher, null, $params);
+
+        $notification = $reminder_notification->get_notification();
+
+        $message = message::create_from_notification($notification);
+
+        $this->assertInstanceOf(message::class, $message);
+        $this->assertEquals($course->id, $message->get('course_id'));
+        $this->assertEquals($user_teacher->id, $message->get('user_id'));
+        $this->assertEquals($params['message_type'], $message->get('message_type'));
+        $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
+        $this->assertEquals($params['signature_id'], $message->get('signature_id'));
+        $this->assertEquals($params['subject'], $message->get('subject'));
+        $this->assertEquals($params['body'], $message->get('body'));
+        $this->assertEquals($params['send_receipt'], $message->get('send_receipt'));
+        // $this->assertEquals($params['to_send_at'], $message->get('to_send_at'));
+        $this->assertEquals($params['no_reply'], $message->get('no_reply'));
+        $this->assertEquals($params['send_to_mentors'], $message->get('send_to_mentors'));
+        $this->assertEquals(0, $message->get('is_draft'));
+        // $this->assertCount(2, $message->get_substitution_code_classes());
     }
 
     ///////////////////////////////////////////////

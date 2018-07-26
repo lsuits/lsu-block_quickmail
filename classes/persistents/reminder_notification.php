@@ -34,6 +34,7 @@ use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\persistents\interfaces\schedulable_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
 use block_quickmail\persistents\schedule;
+use block_quickmail\messenger\messenger;
  
 class reminder_notification extends persistent implements notification_type_interface, schedulable_interface {
  
@@ -206,22 +207,6 @@ class reminder_notification extends persistent implements notification_type_inte
 
 	///////////////////////////////////////////////
     ///
-    ///  METHODS
-    /// 
-    ///////////////////////////////////////////////
-
-	/**
-	 * Returns an array of user ids whom have already been notified at least the "max_per_interval" times since last run
-	 * 
-	 * @return array
-	 */
-	public function get_user_ids_to_ignore()
-	{
-		//
-	}
-
-	///////////////////////////////////////////////
-    ///
     ///  SCHEDULABLE INTERFACE
     /// 
     ///////////////////////////////////////////////
@@ -234,21 +219,21 @@ class reminder_notification extends persistent implements notification_type_inte
 
         $this->handle_schedule_post_run_actions();
     }
-
-    ///////////////////////////////////////////////
+	
+	///////////////////////////////////////////////
     ///
-    ///  NOTIFICATION TYPE INTERFACE
+    ///  METHODS
     /// 
     ///////////////////////////////////////////////
 
-	public function notify()
+	/**
+	 * Returns a filtered array of user ids to be notified given a qualified array of user ids
+	 * 
+	 * @param  array  $user_ids
+	 * @return array
+	 */
+	public function filter_notifiable_user_ids($user_ids = [])
 	{
-		// instantiate this notification_type_interface's notification model
-		$model = $this->get_notification_model();
-
-		// pull all users to be notified
-		$user_ids = $model->get_user_ids_to_notify();
-
 		// if this reminder_notification has a max_per_interval has
 		if ($this->max_per_interval()) {
 			// pull all users to be ignored based on this reminder_notification's configuration
@@ -261,6 +246,46 @@ class reminder_notification extends persistent implements notification_type_inte
 		}
 		
 		return $user_ids;
+	}
+
+	/**
+	 * Returns an array of user ids whom have already been notified at least the "max_per_interval" times since last run
+	 * 
+	 * @return array
+	 */
+	public function get_user_ids_to_ignore()
+	{
+		// @TODO - need to do this!!
+		return [];
+	}
+
+    ///////////////////////////////////////////////
+    ///
+    ///  NOTIFICATION TYPE INTERFACE
+    /// 
+    ///////////////////////////////////////////////
+
+	/**
+	 * Pulls all users who should be notified in this notification and creates a new message
+	 * instance to be sent out in the queue ASAP
+	 *
+	 * Note: if no users can be found, no message is created or sent
+	 * 
+	 * @return void
+	 */
+	public function notify()
+	{
+		// instantiate this notification_type_interface's notification model
+		$model = $this->get_notification_model();
+
+		// get all user ids to be notified, if no user ids, do nothing
+		if ($user_ids = $this->filter_notifiable_user_ids($model->get_user_ids_to_notify())) {
+			try {
+				messenger::via_notification($this->get_notification(), $user_ids);
+			} catch (\Exception $e) {
+				// message not created, fail gracefully
+			}
+		}
 	}
 
 }

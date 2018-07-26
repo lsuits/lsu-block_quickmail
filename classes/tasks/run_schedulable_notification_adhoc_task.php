@@ -24,39 +24,25 @@
 
 namespace block_quickmail\tasks;
 
-use core\task\scheduled_task;
+use core\task\adhoc_task;
 use block_quickmail\persistents\notification;
-use block_quickmail\tasks\run_schedulable_notification_adhoc_task;
-use core\task\manager as task_manager;
 
-class run_all_ready_scheduled_notifications_task extends scheduled_task {
+class run_schedulable_notification_adhoc_task extends adhoc_task {
     
-    public function get_name()
-    {
-        // Shown in admin screens
-        return 'run all scheduled notifications'; // convert to lang string
-    }
-
     /*
-     * This tasks queries for all schedulable notifications that should be fired at the current time
-     * and initiates queueing of each
+     * This tasks kicks off the the process of converting a schedulable notification to a message
      *
-     * Required custom data: none
+     * Required custom data: notification_id
      */
-    public function execute()
-    {
-        // fetch all schedulables that should be fired right now
-        foreach (notification::get_all_ready_schedulables() as $notification) {
+    public function execute() {
+        $data = $this->get_custom_data();
 
-            // fire a task for each
-            $task = new run_schedulable_notification_adhoc_task();
-
-            $task->set_custom_data([
-                'notification_id' => $notification->get('id')
-            ]);
-
-            // queue job
-            task_manager::queue_adhoc_task($task);
+        // attempt to fetch the message
+        if ($notification = notification::find_or_null($data->notification_id)) {
+            // get the schedulable instance from this parent notification
+            if ($schedulable = $notification->get_notification_type_interface()) {
+                $schedulable->run_scheduled();
+            }
         }
     }
 

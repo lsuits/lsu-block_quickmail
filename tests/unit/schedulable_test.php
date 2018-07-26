@@ -119,7 +119,7 @@ class block_quickmail_schedulable_testcase extends advanced_testcase {
         $schedulable = $this->update_schedulable_reminder_notification_last_run_time($schedulable, $lastrun);
         $this->assertEquals($lastrun, $schedulable->get_last_run_time());
 
-        $schedulable->increment_next_run_time();
+        $schedulable->set_next_run_time();
 
         // next run should be 1 week from begin time
         $nextrun = $this->get_timestamp_for_date('may 20 2018 08:30:00');
@@ -150,7 +150,7 @@ class block_quickmail_schedulable_testcase extends advanced_testcase {
         $lastrun = $this->get_timestamp_for_date('may 5 2018 09:00:00');
         $schedulable = $this->update_schedulable_reminder_notification_last_run_time($schedulable, $lastrun);
 
-        $schedulable->increment_next_run_time();
+        $schedulable->set_next_run_time();
 
         // next run should be null since schedule has expired
         $this->assertNull($schedulable->get_next_run_time());

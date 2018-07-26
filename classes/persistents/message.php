@@ -36,6 +36,7 @@ use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_additional_email;
 use block_quickmail\persistents\message_attachment;
+use block_quickmail\persistents\notification;
 use block_quickmail\messenger\message\substitution_code;
  
 class message extends persistent {
@@ -505,6 +506,38 @@ class message extends persistent {
 		]);
 
 		return $message;
+	}
+
+	/**
+	 * Creates a new "compose" (course-scoped) message from a notification
+	 *
+	 * Note: if no recipients are given, message will not be created
+	 * 
+	 * @param  notification  $notification
+	 * @param  array         $recipient_user_ids   array of user ids to receive this notification message
+	 * @param  int           $time_to_send   unix timestamp of time this message should be sent, defaults to ASAP
+	 * @return message
+	 */
+	public static function create_from_notification(notification $notification, $recipient_user_ids, $time_to_send = null)
+	{
+		$message = self::create_new([
+			'course_id' => $notification->get_course()->id,
+			'user_id' => $notification->get_user()->id,
+            'message_type' => $notification->get('message_type'),
+            'alternate_email_id' => $notification->get('alternate_email_id'),
+            'signature_id' => $notification->get('signature_id'),
+            'subject' => $notification->get('subject'),
+            'body' => $notification->get('body'),
+            'send_receipt' => $notification->get('send_receipt'),
+            'to_send_at' => ! empty($time_to_send) ? $time_to_send : time() - 1,
+            'no_reply' => $notification->get('no_reply'),
+            'send_to_mentors' => $notification->get('send_to_mentors'),
+			'is_draft' => 0
+		]);
+
+		$message->sync_recipients($recipient_user_ids);
+
+        return $message;
 	}
 
 	/**
