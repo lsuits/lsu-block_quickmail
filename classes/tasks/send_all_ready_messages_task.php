@@ -25,6 +25,7 @@
 namespace block_quickmail\tasks;
 
 use core\task\scheduled_task;
+use block_quickmail_string;
 use block_quickmail\repos\queued_repo;
 use block_quickmail\tasks\send_message_adhoc_task;
 use core\task\manager as task_manager;

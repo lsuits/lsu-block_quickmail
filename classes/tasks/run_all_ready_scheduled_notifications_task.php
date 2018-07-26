@@ -25,6 +25,7 @@
 namespace block_quickmail\tasks;
 
 use core\task\scheduled_task;
+use block_quickmail_string;
 use block_quickmail\persistents\notification;
 use block_quickmail\tasks\run_schedulable_notification_adhoc_task;
 use core\task\manager as task_manager;
