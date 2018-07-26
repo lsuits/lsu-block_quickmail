@@ -674,7 +674,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
 
         $notification = $reminder_notification->get_notification();
 
-        $message = message::create_from_notification($notification);
+        $message = message::create_from_notification($notification, []);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals($course->id, $message->get('course_id'));
