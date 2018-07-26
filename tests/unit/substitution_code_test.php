@@ -49,7 +49,7 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
     {
         $codes = substitution_code::get('course');
 
-        $this->assertCount(8, $codes);
+        $this->assertCount(10, $codes);
         $this->assertContains('coursefullname', $codes);
         $this->assertContains('courseshortname', $codes);
         $this->assertContains('courseidnumber', $codes);
@@ -58,6 +58,8 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
         $this->assertContains('courseenddate', $codes);
         $this->assertContains('courselink', $codes);
         $this->assertContains('courselastaccess', $codes);
+        $this->assertContains('studentstartdate', $codes);
+        $this->assertContains('studentenddate', $codes);
     }
 
     public function test_gets_activity_substitution_codes()
@@ -75,7 +77,7 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
     {
         $codes = substitution_code::get();
 
-        $this->assertCount(18, $codes);
+        $this->assertCount(20, $codes);
     }
 
     public function test_gets_substitution_code_classes_from_composed_message_with_no_notification()

@@ -74,6 +74,64 @@ trait maps_course_data {
         return $this->format_mapped_date($lastaccesstime);
     }
 
+    /*
+     * Returns student-specific start date for this course
+     *
+     * Thanks to Ben H.
+     */
+    public function get_data_studentstartdate()
+    {
+        global $DB;
+
+        $sql = "SELECT ue.timestart
+                FROM mdl_course AS c
+                JOIN mdl_enrol AS en ON en.courseid = c.id
+                JOIN mdl_user_enrolments AS ue ON ue.enrolid = en.id
+                JOIN mdl_user AS u ON ue.userid = u.id
+                JOIN mdl_context AS ct ON c.id = ct.instanceid
+                JOIN mdl_role_assignments AS ra ON ra.contextid = ct.id
+                WHERE u.id = ?
+                AND c.id = ?
+                AND ra.roleid = 5
+                AND ra.userid = u.id
+                AND ra.userid = ue.userid";
+
+        if ( ! $studentstartdate = $DB->get_field_sql($sql, [$this->user->id, $this->course->id])) {
+            return '--';
+        }
+
+        return $this->format_mapped_date($studentstartdate);
+    }
+
+    /*
+     * Returns student-specific end date for this course
+     *
+     * Thanks to Ben H.
+     */
+    public function get_data_studentenddate()
+    {
+        global $DB;
+
+        $sql = "SELECT ue.timeend
+                FROM mdl_course AS c
+                JOIN mdl_enrol AS en ON en.courseid = c.id
+                JOIN mdl_user_enrolments AS ue ON ue.enrolid = en.id
+                JOIN mdl_user AS u ON ue.userid = u.id
+                JOIN mdl_context AS ct ON c.id = ct.instanceid
+                JOIN mdl_role_assignments AS ra ON ra.contextid = ct.id
+                WHERE u.id = ?
+                AND c.id = ?
+                AND ra.roleid = 5
+                AND ra.userid = u.id
+                AND ra.userid = ue.userid";
+
+        if ( ! $studentenddate = $DB->get_field_sql($sql, [$this->user->id, $this->course->id])) {
+            return '--';
+        }
+
+        return $this->format_mapped_date($studentenddate);
+    }
+
     private function get_course_prop($prop)
     {
         return $this->course->$prop;

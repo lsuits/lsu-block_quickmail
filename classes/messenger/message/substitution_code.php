@@ -47,6 +47,8 @@ class substitution_code {
             'courseenddate',
             'courselink',
             'courselastaccess',
+            'studentstartdate',
+            'studentenddate',
         ],
         'activity' => [
             'activityname',
