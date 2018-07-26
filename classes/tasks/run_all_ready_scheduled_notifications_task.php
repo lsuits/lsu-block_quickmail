@@ -33,8 +33,7 @@ class run_all_ready_scheduled_notifications_task extends scheduled_task {
     
     public function get_name()
     {
-        // Shown in admin screens
-        return 'run all scheduled notifications'; // convert to lang string
+        return block_quickmail_string::get('run_all_ready_scheduled_notifications_task');
     }
 
     /*

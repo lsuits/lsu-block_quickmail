@@ -35,6 +35,10 @@ $string['create_notification'] = 'Create Notification';
 $string['notifications'] = 'Notifications';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
+// tasks
+$string['send_all_ready_messages_task'] = 'Send all scheduled Quickmail messages';
+$string['run_all_ready_scheduled_notifications_task'] = 'Send all scheduled Quickmail notifications';
+
 // capabilities
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';
 $string['quickmail:canconfig'] = 'Configure Quickmail settings in a course';

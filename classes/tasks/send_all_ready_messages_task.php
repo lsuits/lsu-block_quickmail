@@ -33,8 +33,7 @@ class send_all_ready_messages_task extends scheduled_task {
     
     public function get_name()
     {
-        // Shown in admin screens
-        return 'send queued messages'; // convert to lang string
+        return block_quickmail_string::get('send_all_ready_messages_task');
     }
 
     /*

@@ -30,7 +30,7 @@ $tasks = [
         'day' => '*',
         'dayofweek' => '*',
         'hour' => '*',
-        'minute' => '*/5', // change to */5 for production
+        'minute' => '*/1',
     ],[
         'classname' => 'block_quickmail\tasks\run_all_ready_scheduled_notifications_task',
         'blocking' => 0,
@@ -38,6 +38,6 @@ $tasks = [
         'day' => '*',
         'dayofweek' => '*',
         'hour' => '*',
-        'minute' => '*/5', // change to */5 for production
+        'minute' => '*/1',
     ],
 ];
