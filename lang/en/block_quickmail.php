@@ -37,7 +37,7 @@ $string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // tasks
 $string['send_all_ready_messages_task'] = 'Send all scheduled Quickmail messages';
-$string['run_all_ready_scheduled_notifications_task'] = 'Send all scheduled Quickmail notifications';
+$string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail notifications to be sent';
 
 // capabilities
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';

@@ -26,15 +26,16 @@ namespace block_quickmail\tasks;
 
 use core\task\scheduled_task;
 use block_quickmail_string;
+use block_quickmail_config;
 use block_quickmail\persistents\notification;
 use block_quickmail\tasks\run_schedulable_notification_adhoc_task;
 use core\task\manager as task_manager;
 
-class run_all_ready_scheduled_notifications_task extends scheduled_task {
+class queue_scheduled_notifications_task extends scheduled_task {
     
     public function get_name()
     {
-        return block_quickmail_string::get('run_all_ready_scheduled_notifications_task');
+        return block_quickmail_string::get('queue_scheduled_notifications_task');
     }
 
     /*
@@ -45,18 +46,27 @@ class run_all_ready_scheduled_notifications_task extends scheduled_task {
      */
     public function execute()
     {
-        // fetch all schedulables that should be fired right now
-        foreach (notification::get_all_ready_schedulables() as $notification) {
+        // if notifications are turned on
+        if (block_quickmail_config::get('notifications_enabled')) {
+            // fetch all schedulables that should be fired right now
+            foreach (notification::get_all_ready_schedulables() as $notification) {
 
-            // fire a task for each
-            $task = new run_schedulable_notification_adhoc_task();
+                // get the schedulable notification
+                $schedulable = $notification->get_notification_type_interface();
 
-            $task->set_custom_data([
-                'notification_id' => $notification->get('id')
-            ]);
+                // prevent the schedulable from being duplicated preemptively
+                $schedulable->toggle_running_status(true);
+                
+                // fire a task for each
+                $task = new run_schedulable_notification_adhoc_task();
 
-            // queue job
-            task_manager::queue_adhoc_task($task);
+                $task->set_custom_data([
+                    'notification_id' => $notification->get('id')
+                ]);
+
+                // queue job
+                task_manager::queue_adhoc_task($task);
+            }
         }
     }
 

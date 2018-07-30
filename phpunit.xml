@@ -73,10 +73,8 @@
             <exclude>tests/unit/formats_message_recipient_compose_message_body_test.php</exclude>
             <exclude>tests/unit/signature_appender_test.php</exclude>
             <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
-            
             <exclude>tests/unit/messenger_compose_test.php</exclude>
             <exclude>tests/unit/messenger_drafting_test.php</exclude>
-            <exclude>tests/unit/messenger_notification_test.php</exclude>
 
             <!-- messaging tasks -->
             <exclude>tests/unit/send_all_ready_messages_task_test.php</exclude>
@@ -92,7 +90,8 @@
             <exclude>tests/unit/schedulable_test.php</exclude>
 
             <!-- schedulable notification tasks -->
-            <exclude>tests/unit/run_all_ready_scheduled_notifications_task_test.php</exclude>
+            <!-- NOTE: must modify config in class to run these -->
+            <exclude>tests/unit/queue_scheduled_notifications_task_test.php</exclude>
             <exclude>tests/unit/run_schedulable_notification_adhoc_task_test.php</exclude>
             
             <!-- notification conditions -->

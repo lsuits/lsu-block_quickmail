@@ -528,6 +528,7 @@ class message extends \core\persistent {
 			'course_id' => $notification->get_course()->id,
 			'user_id' => $notification->get_user()->id,
             'message_type' => $notification->get('message_type'),
+            'notification_id' => $notification->get('id'),
             'alternate_email_id' => $notification->get('alternate_email_id'),
             'signature_id' => $notification->get('signature_id'),
             'subject' => $notification->get('subject'),

@@ -144,30 +144,6 @@ class messenger implements messenger_interface {
     }
 
     /**
-     * Creates a message from the given notification, syncs the given recipient user ids, and flags
-     * the message to be sent at the given time (defaulting to now)
-     * 
-     * @param  object   $notification         the source notification
-     * @param  array    $recipient_user_ids   array of user ids to receive this notification message
-     * @param  int      $time_to_send         unix timestamp of time this message should be sent, defaults to now
-     * @return message
-     * @throws \Exception
-     * @throws critical_exception
-     */
-    public static function via_notification($notification, $recipient_user_ids = [], $time_to_send = null)
-    {
-        // validate notification data again here?? shouldn't be necessary...
-        $message = message::create_from_notification($notification, $recipient_user_ids, $time_to_send);
-
-        // if not scheduled for delivery later, send now as task
-        if ( ! $message->get_to_send_in_future()) {
-            self::deliver($message, true);
-        }
-
-        return $message;
-    }
-
-    /**
      * Handles sending a given message to the given recipient user ids
      *
      * This will clear any draft-related data for the message, and sync it's recipients/additional emails

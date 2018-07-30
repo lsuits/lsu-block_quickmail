@@ -50,7 +50,7 @@ abstract class notification_model implements notification_model_interface {
      */
     public function get_object_type()
     {
-        return self::$object_type;
+        return static::$object_type;
     }
 
     ///////////////////////////////////////////////

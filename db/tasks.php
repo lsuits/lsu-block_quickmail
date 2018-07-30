@@ -32,7 +32,7 @@ $tasks = [
         'hour' => '*',
         'minute' => '*/1',
     ],[
-        'classname' => 'block_quickmail\tasks\run_all_ready_scheduled_notifications_task',
+        'classname' => 'block_quickmail\tasks\queue_scheduled_notifications_task',
         'blocking' => 0,
         'month' => '*',
         'day' => '*',

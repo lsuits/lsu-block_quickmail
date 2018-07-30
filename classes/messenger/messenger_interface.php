@@ -75,19 +75,6 @@ interface messenger_interface {
      */
     public static function broadcast($user, $course, $form_data, $broadcast_recipient_filter, $draft_message = null, $send_as_tasks = true);
 
-    /**
-     * Creates a message from the given notification, syncs the given recipient user ids, and flags
-     * the message to be sent at the given time (defaulting to now)
-     * 
-     * @param  object   $notification         the source notification
-     * @param  array    $recipient_user_ids   array of user ids to receive this notification message
-     * @param  int      $time_to_send         unix timestamp of time this message should be sent, defaults to now
-     * @return bool
-     * @throws \Exception
-     * @throws critical_exception
-     */
-    public static function via_notification($notification, $recipient_user_ids = [], $time_to_send = null);
-
     /////////////////////////////////////////////////////////////
     ///
     ///  MESSAGE DRAFTING METHODS

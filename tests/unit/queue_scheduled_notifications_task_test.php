@@ -25,9 +25,9 @@
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\messenger;
-use block_quickmail\tasks\run_all_ready_scheduled_notifications_task;
+use block_quickmail\tasks\queue_scheduled_notifications_task;
 
-class block_quickmail_run_all_ready_scheduled_notifications_task_testcase extends advanced_testcase {
+class block_quickmail_queue_scheduled_notifications_task_testcase extends advanced_testcase {
     
     use has_general_helpers, 
         sets_up_courses, 
@@ -57,7 +57,7 @@ class block_quickmail_run_all_ready_scheduled_notifications_task_testcase extend
         // should be no tasks fire yet, so no emails
         $this->assertEquals(0, $this->email_sink_email_count($sink));
 
-        $task = new run_all_ready_scheduled_notifications_task();
+        $task = new queue_scheduled_notifications_task();
 
         $task->execute();
 
