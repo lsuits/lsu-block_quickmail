@@ -25,8 +25,6 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
-$page_url = '/blocks/quickmail/signatures.php';
-
 $page_params = [
     'id' => optional_param('id', 0, PARAM_INT), // signature id, if any
     'courseid' => optional_param('courseid', 0, PARAM_INT), // course id, if any, for redirection
@@ -46,7 +44,7 @@ if ($page_params['courseid']) {
 
 $system_context = context_system::instance();
 $PAGE->set_context($system_context);
-$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->set_url(new moodle_url('/blocks/quickmail/signatures.php', $page_params));
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE

@@ -25,8 +25,6 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
-$page_url = '/blocks/quickmail/sent.php';
-
 $page_params = [
     'courseid' => optional_param('courseid', 0, PARAM_INT),
     'sort' => optional_param('sort', 'sent', PARAM_TEXT), // (field name)
@@ -49,7 +47,7 @@ if ($page_params['courseid']) {
 
 $user_context = context_user::instance($USER->id);
 $PAGE->set_context($user_context);
-$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->set_url(new moodle_url('/blocks/quickmail/sent.php', $page_params));
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE

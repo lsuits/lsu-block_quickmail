@@ -25,8 +25,6 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
-$page_url = '/blocks/quickmail/alternate.php';
-
 $page_params = [
     'course_id' => optional_param('courseid', 0, PARAM_INT),
     'action' => optional_param('action', '', PARAM_TEXT), // create|resend|confirm|delete
@@ -56,7 +54,7 @@ if ($page_params['course_id']) {
 
 $user_context = context_user::instance($USER->id);
 $PAGE->set_context($user_context);
-$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->set_url(new moodle_url('/blocks/quickmail/alternate.php', $page_params));
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE

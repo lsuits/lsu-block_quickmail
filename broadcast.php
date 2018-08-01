@@ -25,8 +25,6 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
-$page_url = '/blocks/quickmail/broadcast.php';
-
 $page_params = [
     'courseid' => SITEID,
     'draftid' => optional_param('draftid', 0, PARAM_INT),
@@ -43,7 +41,7 @@ $page_params = [
 require_login();
 $system_context = context_system::instance();
 $PAGE->set_context($system_context);
-$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->set_url(new moodle_url('/blocks/quickmail/broadcast.php', $page_params));
 
 // throw an exception if user does not have capability to broadcast messages
 block_quickmail_plugin::require_user_can_send('broadcast', $USER, $system_context);

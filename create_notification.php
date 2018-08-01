@@ -25,8 +25,6 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
-$page_url = '/blocks/quickmail/create_notification.php';
-
 $page_params = [
     'courseid' => required_param('courseid', PARAM_INT),
 ];
@@ -40,7 +38,7 @@ $course = get_course($page_params['courseid']);
 require_course_login($course, false);
 $course_context = context_course::instance($course->id);
 $PAGE->set_context($course_context);
-$PAGE->set_url(new moodle_url($page_url, $page_params));
+$PAGE->set_url(new moodle_url('/blocks/quickmail/create_notification.php', $page_params));
 
 // throw an exception if user does not have capability to create notifications
 block_quickmail_plugin::require_user_can_create_notifications($USER, $course_context);
