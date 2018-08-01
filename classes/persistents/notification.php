@@ -24,7 +24,7 @@
 
 namespace block_quickmail\persistents;
 
-use \core\persistent;
+// use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\belongs_to_a_course;
@@ -34,11 +34,11 @@ use block_quickmail\persistents\event_notification;
 use block_quickmail\persistents\reminder_notification;
 use block_quickmail\notifier\notification_condition;
 
-if ( ! class_exists('\core\persistent')) {
-    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-}
+// if ( ! class_exists('\core\persistent')) {
+//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+// }
 
-class notification extends \core\persistent {
+class notification extends \block_quickmail\persistents\persistent {
  
 	use enhanced_persistent,
 		sanitizes_input,

@@ -70,9 +70,9 @@ trait sets_up_notifications {
         }
 
         // get rid of non-course-configurable fields
-        return array_filter($defaults, function ($key) use ($attr) {
+        return \block_quickmail_plugin::array_filter_key($defaults, function ($key) use ($attr) {
             return in_array($key, $attr);
-        }, ARRAY_FILTER_USE_KEY);
+        });
     }
 
     public function get_default_event_notification_params()

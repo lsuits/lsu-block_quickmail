@@ -78,6 +78,7 @@
             <exclude>tests/unit/messenger_drafting_test.php</exclude>
 
             <!-- messaging tasks -->
+            <!-- NOTE: must modify config in class to run these -->
             <exclude>tests/unit/send_all_ready_messages_task_test.php</exclude>
             <exclude>tests/unit/send_message_adhoc_task_test.php</exclude>
 

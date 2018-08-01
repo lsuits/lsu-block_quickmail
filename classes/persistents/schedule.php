@@ -24,16 +24,16 @@
 
 namespace block_quickmail\persistents;
 
-use \core\persistent;
+// use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 
-if ( ! class_exists('\core\persistent')) {
-    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-}
+// if ( ! class_exists('\core\persistent')) {
+//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+// }
  
-class schedule extends \core\persistent {
+class schedule extends \block_quickmail\persistents\persistent {
  
 	use enhanced_persistent,
 		sanitizes_input,

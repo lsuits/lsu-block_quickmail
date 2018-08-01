@@ -24,7 +24,7 @@
 
 namespace block_quickmail\persistents;
 
-use \core\persistent;
+// use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\is_notification_type;
@@ -36,11 +36,11 @@ use block_quickmail\notifier\models\reminder_notification_model;
 use block_quickmail\persistents\schedule;
 use block_quickmail\persistents\message;
  
-if ( ! class_exists('\core\persistent')) {
-    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-}
+// if ( ! class_exists('\core\persistent')) {
+//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+// }
 
-class reminder_notification extends \core\persistent implements notification_type_interface, schedulable_interface {
+class reminder_notification extends \block_quickmail\persistents\persistent implements notification_type_interface, schedulable_interface {
  
 	use enhanced_persistent,
 		sanitizes_input,

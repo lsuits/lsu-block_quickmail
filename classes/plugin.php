@@ -281,4 +281,17 @@ class block_quickmail_plugin {
         return $course_user_data;
     }
 
+    ////////////////////////////////////////////////////
+    ///
+    ///  UTILITES
+    ///  
+    ////////////////////////////////////////////////////
+
+    public static function array_filter_key(array $array, $callback)
+    {
+        $matchedKeys = array_filter(array_keys($array), $callback);
+        
+        return array_intersect_key($array, array_flip($matchedKeys));
+    }
+
 }

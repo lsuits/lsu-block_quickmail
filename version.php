@@ -23,7 +23,7 @@
  */
 
 $plugin->version = 2018072700;
-$plugin->requires = 2017051500;
+$plugin->requires = 2016052300;
 $plugin->release = "v2.0.0";
 $plugin->maturity = MATURITY_STABLE; 
 $plugin->component = 'block_quickmail';

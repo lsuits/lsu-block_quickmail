@@ -363,9 +363,9 @@ class base_controller {
     public function store($input, $keeps = [], $overrides = [])
     {
         // filter out any unwanted params from input
-        $data = array_filter((array) $input, function ($v, $k) use ($keeps) {
+        $data = \block_quickmail_plugin::array_filter_key((array) $input, function ($k) use ($keeps) {
             return in_array($k, $keeps);
-        }, ARRAY_FILTER_USE_BOTH);
+        });
 
         // fill any wanted data keys that do not exist in the filtered params with a default
         foreach ($keeps as $k) {
