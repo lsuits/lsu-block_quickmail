@@ -30,7 +30,6 @@ abstract class validator {
 
     public $form_data;
     public $extra_params;
-    public $transformed_data;
     public $errors;
     public $course;
 
