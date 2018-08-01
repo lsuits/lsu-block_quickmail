@@ -255,9 +255,9 @@ class block_quickmail_config {
         $course_configurable_fields = self::$course_configurable_fields;
 
         // get rid of non-course-configurable fields
-        $params = array_filter($params, function ($key) use ($course_configurable_fields) {
+        $params = \block_quickmail_plugin::array_filter_key($params, function ($key) use ($course_configurable_fields) {
             return in_array($key, $course_configurable_fields);
-        }, ARRAY_FILTER_USE_KEY);
+        });
 
         // handle conversion of special cases...
         if (array_key_exists('roleselection', $params)) {

@@ -34,9 +34,9 @@ class notification_condition_summary {
         $lang_string_key = notification_model_helper::get_condition_summary_lang_string($notification_type, $model_key);
 
         // filter out any unnecessary params
-        $params = array_filter($params, function ($key) use ($keys) {
+        $params = \block_quickmail_plugin::array_filter_key($params, function ($key) use ($keys) {
             return in_array($key, $keys);
-        }, ARRAY_FILTER_USE_KEY);
+        });
 
         // instantiate this summary class
         $summary = new self($lang_string_key, $params);

@@ -46,9 +46,9 @@ trait sanitizes_input {
         $props = array_keys(self::define_properties());
 
         // get rid of non-course-configurable fields
-        $params = array_filter($params, function ($key) use ($props, $keep_keys) {
+        $params = \block_quickmail_plugin::array_filter_key($params, function ($key) use ($props, $keep_keys) {
             return in_array($key, $props) || in_array($key, $keep_keys);
-        }, ARRAY_FILTER_USE_KEY);
+        });
 
         return $params;
     }
