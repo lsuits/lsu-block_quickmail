@@ -24,18 +24,18 @@
 
 namespace block_quickmail\persistents;
 
-use \core\persistent;
+// use \core\persistent;
 use core_user;
 use lang_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
 use block_quickmail\persistents\message;
  
-if ( ! class_exists('\core\persistent')) {
-    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-}
+// if ( ! class_exists('\core\persistent')) {
+//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+// }
 
-class message_additional_email extends \core\persistent {
+class message_additional_email extends \block_quickmail\persistents\persistent {
  
     use enhanced_persistent, 
         belongs_to_a_message;

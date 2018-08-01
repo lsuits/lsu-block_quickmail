@@ -24,7 +24,7 @@
 
 namespace block_quickmail\persistents;
 
-use \core\persistent;
+// use \core\persistent;
 use block_quickmail_cache;
 use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
@@ -39,11 +39,11 @@ use block_quickmail\persistents\message_attachment;
 use block_quickmail\persistents\notification;
 use block_quickmail\messenger\message\substitution_code;
  
-if ( ! class_exists('\core\persistent')) {
-    class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-}
+// if ( ! class_exists('\core\persistent')) {
+//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
+// }
 
-class message extends \core\persistent {
+class message extends \block_quickmail\persistents\persistent {
  
 	use enhanced_persistent,
 		belongs_to_a_course,
