@@ -29,12 +29,7 @@ $page_url = '/blocks/quickmail/notifications.php';
 
 $page_params = [
     'courseid' => required_param('courseid', PARAM_INT),
-    'sort' => optional_param('sort', 'sent', PARAM_TEXT), // (field name)  - name, type, nextrun, enabled
-    'dir' => optional_param('dir', 'desc', PARAM_TEXT), // asc|desc
-    'page' => optional_param('page', 1, PARAM_INT),
-    'per_page' => 10, // adjust as necessary, maybe turn into real param?
-    'action' => optional_param('action', '', PARAM_TEXT), // edit|disable|enable|delete
-    'notificationid' => optional_param('notificationid', 0, PARAM_INT),
+    'notification_id' => required_param('id', PARAM_INT),
 ];
 
 $course = get_course($page_params['courseid']);
@@ -63,12 +58,11 @@ $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('notifications'));
 $PAGE->navbar->add($course->shortname);
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-$PAGE->requires->jquery();
-// $PAGE->requires->js('/blocks/quickmail/js/draft-index.js');
+// $PAGE->requires->jquery();
 
-block_quickmail\controllers\notification_index_controller::handle($PAGE, [
+block_quickmail\controllers\edit_notification_controller::handle($PAGE, [
     'context' => $course_context,
     'user' => $USER,
     'course' => $course,
-    'page_params' => $page_params
-], $page_params['action']);
+    'notification_id' => $page_params['notification_id']
+]);

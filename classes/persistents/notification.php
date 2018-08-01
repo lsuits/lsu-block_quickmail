@@ -178,6 +178,34 @@ class notification extends \core\persistent {
 		return (bool) $this->get('is_enabled');
 	}
 
+    ///////////////////////////////////////////////
+    ///
+    ///  STATUS METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Enables the notification
+     * 
+     * @return void
+     */
+    public function enable()
+    {
+        $this->set('is_enabled', 1);
+        $this->update();
+    }
+
+    /**
+     * Disables the notification
+     * 
+     * @return void
+     */
+    public function disable()
+    {
+        $this->set('is_enabled', 0);
+        $this->update();
+    }
+
 	///////////////////////////////////////////////
 	///
 	///  CREATION METHODS
@@ -222,6 +250,9 @@ class notification extends \core\persistent {
 			'user_id' => $user->id,
 			'conditions' => $conditions
 		]);
+
+        // be sure the name gets capitalized
+        $data['name'] = ucfirst($data['name']);
 
 		$notification = self::create_new($data);
 

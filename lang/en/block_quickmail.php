@@ -72,6 +72,7 @@ $string['compose'] = 'Compose Course Message';
 $string['broadcast'] = 'Compose Admin Message';
 $string['subject'] = 'Subject';
 $string['message_preview'] = 'Message Preview';
+$string['message_details'] = 'Message Details';
 $string['preview_no_subject'] = '(No subject)';
 $string['body'] = 'Body';
 $string['preview_no_body'] = '(No content)';
@@ -99,7 +100,10 @@ $string['excluded_recipients_desc'] = 'Who should NOT receive this message?';
 $string['no_excluded_recipients'] = 'No excluded recipients';
 $string['created'] = 'Created';
 $string['last_updated'] = 'Last Updated';
+$string['send_schedule'] = 'Send Schedule';
 $string['scheduled_time'] = 'Scheduled Time';
+$string['last_run_at'] = 'Last Run';
+$string['next_run_at'] = 'Next Run';
 $string['sent_at'] = 'Sent At';
 $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
@@ -129,6 +133,7 @@ $string['notification_type_event_description'] = 'An automated message that is s
 
 // notification models
 $string['notification_conditions'] = 'Conditions';
+$string['notification_conditions_description'] = 'Specify this notifications conditions. Any recipients that meets these conditions will be notified.';
 $string['select_notification_model'] = 'Select {$a} Notification Model';
 $string['notification_model'] = 'Notification Model';
 $string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
@@ -163,6 +168,7 @@ $string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification 
 $string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';
 $string['schedule_begin_at'] = 'Begin date';
 $string['schedule_end_at'] = 'End date';
+$string['notification_already_sent'] = 'This notification has already been sent at least once.';
 $string['time_unit_day'] = 'Day';
 $string['time_unit_days'] = 'Days';
 $string['time_unit_week'] = 'Week';
@@ -301,6 +307,7 @@ $string['redirect_back_to_course_from_message_after_send'] = 'Your message will 
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
+$string['redirect_back_to_course_from_notification_edit'] = 'Your notification has been updated.';
 
 // validation
 $string['missing_subject'] = 'Missing subject line.';

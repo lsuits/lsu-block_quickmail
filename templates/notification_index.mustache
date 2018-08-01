@@ -26,19 +26,6 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                {{#nameIsSorted}}
-                    {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=name&dir=desc">{{# str }} title, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
-                    {{/isSortedAsc}}
-
-                    {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=name&dir=asc">{{# str }} title, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
-                    {{/isSortedAsc}}
-                {{/nameIsSorted}}
-                {{^nameIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=name&dir=asc">{{# str }} title, block_quickmail {{/ str }}</a></th>
-                {{/nameIsSorted}}
-
                 {{#modelIsSorted}}
                     {{#isSortedAsc}}
                         <th><a href="?courseid={{ courseId }}&sort=model&dir=desc">{{# str }} notification_model, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
@@ -52,7 +39,22 @@
                     <th><a href="?courseid={{ courseId }}&sort=model&dir=asc">{{# str }} notification_model, block_quickmail {{/ str }}</a></th>
                 {{/modelIsSorted}}
 
-                <th>{{# str }} notification_schedule, block_quickmail {{/ str }}</th>
+                {{#nameIsSorted}}
+                    {{#isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=name&dir=desc">{{# str }} title, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
+                    {{/isSortedAsc}}
+
+                    {{^isSortedAsc}}
+                        <th><a href="?courseid={{ courseId }}&sort=name&dir=asc">{{# str }} title, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
+                    {{/isSortedAsc}}
+                {{/nameIsSorted}}
+                {{^nameIsSorted}}
+                    <th><a href="?courseid={{ courseId }}&sort=name&dir=asc">{{# str }} title, block_quickmail {{/ str }}</a></th>
+                {{/nameIsSorted}}
+
+                <th>{{# str }} last_run_at, block_quickmail {{/ str }}</th>
+
+                <th>{{# str }} next_run_at, block_quickmail {{/ str }}</th>
                 
                 {{#enabledIsSorted}}
                     {{#isSortedAsc}}
@@ -67,28 +69,46 @@
                     <th><a href="?courseid={{ courseId }}&sort=enabled&dir=asc">{{# str }} is_enabled, block_quickmail {{/ str }}</a></th>
                 {{/enabledIsSorted}}
 
-                {{#createdAtIsSorted}}
-                    {{#isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=created&dir=desc">{{# str }} created, block_quickmail {{/ str }}</a> {{#pix}} t/sort_asc {{/pix}}</th>
-                    {{/isSortedAsc}}
-
-                    {{^isSortedAsc}}
-                        <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">{{# str }} created, block_quickmail {{/ str }}</a> {{#pix}} t/sort_desc {{/pix}}</th>
-                    {{/isSortedAsc}}
-                {{/createdAtIsSorted}}
-                {{^createdAtIsSorted}}
-                    <th><a href="?courseid={{ courseId }}&sort=created&dir=asc">{{# str }} created, block_quickmail {{/ str }}</a></th>
-                {{/createdAtIsSorted}}
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {{# tableRows }}
                 <tr>
-                    <td>{{ name }}</td>
                     <td>{{ modelDescription }}</td>
-                    <td>fsf</td>
-                    <td>{{ isEnabled }}</td>
-                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    
+                    <td>{{ name }}</td>
+                    
+                    <td>
+                        {{#lastRunAt}}
+                            {{#userdate}} {{lastRunAt}}, %b %d %Y, %I:%M %p {{/userdate}}
+                        {{/lastRunAt}}
+                        {{^lastRunAt}}
+                            --
+                        {{/lastRunAt}}
+                    </td>
+                    
+                    <td>
+                        {{#nextRunAt}}
+                            {{#userdate}} {{nextRunAt}}, %b %d %Y, %I:%M %p {{/userdate}}
+                        {{/nextRunAt}}
+                        {{^nextRunAt}}
+                            --
+                        {{/nextRunAt}}
+                    </td>
+                    
+                    <td>
+                        {{#isEnabled}}
+                            <a href="?courseid={{ courseId }}&action=disable&notificationid={{ notificationId }}" style="color: #373a3c;">{{# pix }} t/hide, core, Disable {{/ pix }}</a>
+                        {{/isEnabled}}
+                        {{^isEnabled}}
+                            <a href="?courseid={{ courseId }}&action=enable&notificationid={{ notificationId }}" style="color: #81878b;">{{# pix }} t/show, core, Enable {{/ pix }}</a>
+                        {{/isEnabled}}
+                    </td>
+
+                    <td>
+                        <a href="{{ editUrl }}" class="btn btn-info btn-sm">{{# str }} edit {{/ str }}</a>
+                    </td>
                 </tr>
             {{/ tableRows }}
 

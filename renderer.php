@@ -88,6 +88,10 @@ class block_quickmail_renderer extends plugin_renderer_base {
         return $this->render_from_template('block_quickmail/alternate_index', $alternate_index_component->export_for_template($this));
     }
 
+    protected function render_notification_index_component(notification_index_component $notification_index_component) {
+        return $this->render_from_template('block_quickmail/notification_index', $notification_index_component->export_for_template($this));
+    }
+
     ////////////////////////////////////////
     /// BROADCAST FORM
     ////////////////////////////////////////
@@ -146,22 +150,6 @@ class block_quickmail_renderer extends plugin_renderer_base {
         $out .= $compose_message_component->compose_form->render();
 
         return $this->output->container($out, 'compose_message_component');
-    }
-
-    ////////////////////////////////////////
-    /// NOTIFICATION INDEX
-    ////////////////////////////////////////
-    
-    public function notification_index_component($params = []) {
-        $notification_index_component = new notification_index_component($params);
-        
-        return $this->render($notification_index_component);
-    }
-
-    protected function render_notification_index_component(notification_index_component $notification_index_component) {
-        $data = $notification_index_component->export_for_template($this);
-
-        return $this->render_from_template('block_quickmail/notification_index', $data);
     }
 
 }

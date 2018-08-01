@@ -26,6 +26,7 @@ namespace block_quickmail\repos\interfaces;
 
 interface notification_repo_interface {
 	
-	public static function get_for_course($course_id, $params = []);
+    public static function get_all_for_course($course_id, $params = []);
+    public static function get_for_course_user_or_null($notification_id, $course_id, $user_id);
 
 }

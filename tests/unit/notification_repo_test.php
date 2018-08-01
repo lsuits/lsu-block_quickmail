@@ -25,6 +25,7 @@
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\notification_repo;
+use block_quickmail\persistents\notification;
 use block_quickmail\repos\pagination\paginated;
 
 class block_quickmail_notification_repo_testcase extends advanced_testcase {
@@ -33,7 +34,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_get_for_course()
+    public function test_get_all_for_course()
     {
         $this->resetAfterTest(true);
 
@@ -48,7 +49,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
             ['name' => 'Reminder Four'],
         ]);
 
-        $notifications = notification_repo::get_for_course($course->id);
+        $notifications = notification_repo::get_all_for_course($course->id);
 
         $this->assertCount(4, $notifications->data);
     }
@@ -73,7 +74,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         ]);
 
         // sort by id, paginated
-        $notifications = notification_repo::get_for_course($course->id, [
+        $notifications = notification_repo::get_all_for_course($course->id, [
             'sort' => 'id',
             'dir' => 'asc',
             'paginate' => true,
@@ -98,7 +99,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         $this->assertEquals('/blocks/quickmail/notifications.php?courseid=' . $course->id . '&sort=id&dir=asc&page=1', $notifications->pagination->previous_page_uri);
 
         // sort by name, paginated
-        $notifications = notification_repo::get_for_course($course->id, [
+        $notifications = notification_repo::get_all_for_course($course->id, [
             'sort' => 'name',
             'dir' => 'asc',
             'paginate' => true,
@@ -113,6 +114,27 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         $this->assertEquals('Reminder One', $notifications->data[3]->get('name'));
         $this->assertEquals('Reminder Seven', $notifications->data[4]->get('name'));
         $this->assertEquals('Reminder Six', $notifications->data[5]->get('name'));
+    }
+
+    public function test_get_for_course_user()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // create a notification
+        $reminder_notification = $this->create_reminder_notification_for_course_user('non-participation', $course, $user_teacher);
+
+        // attempt to fetch this notification by the creator
+        $notification = notification_repo::get_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_teacher->id);
+
+        $this->assertInstanceOf(notification::class, $notification);
+        $this->assertEquals($reminder_notification->get_notification()->get('id'), $notification->get('id'));
+
+        // attempt to fetch this notification by a student
+        $notification = notification_repo::get_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_students[0]->id);
+
+        $this->assertNull($notification);
     }
 
     ///////////////

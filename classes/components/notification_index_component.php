@@ -32,13 +32,17 @@ class notification_index_component extends component implements \renderable {
 
     public $notifications;
     public $pagination;
-    public $course_id;
+    public $user;
+    public $courseid;
+    public $sort_by;
+    public $sort_dir;
 
     public function __construct($params = []) {
         parent::__construct($params);
         $this->notifications = $this->get_param('notifications');
-        $this->pagination = $this->get_param('notification_pagination');
-        $this->course_id = $this->get_param('course_id');
+        $this->pagination = $this->get_param('pagination');
+        $this->user = $this->get_param('user');
+        $this->courseid = $this->get_param('courseid');
         $this->sort_by = $this->get_param('sort_by');
         $this->sort_dir = $this->get_param('sort_dir');
     }
@@ -51,37 +55,38 @@ class notification_index_component extends component implements \renderable {
     public function export_for_template($output) {
         $data = (object)[];
 
-        $data->courseId = $this->course_id;
+        $data->courseId = $this->courseid;
         $data->sortBy = $this->sort_by;
         $data->isSortedAsc = $this->sort_dir == 'asc';
         $data->nameIsSorted = $this->is_attr_sorted('name');
         $data->modelIsSorted = $this->is_attr_sorted('model');
         $data->enabledIsSorted = $this->is_attr_sorted('enabled');
-        $data->createdAtIsSorted = $this->is_attr_sorted('created');
 
         $data = $this->include_pagination($data, $this->pagination);
         
         $data->tableRows = [];
         
         foreach ($this->notifications as $notification) {
+            // get the notification type interface for each notification
+            // @TODO - cache some of this data for better performance?
+            $notification_interface = $notification->get_notification_type_interface();
+
+            $edit_url = new moodle_url('/blocks/quickmail/edit_notification.php', ['courseid' => $this->courseid, 'id' => $notification->get('id')]);
+
             $data->tableRows[] = [
-                'id' => $notification->get('id'),
+                'notificationId' => $notification->get('id'),
+                'modelDescription' => $notification_interface->get_title(),
                 'name' => $notification->get('name'),
-                'modelDescription' => $notification->get_notification_type_interface()->get('model'),
-                'isEnabled' => $notification->is_notification_enabled() ? 'Yes' : 'No',
-                'createdAt' => $notification->get('timecreated'),
+                'isEnabled' => $notification->is_notification_enabled(),
+                'lastRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get('last_run_at') : '--',
+                'nextRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get('next_run_at') : '--',
+                'editUrl' => $edit_url->out(false),
             ];
         }
 
-        $data->urlBack = $this->course_id 
-            ? new moodle_url('/course/view.php', ['id' => $this->course_id])
-            : new moodle_url('/my');
-
-        $data->urlBackLabel = $this->course_id 
-            ? block_quickmail_string::get('back_to_course')
-            : block_quickmail_string::get('back_to_mypage');
-
-        $data->urlCreateNew = new moodle_url('/blocks/quickmail/create_notification.php', ['courseid' => $this->course_id]);
+        $data->urlBack = new moodle_url('/course/view.php', ['id' => $this->courseid]);
+        $data->urlBackLabel = block_quickmail_string::get('back_to_course');
+        $data->urlCreateNew = new moodle_url('/blocks/quickmail/create_notification.php', ['courseid' => $this->courseid]);
         $data->urlCreateNewLabel = block_quickmail_string::get('create_notification');
 
         return $data;
