@@ -33,7 +33,7 @@ $page_params = [
     'dir' => optional_param('dir', 'desc', PARAM_TEXT), // asc|desc
     'page' => optional_param('page', 1, PARAM_INT),
     'per_page' => 10, // adjust as necessary, maybe turn into real param?
-    'action' => optional_param('action', '', PARAM_TEXT), // edit|disable|enable|delete
+    'action' => optional_param('action', '', PARAM_TEXT), // disable|enable
     'notificationid' => optional_param('notificationid', 0, PARAM_INT),
 ];
 

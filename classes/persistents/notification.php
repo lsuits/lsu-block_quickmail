@@ -180,7 +180,7 @@ class notification extends \core\persistent {
 
     ///////////////////////////////////////////////
     ///
-    ///  STATUS METHODS
+    ///  STATUS UPDATE METHODS
     /// 
     ///////////////////////////////////////////////
 

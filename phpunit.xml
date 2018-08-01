@@ -61,6 +61,7 @@
             <!-- forms -->
             <exclude>tests/unit/message_form_validator_test.php</exclude>
             <exclude>tests/unit/save_draft_message_validator_test.php</exclude>
+            <!-- <exclude>tests/unit/edit_notification_form_validator_test.php</exclude> -->
 
             <!-- block utilities -->
             <exclude>tests/unit/alternate_manager_test.php</exclude>

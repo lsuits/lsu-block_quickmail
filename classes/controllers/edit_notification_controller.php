@@ -8,7 +8,6 @@ use block_quickmail\repos\notification_repo;
 use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail_plugin;
-use block_quickmail\persistents\notification;
 use block_quickmail\notifier\models\notification_model_helper;
 use block_quickmail\notifier\notification_condition;
 
@@ -84,11 +83,20 @@ class edit_notification_controller extends base_controller {
      */
     public function post_edit_notification_next(controller_request $request)
     {
+        // grab the notification which must belong to this course and user
+        if ( ! $notification = notification_repo::get_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
+            // redirect back to index with error
+            $request->redirect_as_error('Could not find that notification!', '/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
+        }
+
+        $this->dd($notification);
+        
+        // validate the update notification input
         $this->dd($request->input);
 
-        // do stuff...
+        // update the notification
         
-        // redirect...
+        // redirect back to index
     }
 
 }
