@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\controllers\forms\notification_index;
+namespace block_quickmail\controllers\forms\edit_notification;
 
 require_once $CFG->libdir . '/formslib.php';
 

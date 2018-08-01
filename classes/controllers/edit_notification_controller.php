@@ -51,7 +51,7 @@ class edit_notification_controller extends base_controller {
         // get this notification's type interface
         $notification_type_interface = $notification->get_notification_type_interface();
 
-        $form = $this->make_form('notification_index\edit_notification_form', [
+        $form = $this->make_form('edit_notification\edit_notification_form', [
             'context' => $this->context,
             'notification' => $notification,
             'notification_object_type' => notification_model_helper::get_object_type_for_model($notification->get('type'), $notification_type_interface->get('model')),
