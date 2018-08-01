@@ -70,7 +70,7 @@ $PAGE->navbar->add(block_quickmail_string::get('alternate'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('alternate'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->jquery();
-$PAGE->requires->js('/blocks/quickmail/js/alternate-form.js');
+$PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/quickmail/js/alternate-form.js'));
 
 block_quickmail\controllers\alternate_index_controller::handle($PAGE, [
     'context' => $user_context,

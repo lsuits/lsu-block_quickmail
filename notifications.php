@@ -63,8 +63,7 @@ $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('notifications'));
 $PAGE->navbar->add($course->shortname);
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
-$PAGE->requires->jquery();
-// $PAGE->requires->js('/blocks/quickmail/js/draft-index.js');
+// $PAGE->requires->jquery();
 
 block_quickmail\controllers\notification_index_controller::handle($PAGE, [
     'context' => $course_context,

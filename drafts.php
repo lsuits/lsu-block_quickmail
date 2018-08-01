@@ -65,7 +65,7 @@ $PAGE->navbar->add(block_quickmail_string::get('drafts'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('drafts'));
 $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
 $PAGE->requires->jquery();
-$PAGE->requires->js('/blocks/quickmail/js/draft-index.js');
+$PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/quickmail/js/draft-index.js'));
 
 block_quickmail\controllers\draft_message_index_controller::handle($PAGE, [
     'context' => $user_context,
