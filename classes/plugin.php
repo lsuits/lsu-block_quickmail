@@ -287,11 +287,34 @@ class block_quickmail_plugin {
     ///  
     ////////////////////////////////////////////////////
 
+    /**
+     * Returns an array of the given array filtered by key via the given callback
+     *
+     * This is necessary for PHP versions less than 5.6
+     * 
+     * @param  array     $array
+     * @param  callable  $callback
+     * @return array
+     */
     public static function array_filter_key(array $array, $callback)
     {
         $matchedKeys = array_filter(array_keys($array), $callback);
         
         return array_intersect_key($array, array_flip($matchedKeys));
+    }
+
+    /**
+     * Returns the base web path for any of this block's pages
+     * 
+     * @return string
+     */
+    public static function base_url()
+    {
+        require_once('../../config.php');
+
+        global $CFG;
+
+        return $CFG->wwwroot . '/blocks/quickmail/';
     }
 
 }

@@ -53,7 +53,7 @@ $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickm
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('create_notification'));
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('create_notification'));
-$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
+$PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 
 block_quickmail\controllers\create_notification_controller::handle($PAGE, [
     'context' => $course_context,

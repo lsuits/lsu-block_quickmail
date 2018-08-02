@@ -56,9 +56,9 @@ $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickm
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('signatures'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
-$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
+$PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 $PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/quickmail/js/signature-form.js'));
+$PAGE->requires->js(new moodle_url('/blocks/quickmail/js/signature-form.js'));
 $PAGE->requires->data_for_js('signaturedata', ['courseid' => $page_params['courseid']]);
 
 block_quickmail\controllers\signature_index_controller::handle($PAGE, [

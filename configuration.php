@@ -53,7 +53,7 @@ $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . get_string('
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(get_string('configuration'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
-$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
+$PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 
 block_quickmail\controllers\course_config_controller::handle($PAGE, [
     'context' => $course_context,

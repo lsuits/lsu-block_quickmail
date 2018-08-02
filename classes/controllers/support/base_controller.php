@@ -299,7 +299,7 @@ class base_controller {
     {
         global $CFG;
 
-        $moodle_url = new moodle_url($CFG->wwwroot . static::$base_uri, $this->get_form_url_params());
+        $moodle_url = new moodle_url(static::$base_uri, $this->get_form_url_params());
 
         return $moodle_url->out();
     }
