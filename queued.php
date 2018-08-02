@@ -61,9 +61,9 @@ $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickm
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('queued'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('queued'));
-$PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css'));
+$PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 $PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/quickmail/js/queued-index.js'));
+$PAGE->requires->js(new moodle_url('/blocks/quickmail/js/queued-index.js'));
 
 block_quickmail\controllers\queued_message_index_controller::handle($PAGE, [
     'context' => $user_context,

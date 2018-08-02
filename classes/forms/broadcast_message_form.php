@@ -501,7 +501,9 @@ class broadcast_message_form extends \moodleform {
      * @return string
      */
     private function get_create_signature_url() {
-        return '/blocks/quickmail/signatures.php?courseid=' . $this->course->id;
+        return new \moodle_url('/blocks/quickmail/signatures.php', [
+            'courseid' => $this->course->id
+        ]);
     }
 
     /**
