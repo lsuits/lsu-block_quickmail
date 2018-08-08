@@ -26,8 +26,8 @@ require_once('../../config.php');
 require_once 'lib.php';
 
 $page_params = [
+    'id' => required_param('id', PARAM_INT),
     'courseid' => required_param('courseid', PARAM_INT),
-    'notification_id' => required_param('id', PARAM_INT),
 ];
 
 $course = get_course($page_params['courseid']);
@@ -61,6 +61,6 @@ $PAGE->requires->css(new moodle_url($CFG->wwwroot . '/blocks/quickmail/style.css
 block_quickmail\controllers\edit_notification_controller::handle($PAGE, [
     'context' => $course_context,
     'user' => $USER,
+    'notification_id' => $page_params['id'],
     'course' => $course,
-    'notification_id' => $page_params['notification_id']
 ]);
