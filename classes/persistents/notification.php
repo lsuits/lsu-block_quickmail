@@ -259,6 +259,20 @@ class notification extends \block_quickmail\persistents\persistent {
 		return $notification;
 	}
 
+    // edit_for_course_user
+    
+        // FOR VALIDATOR
+        // extra_params => notification_type          required
+        // extra_params => substitution_code_classes  default: (['user'])
+        // extra_params => required_condition_keys    default: ([])
+            // get_condition_keys_for_model($notification_type, $model_key)
+
+        // test_validate_schedule_begin_at
+            // if notification has been sent, do not allow
+        
+        // test_validate_schedule_end_at
+            // must be greater than current time
+
 	///////////////////////////////////////////////
 	///
 	///  CONDITIONS

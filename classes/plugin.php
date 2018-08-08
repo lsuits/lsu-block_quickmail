@@ -283,6 +283,37 @@ class block_quickmail_plugin {
 
     ////////////////////////////////////////////////////
     ///
+    ///  SCHEDULABLE HELPERS
+    ///  
+    ////////////////////////////////////////////////////
+
+    /**
+     * Returns the available time unit values
+     * 
+     * @return array
+     */
+    public static function get_time_unit_values()
+    {
+        return ['day', 'week', 'month'];
+    }
+
+    /**
+     * Returns an array for time unit form selection
+     * 
+     * @return array
+     */
+    public static function get_time_unit_selection_array()
+    {
+        return [
+            '' => get_string('select'),
+            'day' => ucfirst(get_string('days')),
+            'week' => ucfirst(get_string('weeks')),
+            'month' => ucfirst(get_string('months')),
+        ];
+    }
+
+    ////////////////////////////////////////////////////
+    ///
     ///  UTILITES
     ///  
     ////////////////////////////////////////////////////

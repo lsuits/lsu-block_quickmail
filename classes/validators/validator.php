@@ -133,7 +133,21 @@ abstract class validator {
             return true;
         }
 
-        return $this->extra_params[$key] == $value;
+        return $this->get_extra_param_value($key) == $value;
+    }
+
+    /**
+     * Returns the value of the given extra param key
+     * 
+     * @param  string  $key
+     * @param  mixed  $default    value to return as default
+     * @return mixed
+     */
+    public function get_extra_param_value($key, $default = null)
+    {
+        return array_key_exists($key, $this->extra_params)
+            ? $this->extra_params[$key]
+            : $default;
     }
 
 }

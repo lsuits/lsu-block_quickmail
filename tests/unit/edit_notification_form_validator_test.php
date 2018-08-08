@@ -24,281 +24,474 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\validators\message_form_validator;
+use block_quickmail\validators\edit_notification_form_validator;
 
 class block_quickmail_edit_notification_form_validator_testcase extends advanced_testcase {
     
     use has_general_helpers,
         sets_up_courses;
 
-    // public function test_validate_subject_is_missing()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_notification_name()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        // check exist
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'subject' => ''
-    //     ]);
+        $input = $this->get_notification_input(['notification_name' => '']);
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Missing subject line.', $validator->errors[0]);
-    // }
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Missing notification name.', $validator->errors[0]);
 
-    // public function test_validate_body_is_missing_with_no_substitution_codes()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+        // check length
+
+        $input = $this->get_notification_input(['notification_name' => 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Notification name must be 40 characters or less.', $validator->errors[0]);
+    }
+
+    public function test_validate_message_subject()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        // check exist
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => ''
-    //     ]);
+        $input = $this->get_notification_input(['message_subject' => '']);
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Missing message body.', $validator->errors[0]);
-    // }
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Missing subject line.', $validator->errors[0]);
+    }
 
-    // public function test_validate_body_with_substitution_code_typo_scenario_one()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_message_body()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        // check exist
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => 'Hey [:firstname I think I may have [:messed up'
-    //     ]);
+        $input = $this->get_notification_input(['message_body' => ['text' => '', 'format' => '1']]);
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
-    // }
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Missing message body.', $validator->errors[0]);
+    }
 
-    // public function test_validate_body_with_substitution_code_typo_scenario_two()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_invalid_message_type_is_invalid()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+
+        $input = $this->get_notification_input(['message_type' => 'invalid']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('That send method is not allowed.', $validator->errors[0]);
+    }
+
+    public function test_validate_unsupported_message_type_is_invalid()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+
+        $this->update_system_config_value('block_quickmail_message_types_available', 'email');
+
+        $input = $this->get_notification_input(['message_type' => 'invalid']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('That send method is not allowed.', $validator->errors[0]);
+    }
+
+    public function test_validate_body_with_substitution_code_typo_scenario_one()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => 'Hey [:firstname I think I may have [:messed up',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => 'Hey [:firstname I am trying:] this again, did it work?'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
-    // }
-
-    // public function test_validate_body_with_substitution_code_typo_scenario_three()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_body_with_substitution_code_typo_scenario_two()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => 'Hey [:firstname I am trying:] this again, did it work?',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => 'Hey [: firstname:] let me try this again :('
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
-    // }
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
+    }
 
-    // public function test_validate_body_with_substitution_code_typo_scenario_four()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_body_with_substitution_code_typo_scenario_three()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => 'Hey [: firstname:] let me try this again :(',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => ':] and again'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
-    // }
-
-    // public function test_validate_body_with_substitution_code_typo_scenario_five()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_body_with_substitution_code_typo_scenario_four()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => ':] and again',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => ' :]is this it?[:'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
-    // }
-
-    // public function test_validate_body_with_substitution_code_typo_scenario_six()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_body_with_substitution_code_typo_scenario_five()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => ' :]is this it?[:',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => '[: nothisisit:]'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
-    // }
-
-    // public function test_validate_compose_body_with_invalid_substitution_code()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_body_with_substitution_code_typo_scenario_six()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => '[: nothisisit:]',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'body' => 'Hello [:firstname:] lets try an [:invalidcode:]. Is your email still [:email:]?'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Message body substitution codes not formatted properly.', $validator->errors[0]);
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('Custom data key "invalidcode" is not allowed.', $validator->errors[0]);
-    // }
-
-    // public function test_validate_additional_email_list_is_valid()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_message_body_with_invalid_substitution_code()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => 'Hello [:firstname:] lets try an [:invalidcode:]. Is your email still [:email:]?',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'additional_emails' => 'test@email.com, another@email.com'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Custom data key "invalidcode" is not allowed.', $validator->errors[0]);
+    }
 
-    //     $this->assertFalse($validator->has_errors());
-    // }
-
-    // public function test_validate_additional_email_list_is_invalid()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_message_body_with_unallowed_substitution_code()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => 'Hello [:firstname:] lets try an [:coursefullname:]. Is your email still [:email:]?',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'email', [
-    //         'additional_emails' => 'invalid@email, another@email.com'
-    //     ]);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Custom data key "coursefullname" is not allowed.', $validator->errors[0]);
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('The additional email "invalid@email" you entered is invalid', $validator->errors[0]);
-    // }
-
-    // public function test_validate_invalid_message_type_is_invalid()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_message_body_with_allowed_substitution_code()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['message_body' => [
+            'text' => 'Hello [:firstname:] lets try an [:coursefullname:]. Is your email still [:email:]?',
+            'format' => '1',
+        ]]);
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'invalid');
+        $validator = new edit_notification_form_validator($input, [
+            'substitution_code_classes' => ['user', 'course']
+        ]);
+        $validator->validate();
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        $this->assertFalse($validator->has_errors());
+    }
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('That send method is not allowed.', $validator->errors[0]);
-    // }
-
-    // public function test_validate_unsupported_message_type_is_invalid()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_validate_schedule_time_unit_is_valid_for_reminder_notifications()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
  
-    //     // set up a course with a teacher and students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
 
-    //     $this->update_system_config_value('block_quickmail_message_types_available', 'email');
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
 
-    //     // get a compose form submission
-    //     $compose_form_data = $this->get_compose_message_form_submission($user_students, 'message');
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Invalid unit of time for schedule.', $validator->errors[0]);
 
-    //     $validator = new message_form_validator($compose_form_data);
-    //     $validator->for_course($course);
-    //     $validator->validate();
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['schedule_time_unit' => 'day']);
 
-    //     $this->assertTrue($validator->has_errors());
-    //     $this->assertEquals('That send method is not allowed.', $validator->errors[0]);
-    // }
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
+    }
+
+    public function test_validate_schedule_time_unit_is_not_required_for_event_notifications()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'event',
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
+    }
+
+    public function test_validate_schedule_time_amount_is_valid_for_reminder_notifications()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['schedule_time_amount' => '']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Invalid amount of time for schedule.', $validator->errors[0]);
+
+        $input = $this->get_notification_input(['schedule_time_amount' => 'longtime']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Invalid amount of time for schedule.', $validator->errors[0]);
+
+        $input = $this->get_notification_input(['schedule_time_amount' => '2']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
+    }
+
+    public function test_validate_condition_time_unit_is_valid_for_notification_with_required_keys()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['condition_time_unit' => 'decade']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+            'required_condition_keys' => ['time_unit', 'time_amount'],
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Invalid unit of time for condition.', $validator->errors[0]);
+
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['schedule_time_unit' => 'day']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
+    }
+
+    public function test_validate_condition_time_amount_is_valid_for_notification_with_required_keys()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['condition_time_amount' => '']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+            'required_condition_keys' => ['time_unit', 'time_amount'],
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Invalid amount of time for condition.', $validator->errors[0]);
+
+        $input = $this->get_notification_input(['condition_time_amount' => 'longtime']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+            'required_condition_keys' => ['time_unit', 'time_amount'],
+        ]);
+        $validator->validate();
+
+        $this->assertTrue($validator->has_errors());
+        $this->assertEquals('Invalid amount of time for condition.', $validator->errors[0]);
+
+        $input = $this->get_notification_input(['condition_time_amount' => '2']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+            'required_condition_keys' => ['time_unit', 'time_amount'],
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
+    }
+
+    public function test_validate_conditions_for_notification_with_no_required_keys()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['condition_time_unit' => 'decade', 'condition_time_amount' => 'no']);
+
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'reminder',
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
+    }
+
+    ////////////////////////////////////////
+    ///
+    /// HELPERS
+    /// 
+    ////////////////////////////////////////
+
+    private function get_notification_input($overrides = [])
+    {
+        return (object) array_merge($this->get_default_notification_params(), $overrides);
+    }
+
+    private function get_default_notification_params()
+    {
+        return [
+            'notification_name' => 'My new notification',
+            'notification_is_enabled' => '1',
+            'schedule_time_unit' => 'day',
+            'schedule_time_amount' => '3',
+            // 'schedule_begin_at' => '',
+            // 'schedule_end_at' => '',
+            'condition_time_unit' => 'week',
+            'condition_time_amount' => '1',
+            'message_subject' => 'The subject',
+            'message_body' => [
+                'text' => 'One fine body',
+                'format' => '1',
+            ],
+            'message_type' => 'email',
+            'message_send_to_mentors' => '1',
+        ];
+    }
 
 }

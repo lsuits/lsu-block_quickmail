@@ -27,6 +27,7 @@ namespace block_quickmail\controllers\forms\edit_notification;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\controllers\support\controller_form;
+use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\messenger\message\substitution_code;
@@ -557,12 +558,7 @@ class edit_notification_form extends controller_form {
      */
     private function get_time_unit_options()
     {
-        return [
-            '' => get_string('select'),
-            'day' => ucfirst(get_string('days')),
-            'week' => ucfirst(get_string('weeks')),
-            'month' => ucfirst(get_string('months')),
-        ];
+        return block_quickmail_plugin::get_time_unit_selection_array();
     }
 
     /**

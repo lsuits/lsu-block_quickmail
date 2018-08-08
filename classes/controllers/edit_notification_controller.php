@@ -10,6 +10,7 @@ use block_quickmail_config;
 use block_quickmail_plugin;
 use block_quickmail\notifier\models\notification_model_helper;
 use block_quickmail\notifier\notification_condition;
+use block_quickmail\validators\edit_notification_form_validator;
 
 class edit_notification_controller extends base_controller {
 
@@ -66,7 +67,22 @@ class edit_notification_controller extends base_controller {
 
         // route the form submission, if any
         if ($form->is_validated_next()) {
-            return $this->post($request, 'edit_notification', 'next');
+            // further validation on the update notification input
+            $validator = new edit_notification_form_validator($request->input, [
+                'notification_type' => $notification->get('type'),
+                'substitution_code_classes' => ['user', 'course'], // @TODO : make this work!!
+                'required_condition_keys' => notification_condition::get_required_condition_keys($notification->get('type'), str_replace('-', '_', $notification_type_interface->get('model'))),
+            ]);
+            $validator->validate();
+
+            // if no errors, post update
+            if ( ! $validator->has_errors()) {
+                return $this->post($request, 'edit_notification', 'next');
+            }
+
+            // otherwise, save errors for render below
+            $this->form_errors = $validator->errors;
+
         } else if ($form->is_cancelled()) {
             // redirect back to notification list
             $request->redirect_to_url('/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
@@ -89,12 +105,12 @@ class edit_notification_controller extends base_controller {
             $request->redirect_as_error('Could not find that notification!', '/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
         }
 
-        $this->dd($notification);
-        
-        // validate the update notification input
-        $this->dd($request->input);
-
-        // update the notification
+        // attempt to update the notification
+        try {
+            $notification->update_by_user($this->props->user, $request->input);
+        } catch (\Exception $e) {
+            //
+        }
         
         // redirect back to index
     }

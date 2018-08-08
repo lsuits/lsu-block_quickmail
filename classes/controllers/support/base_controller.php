@@ -17,10 +17,12 @@ class base_controller {
     public $context;
     public $props;
     public $session;
+    public $form_errors;
 
     public function __construct(&$page, $data = []) {
         $this->set_props($data);
         $this->session = new controller_session($this->get_store_key());
+        $this->form_errors = [];
         // $page->navbar->add('add a nav node here...');
     }
 
@@ -115,16 +117,16 @@ class base_controller {
      *
      * Additionally renders the page header and footer
      *
-     * @param  string              $name
+     * @param  string              $action_name
      * @param  controller_request  $request
      * @return mixed
      */
-    private function call_action($name, controller_request $request)
+    private function call_action($action_name, controller_request $request)
     {
-        $action_name = 'action_' . $name;
+        $action_name = 'action_' . $action_name;
 
         if ( ! method_exists($this, $action_name)) {
-            throw new \Exception('controller action "' . $name . '"does not exist!');
+            throw new \Exception('controller action "' . $action_name . '"does not exist!');
         }
 
         global $OUTPUT;
@@ -141,21 +143,21 @@ class base_controller {
      *
      * Additionally renders the page header and footer
      * 
-     * @param  string              $name
+     * @param  string              $view_name
      * @param  controller_request  $request
      * @return string
      */
-    private function call_view($name, controller_request $request)
+    private function call_view($view_name, controller_request $request)
     {
-        if ( ! method_exists($this, $name)) {
-            throw new \Exception('controller view "' . $name . '"does not exist!');
+        if ( ! method_exists($this, $view_name)) {
+            throw new \Exception('controller view "' . $view_name . '"does not exist!');
         }
 
         global $OUTPUT;
 
         echo $OUTPUT->header();
         
-        call_user_func([$this, $name], $request);
+        call_user_func([$this, $view_name], $request);
 
         echo $OUTPUT->footer();
     }
@@ -232,8 +234,7 @@ class base_controller {
 
         $rendered = $renderer->controller_form_component(new controller_form_component($form, $params));
 
-        // @TODO: include general notifications in the rendered output
-        // $compose_form->render_error_notification();
+        $this->render_form_error_notification();
         
         echo $rendered;
     }
@@ -252,11 +253,28 @@ class base_controller {
         $renderer = $PAGE->get_renderer('block_quickmail');
 
         $rendered = $renderer->controller_component_template($component_name, $params);
-
-        // @TODO: include general notifications in the rendered output
-        // $compose_form->render_error_notification();
         
         echo $rendered;
+    }
+
+    /**
+     * Renders a moodle error notification for any form errors
+     * 
+     * @return string
+     */
+    public function render_form_error_notification()
+    {
+        if ($this->form_errors) {
+            $html = '<ul style="margin-bottom: 0px;">';
+            
+            foreach ($this->form_errors as $error) {
+                $html .= '<li>' . $error . '</li>';
+            }
+
+            $html .= '</ul>';
+            
+            \core\notification::error($html);
+        }
     }
 
     ////////////////////////////////////////////
