@@ -81,7 +81,6 @@ class message_recipient_send_factory extends recipient_send_factory implements r
 
         $moodlemessage = new moodle_message();
 
-        $moodlemessage->courseid = $this->message->get_course()->id;
         $moodlemessage->component = $this->message_params->component;
         $moodlemessage->name = $this->message_params->name;
         $moodlemessage->userto = $user;
@@ -92,6 +91,13 @@ class message_recipient_send_factory extends recipient_send_factory implements r
         $moodlemessage->fullmessagehtml = $this->get_message_prefix($options) . $this->message_params->fullmessagehtml;
         $moodlemessage->smallmessage = $this->message_params->smallmessage;
         $moodlemessage->notification = $this->message_params->notification;
+        
+        // if moodle version is 3.2+, a courseid is required for sending messages
+        global $CFG;
+
+        if ($CFG->version >= 2016120500) {
+            $moodlemessage->courseid = $this->message->get('course_id');
+        }
 
         // returns mixed the integer ID of the new message or false if there was a problem with submitted data
         $result = message_send($moodlemessage);
