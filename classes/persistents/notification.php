@@ -33,6 +33,7 @@ use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\event_notification;
 use block_quickmail\persistents\reminder_notification;
 use block_quickmail\notifier\notification_condition;
+use block_quickmail_string;
 
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -259,19 +260,52 @@ class notification extends \block_quickmail\persistents\persistent {
 		return $notification;
 	}
 
-    // edit_for_course_user
-    
-        // FOR VALIDATOR
-        // extra_params => notification_type          required
-        // extra_params => substitution_code_classes  default: (['user'])
-        // extra_params => required_condition_keys    default: ([])
-            // get_condition_keys_for_model($notification_type, $model_key)
-
+    /**
+     * Updates this notification with the given params
+     *
+     * NOTE: it is assumed that these params have been validated
+     * 
+     * @param  object  $user
+     * @param  array   $params
+     * @return notification
+     * @throws \Exception
+     */
+    public function update_by_user($user, $params)
+    {
         // test_validate_schedule_begin_at
             // if notification has been sent, do not allow
         
         // test_validate_schedule_end_at
             // must be greater than current time
+        
+        $notification_type_interface = $this->get_notification_type_interface();
+
+        try {
+            $this->set('name', $params['notification_name']);
+            $this->set('is_enabled', $params['notification_is_enabled']);
+            $this->set('conditions', self::sanitize_condition_params($params, $this->get('type'), $notification_type_interface->get('model')));
+            $this->set('subject', $params['message_subject']);
+            $this->set('body', $params['message_body']['text']);
+            $this->set('message_type', $params['message_type']);
+            $this->set('send_to_mentors', $params['message_send_to_mentors']);
+            $this->update();
+            
+            // update schedule details if necessary
+            if ($notification_type_interface->is_schedulable()) {
+                $schedule = $notification_type_interface->get_schedule();
+                $schedule->set('unit', $params['schedule_time_unit']);
+                $schedule->set('amount', $params['schedule_time_amount']);
+                $schedule->update();
+            }
+
+            $notification_type_interface->set_next_run_time();
+        } catch (\Exception $e) {
+            throw new \Exception(block_quickmail_string::get('notification_not_updated'));
+        }
+
+        return $this->read();
+    }
+    
 
 	///////////////////////////////////////////////
 	///

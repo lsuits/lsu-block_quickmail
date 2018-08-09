@@ -123,6 +123,10 @@ $string['notification_review'] = 'Review Your Notification';
 $string['notified_by'] = 'Notified By';
 $string['enable_notification'] = 'Enable Notification';
 $string['no_notifications'] = 'You have no created notifications.';
+$string['notification_not_found'] = 'Could not find that notification.';
+$string['notification_created'] = 'Notification created.';
+$string['notification_updated'] = 'Notification updated.';
+$string['notification_not_updated'] = 'Notification updated.';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -312,7 +316,7 @@ $string['redirect_back_to_course_from_message_after_send'] = 'Your message will 
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
-$string['redirect_back_to_course_from_notification_edit'] = 'Your notification has been updated.';
+
 
 // validation
 $string['missing_subject'] = 'Missing subject line.';

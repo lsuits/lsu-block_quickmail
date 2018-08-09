@@ -580,7 +580,7 @@ class create_notification_controller extends base_controller {
             var_dump($e->getMessage());die;
         }
 
-        $request->redirect_as_success('Notification created!', '/course/view.php', ['id' => $this->props->course->id]);
+        $request->redirect_as_success(block_quickmail_string::get('notification_created'), '/course/view.php', ['id' => $this->props->course->id]);
     }
 
     /**

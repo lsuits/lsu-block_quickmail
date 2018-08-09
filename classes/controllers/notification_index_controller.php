@@ -100,7 +100,7 @@ class notification_index_controller extends base_controller {
         // grab the notification which must belong to this course and user
         if ( ! $notification = notification_repo::get_for_course_user_or_null($this->props->page_params['notificationid'], $this->props->course->id, $this->props->user->id)) {
             // redirect back to index with error
-            $request->redirect_as_error('Could not find that notification!', static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('notification_not_found'), static::$base_uri, $this->get_form_url_params());
         }
 
         // handle the action
@@ -111,7 +111,7 @@ class notification_index_controller extends base_controller {
         }
 
         // redirect back to index as success
-        $request->redirect_as_success(block_quickmail_string::get('redirect_back_to_course_from_notification_edit'), static::$base_uri, $this->get_form_url_params());
+        $request->redirect_as_success(block_quickmail_string::get('notification_updated'), static::$base_uri, $this->get_form_url_params());
     }
 
 }

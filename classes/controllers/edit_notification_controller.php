@@ -102,17 +102,18 @@ class edit_notification_controller extends base_controller {
         // grab the notification which must belong to this course and user
         if ( ! $notification = notification_repo::get_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
             // redirect back to index with error
-            $request->redirect_as_error('Could not find that notification!', '/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
+            $request->redirect_as_error(block_quickmail_string::get('notification_not_found'), '/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
         }
 
         // attempt to update the notification
         try {
-            $notification->update_by_user($this->props->user, $request->input);
+            $notification->update_by_user($this->props->user, (array) $request->input);
         } catch (\Exception $e) {
-            //
+            $request->redirect_as_error($e->getMessage(), '/blocks/quickmail/edit_notification.php', ['courseid' => $this->props->course->id, 'id' => $notification->get('id')]);
         }
-        
-        // redirect back to index
+
+        $request->redirect_as_success(block_quickmail_string::get('notification_updated'), '/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
+
     }
 
 }
