@@ -55,6 +55,8 @@ class attachment_appender {
      */
     public static function add_download_links($message, $body)
     {
+        require_once($CFG->libdir . '/filelib.php');
+        
         $appender = new self($message, $body);
 
         // if there are no attachments for this message, return body as is
