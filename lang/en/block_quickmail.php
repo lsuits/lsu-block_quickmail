@@ -46,6 +46,7 @@ $string['quickmail:allowalternate'] = 'Create alternate Quickmail email addresse
 $string['quickmail:addinstance'] = 'Add a new Quickmail block to a course page';
 $string['quickmail:myaddinstance'] = 'Add a new Quickmail block to the /my page';
 $string['quickmail:viewgroupusers'] = 'View all users in every group';
+$string['quickmail:createnotifications'] = 'Create auto notifications in Quickmail';
 
 // general terms
 $string['duplicate'] = 'Duplicate';
@@ -341,7 +342,7 @@ $string['cachedef_qm_msg_recip_count'] = 'Cached message recipient counts.';
 $string['cachedef_qm_msg_deliv_count'] = 'Cached message delievered counts.';
 $string['cachedef_qm_msg_attach_count'] = 'Cached message attachment counts.';
 $string['cachedef_qm_msg_addl_email_count'] = 'Cached message additional email counts.';
-$string['cachedef_qm_controller_store_'] = 'Cache store for controller instances.';
+$string['cachedef_qm_controller_store'] = 'Cache store for controller instances.';
 
 // backup/restore
 $string['backup_history'] = 'Include Quickmail History';
