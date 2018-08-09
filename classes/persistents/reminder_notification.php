@@ -35,6 +35,7 @@ use block_quickmail\persistents\interfaces\schedulable_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
 use block_quickmail\persistents\schedule;
 use block_quickmail\persistents\message;
+use block_quickmail\repos\user_repo;
  
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -238,6 +239,14 @@ class reminder_notification extends \block_quickmail\persistents\persistent impl
 	 */
 	public function filter_notifiable_user_ids($user_ids = [])
 	{
+		// pull all users that this message creator is capable of emailing within the course
+        $allowed_users_ids = array_keys(user_repo::get_course_user_selectable_users($this->get_notification()->get_course(), $this->get_notification()->get_user()));
+
+        // filter out any user ids that are not allowed
+        $user_ids = array_filter($user_ids, function($id) use ($allowed_users_ids) {
+            return in_array($id, $allowed_users_ids);
+        });
+
 		// if this reminder_notification has a max_per_interval has
 		if ($this->max_per_interval()) {
 			// pull all users to be ignored based on this reminder_notification's configuration
