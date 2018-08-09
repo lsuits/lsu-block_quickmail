@@ -77,8 +77,8 @@ class queued_message_index_component extends component implements \renderable {
                 'courseName' => $message->get_course()->shortname,
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
-                'createdAt' => $message->get('timecreated'),
-                'scheduledSendAt' => $message->get('to_send_at'),
+                'createdAt' => $message->get_readable_date('timecreated'),
+                'scheduledSendAt' => $message->get_readable_date('to_send_at'),
             ];
         }
 

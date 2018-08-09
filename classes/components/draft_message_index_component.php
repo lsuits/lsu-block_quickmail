@@ -79,8 +79,8 @@ class draft_message_index_component extends component implements \renderable {
                 'courseName' => $message->get_course()->shortname,
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
-                'createdAt' => $message->get('timecreated'),
-                'lastModifiedAt' => $message->get('timemodified'),
+                'createdAt' => $message->get_readable_date('timecreated'), 
+                'lastModifiedAt' => $message->get_readable_date('timemodified'),
                 'openUrl' => new moodle_url('/blocks/quickmail/' . $message->get_message_scope() . '.php', [
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')

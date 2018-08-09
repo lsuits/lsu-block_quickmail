@@ -96,8 +96,8 @@
                     <td>{{ courseName }}</td>
                     <td>{{ subjectPreview }}</td>
                     <td>{{ messagePreview }}</td>
-                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
-                    <td>{{#userdate}} {{scheduledSendAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    <td>{{ createdAt }}</td>
+                    <td>{{ scheduledSendAt }}</td>
                     <td>
                         <a href="?action=send&id={{ id }}" class="btn btn-success btn-sm">{{# str }} send_now, block_quickmail {{/ str }}</a>
                         <a href="?action=unqueue&id={{ id }}" class="btn btn-info btn-sm">{{# str }} unqueue, block_quickmail {{/ str }}</a>

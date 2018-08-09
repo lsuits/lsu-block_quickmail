@@ -90,7 +90,7 @@ trait enhanced_persistent {
      */
     public function get_readable_date($attr)
     {
-        return date('Y-m-d H:i:s', $this->get($attr));
+        return date('Y-m-d g:i a', $this->get($attr));
     }
 
     /**

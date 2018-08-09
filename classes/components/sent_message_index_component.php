@@ -78,7 +78,7 @@ class sent_message_index_component extends component implements \renderable {
                 'attachmentTotal' => $message->cached_attachment_count(),
                 'recipientTotal' => $message->cached_recipient_count(),
                 'additionalEmailTotal' => $message->cached_additional_email_count(),
-                'sentAt' => $message->get('sent_at'),
+                'sentAt' => $message->get_readable_date('sent_at'),
             ];
         }
 

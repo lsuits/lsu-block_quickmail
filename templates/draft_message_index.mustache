@@ -96,8 +96,8 @@
                     <td>{{ courseName }}</td>
                     <td>{{ subjectPreview }}</td>
                     <td>{{ messagePreview }}</td>
-                    <td>{{#userdate}} {{createdAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
-                    <td>{{#userdate}} {{lastModifiedAt}}, %b %d %Y, %I:%M %p {{/userdate}}</td>
+                    <td>{{ createdAt }}</td>
+                    <td>{{ lastModifiedAt }}</td>
                     <td>
                         <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} edit {{/ str }}</a>
                         <a href="?action=duplicate&id={{ id }}" class="btn btn-info btn-sm btn-duplicate-draft">{{# str }} duplicate {{/ str }}</a>

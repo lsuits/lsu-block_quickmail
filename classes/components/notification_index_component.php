@@ -78,8 +78,8 @@ class notification_index_component extends component implements \renderable {
                 'modelDescription' => $notification_interface->get_title(),
                 'name' => $notification->get('name'),
                 'isEnabled' => $notification->is_notification_enabled(),
-                'lastRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get('last_run_at') : '--',
-                'nextRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get('next_run_at') : '--',
+                'lastRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get_readable_date('last_run_at') : '',
+                'nextRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get_readable_date('next_run_at') : '',
                 'editUrl' => $edit_url->out(false),
             ];
         }

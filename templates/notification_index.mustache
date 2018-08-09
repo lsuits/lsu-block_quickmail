@@ -81,7 +81,7 @@
                     
                     <td>
                         {{#lastRunAt}}
-                            {{#userdate}} {{lastRunAt}}, %b %d %Y, %I:%M %p {{/userdate}}
+                            {{ lastRunAt }}
                         {{/lastRunAt}}
                         {{^lastRunAt}}
                             --
@@ -90,7 +90,7 @@
                     
                     <td>
                         {{#nextRunAt}}
-                            {{#userdate}} {{nextRunAt}}, %b %d %Y, %I:%M %p {{/userdate}}
+                            {{ nextRunAt }}
                         {{/nextRunAt}}
                         {{^nextRunAt}}
                             --
