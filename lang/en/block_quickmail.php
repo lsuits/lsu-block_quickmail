@@ -114,6 +114,7 @@ $string['send_now_scheduled_modal_title'] = 'Send Message Now';
 $string['send_now_scheduled_confirm_message'] = 'This will forget the schedule and send the message now, are you sure?';
 $string['send_receipt_subject_addendage'] = 'Sent Message';
 $string['found_filtered_users'] = 'Found {$a} user(s)';
+$string['never'] = 'Never';
 $string['courseneveraccessed'] = 'Never Accessed';
 
 // notifications

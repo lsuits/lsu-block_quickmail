@@ -27,6 +27,7 @@ namespace block_quickmail\messenger\message\data_mapper;
 use block_quickmail\messenger\message\data_mapper\maps_user_data;
 use block_quickmail\messenger\message\data_mapper\maps_course_data;
 use block_quickmail\messenger\message\data_mapper\maps_activity_data;
+use block_quickmail_string;
 
 class substitution_code_data_mapper {
 
@@ -95,8 +96,12 @@ class substitution_code_data_mapper {
      * @param  int  $timestamp
      * @return string
      */
-    public function format_mapped_date($timestamp)
+    public function format_mapped_date($timestamp = 0)
     {
+        if ( ! $timestamp) {
+            return block_quickmail_string::get('never');
+        }
+
         return date(self::$date_format, $timestamp);
     }
 
