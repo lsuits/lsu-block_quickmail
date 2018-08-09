@@ -360,10 +360,21 @@ class user_repo extends repo implements user_repo_interface {
         }
 
         //////////////////////////////////////////////////////////////
-        /// REMOVE ANY EXCLUDED USER IDS FROM THE INCLUDED USER IDS, CREATING A NEW FINAL CONTAINER
+        /// REMOVE ANY EXCLUDED USER IDS FROM THE INCLUDED USER IDS, CREATING A NEW CONTAINER
         //////////////////////////////////////////////////////////////
 
         $result_user_ids = array_filter($included_user_ids, function($id) use ($excluded_user_ids) {
+            return ! in_array($id, $excluded_user_ids);
+        });
+
+        //////////////////////////////////////////////////////////////
+        /// FINALLY, REMOVE ANY USER IDS THAT THIS USER MAY NOT MESSAGE
+        //////////////////////////////////////////////////////////////
+
+        // pull all users that this user is capable of emailing within the course
+        $allowed_users = self::get_course_user_selectable_users($course, $user, $course_context);
+
+        $result_user_ids = array_filter(array_keys($allowed_users), function($id) {
             return ! in_array($id, $excluded_user_ids);
         });
 
