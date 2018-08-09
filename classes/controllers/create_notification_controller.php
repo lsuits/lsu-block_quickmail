@@ -93,7 +93,7 @@ class create_notification_controller extends base_controller {
         if ($form->is_validated_next()) {
             return $this->post($request, 'select_type', 'next');
         } else if ($form->is_cancelled()) {
-            return $this->cancel();
+            return $request->redirect_to_url('/course/view.php', ['id' => $this->props->course->id]);
         }
 
         $this->render_form($form);
@@ -145,7 +145,7 @@ class create_notification_controller extends base_controller {
         } else if ($form->is_submitted_back()) {
             return $this->post($request, 'select_model', 'back');
         } else if ($form->is_cancelled()) {
-            return $this->cancel();
+            return $request->redirect_to_url('/course/view.php', ['id' => $this->props->course->id]);
         }
 
         $this->render_form($form, [
