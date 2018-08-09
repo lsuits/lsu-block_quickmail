@@ -24,38 +24,40 @@
 
 namespace block_quickmail\messenger\message;
 
-use block_quickmail\persistents\message_recipient;
+use block_quickmail\persistents\message;
 use block_quickmail\messenger\message\body_substitution_code_parser;
 use block_quickmail\messenger\message\data_mapper\substitution_code_data_mapper;
 use block_quickmail\messenger\message\substitution_code;
 
 class message_body_constructor {
 
-    public $message_recipient;
     public $message;
+    public $user;
+    public $course;
     public $allowed_substitution_code_classes;
 
-    public function __construct(message_recipient $message_recipient) {
-        $this->message_recipient = $message_recipient;
-        $this->set_message();
+    public function __construct(message $message, $user, $course = null) {
+        $this->message = $message;
+        $this->user = $user;
+        $this->course = $course;
         $this->set_allowed_substitution_code_classes();
     }
     
     /**
-     * Returns a message body which has the given message recipient's data injected into any substitution codes
+     * Returns a message body which has the given message's recipient user and course data injected into any substitution codes
      * 
-     * @param  message_recipient  $message_recipient
+     * @param  message  $message
      * @return string
      */
-    public static function get_formatted_body(message_recipient $message_recipient)
+    public static function get_formatted_body(message $message, $user, $course = null)
     {
-        $constructor = new self($message_recipient);
+        $constructor = new self($message, $user, $course);
 
         // get all codes that appear in the message
         $codes = body_substitution_code_parser::get_codes($constructor->get_raw_body());
 
         // get an associative array of code => value
-        $mapped = substitution_code_data_mapper::map_codes($codes, $constructor->get_user(), $constructor->get_course()); // TODO: need to figure out how to inject "object" here
+        $mapped = substitution_code_data_mapper::map_codes($codes, $user, $constructor->get_course()); // TODO: need to figure out how to inject "object" here
 
         $body = $constructor->get_raw_body();
 
@@ -79,29 +81,11 @@ class message_body_constructor {
     }
 
     /**
-     * Sets the message recipient's message
-     */
-    private function set_message()
-    {
-        $this->message = $this->message_recipient->get_message();
-    }
-
-    /**
      * Sets an array of "allowed substitution codes" for this message body constructor instance
      */
     private function set_allowed_substitution_code_classes()
     {
         $this->allowed_substitution_code_classes = $this->message->get_substitution_code_classes();
-    }
-
-    /**
-     * Helper function that returns the message_recipient user
-     * 
-     * @return object
-     */
-    private function get_user()
-    {
-        return $this->message_recipient->get_user();
     }
 
     /**
@@ -112,7 +96,7 @@ class message_body_constructor {
     private function get_course()
     {
         return $this->message->get_message_scope() == 'compose'
-            ? $this->message->get_course()
+            ? $this->course
             : null;
     }
 

@@ -75,7 +75,7 @@ class substitution_code_data_mapper {
     }
 
     /**
-     * Returns a calculated value from a given code
+     * Returns a calculated value from a given code, default to empty string
      * 
      * @param  string  $code
      * @return string
@@ -84,7 +84,9 @@ class substitution_code_data_mapper {
     {
         $func = 'get_data_' . $code;
 
-        return $this->$func();
+        $data = $this->$func();
+
+        return $data ?: '';
     }
 
     /**

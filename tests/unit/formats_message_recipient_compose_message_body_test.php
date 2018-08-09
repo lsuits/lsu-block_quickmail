@@ -47,9 +47,7 @@ class block_quickmail_parses_compose_message_body_testcase extends advanced_test
 
         $first_student = $user_students[0];
 
-        $recipient = $this->create_message_recipient_from_user($message, $first_student);
-
-        $body = message_body_constructor::get_formatted_body($recipient);
+        $body = message_body_constructor::get_formatted_body($message, $first_student, $course);
 
         $this->assertEquals('Hey there ' . $first_student->firstname . '. Don\'t I know you? Your last name is ' . $first_student->lastname . ', right? In fact, I believe that your full name is ' . fullname($first_student) . '. Your middle name must be ' . $first_student->middlename . ', but we will call you ' . $first_student->alternatename . '. Is your email still ' . $first_student->email . '?', $body);
     }
@@ -69,11 +67,9 @@ class block_quickmail_parses_compose_message_body_testcase extends advanced_test
 
         $first_student = $user_students[0];
 
-        $recipient = $this->create_message_recipient_from_user($message, $first_student);
-
         $courselink = new \moodle_url('/course/view.php', ['id' => $course->id]);
 
-        $body = message_body_constructor::get_formatted_body($recipient);
+        $body = message_body_constructor::get_formatted_body($message, $first_student, $course);
 
         $this->assertEquals('Welcome to ' . $course->fullname . '! Let\'s shorten the name to ' . $course->shortname . ' if that\'s ok with you. The ID number will remain as ' . $course->idnumber . ' though. If I had to summarize this course, I\'d say it would be: ' . $course->summary . '. You can always access the course online by going to ' . $courselink . '. The course will begin on ' . date('F j, Y', $course->startdate) . ' and end on ' . date('F j, Y', $course->enddate) . '. Do we have a mutual understanding?', $body);
     }
@@ -97,9 +93,7 @@ class block_quickmail_parses_compose_message_body_testcase extends advanced_test
 
         $this->report_user_access_in_course($first_student, $course, $accesstime);
 
-        $recipient = $this->create_message_recipient_from_user($message, $first_student);
-
-        $body = message_body_constructor::get_formatted_body($recipient);
+        $body = message_body_constructor::get_formatted_body($message, $first_student, $course);
 
         $this->assertEquals('FYI, the last time you access this course was on ' . date('F j, Y', $accesstime) . '.', $body);
     }
@@ -119,9 +113,7 @@ class block_quickmail_parses_compose_message_body_testcase extends advanced_test
 
         $first_student = $user_students[0];
 
-        $recipient = $this->create_message_recipient_from_user($message, $first_student);
-
-        $body = message_body_constructor::get_formatted_body($recipient);
+        $body = message_body_constructor::get_formatted_body($message, $first_student, $course);
 
         $this->assertEquals('FYI, the last time you access this course was on Never Accessed.', $body);
     } 

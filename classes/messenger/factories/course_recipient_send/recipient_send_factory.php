@@ -38,6 +38,7 @@ abstract class recipient_send_factory {
 
     public $message;
     public $recipient;
+    public $course;
     public $message_params;
     public $alternate_email;
 
@@ -88,21 +89,20 @@ abstract class recipient_send_factory {
     {
         $this->message_params->userto = $this->recipient->get_user();
         $this->message_params->userfrom = $this->message->get_user();
+        $this->course = $this->message->get_course();
     }
 
     private function set_global_computed_params()
     {
-        $course = $this->message->get_course();
-
         // optional message prepend + message subject
         // very short one-line subject
         $this->message_params->subject = subject_prepender::format_course_subject(
-            $course, 
+            $this->course, 
             $this->message->get('subject')
         );
         
         // format the message body to include any injected user/course data
-        $formatted_body = message_body_constructor::get_formatted_body($this->recipient);
+        $formatted_body = message_body_constructor::get_formatted_body($this->message, $this->message_params->userto, $this->course);
 
         // append a signature to the formatted body, if appropriate
         $formatted_body = signature_appender::append_user_signature_to_body(
