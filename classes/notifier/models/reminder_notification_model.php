@@ -16,7 +16,6 @@ abstract class reminder_notification_model extends notification_model implements
 
     private function set_object()
     {
-        // get 'component' and 'object' from this reminder_notification_model
         // get 'object_id' from  $this->notification_type_interface
         
         // pull object
