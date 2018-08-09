@@ -84,7 +84,7 @@ class draft_message_index_component extends component implements \renderable {
                 'openUrl' => new moodle_url('/blocks/quickmail/' . $message->get_message_scope() . '.php', [
                     'courseid' => $message->get('course_id'),
                     'draftid' => $message->get('id')
-                ]
+                ])
             ];
         }
 
