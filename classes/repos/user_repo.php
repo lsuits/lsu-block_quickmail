@@ -372,10 +372,10 @@ class user_repo extends repo implements user_repo_interface {
         //////////////////////////////////////////////////////////////
 
         // pull all users that this user is capable of emailing within the course
-        $allowed_users = self::get_course_user_selectable_users($course, $user, $course_context);
+        $allowed_users_ids = array_keys(self::get_course_user_selectable_users($course, $user, $course_context));
 
-        $result_user_ids = array_filter(array_keys($allowed_users), function($id) {
-            return ! in_array($id, $excluded_user_ids);
+        $result_user_ids = array_filter($result_user_ids, function($id) use ($allowed_users_ids) {
+            return in_array($id, $allowed_users_ids);
         });
 
         // return a unique list of user ids
