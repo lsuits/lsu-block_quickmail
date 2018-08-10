@@ -24,26 +24,27 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-class block_quickmail_notification_model_testcase extends advanced_testcase {
+use block_quickmail\validators\edit_notification_form_validator;
+
+class block_quickmail_edit_event_notification_form_validator_testcase extends advanced_testcase {
     
     use has_general_helpers,
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_something()
+    public function test_validate_schedule_time_unit_is_not_required_for_event_notifications()
     {
         // reset all changes automatically after this test
         $this->resetAfterTest(true);
+ 
+        $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
 
-        $this->assertTrue(true);
+        $validator = new edit_notification_form_validator($input, [
+            'notification_type' => 'event',
+        ]);
+        $validator->validate();
+
+        $this->assertFalse($validator->has_errors());
     }
-
-    ///////////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    //////////////////////////////////////////////
-    
-    // 
 
 }

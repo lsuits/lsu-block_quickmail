@@ -117,4 +117,30 @@ trait sets_up_notifications {
         ];
     }
 
+    private function get_notification_input($overrides = [])
+    {
+        return (object) array_merge($this->get_default_input_notification_params(), $overrides);
+    }
+
+    private function get_default_input_notification_params()
+    {
+        return [
+            'notification_name' => 'My new notification',
+            'notification_is_enabled' => '1',
+            'schedule_time_unit' => 'day',
+            'schedule_time_amount' => '3',
+            // 'schedule_begin_at' => '',
+            // 'schedule_end_at' => '',
+            'condition_time_unit' => 'week',
+            'condition_time_amount' => '1',
+            'message_subject' => 'The subject',
+            'message_body' => [
+                'text' => 'One fine body',
+                'format' => '1',
+            ],
+            'message_type' => 'email',
+            'message_send_to_mentors' => '1',
+        ];
+    }
+
 }

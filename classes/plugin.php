@@ -283,6 +283,35 @@ class block_quickmail_plugin {
 
     ////////////////////////////////////////////////////
     ///
+    ///  NOTIFICATION MODELS
+    ///  
+    ////////////////////////////////////////////////////
+
+    /**
+     * Returns notification model types as an associative array, keyed by type
+     *
+     * NOTE: if a type is given, will return an array of that type's models only
+     * 
+     * @param  string  $type  reminder|event
+     * @return array
+     */
+    public static function get_model_notification_types($type = '')
+    {
+        $models = [
+            'reminder' => [
+                'non_participation',
+                'course_grade_range'
+            ],
+            'event' => [
+                'assignment_submitted'
+            ]
+        ];
+
+        return $type ? $models[$type] : $models;
+    }
+
+    ////////////////////////////////////////////////////
+    ///
     ///  SCHEDULABLE HELPERS
     ///  
     ////////////////////////////////////////////////////

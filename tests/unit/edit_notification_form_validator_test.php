@@ -29,7 +29,8 @@ use block_quickmail\validators\edit_notification_form_validator;
 class block_quickmail_edit_notification_form_validator_testcase extends advanced_testcase {
     
     use has_general_helpers,
-        sets_up_courses;
+        sets_up_courses,
+        sets_up_notifications;
 
     public function test_validate_notification_name()
     {
@@ -302,84 +303,6 @@ class block_quickmail_edit_notification_form_validator_testcase extends advanced
         $this->assertFalse($validator->has_errors());
     }
 
-    public function test_validate_schedule_time_unit_is_valid_for_reminder_notifications()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
- 
-        $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
-
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-        ]);
-        $validator->validate();
-
-        $this->assertTrue($validator->has_errors());
-        $this->assertEquals('Invalid unit of time for schedule.', $validator->errors[0]);
-
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
- 
-        $input = $this->get_notification_input(['schedule_time_unit' => 'day']);
-
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-        ]);
-        $validator->validate();
-
-        $this->assertFalse($validator->has_errors());
-    }
-
-    public function test_validate_schedule_time_unit_is_not_required_for_event_notifications()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
- 
-        $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
-
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'event',
-        ]);
-        $validator->validate();
-
-        $this->assertFalse($validator->has_errors());
-    }
-
-    public function test_validate_schedule_time_amount_is_valid_for_reminder_notifications()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
- 
-        $input = $this->get_notification_input(['schedule_time_amount' => '']);
-
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-        ]);
-        $validator->validate();
-
-        $this->assertTrue($validator->has_errors());
-        $this->assertEquals('Invalid amount of time for schedule.', $validator->errors[0]);
-
-        $input = $this->get_notification_input(['schedule_time_amount' => 'longtime']);
-
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-        ]);
-        $validator->validate();
-
-        $this->assertTrue($validator->has_errors());
-        $this->assertEquals('Invalid amount of time for schedule.', $validator->errors[0]);
-
-        $input = $this->get_notification_input(['schedule_time_amount' => '2']);
-
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-        ]);
-        $validator->validate();
-
-        $this->assertFalse($validator->has_errors());
-    }
-
     public function test_validate_condition_time_unit_is_valid_for_notification_with_required_keys()
     {
         // reset all changes automatically after this test
@@ -460,38 +383,6 @@ class block_quickmail_edit_notification_form_validator_testcase extends advanced
         $validator->validate();
 
         $this->assertFalse($validator->has_errors());
-    }
-
-    ////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    ////////////////////////////////////////
-
-    private function get_notification_input($overrides = [])
-    {
-        return (object) array_merge($this->get_default_notification_params(), $overrides);
-    }
-
-    private function get_default_notification_params()
-    {
-        return [
-            'notification_name' => 'My new notification',
-            'notification_is_enabled' => '1',
-            'schedule_time_unit' => 'day',
-            'schedule_time_amount' => '3',
-            // 'schedule_begin_at' => '',
-            // 'schedule_end_at' => '',
-            'condition_time_unit' => 'week',
-            'condition_time_amount' => '1',
-            'message_subject' => 'The subject',
-            'message_body' => [
-                'text' => 'One fine body',
-                'format' => '1',
-            ],
-            'message_type' => 'email',
-            'message_send_to_mentors' => '1',
-        ];
     }
 
 }

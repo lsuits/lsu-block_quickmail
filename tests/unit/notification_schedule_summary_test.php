@@ -25,7 +25,6 @@
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\notifier\notification_schedule_summary;
-use block_quickmail_string;
 
 class block_quickmail_notification_schedule_summary_testcase extends advanced_testcase {
     

@@ -2,18 +2,10 @@
 
 namespace block_quickmail\notifier\models;
 
+use block_quickmail_plugin;
 use block_quickmail_string;
 
 class notification_model_helper {
-
-    public static $models = [
-        'reminder' => [
-            'non_participation'
-        ],
-        'event' => [
-            'assignment_submitted'
-        ]
-    ];
 
     /**
      * Returns a fully namespaced notification_model class name from a notification type and a model key
@@ -46,7 +38,7 @@ class notification_model_helper {
      */
     public static function get_available_model_keys_by_type($notification_type)
     {
-        return self::$models[$notification_type];
+        return block_quickmail_plugin::get_model_notification_types($notification_type);
     }
 
     /**

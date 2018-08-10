@@ -87,10 +87,10 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
 
         $this->assertEquals('Id dolore irure...', $message->get_subject_preview(20));
         $this->assertEquals('Id dolore irure nostrud dolor eu elit et...', $message->get_body_preview(40));
-        $this->assertEquals(date('Y-m-d H:i:s', $message->get('timecreated')), $message->get_readable_created_at());
-        $this->assertEquals(date('Y-m-d H:i:s', $message->get('timemodified')), $message->get_readable_last_modified_at());
-        $this->assertEquals(date('Y-m-d H:i:s', $message->get('sent_at')), $message->get_readable_sent_at());
-        $this->assertEquals(date('Y-m-d H:i:s', $message->get('to_send_at')), $message->get_readable_to_send_at());
+        $this->assertEquals(date('Y-m-d g:i a', $message->get('timecreated')), $message->get_readable_created_at());
+        $this->assertEquals(date('Y-m-d g:i a', $message->get('timemodified')), $message->get_readable_last_modified_at());
+        $this->assertEquals(date('Y-m-d g:i a', $message->get('sent_at')), $message->get_readable_sent_at());
+        $this->assertEquals(date('Y-m-d g:i a', $message->get('to_send_at')), $message->get_readable_to_send_at());
     }
 
     public function test_get_message_recipients()

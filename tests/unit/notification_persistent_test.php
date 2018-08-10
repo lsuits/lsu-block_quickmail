@@ -54,15 +54,6 @@ class block_quickmail_notification_persistent_testcase extends advanced_testcase
         $this->assertEquals('Reminder Three', $notifications[0]->get('name'));
     }
 
-    public function test_gets_required_conditions_for_type()
-    {
-        $condition_keys = notification::get_required_conditions_for_type('reminder', 'non-participation');
-
-        $this->assertCount(2, $condition_keys);
-        $this->assertContains('time_amount', $condition_keys);
-        $this->assertContains('time_unit', $condition_keys);
-    }
-
     ///////////////////////////////////////////////
     ///
     /// HELPERS

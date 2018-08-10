@@ -115,12 +115,4 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         $this->assertInstanceOf(reminder_notification_model::class, $reminder_notification_model);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    //////////////////////////////////////////////
-    
-    // 
-
 }

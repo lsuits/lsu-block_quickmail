@@ -96,12 +96,4 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         $this->assertInstanceOf(event_notification_model::class, $event_notification_model);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    //////////////////////////////////////////////
-    
-    // 
-
 }

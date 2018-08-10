@@ -5,13 +5,13 @@ namespace block_quickmail\notifier\models\reminder;
 use block_quickmail\notifier\models\interfaces\reminder_notification_model_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
 
-class non_participation_model extends reminder_notification_model implements reminder_notification_model_interface {
+class course_grade_range_model extends reminder_notification_model implements reminder_notification_model_interface {
 
     public static $object_type = 'course';
     
     public static $condition_keys = [
-        'time_amount',
-        'time_unit',
+        'grade_greater_than',
+        'grade_less_than',
     ];
 
     /**

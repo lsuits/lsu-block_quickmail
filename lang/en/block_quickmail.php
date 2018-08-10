@@ -128,6 +128,11 @@ $string['notification_not_found'] = 'Could not find that notification.';
 $string['notification_created'] = 'Notification created.';
 $string['notification_updated'] = 'Notification updated.';
 $string['notification_not_updated'] = 'Notification updated.';
+$string['notification_model'] = 'Notification Model';
+$string['notification_conditions'] = 'Conditions';
+$string['notification_conditions_description'] = 'Specify this notifications conditions. Any recipients that meets these conditions will be notified.';
+$string['select_notification_model'] = 'Select {$a} Notification Model';
+$string['invalid_notification_model'] = 'Invalid notification model selection.';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -138,15 +143,22 @@ $string['notification_type_reminder_description'] = 'A recurring message that wi
 $string['notification_type_event_description'] = 'An automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
 
 // notification models
-$string['notification_conditions'] = 'Conditions';
-$string['notification_conditions_description'] = 'Specify this notifications conditions. Any recipients that meets these conditions will be notified.';
-$string['select_notification_model'] = 'Select {$a} Notification Model';
-$string['notification_model'] = 'Notification Model';
+
+// reminder: non_participation
 $string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
-$string['notification_model_reminder_non_participation_description'] = 'Notify all course participants that have not accessed the course in a given amount of time on a scheduled basis.';
+$string['notification_model_reminder_non_participation_description'] = 'Notify course participants that have not accessed the course in a given amount of time.';
+$string['notification_model_reminder_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
+$string['condition_summary_reminder_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
+
+// reminder: course_grade_range
+$string['notification_model_reminder_course_grade_range'] = 'Course Grade Range';
+$string['notification_model_reminder_course_grade_range_description'] = 'Notify course participants which currently have a grade within the given range.';
+$string['notification_model_reminder_course_grade_range_condition_description'] = 'Specify the grade range. If a course participant currently has within this range, they will be notified.';
+$string['condition_summary_reminder_course_grade_range'] = 'All who have a grade between {$a->grade_greater_than} and {$a->grade_less_than}';
+
+// event: assignment_submitted
 $string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
 $string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
-$string['invalid_notification_model'] = 'Invalid notification model selection.';
 
 // notification conditions
 $string['set_notification_conditions'] = 'Set {$a->model} {$a->type} Notification Conditions';
@@ -164,13 +176,6 @@ $string['condition_grade_greater_than'] = 'Grade greater than';
 $string['invalid_condition_grade_greater_than'] = 'Invalid grade greater than value.';
 $string['condition_grade_less_than'] = 'Grade less than';
 $string['invalid_condition_grade_less_than'] = 'Invalid grade less than value.';
-
-// notification model condition descriptions
-$string['notification_model_reminder_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
-
-// notification model condition summaries
-// @IMPORTANT - be sure to keep all parameters intact, no more, no less...
-$string['condition_summary_reminder_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
 
 // reminder notification schedules
 $string['notification_schedule'] = 'Schedule';
