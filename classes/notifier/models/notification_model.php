@@ -9,6 +9,8 @@ use block_quickmail\notifier\models\notification_model_helper;
 
 abstract class notification_model implements notification_model_interface {
 
+    public static $object_type = '';
+    public static $condition_keys = [];
     public $notification_type_interface;
     public $notification;
     public $condition;
