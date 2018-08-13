@@ -5,7 +5,7 @@ namespace block_quickmail\notifier\models\reminder;
 use block_quickmail\notifier\models\interfaces\reminder_notification_model_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
 
-class non_participation_model extends reminder_notification_model implements reminder_notification_model_interface {
+class course_non_participation_model extends reminder_notification_model implements reminder_notification_model_interface {
 
     public static $object_type = 'course';
     

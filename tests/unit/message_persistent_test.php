@@ -670,7 +670,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'condition_time_unit' => 'day',
         ];
 
-        $reminder_notification = $this->create_reminder_notification_for_course_user('non-participation', $course, $user_teacher, null, $params);
+        $reminder_notification = $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user_teacher, null, $params);
 
         $notification = $reminder_notification->get_notification();
 

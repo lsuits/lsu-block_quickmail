@@ -299,7 +299,7 @@ class block_quickmail_plugin {
     {
         $models = [
             'reminder' => [
-                'non_participation',
+                'course_non_participation',
                 'course_grade_range'
             ],
             'event' => [

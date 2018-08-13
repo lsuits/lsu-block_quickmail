@@ -77,7 +77,7 @@ class block_quickmail_notification_condition_testcase extends advanced_testcase 
 
     public function test_gets_required_conditions_for_a_type_of_notification()
     {
-        $required_condition_keys = notification_condition::get_required_condition_keys('reminder', 'non-participation');
+        $required_condition_keys = notification_condition::get_required_condition_keys('reminder', 'course-non-participation');
 
         $this->assertCount(2, $required_condition_keys);
         $this->assertContains('time_amount', $required_condition_keys);
@@ -86,7 +86,7 @@ class block_quickmail_notification_condition_testcase extends advanced_testcase 
 
     public function test_gets_required_conditions_for_a_type_of_notification_with_prepend()
     {
-        $required_condition_keys = notification_condition::get_required_condition_keys('reminder', 'non-participation', 'condition');
+        $required_condition_keys = notification_condition::get_required_condition_keys('reminder', 'course-non-participation', 'condition');
 
         $this->assertCount(2, $required_condition_keys);
         $this->assertContains('condition_time_amount', $required_condition_keys);

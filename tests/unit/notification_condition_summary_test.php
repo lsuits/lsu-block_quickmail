@@ -30,14 +30,14 @@ class block_quickmail_notification_condition_summary_testcase extends advanced_t
     
     use has_general_helpers;
 
-    public function test_gets_summary_for_reminder_non_participation_notification()
+    public function test_gets_summary_for_reminder_course_non_participation_notification()
     {
         $params = [
             'time_unit' => 'day',
             'time_amount' => '3',
         ];
 
-        $summary = notification_condition_summary::get_model_condition_summary('reminder', 'non_participation', $params);
+        $summary = notification_condition_summary::get_model_condition_summary('reminder', 'course_non_participation', $params);
 
         $this->assertInternalType('string', $summary);
         $this->assertEquals('All who have not accessed the course in 3 days', $summary);
@@ -47,7 +47,7 @@ class block_quickmail_notification_condition_summary_testcase extends advanced_t
             'time_amount' => '1',
         ];
 
-        $summary = notification_condition_summary::get_model_condition_summary('reminder', 'non_participation', $params);
+        $summary = notification_condition_summary::get_model_condition_summary('reminder', 'course_non_participation', $params);
 
         $this->assertInternalType('string', $summary);
         $this->assertEquals('All who have not accessed the course in 1 week', $summary);

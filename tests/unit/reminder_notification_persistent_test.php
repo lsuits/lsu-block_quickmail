@@ -50,10 +50,10 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // create
-        $reminder_notification = reminder_notification::create_type('non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params());
+        $reminder_notification = reminder_notification::create_type('course-non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params());
 
         $this->assertInstanceOf(reminder_notification::class, $reminder_notification);
-        $this->assertEquals('non-participation', $reminder_notification->get('model'));
+        $this->assertEquals('course-non-participation', $reminder_notification->get('model'));
         $this->assertEquals($course->id, $reminder_notification->get('object_id'));
         $this->assertEquals($this->get_reminder_notification_params('max_per_interval'), $reminder_notification->get('max_per_interval'));
         $this->assertEquals($this->get_reminder_notification_params('max_per_interval'), $reminder_notification->max_per_interval());
@@ -104,7 +104,7 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // create a reminder notification to run soon
-        $reminder_notification = reminder_notification::create_type('non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
+        $reminder_notification = reminder_notification::create_type('course-non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
             'schedule_unit' => 'week',
             'schedule_amount' => 2,
             'schedule_begin_at' => $this->get_soon_time()

@@ -11,7 +11,7 @@ class notification_model_helper {
      * Returns a fully namespaced notification_model class name from a notification type and a model key
      * 
      * @param  string  $notification_type  reminder|event
-     * @param  string  $model_key  ex: 'non-participation'
+     * @param  string  $model_key  ex: 'course-non-participation'
      * @return string
      */
     public static function get_full_model_class_name($notification_type, $model_key)

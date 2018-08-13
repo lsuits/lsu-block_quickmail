@@ -78,7 +78,7 @@ class block_quickmail_queue_scheduled_notifications_task_testcase extends advanc
     private function create_reminder_notifications_with_names($course, $user, $instance_params = [])
     {
         foreach ($instance_params as $params) {
-            $this->create_reminder_notification_for_course_user('non-participation', $course, $user, null, $params);
+            $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user, null, $params);
         }
     }
 

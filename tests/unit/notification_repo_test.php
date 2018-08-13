@@ -123,7 +123,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // create a notification
-        $reminder_notification = $this->create_reminder_notification_for_course_user('non-participation', $course, $user_teacher);
+        $reminder_notification = $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user_teacher);
 
         // attempt to fetch this notification by the creator
         $notification = notification_repo::get_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_teacher->id);
@@ -142,7 +142,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
     private function create_reminder_notifications_with_names($course, $user, $instance_params = [])
     {
         foreach ($instance_params as $params) {
-            $this->create_reminder_notification_for_course_user('non-participation', $course, $user, null, $params);
+            $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user, null, $params);
         }
     }
 

@@ -144,11 +144,11 @@ $string['notification_type_event_description'] = 'An automated message that is s
 
 // notification models
 
-// reminder: non_participation
-$string['notification_model_reminder_non_participation'] = 'Course Non-Participation';
-$string['notification_model_reminder_non_participation_description'] = 'Notify course participants that have not accessed the course in a given amount of time.';
-$string['notification_model_reminder_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
-$string['condition_summary_reminder_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
+// reminder: course_non_participation
+$string['notification_model_reminder_course_non_participation'] = 'Course Non-Participation';
+$string['notification_model_reminder_course_non_participation_description'] = 'Notify course participants that have not accessed the course in a given amount of time.';
+$string['notification_model_reminder_course_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
+$string['condition_summary_reminder_course_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
 
 // reminder: course_grade_range
 $string['notification_model_reminder_course_grade_range'] = 'Course Grade Range';
