@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\controllers\forms\alternate_index;
+namespace block_quickmail\controllers\forms\create_alternate;
 
 require_once $CFG->libdir . '/formslib.php';
 
@@ -58,6 +58,7 @@ class create_alternate_form extends controller_form {
             PARAM_TEXT
         );
         $mform->addRule('email', get_string('required'), 'required', '', 'server');
+        $mform->addRule('email', get_string('invalidemail'), 'email', '', 'server');
 
         ////////////////////////////////////////////////////////////
         ///  firstname (text)

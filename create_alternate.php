@@ -27,9 +27,6 @@ require_once 'lib.php';
 
 $page_params = [
     'course_id' => optional_param('courseid', 0, PARAM_INT),
-    'action' => optional_param('action', '', PARAM_TEXT), // create|resend|confirm|delete
-    'alternate_id' => optional_param('id', 0, PARAM_INT),
-    'token' => optional_param('token', '', PARAM_TEXT),
 ];
 
 ////////////////////////////////////////
@@ -54,7 +51,7 @@ if ($page_params['course_id']) {
 
 $user_context = context_user::instance($USER->id);
 $PAGE->set_context($user_context);
-$PAGE->set_url(new moodle_url('/blocks/quickmail/alternate.php', $page_params));
+$PAGE->set_url(new moodle_url('/blocks/quickmail/create_alternate.php', $page_params));
 
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
@@ -62,17 +59,14 @@ $PAGE->set_url(new moodle_url('/blocks/quickmail/alternate.php', $page_params));
 
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_alternates'));
+$PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('alternate_new'));
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'));
-$PAGE->navbar->add(block_quickmail_string::get('manage_alternates'));
-$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_alternates'));
+$PAGE->navbar->add(block_quickmail_string::get('alternate'));
+$PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('alternate_new'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
-$PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url('/blocks/quickmail/js/alternate-form.js'));
 
-block_quickmail\controllers\alternate_index_controller::handle($PAGE, [
+block_quickmail\controllers\create_alternate_controller::handle($PAGE, [
     'context' => $user_context,
     'user' => $USER,
     'course_id' => $page_params['course_id'],
-    'page_params' => $page_params
-], $page_params['action']);
+]);

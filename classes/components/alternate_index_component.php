@@ -78,6 +78,8 @@ class alternate_index_component extends component implements \renderable {
         $data->urlBackLabel = $this->course_id 
             ? block_quickmail_string::get('back_to_course')
             : block_quickmail_string::get('back_to_mypage');
+
+        $data->urlCreate = new moodle_url('/blocks/quickmail/create_alternate.php', ['courseid' => $this->course_id]);
         
         return $data;
     }

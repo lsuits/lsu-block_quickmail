@@ -17,7 +17,6 @@ class alternate_index_controller extends base_controller {
     ];
 
     public static $actions = [
-        'create',
         'resend',
         'confirm',
         'delete',
@@ -52,51 +51,6 @@ class alternate_index_controller extends base_controller {
             'alternates' => $alternates,
             'course_id' => $this->props->course_id,
         ]);
-    }
-
-    /**
-     * Show the create alternate form
-     * 
-     * @param  controller_request  $request
-     * @return mixed
-     */
-    public function action_create(controller_request $request)
-    {
-        $form = $this->make_form('alternate_index\create_alternate_form', [], 'create');
-
-        // list of form submission subactions that may be handled in addition to "back" or "next"
-        $subactions = [
-            'save',
-        ];
-
-        // route the form submission, if any
-        if ($form->is_submitted_subaction('save', $subactions, true)) {
-            return $this->post($request, 'alternate', 'save');
-        } else if ($form->is_cancelled()) {
-            $request->redirect_to_course_or_my($this->props->course_id);
-        }
-
-        $this->render_form($form);
-    }
-
-    /**
-     * Handles post of alternate form, save subaction
-     * 
-     * @param  controller_request  $request
-     * @return mixed
-     */
-    public function post_alternate_save(controller_request $request)
-    {
-        // attempt to create the alternate and send a confirmation email
-        alternate_manager::create_alternate_for_user($this->props->user, $this->props->page_params['course_id'], [
-            'availability' => $request->input->availability,
-            'firstname' => $request->input->firstname,
-            'lastname' => $request->input->lastname,
-            'email' => $request->input->email,
-        ]);
-
-        // redirect and notify of success
-        $request->redirect_as_success(block_quickmail_string::get('alternate_created'), static::$base_uri, $this->get_form_url_params());
     }
 
     /**
