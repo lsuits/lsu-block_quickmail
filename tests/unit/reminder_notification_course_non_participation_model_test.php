@@ -104,7 +104,11 @@ class block_quickmail_reminder_notification_course_non_participation_model_testc
 
         $model = $this->create_reminder_notification_model('course-non-participation', $course, $user_teacher, $course, [
             'name' => 'My Non Participation Notification',
+            'condition_time_amount' => 6,
+            'condition_time_unit' => 'day',
         ]);
+
+        $this->dd($model);
 
         $ids_to_notify = $model->get_user_ids_to_notify();
 
