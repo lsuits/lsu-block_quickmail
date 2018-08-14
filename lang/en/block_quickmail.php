@@ -85,6 +85,7 @@ $string['unqueue'] = 'Unqueue';
 $string['no_queued'] = 'You have no scheduled messages.';
 $string['message_no_record'] = 'Could not find that message.';
 $string['queued_no_record'] = 'Could not find that queued message.';
+$string['send_as_tasks'] = 'Send all messages as background tasks.';
 $string['receipt'] = 'Receive a send report';
 $string['mentor_copy'] = 'Send copies to mentors of recipients?';
 $string['mentors_copied'] = 'Send copies to mentors';
@@ -274,6 +275,7 @@ $string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
 $string['allow_mentor_copy'] = 'Allow senders to automatically message mentors of recipients when sending';
 $string['allow_mentor_copy_help'] = 'If enabled, the sender will have the ability to select whether or not mentors should be copied to any outbound message. This message will only happen if the recipient user has a mentor, otherwise, they will receive the message individually as per normal.';
+$string['send_as_tasks_help'] = 'If selected, will send all messages asynchronously as cron tasks. Otherwise, will send immediately.';
 
 // settings management
 $string['restore_default_modal_title'] = 'Restore Default Configuration';

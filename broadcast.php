@@ -139,7 +139,7 @@ try {
     } else if ($request->to_send_message()) {
 
         // attempt to send (as task)
-        $message = \block_quickmail\messenger\messenger::broadcast($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message, true);
+        $message = \block_quickmail\messenger\messenger::broadcast($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message, \block_quickmail_config::block('send_as_tasks'));
         
         // clear any recipient user filtering session data
         $broadcast_recipient_filter->clear_session();

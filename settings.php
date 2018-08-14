@@ -90,6 +90,22 @@ if($ADMIN->fulltree) {
 
     ///////////////////////////////////////////////////////////
     ///
+    ///  SEND MESSAGES AS BACKGROUND TASKS
+    ///  
+    ///////////////////////////////////////////////////////////
+
+    $settings->add(
+        new admin_setting_configselect(
+            'block_quickmail_send_as_tasks',
+            block_quickmail_string::get('send_as_tasks'), 
+            block_quickmail_string::get('send_as_tasks_help'),
+            1,  // <-- default
+            $no_or_yes_options
+        )
+    );
+
+    ///////////////////////////////////////////////////////////
+    ///
     ///  SENDER RECEIVES A COPY ?
     ///  
     ///////////////////////////////////////////////////////////

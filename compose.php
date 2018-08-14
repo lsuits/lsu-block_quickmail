@@ -136,7 +136,7 @@ try {
     } else if ($request->to_send_message()) {
 
         // attempt to send (as task)
-        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, true);
+        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, \block_quickmail_config::block('send_as_tasks'));
 
         // redirect back to course page
         $redirect_message = $message->is_queued_message()

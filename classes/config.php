@@ -61,6 +61,7 @@ class block_quickmail_config {
         $block_config_array = [
             'allowstudents'             => get_config('moodle', 'block_quickmail_allowstudents'),
             'roleselection'             => get_config('moodle', 'block_quickmail_roleselection'),
+            'send_as_tasks'             => get_config('moodle', 'block_quickmail_send_as_tasks'),
             'receipt'                   => get_config('moodle', 'block_quickmail_receipt'),
             'allow_mentor_copy'         => get_config('moodle', 'block_quickmail_allow_mentor_copy'),
             'prepend_class'             => get_config('moodle', 'block_quickmail_prepend_class'),
@@ -133,6 +134,7 @@ class block_quickmail_config {
                 : $block_config['prepend_class'],
             'ferpa'                     => $block_config['ferpa'],
             'downloads'                 => $block_config['downloads'],
+            'send_as_tasks'             => $block_config['send_as_tasks'],
             'allow_mentor_copy'         => $block_config['allow_mentor_copy'],
             'additionalemail'           => $block_config['additionalemail'],
             'message_types_available'   => $block_config['message_types_available'],
@@ -179,6 +181,7 @@ class block_quickmail_config {
             'prepend_class'             => (string) $params['prepend_class'],
             'ferpa'                     => (string) $params['ferpa'],
             'downloads'                 => (int) $params['downloads'],
+            'send_as_tasks'             => (int) $params['send_as_tasks'],
             'additionalemail'           => (int) $params['additionalemail'],
             'message_types_available'   => (string) $params['message_types_available'],
             'default_message_type'      => (string) $params['default_message_type'],
