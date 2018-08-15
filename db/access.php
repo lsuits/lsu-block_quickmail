@@ -78,6 +78,17 @@ $capabilities = array(
         )
     ),
 
+    'block/quickmail:allowcoursealternate' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+        )
+    ),
+
     'block/quickmail:viewgroupusers' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,

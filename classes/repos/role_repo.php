@@ -66,4 +66,32 @@ class role_repo extends repo implements role_repo_interface {
         return $roles;
     }
 
+    /**
+     * Returns an array of role selection values
+     *
+     * Note: if a course or course id is given, the returned array will limit to course-level configuration,
+     * otherwise, defaults to block-level configuration.
+     * 
+     * @param  mixed $courseorid
+     * @return array  [role id => role name]
+     */
+    public static function get_alternate_email_role_selection_array($courseorid = null)
+    {
+        if ( ! $allowed_role_ids = \block_quickmail_config::get_role_selection_array($courseorid)) {
+            return [];
+        }
+
+        global $DB;
+
+        $roles = $DB->get_records('role', null, 'sortorder ASC');
+
+        return array_reduce($roles, function ($carry, $role) use ($allowed_role_ids) {
+            if (in_array($role->id, $allowed_role_ids)) {
+                $carry[$role->id] = $role->name;
+            }
+
+            return $carry;
+        }, []);
+    }
+
 }

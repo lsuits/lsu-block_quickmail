@@ -79,4 +79,35 @@ class block_quickmail_role_repo_testcase extends advanced_testcase {
         $this->assertObjectHasAttribute('shortname', $roles[4]);
     }
 
+    public function test_get_alternate_email_role_selection_array()
+    {
+        $this->resetAfterTest(true);
+
+        $role_selection_array = role_repo::get_alternate_email_role_selection_array();
+
+        $this->assertCount(3, $role_selection_array);
+        $this->assertInternalType('array', $role_selection_array);
+        $this->assertArrayHasKey(3, $role_selection_array);
+        $this->assertInternalType('string', $role_selection_array[3]);
+
+        // create course with enrolled users
+        list($course, $course_context, $users) = $this->setup_course_with_users([
+            'editingteacher' => 1,
+            'teacher' => 3,
+            'student' => 40,
+        ]);
+
+        // update the course's settings to exclude editingteacher
+        $new_params = [
+            'roleselection' => '4,5',
+        ];
+
+        // update the courses config
+        block_quickmail_config::update_course_config($course, $new_params);
+
+        $role_selection_array = role_repo::get_alternate_email_role_selection_array($course);
+
+        $this->assertCount(2, $role_selection_array);
+    }
+
 }

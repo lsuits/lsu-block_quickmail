@@ -27,10 +27,12 @@ namespace block_quickmail\services\alternate;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\create_alternate_form_validator;
 use block_quickmail\exceptions\validation_exception;
+use block_quickmail_plugin;
 use block_quickmail_emailer;
 use block_quickmail_string;
 use html_writer;
 use moodle_url;
+use context_course;
 
 class alternate_manager {
 
@@ -39,7 +41,7 @@ class alternate_manager {
      * 
      * @param  object  $user  the creating user
      * @param  int     $course_id  (optional) a course id to scope this alternate to if desired
-     * @param  array  $params [availability,email,firstname,lastname]
+     * @param  array  $params [availability,email,firstname,lastname,allowed_role_ids]
      * @return alternate_email
      */
     public static function create_alternate_for_user($user, $course_id = 0, $params)
@@ -60,17 +62,35 @@ class alternate_manager {
         // alternate_availability_user (user)
         // alternate_availability_course (course)
 
-        // if an availability requiring a scoped course is selected and no course was given
-        if ($params['availability'] !== 'user' && ! $course_id) {
-            throw new validation_exception(
-                block_quickmail_string::get('validation_exception_message'), [
-                block_quickmail_string::get('course_required')
-            ]);
+        // if an availability requiring a scoped course is selected
+        if ($params['availability'] !== 'user') {
+            // if no course was given, throw an error
+            if ( ! $course_id) {
+                throw new validation_exception(
+                    block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('course_required')
+                ]);
+            }
         }
 
-        $user_id = $params['availability'] !== 'course'
-            ? $user->id
-            : 0;
+        // if this is an availability which does not allow for role ids, clear the param
+        if (in_array($params['availability'], ['user', 'only'])) {
+            $params['allowed_role_ids'] = '';
+        }
+
+        // if we still have allowed_role_ids, make sure this user is allowed to assign them
+        if ( ! empty($params['allowed_role_ids'])) {
+            // pull the course context to determine capability of this user
+            $course_context = context_course::instance($course_id);
+            
+            // determine if this user is able to assign shared role ids in this course
+            if ( ! $allow_course_alternates = block_quickmail_plugin::user_has_capability('allowcoursealternate', $user, $course_context)) {
+                throw new validation_exception(
+                    block_quickmail_string::get('validation_exception_message'), [
+                    block_quickmail_string::get('coursealternate_not_allowed')
+                ]);
+            }
+        }
 
         // create the new alternate email
         $alternate = alternate_email::create_new([
@@ -78,8 +98,9 @@ class alternate_manager {
             'email' => $params['email'],
             'firstname' => $params['firstname'],
             'lastname' => $params['lastname'],
+            'allowed_role_ids' => $params['allowed_role_ids'] ? implode(',', $params['allowed_role_ids']) : '',
             'course_id' => $course_id,
-            'user_id' => $user_id,
+            'user_id' => $params['availability'] !== 'course' ? $user->id : 0,
         ]);
 
         // send the set up user a confirmation email

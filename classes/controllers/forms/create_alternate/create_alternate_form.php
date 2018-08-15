@@ -45,6 +45,10 @@ class create_alternate_form extends controller_form {
         $mform->setType('view_form_name', PARAM_TEXT);
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
+        $mform->addElement('hidden', 'course_id');
+        $mform->setType('course_id', PARAM_INT);
+        $mform->setDefault('course_id', $this->get_custom_data('course_id'));
+
         ////////////////////////////////////////////////////////////
         ///  email (text)
         ////////////////////////////////////////////////////////////
@@ -91,16 +95,36 @@ class create_alternate_form extends controller_form {
         ////////////////////////////////////////////////////////////
         ///  availability (select)
         ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'availability', 
-            block_quickmail_string::get('alternate_availability'), 
-            $this->get_availability_options()
-        );
-        $mform->setType(
-            'availability', 
-            PARAM_TEXT
-        );
+        
+        if (count($this->get_custom_data('availability_options')) > 1) {
+            $mform->addElement(
+                'select', 
+                'availability', 
+                block_quickmail_string::get('alternate_availability'), 
+                $this->get_custom_data('availability_options')
+            );
+            $mform->setType(
+                'availability', 
+                PARAM_TEXT
+            );
+        } else {
+            $mform->addElement('hidden', 'availability');
+            $mform->setType('availability', PARAM_TEXT);
+            $mform->setDefault('availability', 'user');
+        }
+
+        ////////////////////////////////////////////////////////////
+        ///  allowed_role_ids (multiselect)
+        ////////////////////////////////////////////////////////////
+
+        if ($this->should_show_role_selection()) {
+            $select = $mform->addElement('select', 'allowed_role_ids', 'Roles Allowed', $this->get_custom_data('role_selection'))->setMultiple(true);
+            $mform->disabledIf('allowed_role_ids', 'availability', 'neq', 'course');
+        } else {
+            $mform->addElement('hidden', 'allowed_role_ids');
+            $mform->setType('allowed_role_ids', PARAM_TEXT);
+            $mform->setDefault('allowed_role_ids', '');
+        }
 
         ////////////////////////////////////////////////////////////
         ///  buttons
@@ -114,17 +138,13 @@ class create_alternate_form extends controller_form {
     }
 
     /**
-     * Returns the current user's signatures for selection with a prepended "new signature" option
+     * Reports whether or not the allowed_role_ids multiselect should be displayed
      * 
-     * @return array
+     * @return bool
      */
-    private function get_availability_options()
+    private function should_show_role_selection()
     {
-        return [
-            'only' => block_quickmail_string::get('alternate_availability_only'),
-            'user' => block_quickmail_string::get('alternate_availability_user'),
-            'course' => block_quickmail_string::get('alternate_availability_course'),
-        ];
+        return ! empty($this->get_custom_data('role_selection')) && ! empty($this->get_custom_data('course_id'));
     }
 
 }

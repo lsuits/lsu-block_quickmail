@@ -47,6 +47,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => '',
             'lastname' => '',
             'availability' => '',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
@@ -65,6 +66,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => '',
             'lastname' => '',
             'availability' => 'only',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, 0, $form_data);
@@ -83,6 +85,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => '',
             'lastname' => '',
             'availability' => 'course',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, 0, $form_data);
@@ -99,6 +102,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
             'availability' => 'only',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
@@ -107,6 +111,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         $this->assertEquals('an@email.com', $alternate->get('email'));
         $this->assertEquals('Firsty', $alternate->get('firstname'));
         $this->assertEquals('Lasty', $alternate->get('lastname'));
+        $this->assertEquals('', $alternate->get('allowed_role_ids'));
         $this->assertEquals($user_teacher->id, $alternate->get('setup_user_id'));
         $this->assertEquals($course->id, $alternate->get('course_id'));
         $this->assertEquals($user_teacher->id, $alternate->get('user_id'));
@@ -124,6 +129,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
             'availability' => 'course',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
@@ -132,6 +138,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         $this->assertEquals('an@email.com', $alternate->get('email'));
         $this->assertEquals('Firsty', $alternate->get('firstname'));
         $this->assertEquals('Lasty', $alternate->get('lastname'));
+        $this->assertEquals('', $alternate->get('allowed_role_ids'));
         $this->assertEquals($user_teacher->id, $alternate->get('setup_user_id'));
         $this->assertEquals($course->id, $alternate->get('course_id'));
         $this->assertEquals(0, $alternate->get('user_id'));
@@ -149,6 +156,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
             'availability' => 'user',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, 0, $form_data);
@@ -157,6 +165,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
         $this->assertEquals('an@email.com', $alternate->get('email'));
         $this->assertEquals('Firsty', $alternate->get('firstname'));
         $this->assertEquals('Lasty', $alternate->get('lastname'));
+        $this->assertEquals('', $alternate->get('allowed_role_ids'));
         $this->assertEquals($user_teacher->id, $alternate->get('setup_user_id'));
         $this->assertEquals(0, $alternate->get('course_id'));
         $this->assertEquals($user_teacher->id, $alternate->get('user_id'));
@@ -176,6 +185,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
             'availability' => 'only',
+            'allowed_role_ids' => [],
         ];
 
         $alternate = alternate_manager::create_alternate_for_user($user_teacher, $course->id, $form_data);
@@ -197,6 +207,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -220,6 +231,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -241,6 +253,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -264,6 +277,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -289,6 +303,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -320,6 +335,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -347,6 +363,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -374,6 +391,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,
@@ -395,6 +413,7 @@ class block_quickmail_alternate_manager_testcase extends advanced_testcase {
             'setup_user_id' => $user_teacher->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => '',
             'course_id' => $course->id,
             'user_id' => $user_teacher->id,
             'email' => $user_teacher->email,

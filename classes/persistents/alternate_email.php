@@ -59,6 +59,10 @@ class alternate_email extends \block_quickmail\persistents\persistent {
             'lastname' => [
                 'type' => PARAM_TEXT,
             ],
+            'allowed_role_ids' => [
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ],
             'course_id' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -322,9 +326,7 @@ class alternate_email extends \block_quickmail\persistents\persistent {
         $user_alternate_emails = self::get_records(['user_id' => $user->id, 'is_validated' => 1, 'timedeleted' => 0]);
 
         $user_alternates = array_reduce($user_alternate_emails, function ($carry, $alternate_email) {
-            $value = $alternate_email->get('email');
-
-            $carry[$alternate_email->get('id')] = $value;
+            $carry[$alternate_email->get('id')] = $alternate_email->get('email');
             
             return $carry;
         }, [0 => $user->email]);
@@ -333,9 +335,7 @@ class alternate_email extends \block_quickmail\persistents\persistent {
         $course_alternate_emails = self::get_records(['course_id' => $course_id, 'user_id' => 0, 'is_validated' => 1, 'timedeleted' => 0]);
 
         $result = array_reduce($course_alternate_emails, function ($carry, $alternate_email) {
-            $value = $alternate_email->get('email');
-
-            $carry[$alternate_email->get('id')] = $value;
+            $carry[$alternate_email->get('id')] = $alternate_email->get('email');
             
             return $carry;
         }, $user_alternates);

@@ -652,5 +652,23 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018051100, 'quickmail');
     }
 
+    // add allowed_role_ids to alt_emails
+
+    if ($oldversion < 2018081501) {
+        
+        // Define field status to be added to block_quickmail_log.
+        $table = new xmldb_table('block_quickmail_alt_emails');
+        $field = new xmldb_field('allowed_role_ids', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'lastname');
+        
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018081501, 'quickmail');
+    }
+
+
     return $result;
 }

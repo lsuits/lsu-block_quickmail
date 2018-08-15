@@ -42,7 +42,8 @@ $string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail n
 // capabilities
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';
 $string['quickmail:canconfig'] = 'Configure Quickmail settings in a course';
-$string['quickmail:allowalternate'] = 'Create alternate Quickmail email addresses in a course';
+$string['quickmail:allowcoursealternate'] = 'Create alternate email addresses to send from';
+$string['quickmail:allowcoursealternate'] = 'Create alternate email addresses to share with other course instructors';
 $string['quickmail:addinstance'] = 'Add a new Quickmail block to a course page';
 $string['quickmail:myaddinstance'] = 'Add a new Quickmail block to the /my page';
 $string['quickmail:viewgroupusers'] = 'View all users in every group';
@@ -246,6 +247,7 @@ $string['alternate_confirmation_email_resent'] = 'The confirmation email has bee
 $string['eventalternateemailadded'] = 'Alternate email added';
 $string['eventalternateemailadded_desc'] = 'The user with id {$a->user_id} has added an alternate email: {$a->email}';
 $string['alternate_subject'] = 'Alternate email address verification';
+$string['coursealternate_not_allowed'] = 'You are not able to share this alternate email is this course.';
 
 // signatures
 $string['signature'] = 'Signature';

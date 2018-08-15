@@ -529,11 +529,13 @@ class compose_message_form extends \moodleform {
      * @return array
      */
     private function get_from_email_values() {
-        $values = ['-1' => get_config('moodle', 'noreplyaddress')];
+        $values = [];
 
         foreach ($this->user_alternate_email_array as $key => $value) {
             $values[(string) $key] = $value;
         }
+        
+        $values['-1'] = get_config('moodle', 'noreplyaddress');
 
         return $values;
     }

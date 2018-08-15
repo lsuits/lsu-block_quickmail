@@ -152,11 +152,24 @@ class block_quickmail_config {
     /**
      * Returns an array of role ids configured to be selectable when composing message
      * 
-     * @param  object  $course  optional, if not given will default to the block-level setting
+     * @param  object  $courseorid  optional, if not given will default to the block-level setting
      * @return array
      */
-    public static function get_role_selection_array($course = null)
+    public static function get_role_selection_array($courseorid = null)
     {
+        // get course if possible
+        if (empty($courseorid)) {
+            $course = null;
+        } else if (is_object($courseorid)) {
+            $course = $courseorid;
+        } else {
+            try {
+                $course = get_course($courseorid);
+            } catch (\Exception $e) {
+                $course = null;
+            }
+        }
+
         $roleselection_value = $course
             ? self::course($course, 'roleselection')
             : self::block('roleselection');
