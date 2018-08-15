@@ -42,7 +42,7 @@ $string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail n
 // capabilities
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';
 $string['quickmail:canconfig'] = 'Configure Quickmail settings in a course';
-$string['quickmail:allowcoursealternate'] = 'Create alternate email addresses to send from';
+$string['quickmail:allowalternate'] = 'Create alternate email addresses to send from';
 $string['quickmail:allowcoursealternate'] = 'Create alternate email addresses to share with other course instructors';
 $string['quickmail:addinstance'] = 'Add a new Quickmail block to a course page';
 $string['quickmail:myaddinstance'] = 'Add a new Quickmail block to the /my page';
