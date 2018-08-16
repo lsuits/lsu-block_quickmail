@@ -30,6 +30,7 @@ use core\ip_utils;
 use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
+use block_quickmail\repos\role_repo;
 
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -174,6 +175,19 @@ class alternate_email extends \block_quickmail\persistents\persistent {
         return substr($email, strpos($email, '@') + 1);
     }
 
+    /**
+     * Returns any specified allowed_role_ids as an array
+     * 
+     * @return array
+     */
+    public function get_allowed_roles() {
+        if ( ! $allowed_role_ids = $this->get('allowed_role_ids')) {
+            return [];
+        }
+
+        return explode(',', $allowed_role_ids);
+    }
+
     ///////////////////////////////////////////////
     ///
     ///  SETTERS
@@ -315,32 +329,48 @@ class alternate_email extends \block_quickmail\persistents\persistent {
 
     /**
      * Returns an array of alternate emails available to the given course/user combination
-     * 
+     *
      * @param  int        $course_id
      * @param  mdl_user   $user
+     * @param  bool       $include_user_email    whether or not to include this user's email in the results
      * @return array   (alternate_email id => alternate_email title)
      */
-    public static function get_flat_array_for_course_user($course_id, $user)
+    public static function get_flat_array_for_course_user($course_id, $user, $include_user_email = true)
     {
         // get all validated alternates available to this user
         $user_alternate_emails = self::get_records(['user_id' => $user->id, 'is_validated' => 1, 'timedeleted' => 0]);
 
-        $user_alternates = array_reduce($user_alternate_emails, function ($carry, $alternate_email) {
+        // include user's email in results if necessary
+        $initial = $include_user_email
+            ? [0 => $user->email]
+            : [];
+
+        $results = array_reduce($user_alternate_emails, function ($carry, $alternate_email) {
             $carry[$alternate_email->get('id')] = $alternate_email->get('email');
             
             return $carry;
-        }, [0 => $user->email]);
+        }, $initial);
 
         // get all validated alternates available to this course
         $course_alternate_emails = self::get_records(['course_id' => $course_id, 'user_id' => 0, 'is_validated' => 1, 'timedeleted' => 0]);
 
-        $result = array_reduce($course_alternate_emails, function ($carry, $alternate_email) {
-            $carry[$alternate_email->get('id')] = $alternate_email->get('email');
-            
-            return $carry;
-        }, $user_alternates);
+        $user_role_ids = role_repo::get_user_roles_in_course($user->id, $course_id);
 
-        return $result;
+        // iterate through all course-scoped alternates
+        foreach ($course_alternate_emails as $alternate) {
+            $allowed_role_ids = $alternate->get_allowed_roles();
+
+            // if no roles required for this alternate, add to results
+            if (empty($allowed_role_ids)) {
+                $results[$alternate->get('id')] = $alternate->get('email');
+            
+            // otherwise, if this user has a role within the allowed roles, add to results
+            } else if ( ! empty(array_intersect($user_role_ids, $allowed_role_ids))) {
+                $results[$alternate->get('id')] = $alternate->get('email');
+            }
+        }
+
+        return $results;
     }
  
 }

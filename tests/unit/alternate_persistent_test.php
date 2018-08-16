@@ -92,6 +92,27 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
         $this->assertEquals('a-big-email-domain-with-dashes.com', $alternate->get_domain());
     }
 
+    public function test_gets_allowed_role_ids_as_array()
+    {
+        $this->resetAfterTest(true);
+
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        $alternate = $this->create_alternate($user_teacher, $course, 'course', 'email@example.com', true, '3,4,5');
+
+        $allowed_roles = $alternate->get_allowed_roles();
+
+        $this->assertInternalType('array', $allowed_roles);
+        $this->assertCount(3, $allowed_roles);
+
+        $alternate = $this->create_alternate($user_teacher, $course, 'course', 'email@example.com', true, '');
+
+        $allowed_roles = $alternate->get_allowed_roles();
+
+        $this->assertInternalType('array', $allowed_roles);
+        $this->assertCount(0, $allowed_roles);
+    }
+
     public function test_gets_all_for_user()
     {
         $this->resetAfterTest(true);
@@ -120,9 +141,9 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
         $student1 = $user_students[0];
         $student2 = $user_students[1];
 
-        $alternate = $this->create_alternate($user_teacher, $course, 'only', 'uncofirmed@one.com');
-        $alternate = $this->create_alternate($user_teacher, $course, 'user', 'uncofirmed@two.com');
-        $alternate = $this->create_alternate($user_teacher, $course, 'course', 'uncofirmed@three.com');
+        $alternate = $this->create_alternate($user_teacher, $course, 'only', 'unconfirmed@one.com');
+        $alternate = $this->create_alternate($user_teacher, $course, 'user', 'unconfirmed@two.com');
+        $alternate = $this->create_alternate($user_teacher, $course, 'course', 'unconfirmed@three.com');
 
         $alternate = $this->create_alternate($user_teacher, $course, 'only', 'teacher@one.com', true);
         $alternate = $this->create_alternate($user_teacher, $course, 'user', 'teacher@two.com', true);
@@ -141,6 +162,48 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
         $this->assertInternalType('array', $alternates);
         $this->assertCount(6, $alternates);
     }
+
+    public function test_get_flat_array_for_course_user_while_limiting_by_roles()
+    {
+        $this->resetAfterTest(true);
+
+        // create course with enrolled users
+        list($course, $course_context, $users) = $this->setup_course_with_users([
+            'editingteacher' => 2,
+            'teacher' => 2,
+            'student' => 2,
+        ]);
+
+        // get all characters in this thing...
+
+        // role id: 3
+        $editingteacher1 = $users['editingteacher'][0];
+        $editingteacher2 = $users['editingteacher'][1];
+        
+        // role id: 4
+        $teacher1 = $users['teacher'][0];
+        $teacher2 = $users['teacher'][1];
+
+        // role id: 5
+        $student1 = $users['student'][0];
+        $student2 = $users['student'][1];
+
+        // create an alternate for editing teacher 1, available for everyone in course
+        $alternate1_editingteacher1 = $this->create_alternate($editingteacher1, $course, 'course', 'editingteacher1@example.com', true, '');
+
+        // create an alternate for editing teacher 1, available for only editing teacher roles in course
+        $alternate2_editingteacher1 = $this->create_alternate($editingteacher1, $course, 'course', 'editingteacher2@example.com', true, '3');
+
+        // create an alternate for editing teacher 1, available for editing teacher AND teacher roles in course
+        $alternate3_editingteacher1 = $this->create_alternate($editingteacher1, $course, 'course', 'editingteacher2@example.com', true, '3,4');
+
+        // grab alternates for teacher 1
+        $alternates = alternate_email::get_flat_array_for_course_user($course->id, $teacher1, false);
+
+        // teacher 1 should have access to only 2
+        $this->assertInternalType('array', $alternates);
+        $this->assertCount(2, $alternates);
+    }
     
     ///////////////////////////////////
     ///
@@ -151,7 +214,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
     // only
     // user
     // course
-    private function create_alternate($setup_user, $course, $availability = 'only', $email = '', $confirmed = false)
+    private function create_alternate($setup_user, $course, $availability = 'only', $email = '', $confirmed = false, $allowed_role_ids = '')
     {
         $course_id = $availability !== 'user'
             ? $course->id
@@ -165,6 +228,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
             'setup_user_id' => $setup_user->id,
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
+            'allowed_role_ids' => $allowed_role_ids,
             'course_id' => $course_id,
             'user_id' => $user_id,
             'email' => $email ?: 'some@email.com',

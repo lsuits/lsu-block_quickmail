@@ -94,4 +94,26 @@ class role_repo extends repo implements role_repo_interface {
         }, []);
     }
 
+    /**
+     * Returns an array of role ids that are assigned to a given user id in a given course id
+     * 
+     * @param  int             $user_id
+     * @param  int             $course_id
+     * @param  context_course  $course_context   optional, will be fetched if not given
+     * @return array
+     */
+    public static function get_user_roles_in_course($user_id, $course_id, $course_context = null)
+    {
+        // if a context was not passed, pull one now
+        $course_context = $course_context ?: \context_course::instance($course_id);
+
+        // get the user's roles in the course context (no parents)
+        $roles = get_user_roles($course_context, $user_id, false);
+
+        // return as a simple array of role ids
+        return array_values(array_map(function($role) {
+            return (int) $role->roleid;
+        }, $roles));
+    }
+
 }

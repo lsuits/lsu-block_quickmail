@@ -110,4 +110,56 @@ class block_quickmail_role_repo_testcase extends advanced_testcase {
         $this->assertCount(2, $role_selection_array);
     }
 
+    public function test_get_user_role_id_array_in_course()
+    {
+        $this->resetAfterTest(true);
+
+        // create course with enrolled users
+        list($course, $course_context, $users) = $this->setup_course_with_users([
+            'editingteacher' => 1, // role id: 3
+            'teacher' => 1, // role id: 4
+            'student' => 1, // role id: 5
+        ]);
+
+        $editingteacher = $users['editingteacher'][0];
+        $teacher = $users['teacher'][0];
+        $student = $users['student'][0];
+
+        // editingteacher
+        $role_ids = role_repo::get_user_roles_in_course($editingteacher->id, $course->id);
+
+        $this->assertInternalType('array', $role_ids);
+        $this->assertCount(1, $role_ids);
+        $this->assertContains(3, $role_ids);
+
+        // teacher
+        $role_ids = role_repo::get_user_roles_in_course($teacher->id, $course->id);
+
+        $this->assertCount(1, $role_ids);
+        $this->assertContains(4, $role_ids);
+
+        // student
+        $role_ids = role_repo::get_user_roles_in_course($student->id, $course->id);
+
+        $this->assertCount(1, $role_ids);
+        $this->assertContains(5, $role_ids);
+
+        // a nobody
+        $nobody = $this->getDataGenerator()->create_user();
+
+        $role_ids = role_repo::get_user_roles_in_course($nobody->id, $course->id);
+
+        $this->assertCount(0, $role_ids);
+
+        // add editingteacher role to teacher
+        $this->assign_role_id_to_user_in_course(3, $teacher, $course);
+
+        $role_ids = role_repo::get_user_roles_in_course($teacher->id, $course->id);
+
+        // should have both roles now
+        $this->assertCount(2, $role_ids);
+        $this->assertContains(4, $role_ids);
+        $this->assertContains(3, $role_ids);
+    }
+
 }

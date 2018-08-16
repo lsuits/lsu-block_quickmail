@@ -268,4 +268,11 @@ trait sets_up_courses {
         $DB->insert_record('user_lastaccess', $record);
     }
 
+    public function assign_role_id_to_user_in_course($role_id, $user, $course)
+    {
+        $course_context = \context_course::instance($course->id);
+
+        role_assign($role_id, $user->id, $course_context->id);
+    }
+
 }

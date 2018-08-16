@@ -28,5 +28,6 @@ interface role_repo_interface {
 
     public static function get_course_selectable_roles($course, $course_context = null);
     public static function get_alternate_email_role_selection_array($courseorid = null);
+    public static function get_user_roles_in_course($user_id, $course_id, $course_context = null);
 
 }
