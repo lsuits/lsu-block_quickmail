@@ -108,8 +108,15 @@ class create_alternate_controller extends base_controller {
             return $options;
         }
 
-        $options['only'] = block_quickmail_string::get('alternate_availability_only');
-        $options['course'] = block_quickmail_string::get('alternate_availability_course');
+        try {
+            $course = get_course($this->props->course_id);
+            $courseshortname = $course->shortname;
+        } catch (\Exception $e) {
+            $courseshortname = 'Non-Existent Course';
+        }
+
+        $options['only'] = block_quickmail_string::get('alternate_availability_only', (object) ['courseshortname' => $courseshortname]);
+        $options['course'] = block_quickmail_string::get('alternate_availability_course', (object) ['courseshortname' => $courseshortname]);
 
         return $options;
     }

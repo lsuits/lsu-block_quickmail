@@ -70,7 +70,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
 
         $alternate = $this->create_alternate($user_teacher, $course, 'only', 'email@one.com');
 
-        $this->assertEquals(\block_quickmail_string::get('alternate_availability_only'), $alternate->get_scope());
+        $this->assertEquals(\block_quickmail_string::get('alternate_availability_only', (object) ['courseshortname' => $course->shortname]), $alternate->get_scope());
 
         $alternate = $this->create_alternate($user_teacher, $course, 'user', 'email@two.com');
 
@@ -78,7 +78,7 @@ class block_quickmail_alternate_persistent_testcase extends advanced_testcase {
 
         $alternate = $this->create_alternate($user_teacher, $course, 'course', 'email@three.com');
 
-        $this->assertEquals(\block_quickmail_string::get('alternate_availability_course'), $alternate->get_scope());
+        $this->assertEquals(\block_quickmail_string::get('alternate_availability_course', (object) ['courseshortname' => $course->shortname]), $alternate->get_scope());
     }
 
     public function test_get_domain()

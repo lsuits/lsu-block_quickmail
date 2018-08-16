@@ -36,12 +36,16 @@ trait belongs_to_a_course {
     ///////////////////////////////////////////////
 
     /**
-     * Returns the course object of the persistent.
+     * Returns the course object of the persistent, defaulting to null if no course
      *
      * @return stdClass
      */
     public function get_course() {
-        return get_course($this->get('course_id'));
+        try {
+            return get_course($this->get('course_id'));
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     ///////////////////////////////////////////////

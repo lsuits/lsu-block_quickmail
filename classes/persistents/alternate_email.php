@@ -30,6 +30,7 @@ use core\ip_utils;
 use block_quickmail_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
+use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\repos\role_repo;
 
 // if ( ! class_exists('\core\persistent')) {
@@ -39,6 +40,7 @@ use block_quickmail\repos\role_repo;
 class alternate_email extends \block_quickmail\persistents\persistent {
  
     use enhanced_persistent,
+        belongs_to_a_course,
         can_be_soft_deleted;
 
     /** Table name for the persistent. */
@@ -155,10 +157,20 @@ class alternate_email extends \block_quickmail\persistents\persistent {
      * @return string
      */
     public function get_scope() {
+        // first, get course if assigned to one
+        if ( ! empty($this->get('course_id'))) {
+            // get course short name, defaulting to a generic name if necessary
+            if ($course = $this->get_course()) {
+                $courseshortname = $course->shortname;
+            } else {
+                $courseshortname = 'Non-Existent Course';
+            }
+        }
+
         if ( ! empty($this->get('course_id')) && ! empty($this->get('user_id'))) {
-            return block_quickmail_string::get('alternate_availability_only');
+            return block_quickmail_string::get('alternate_availability_only', (object) ['courseshortname' => $courseshortname]);
         } else if ( ! empty($this->get('course_id'))) {
-            return block_quickmail_string::get('alternate_availability_course');
+            return block_quickmail_string::get('alternate_availability_course', (object) ['courseshortname' => $courseshortname]);
         } else {
             return block_quickmail_string::get('alternate_availability_user');
         }
