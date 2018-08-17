@@ -43,6 +43,7 @@ class compose_message_form extends \moodleform {
     public $user;
     public $course;
     public $course_user_data;
+    public $user_can_select_alternate;
     public $user_alternate_email_array;
     public $user_signature_array;
     public $user_default_signature_id;
@@ -68,6 +69,9 @@ class compose_message_form extends \moodleform {
             'courseid' => $course->id,
             'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
         ]);
+
+        // determine whether or not the user can select an alternate email to send from
+        $user_can_select_alternate = block_quickmail_plugin::user_has_capability('allowalternate', $user, $context);
 
         // get the user's available alternate emails for this course
         $user_alternate_email_array = alternate_email::get_flat_array_for_course_user($course->id, $user);
@@ -97,6 +101,7 @@ class compose_message_form extends \moodleform {
             'user' => $user,
             'course' => $course,
             'course_user_data' => $course_user_data,
+            'user_can_select_alternate' => $user_can_select_alternate,
             'user_alternate_email_array' => $user_alternate_email_array,
             'user_signature_array' => $user_signature_array,
             'user_default_signature_id' => $user_default_signature_id,
@@ -118,6 +123,7 @@ class compose_message_form extends \moodleform {
         $this->context = $this->_customdata['context'];
         $this->user = $this->_customdata['user'];
         $this->course = $this->_customdata['course'];
+        $this->user_can_select_alternate = $this->_customdata['user_can_select_alternate'];
         $this->course_user_data = $this->_customdata['course_user_data'];
         $this->user_alternate_email_array = $this->_customdata['user_alternate_email_array'];
         $this->user_signature_array = $this->_customdata['user_signature_array'];
@@ -131,23 +137,35 @@ class compose_message_form extends \moodleform {
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
         ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'from_email_id', 
-            get_string('from'), 
-            $this->get_from_email_values()
-        );
-        $mform->addHelpButton(
-            'from_email_id', 
-            'from_email', 
-            'block_quickmail'
-        );
-
-        // inject default if draft mesage
-        if ($this->is_draft_message()) {
-            $mform->setDefault(
+        if ($this->user_can_select_alternate) {
+            $mform->addElement(
+                'select', 
                 'from_email_id', 
-                $this->draft_message->get('alternate_email_id')
+                get_string('from'), 
+                $this->get_from_email_values()
+            );
+            $mform->addHelpButton(
+                'from_email_id', 
+                'from_email', 
+                'block_quickmail'
+            );
+
+            // inject default if draft mesage
+            if ($this->is_draft_message()) {
+                $mform->setDefault(
+                    'from_email_id', 
+                    $this->draft_message->get('alternate_email_id')
+                );
+            }
+        } else {
+            $mform->addElement(
+                'hidden', 
+                'from_email_id',
+                0
+            );
+            $mform->setType(
+                'from_email_id', 
+                PARAM_INT
             );
         }
 
