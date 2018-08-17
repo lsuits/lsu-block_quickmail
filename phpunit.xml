@@ -96,7 +96,7 @@
             <exclude>tests/unit/notification_model_helper_test.php</exclude>
             <exclude>tests/unit/reminder_notification_model_test.php</exclude>
             <exclude>tests/unit/reminder_notification_course_non_participation_model_test.php</exclude>
-            <exclude>tests/unit/reminder_notification_course_grade_range_model_test.php</exclude>
+            <!-- <exclude>tests/unit/reminder_notification_course_grade_range_model_test.php</exclude> -->
             <exclude>tests/unit/event_notification_assignment_submitted_model_test.php</exclude>
             
             <!-- notification conditions -->

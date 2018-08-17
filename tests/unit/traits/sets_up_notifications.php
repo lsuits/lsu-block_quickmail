@@ -114,6 +114,8 @@ trait sets_up_notifications {
             // 'conditions' => '',
             'condition_time_amount' => 4,
             'condition_time_unit' => 'day',
+            'condition_grade_greater_than' => 40,
+            'condition_grade_less_than' => 60,
         ];
     }
 

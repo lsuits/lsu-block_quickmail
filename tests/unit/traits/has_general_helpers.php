@@ -32,6 +32,11 @@ use block_quickmail\messenger\message\substitution_code;
 
 trait has_general_helpers {
 
+    public function dg()
+    {
+        return $this->getDataGenerator();
+    }
+
     public function dd($thing)
     {
         var_dump($thing);
