@@ -156,7 +156,7 @@ class course_config_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('back')),
+            $mform->createElement('cancel', 'cancelbutton', get_string('back')),
             $mform->createElement('submit', 'reset', get_string('resettodefaults')),
             $mform->createElement('submit', 'save', get_string('savepreferences')),
         ];

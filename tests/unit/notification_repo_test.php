@@ -74,7 +74,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         ]);
 
         // sort by id, paginated
-        $notifications = notification_repo::get_all_for_course($course->id, [
+        $notifications = notification_repo::get_all_for_course($course->id, $user_teacher->id, [
             'sort' => 'id',
             'dir' => 'asc',
             'paginate' => true,
@@ -99,7 +99,7 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         $this->assertEquals('/blocks/quickmail/notifications.php?courseid=' . $course->id . '&sort=id&dir=asc&page=1', $notifications->pagination->previous_page_uri);
 
         // sort by name, paginated
-        $notifications = notification_repo::get_all_for_course($course->id, [
+        $notifications = notification_repo::get_all_for_course($course->id, null, [
             'sort' => 'name',
             'dir' => 'asc',
             'paginate' => true,
@@ -126,13 +126,13 @@ class block_quickmail_notification_repo_testcase extends advanced_testcase {
         $reminder_notification = $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user_teacher);
 
         // attempt to fetch this notification by the creator
-        $notification = notification_repo::get_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_teacher->id);
+        $notification = notification_repo::get_notification_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_teacher->id);
 
         $this->assertInstanceOf(notification::class, $notification);
         $this->assertEquals($reminder_notification->get_notification()->get('id'), $notification->get('id'));
 
         // attempt to fetch this notification by a student
-        $notification = notification_repo::get_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_students[0]->id);
+        $notification = notification_repo::get_notification_for_course_user_or_null($reminder_notification->get_notification()->get('id'), $course->id, $user_students[0]->id);
 
         $this->assertNull($notification);
     }

@@ -131,7 +131,7 @@ class create_schedule_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('cancel')),
+            // $mform->createElement('cancel', 'cancel', get_string('cancel')),
             $mform->createElement('submit', 'back', 'Back'),
             $mform->createElement('submit', 'next', 'Next'),
         ];

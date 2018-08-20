@@ -141,7 +141,7 @@ class block_quickmail extends block_list {
             // DRAFTS (manage your personal message drafts)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('manage_drafts'),
-                'icon_key' => 'i/open',
+                'icon_key' => 'e/template',
                 'page' => 'drafts',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
@@ -149,7 +149,7 @@ class block_quickmail extends block_list {
             // QUEUED (view/manage your queued messages)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_queued'),
-                'icon_key' => 'i/calendareventtime',
+                'icon_key' => 'i/calendar',
                 'page' => 'queued',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
@@ -157,7 +157,7 @@ class block_quickmail extends block_list {
             // SENT (view your sent messages)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_sent'),
-                'icon_key' => 'e/increase_indent',
+                'icon_key' => 't/message',
                 'page' => 'sent',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
@@ -174,7 +174,7 @@ class block_quickmail extends block_list {
             if (block_quickmail_plugin::user_has_capability('allowalternate', $this->user, $this->course_context)) {
                 $this->add_item_to_content([
                     'lang_key' => block_quickmail_string::get('manage_alternates'),
-                    'icon_key' => 't/addcontact',
+                    'icon_key' => 't/add',
                     'page' => 'alternate',
                     'query_string' => ['courseid' => $this->course->id]
                 ]);
@@ -194,7 +194,7 @@ class block_quickmail extends block_list {
             if (block_quickmail_plugin::user_can_create_notifications($this->user, $this->course_context)) {
                 $this->add_item_to_content([
                     'lang_key' => block_quickmail_string::get('notifications'),
-                    'icon_key' => 'i/calendar',
+                    'icon_key' => 'e/insert_time',
                     'page' => 'notifications',
                     'query_string' => ['courseid' => $this->course->id]
                 ]);
@@ -223,7 +223,7 @@ class block_quickmail extends block_list {
             // DRAFTS (manage your personal message drafts)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('manage_drafts'),
-                'icon_key' => 'i/open',
+                'icon_key' => 'e/template',
                 'page' => 'drafts',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
@@ -231,7 +231,7 @@ class block_quickmail extends block_list {
             // QUEUED (view/manage your queued messages)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_queued'),
-                'icon_key' => 'i/calendareventtime',
+                'icon_key' => 'i/calendar',
                 'page' => 'queued',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
@@ -239,7 +239,7 @@ class block_quickmail extends block_list {
             // SENT (view your sent messages)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_sent'),
-                'icon_key' => 'e/increase_indent',
+                'icon_key' => 't/message',
                 'page' => 'sent',
                 'query_string' => ['courseid' => $this->course->id]
             ]);

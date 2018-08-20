@@ -443,8 +443,8 @@ class edit_notification_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('back')),
-            $mform->createElement('submit', 'next', get_string('save')),
+            $mform->createElement('cancel', 'cancelbutton', get_string('back')),
+            $mform->createElement('submit', 'next', get_string('save', 'block_quickmail')),
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
@@ -515,7 +515,7 @@ class edit_notification_form extends controller_form {
         $html = '<p style="margin-bottom: 4px;"><i>' . block_quickmail_string::get('select_allowed_user_fields') . ':</i></p>';
 
         foreach ($this->get_allowed_user_fields() as $field) {
-            $html .= '<div class="label user-field-label">[:' . $field . ':]</div>';
+            $html .= '<div class="field-label user-field-label">[:' . $field . ':]</div>';
         }
 
         return $html;

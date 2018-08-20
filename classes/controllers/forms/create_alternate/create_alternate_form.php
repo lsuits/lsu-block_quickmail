@@ -130,8 +130,8 @@ class create_alternate_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('back')),
-            $mform->createElement('submit', 'save', get_string('save')),
+            $mform->createElement('cancel', 'cancelbutton', get_string('back')),
+            $mform->createElement('submit', 'save', get_string('save', 'block_quickmail')),
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);

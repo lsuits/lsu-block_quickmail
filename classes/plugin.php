@@ -300,7 +300,7 @@ class block_quickmail_plugin {
         $models = [
             'reminder' => [
                 'course_non_participation',
-                'course_grade_range'
+                // 'course_grade_range'
             ],
             'event' => [
                 'assignment_submitted'

@@ -40,8 +40,8 @@ class notification_index_controller extends base_controller {
      */
     public function notification_index(controller_request $request)
     {
-        // get all notifications belonging to this course
-        $notifications = notification_repo::get_all_for_course($this->props->course->id, [
+        // get all notifications belonging to this course user
+        $notifications = notification_repo::get_all_for_course($this->props->course->id, $this->props->user->id, [
             'sort' => $this->props->page_params['sort'], 
             'dir' => $this->props->page_params['dir'],
             'paginate' => true,
@@ -98,7 +98,7 @@ class notification_index_controller extends base_controller {
         }
 
         // grab the notification which must belong to this course and user
-        if ( ! $notification = notification_repo::get_for_course_user_or_null($this->props->page_params['notificationid'], $this->props->course->id, $this->props->user->id)) {
+        if ( ! $notification = notification_repo::get_notification_for_course_user_or_null($this->props->page_params['notificationid'], $this->props->course->id, $this->props->user->id)) {
             // redirect back to index with error
             $request->redirect_as_error(block_quickmail_string::get('notification_not_found'), static::$base_uri, $this->get_form_url_params());
         }

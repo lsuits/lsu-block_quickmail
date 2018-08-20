@@ -44,7 +44,7 @@ class edit_notification_controller extends base_controller {
     public function edit_notification(controller_request $request)
     {
         // grab the notification which must belong to this course and user
-        if ( ! $notification = notification_repo::get_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
+        if ( ! $notification = notification_repo::get_notification_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
             // redirect back to index with error
             $request->redirect_as_error('Could not find that notification!', static::$base_uri, $this->get_form_url_params());
         }
@@ -100,7 +100,7 @@ class edit_notification_controller extends base_controller {
     public function post_edit_notification_next(controller_request $request)
     {
         // grab the notification which must belong to this course and user
-        if ( ! $notification = notification_repo::get_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
+        if ( ! $notification = notification_repo::get_notification_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
             // redirect back to index with error
             $request->redirect_as_error(block_quickmail_string::get('notification_not_found'), '/blocks/quickmail/notifications.php', ['courseid' => $this->props->course->id]);
         }

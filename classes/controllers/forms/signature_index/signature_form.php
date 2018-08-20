@@ -130,7 +130,7 @@ class signature_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('back')),
+            $mform->createElement('cancel', 'cancelbutton', get_string('back')),
         ];
 
         if ($this->get_selected_signature('id')) {
@@ -140,7 +140,7 @@ class signature_form extends controller_form {
             ]);
         } else {
             $buttons = array_merge($buttons, [
-                $mform->createElement('submit', 'save', get_string('save')),
+                $mform->createElement('submit', 'save', get_string('save', 'block_quickmail')),
             ]);
         }
         

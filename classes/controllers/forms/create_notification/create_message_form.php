@@ -213,7 +213,7 @@ class create_message_form extends controller_form {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('cancel')),
+            // $mform->createElement('cancel', 'cancel', get_string('cancel')),
             $mform->createElement('submit', 'back', 'Back'),
             $mform->createElement('submit', 'next', 'Next'),
         ];
@@ -302,7 +302,7 @@ class create_message_form extends controller_form {
         $html = '<p style="margin-bottom: 4px;"><i>' . block_quickmail_string::get('select_allowed_user_fields') . ':</i></p>';
 
         foreach ($this->get_allowed_user_fields() as $field) {
-            $html .= '<div class="label user-field-label">[:' . $field . ':]</div>';
+            $html .= '<div class="field-label user-field-label">[:' . $field . ':]</div>';
         }
 
         return $html;

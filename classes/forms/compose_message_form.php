@@ -459,7 +459,7 @@ class compose_message_form extends \moodleform {
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancel', get_string('back')),
+            $mform->createElement('cancel', 'cancelbutton', get_string('cancel')),
             $mform->createElement('submit', 'save', block_quickmail_string::get('save_draft')),
             $mform->createElement('submit', 'send', block_quickmail_string::get('send_message')),
         ];
@@ -535,7 +535,7 @@ class compose_message_form extends \moodleform {
         $html = '<p style="margin-bottom: 4px;"><i>' . block_quickmail_string::get('select_allowed_user_fields') . ':</i></p>';
 
         foreach ($this->get_allowed_user_fields() as $field) {
-            $html .= '<div class="label user-field-label">[:' . $field . ':]</div>';
+            $html .= '<div class="field-label user-field-label">[:' . $field . ':]</div>';
         }
 
         return $html;

@@ -46,10 +46,11 @@ class notification_repo extends repo implements notification_repo_interface {
      * Returns all notifications belonging to the given course id
      *
      * @param  int     $course_id
+     * @param  mixed   $user_id     if given, scopes notification to this user id
      * @param  array   $params  sort|dir|paginate|page|per_page|uri
      * @return array
      */
-    public static function get_all_for_course($course_id, $params = [])
+    public static function get_all_for_course($course_id, $user_id = null, $params = [])
     {
         // instantiate repo
         $repo = new self($params);
@@ -60,10 +61,15 @@ class notification_repo extends repo implements notification_repo_interface {
 
         $query_params['course_id'] = $course_id;
 
+        // conditionally add user id as param
+        if (is_numeric($user_id)) {
+            $query_params['user_id'] = $user_id;
+        }
+
         // if not paginating, return all sorted results
         if ( ! $repo->paginate) {
             // get SQL given params
-            $sql = self::get_all_for_course_sql($course_id, $sort_by, $sort_dir, false);
+            $sql = self::get_all_for_course_sql($course_id, $user_id, $sort_by, $sort_dir, false);
 
             // pull data, iterate through recordset, instantiate persistents, add to array
             $data = [];
@@ -74,7 +80,7 @@ class notification_repo extends repo implements notification_repo_interface {
             $recordset->close();
         } else {
             // get (count) SQL given params
-            $sql = self::get_all_for_course_sql($course_id, $sort_by, $sort_dir, true);
+            $sql = self::get_all_for_course_sql($course_id, $user_id, $sort_by, $sort_dir, true);
          
             // pull count
             $count = $DB->count_records_sql($sql, $query_params);
@@ -86,7 +92,7 @@ class notification_repo extends repo implements notification_repo_interface {
             $repo->set_result_pagination($paginated);
 
             // get SQL given params
-            $sql = self::get_all_for_course_sql($course_id, $sort_by, $sort_dir, false);
+            $sql = self::get_all_for_course_sql($course_id, $user_id, $sort_by, $sort_dir, false);
          
             // pull data, iterate through recordset, instantiate persistents, add to array
             $data = [];
@@ -110,7 +116,7 @@ class notification_repo extends repo implements notification_repo_interface {
      * @param  int $user_id
      * @return notification|null
      */
-    public static function get_for_course_user_or_null($notification_id, $course_id, $user_id)
+    public static function get_notification_for_course_user_or_null($notification_id, $course_id, $user_id)
     {
         if ( ! $notification = notification::get_record([
             'id' => $notification_id, 
@@ -124,16 +130,21 @@ class notification_repo extends repo implements notification_repo_interface {
         return $notification;
     }
 
-    private static function get_all_for_course_sql($course_id, $sort_by, $sort_dir, $as_count = false)
+    private static function get_all_for_course_sql($course_id, $user_id = null, $sort_by, $sort_dir, $as_count = false)
     {
         $sql = $as_count
             ? 'SELECT COUNT(DISTINCT n.id) '
             : 'SELECT DISTINCT n.* ';
 
         $sql .= 'FROM {block_quickmail_notifs} n
-                  WHERE n.course_id = :course_id 
-                  AND n.timedeleted = 0 
-                  ORDER BY ' . $sort_by . ' ' . $sort_dir;
+                  WHERE n.course_id = :course_id';
+
+        if (is_numeric($user_id)) {
+            $sql .= ' AND n.user_id = :user_id';
+        }
+
+        $sql .= ' AND n.timedeleted = 0 
+                 ORDER BY ' . $sort_by . ' ' . $sort_dir;
 
         return $sql;
     }
