@@ -22,8 +22,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2018082100;
-$plugin->requires = 2016052300;
-$plugin->release = "v2.0.0";
-$plugin->maturity = MATURITY_STABLE; 
-$plugin->component = 'block_quickmail';
+namespace block_quickmail\tasks;
+
+use core\task\scheduled_task;
+use block_quickmail_string;
+use core\task\manager as task_manager;
+
+class migrate_legacy_data_task extends scheduled_task {
+    
+    public function get_name()
+    {
+        return block_quickmail_string::get('migrate_legacy_data_task');
+    }
+
+    /*
+     * This task migrates historical data from Quickmail v1 schema to v2 schema
+     *
+     * The idea is that, if enabled, this task will continue to transfer data from block_quickmail_log and block_quickmail_drafts until complete
+     * at which point, this task should stop and delete those tables
+     *
+     * Required custom data: none
+     */
+    public function execute()
+    {
+        // 
+    }
+
+}

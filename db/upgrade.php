@@ -453,10 +453,6 @@ function xmldb_block_quickmail_upgrade($oldversion) {
             $dbman->add_field($signature_table, $timedeleted_field);
         }
 
-        // add key on user_id
-        $user_id_key = new xmldb_key('user_id', XMLDB_KEY_FOREIGN, array('user_id'), 'user', array('id'));
-        $dbman->add_key($signature_table, $user_id_key);
-
         // make title non null
         $title_field = new xmldb_field('title', XMLDB_TYPE_CHAR, '125', null, XMLDB_NOTNULL, null, null);
         $dbman->change_field_notnull($signature_table, $title_field);
@@ -488,10 +484,11 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         $dbman->drop_field($signature_table, $userid_field);
 
         // migrate the data from v1 to v2
-        migrate_quickmail_v1_to_v2();
+        // commenting out as this process can take too long through web upgrade
+        // migrate_quickmail_v1_to_v2();
 
-        // drop all of the old tables
-        foreach (['block_quickmail_alternate', 'block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
+        // drop all of the old tables (but keep 'block_quickmail_log' & 'block_quickmail_drafts' for optional migration later)
+        foreach (['block_quickmail_alternate'] as $table_name) {
             $table = new xmldb_table($table_name);
 
             if ($dbman->table_exists($table)) {
@@ -667,6 +664,24 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // Quickmail savepoint reached.
         upgrade_block_savepoint(true, 2018081501, 'quickmail');
+    }
+
+    // add an "has_migrated" field log and drafts tables
+
+    if ($oldversion < 2018082100) {
+        
+        foreach (['block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
+            $table = new xmldb_table($table_name);
+            $field = new xmldb_field('has_migrated', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+            // add field if not already existing
+            if ( ! $dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018082100, 'quickmail');
     }
 
 

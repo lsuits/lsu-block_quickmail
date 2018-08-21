@@ -30,6 +30,7 @@ $string['manage_drafts'] = 'View Drafts';
 $string['view_queued'] = 'View Scheduled';
 $string['view_sent'] = 'View Sent Messages';
 $string['manage_signatures'] = 'My Signatures';
+$string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['create_notification'] = 'Create Notification';
 $string['notifications'] = 'Notifications';
@@ -38,6 +39,7 @@ $string['messageprovider:quickmessage'] = 'Quickmail message';
 // tasks
 $string['send_all_ready_messages_task'] = 'Send all scheduled Quickmail messages';
 $string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail notifications to be sent';
+$string['migrate_legacy_data_task'] = 'Migrate historical data from Quickmail v1 to v2';
 
 // capabilities
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';
