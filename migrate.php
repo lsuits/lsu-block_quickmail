@@ -55,15 +55,23 @@ $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quic
 
 echo $OUTPUT->header();
 
+$result = block_quickmail\migrator\migrator::execute();
+
+var_dump($result);die;
+
 global $DB;
 
-// if migrate task is not enabled...
-    // this tool allows you to migrate any historical data from Quickmail v1 to Quickmail v2
-    // if you want to do this, please enable the "task" via the admin menu
+// get the task
+$task = \core\task\manager::get_scheduled_task('block_quickmail\tasks\migrate_legacy_data_task');
 
-// else
-    echo '<h3>Migration progress...</h3>';
-    
+// if migrate task is not enabled...
+if ($task->get_disabled()) {
+    echo '<h4>This tool allows you to migrate any historical data from Quickmail v1 to Quickmail v2</h4><p>If you want to do this, please enable the "block_quickmail\tasks\migrate_legacy_data_task" in the admin panel, then come back to this page to see the progress.';
+
+// otherwise, show the progress report
+} else {
+    echo '<h4>Migration progress</h4><p>This task is currently configured to run. If you want to stop this process, please disable the "block_quickmail\tasks\migrate_legacy_data_task" in the admin panel. Note: any data that has been migrated up to this point will be retained.';
+
     foreach (['drafts', 'log'] as $type) {
         $table = 'block_quickmail_' . $type;
 
@@ -76,5 +84,6 @@ global $DB;
         $label = ucfirst($type) . ' (' . number_format($done) . ' / ' . number_format($total) . ')';
         $bar->update($done, $total, $label);
     }
+}
 
 echo $OUTPUT->footer();
