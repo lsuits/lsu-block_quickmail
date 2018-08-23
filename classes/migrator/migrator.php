@@ -48,14 +48,7 @@ class migrator {
         $this->db = $DB;
         $this->cfg = $CFG;
         $this->site_id = SITEID;
-        $this->chunk_size = 1000;
-
-        if ($chunk_size = get_config('moodle', 'block_quickmail_migration_chunk_size')) {
-            if (is_numeric($chunk_size)) {
-                $this->chunk_size = $chunk_size;
-            }
-        }
-
+        $this->chunk_size = $this->get_configured_chunk_size();
         $this->migrated_count = 0;
     }
 
@@ -111,18 +104,20 @@ class migrator {
      */
     public static function execute()
     {
-        $migrator = new self();
+        if ( ! empty($this->chunk_size)) {
+            $migrator = new self();
 
-        // course drafts
-        $migrator->migrate(true, false);
-        // course sents
-        $migrator->migrate(false, false);
-        // site drafts
-        $migrator->migrate(true, true);
-        // site sents
-        $migrator->migrate(false, true);
+            // course drafts
+            $migrator->migrate(true, false);
+            // course sents
+            $migrator->migrate(false, false);
+            // site drafts
+            $migrator->migrate(true, true);
+            // site sents
+            $migrator->migrate(false, true);
 
-        return true;
+            return true;
+        }
     }
 
     /**
@@ -423,6 +418,24 @@ class migrator {
     public function get_migrated_count($type)
     {
         return (int) $this->db->count_records('block_quickmail_' . $type, ['has_migrated' => 1]);
+    }
+
+    /**
+     * Returns the configured chunk size amount, defaulting to 1000
+     * 
+     * @return int
+     */
+    private function get_configured_chunk_size()
+    {
+        // attempt to pull the configured chunk size and return
+        if ($chunk_size = get_config('moodle', 'block_quickmail_migration_chunk_size')) {
+            if (is_numeric($chunk_size)) {
+                return (int) $chunk_size;
+            }
+        }
+
+        // default
+        return 1000;
     }
 
 }
