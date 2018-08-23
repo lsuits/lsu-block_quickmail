@@ -47,9 +47,7 @@ class migrate_legacy_data_task extends scheduled_task {
     {
         return true;
 
-        // first, let's do the drafts...
-        
-        block_quickmail_migrator::migrate();
+        $result = block_quickmail\migrator\migrator::execute();
     }
 
 }

@@ -25,6 +25,7 @@
 namespace block_quickmail\migrator;
 
 use block_quickmail\migrator\chunk_size_met_exception;
+use \core\task\manager as task_manager;
 
 class migrator {
 
@@ -40,12 +41,53 @@ class migrator {
     public static $message_recipient_table = 'block_quickmail_msg_recips';
     public static $additional_email_table = 'block_quickmail_msg_ad_email';
 
-    public function __construct($db, $cfg) {
-        $this->db = $db;
-        $this->cfg = $cfg;
+    public function __construct() {
+        global $DB;
+        global $CFG;
+
+        $this->db = $DB;
+        $this->cfg = $CFG;
         $this->site_id = SITEID;
         $this->chunk_size = 10;
         $this->migrated_count = 0;
+    }
+
+    /**
+     * Reports whether or not the migration task is enabled
+     * 
+     * @return bool
+     */
+    public static function is_enabled()
+    {
+        $task = task_manager::get_scheduled_task('block_quickmail\tasks\migrate_legacy_data_task');
+
+        return ! $task->get_disabled();
+    }
+
+    /**
+     * Returns a count of all old records of a given type
+     * 
+     * @param  string  $type  drafts|log
+     * @return int
+     */
+    public static function total_count($type)
+    {
+        $migrator = new self();
+
+        return $migrator->get_total_count($type);
+    }
+
+    /**
+     * Returns a count of all migrated records of a given type
+     * 
+     * @param  string  $type  drafts|log
+     * @return int
+     */
+    public static function migrated_count($type)
+    {
+        $migrator = new self();
+
+        return $migrator->get_migrated_count($type);
     }
 
     /**
@@ -60,10 +102,7 @@ class migrator {
      */
     public static function execute()
     {
-        global $DB;
-        global $CFG;
-
-        $migrator = new self($DB, $CFG);
+        $migrator = new self();
 
         try {
             // course drafts
@@ -359,6 +398,28 @@ class migrator {
         if ($this->migrated_count >= $this->chunk_size) {
             throw new chunk_size_met_exception;
         }
+    }
+
+    /**
+     * Returns count of given type of records
+     * 
+     * @param  string  $type  drafts|log
+     * @return int
+     */
+    public function get_total_count($type)
+    {
+        return (int) $this->db->count_records('block_quickmail_' . $type);
+    }
+
+    /**
+     * Returns count of given type of records that have been migrated
+     * 
+     * @param  string  $type  drafts|log
+     * @return int
+     */
+    public function get_migrated_count($type)
+    {
+        return (int) $this->db->count_records('block_quickmail_' . $type, ['has_migrated' => 1]);
     }
 
 }
