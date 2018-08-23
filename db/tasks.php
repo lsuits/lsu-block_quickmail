@@ -39,5 +39,14 @@ $tasks = [
         'dayofweek' => '*',
         'hour' => '*',
         'minute' => '*/1',
+    ],[
+        'classname' => 'block_quickmail\tasks\migrate_legacy_data_task',
+        'disabled' => true,
+        'blocking' => 0,
+        'month' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'hour' => '*',
+        'minute' => '*/15',
     ],
 ];

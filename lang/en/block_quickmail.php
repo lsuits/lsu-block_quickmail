@@ -30,6 +30,7 @@ $string['manage_drafts'] = 'View Drafts';
 $string['view_queued'] = 'View Scheduled';
 $string['view_sent'] = 'View Sent Messages';
 $string['manage_signatures'] = 'My Signatures';
+$string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['create_notification'] = 'Create Notification';
 $string['notifications'] = 'Notifications';
@@ -38,6 +39,7 @@ $string['messageprovider:quickmessage'] = 'Quickmail message';
 // tasks
 $string['send_all_ready_messages_task'] = 'Send all scheduled Quickmail messages';
 $string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail notifications to be sent';
+$string['migrate_legacy_data_task'] = 'Migrate historical data from Quickmail v1 to v2';
 
 // capabilities
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';
@@ -320,6 +322,8 @@ $string['select_allowed_user_fields'] = 'Supported user data fields';
 $string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make message content dynamic and specific to the recipient. Ex: "[:firstname:]"';
 $string['notifications_enabled'] = 'Enable Quickmail Notifications';
 $string['notifications_enabled_desc'] = 'Allow courses to create automated notifications including reminders and event responses.';
+$string['migration_chunk_size'] = 'Migration Chunk Size';
+$string['migration_chunk_size_desc'] = 'Number of records that should be processed by the legacy data migration task each time it is run, if enabled.';
 
 // redirect messages
 $string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
