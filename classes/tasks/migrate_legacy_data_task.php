@@ -47,8 +47,6 @@ class migrate_legacy_data_task extends scheduled_task {
      */
     public function execute()
     {
-        return true;
-
         try {
             if ($result = migrator::execute()) {
                 // all migration has completed, do something here?!?
