@@ -104,20 +104,18 @@ class migrator {
      */
     public static function execute()
     {
-        if ( ! empty($this->chunk_size)) {
-            $migrator = new self();
+        $migrator = new self();
 
-            // course drafts
-            $migrator->migrate(true, false);
-            // course sents
-            $migrator->migrate(false, false);
-            // site drafts
-            $migrator->migrate(true, true);
-            // site sents
-            $migrator->migrate(false, true);
+        // course drafts
+        $migrator->migrate(true, false);
+        // course sents
+        $migrator->migrate(false, false);
+        // site drafts
+        $migrator->migrate(true, true);
+        // site sents
+        $migrator->migrate(false, true);
 
-            return true;
-        }
+        return true;
     }
 
     /**
@@ -130,15 +128,17 @@ class migrator {
      */
     public function migrate($is_draft, $is_admin_message)
     {
-        // while we can pull an unmigrated message of the given status type (beginning with latest)
-        while ($record = $this->find_latest_unmigrated($is_draft, $is_admin_message)) {
-            $this->create_message($is_draft, $is_admin_message, $record);
+        if ( ! empty($this->chunk_size)) {
+            // while we can pull an unmigrated message of the given status type (beginning with latest)
+            while ($record = $this->find_latest_unmigrated($is_draft, $is_admin_message)) {
+                $this->create_message($is_draft, $is_admin_message, $record);
 
-            $this->mark_old_record_as_migrated($is_draft, $record);
+                $this->mark_old_record_as_migrated($is_draft, $record);
 
-            $this->migrated_count++;
+                $this->migrated_count++;
 
-            $this->check_chunk_size();
+                $this->check_chunk_size();
+            }
         }
     }
 
