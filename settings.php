@@ -253,4 +253,19 @@ if($ADMIN->fulltree) {
         )
     );
 
+    ///////////////////////////////////////////////////////////
+    ///
+    ///  MIGRATION CHUNK SIZE
+    ///  
+    ///////////////////////////////////////////////////////////
+    
+    $settings->add(
+        new admin_setting_configtext(
+            'block_quickmail_migration_chunk_size',
+            block_quickmail_string::get('migration_chunk_size'), 
+            block_quickmail_string::get('migration_chunk_size_desc'),
+            1000 // <-- default
+        )
+    );
+
 }

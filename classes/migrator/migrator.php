@@ -48,7 +48,14 @@ class migrator {
         $this->db = $DB;
         $this->cfg = $CFG;
         $this->site_id = SITEID;
-        $this->chunk_size = 10;
+        $this->chunk_size = 1000;
+
+        if ($chunk_size = get_config('moodle', 'block_quickmail_migration_chunk_size')) {
+            if (is_numeric($chunk_size)) {
+                $this->chunk_size = $chunk_size;
+            }
+        }
+
         $this->migrated_count = 0;
     }
 
@@ -98,28 +105,24 @@ class migrator {
      *
      * NOTE: this process does not convert old email attachment data, alternate email, or signature data
      * 
-     * @return string  a simple descriptive result of what happened when attempting to migrate data
+     * @return bool  whether or not the migration process has completed
+     * @throws block_quickmail\migrator\chunk_size_met_exception
+     * @throws \Exception  a catch all in case anything unexpected happens
      */
     public static function execute()
     {
         $migrator = new self();
 
-        try {
-            // course drafts
-            $migrator->migrate(true, false);
-            // course sents
-            $migrator->migrate(false, false);
-            // site drafts
-            $migrator->migrate(true, true);
-            // site sents
-            $migrator->migrate(false, true);
+        // course drafts
+        $migrator->migrate(true, false);
+        // course sents
+        $migrator->migrate(false, false);
+        // site drafts
+        $migrator->migrate(true, true);
+        // site sents
+        $migrator->migrate(false, true);
 
-            return 'all done!';
-        } catch (chunk_size_met_exception $e) {
-            return 'chunk size met!';
-        } catch (\Exception $e) {
-            return 'something has gone wrong in the migration process: ' . $e->getMessage();
-        }
+        return true;
     }
 
     /**

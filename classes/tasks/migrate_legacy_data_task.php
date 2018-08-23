@@ -26,6 +26,8 @@ namespace block_quickmail\tasks;
 
 use core\task\scheduled_task;
 use block_quickmail_string;
+use block_quickmail\migrator\migrator;
+use block_quickmail\migrator\chunk_size_met_exception;
 use core\task\manager as task_manager;
 
 class migrate_legacy_data_task extends scheduled_task {
@@ -47,7 +49,19 @@ class migrate_legacy_data_task extends scheduled_task {
     {
         return true;
 
-        $result = block_quickmail\migrator\migrator::execute();
+        try {
+            if ($result = migrator::execute()) {
+                // all migration has completed, do something here?!?
+                // - tear down old tables
+                // - disable the task
+            } else {
+                return true;
+            }
+        } catch (chunk_size_met_exception $e) {
+            return true;
+        } catch (\Exception $e) {
+            return 'something has gone wrong in the migration process: ' . $e->getMessage();
+        }
     }
 
 }
