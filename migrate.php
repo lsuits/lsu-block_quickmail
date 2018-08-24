@@ -141,42 +141,43 @@ if ( ! block_quickmail\migrator\migrator::old_tables_exist()) {
         $bar->update($migrated_log_count, $total_log_count, 'Logs (' . number_format($migrated_log_count) . ' / ' . number_format($total_log_count) . ')');
     }
 
-    echo '<br><br><h4>Delete Old Tables?</h4>';
+    if (in_array($status, ['process-complete', 'nothing-to-migrate'])) {
 
-    if ($status == 'process-complete') {
-        echo '<p>Since this process is complete, you can now safely drop the old tables:</p>';
-    } else if ($status == 'nothing-to-migrate') {
-        echo '<p>Since there is nothing to migrate, you can now safely drop the old tables:</p>';
-    } else {
-        echo '<p>Although the migration process is still incomplete, you can drop the old tables if you wish. This will, of course, <strong>permanently delete any unmigrated data</strong>. The old tables are:</p>';
-    }
+        echo '<br><br><h4>Delete Old Tables?</h4>';
 
-    echo '
-        <pre>block_quickmail_log</pre>
-        <pre>block_quickmail_drafts</pre>
-    ';
-
-    if ($task_enabled) {
-        echo '<p>If you do wish to drop these tables, please disable this migration task first by going to <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel and marking it as disabled.';
-    } else {
-        echo '<p>Click the button below to automatically remove them now, or come back to this page at any time to do so.</p>';
-
-        // display a form to allow for deletion of old tables
-        $mform = new block_quickmail\forms\migration_post_actions_form();
-
-        if ($mform->is_cancelled()) {
-            // should not happen, but don't do anything just in case...
-        } else if ($submission = $mform->get_data()) {
-            if (property_exists($submission, 'submitbutton')) {
-                try {
-                    block_quickmail\migrator\migrator::drop_old_tables();
-                    redirect($PAGE->url, 'Old tables have been successfully removed!', 'success');
-                } catch (\Exception $e) {
-                    redirect($PAGE->url, $e->getMessage(), 'error');
-                }
-            }
+        if ($status == 'process-complete') {
+            echo '<p>Since this process is complete, you can now safely drop the old tables:</p>';
         } else {
-            $mform->display();
+            echo '<p>Since there is nothing to migrate, you can now safely drop the old tables:</p>';
+        }
+
+        echo '
+            <pre>block_quickmail_log</pre>
+            <pre>block_quickmail_drafts</pre>
+        ';
+
+        if ($task_enabled) {
+            echo '<p>If you do wish to drop these tables, please disable this migration task first by going to <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel and marking it as disabled.';
+        } else {
+            echo '<p>Click the button below to automatically remove them now, or come back to this page at any time to do so.</p>';
+
+            // display a form to allow for deletion of old tables
+            $mform = new block_quickmail\forms\migration_post_actions_form();
+
+            if ($mform->is_cancelled()) {
+                // should not happen, but don't do anything just in case...
+            } else if ($submission = $mform->get_data()) {
+                if (property_exists($submission, 'submitbutton')) {
+                    try {
+                        block_quickmail\migrator\migrator::drop_old_tables();
+                        redirect($PAGE->url, 'Old tables have been successfully removed!', 'success');
+                    } catch (\Exception $e) {
+                        redirect($PAGE->url, $e->getMessage(), 'error');
+                    }
+                }
+            } else {
+                $mform->display();
+            }
         }
     }
 }
