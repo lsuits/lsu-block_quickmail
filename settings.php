@@ -24,6 +24,11 @@
 
 global $CFG;
 
+if (block_quickmail\migrator\migrator::old_tables_exist()) {
+    $msp = get_string('pluginname', 'block_quickmail') . ' ' . get_string('migrate', 'block_quickmail');
+    $ADMIN->add('blocksettings', new admin_externalpage('blockquickmail', $msp, new moodle_url('/blocks/quickmail/migrate.php')));
+}
+
 if($ADMIN->fulltree) {
     $never_no_or_yes_options = [
         -1 => get_string('never'), 
