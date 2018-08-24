@@ -22,37 +22,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\tasks;
+namespace block_quickmail\forms;
 
-use core\task\scheduled_task;
-use block_quickmail_string;
-use block_quickmail\migrator\migrator;
-use block_quickmail\migrator\chunk_size_met_exception;
-use core\task\manager as task_manager;
+require_once $CFG->libdir . '/formslib.php';
 
-class migrate_legacy_data_task extends scheduled_task {
+// use block_quickmail_string;
+
+class migration_post_actions_form extends \moodleform {
     
-    public function get_name()
+    public function definition()
     {
-        return block_quickmail_string::get('migrate_legacy_data_task');
+        $mform = $this->_form;
+ 
+        $this->add_action_buttons(false, 'Delete Old Quickmail Tables');
     }
-
-    /*
-     * This task migrates historical data from Quickmail v1 schema to v2 schema
-     *
-     * The idea is that, if enabled, this task will continue to transfer data from block_quickmail_log and block_quickmail_drafts until completion
-     *
-     * Required custom data: none
-     */
-    public function execute()
-    {
-        try {
-            migrator::execute();
-        } catch (chunk_size_met_exception $e) {
-            return true;
-        } catch (\Exception $e) {
-            return 'something has gone wrong in the migration process: ' . $e->getMessage();
-        }
-    }
-
 }

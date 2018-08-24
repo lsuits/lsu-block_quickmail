@@ -55,21 +55,129 @@ $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quic
 
 echo $OUTPUT->header();
 
-// if migrate task is not enabled...
-if ( ! block_quickmail\migrator\migrator::is_enabled()) {
-    echo '<h4>This tool allows you to migrate any historical data from Quickmail v1 to Quickmail v2</h4><p>If you want to do this, please enable the "block_quickmail\tasks\migrate_legacy_data_task" in the admin panel, then come back to this page to see the progress.';
+$task_url = new moodle_url('/admin/tool/task/scheduledtasks.php', [
+    'action' => 'edit',
+    'task' => 'block_quickmail\\tasks\\migrate_legacy_data_task'
+]);
 
-// otherwise, show the progress report
+$settings_url = new moodle_url('/admin/settings.php', [
+    'section' => 'blocksettingquickmail',
+]);
+
+// if old tables do not exist, either the process has completed -OR- the user has dropped the old tables
+if ( ! block_quickmail\migrator\migrator::old_tables_exist()) {
+    echo '
+        <h4>Migration Progress: Complete</h4>
+        <p>It looks like the migration process is complete, or Quickmail\'s old tables no longer exist, so nothing else needs to be done.</p>
+    ';
+
+// otherwise, there may still work to be done
 } else {
-    echo '<h4>Migration progress</h4><p>This task is currently configured to run. If you want to stop this process, please disable the "block_quickmail\tasks\migrate_legacy_data_task" in the admin panel. Note: any data that has been migrated up to this point will be retained.';
 
-    foreach (['drafts', 'log'] as $type) {
-        $total_count = block_quickmail\migrator\migrator::total_count($type);
-        $migrated_count = block_quickmail\migrator\migrator::migrated_count($type);
+    // pull the current numbers
+    $total_draft_count = block_quickmail\migrator\migrator::total_count('drafts');
+    $migrated_draft_count = block_quickmail\migrator\migrator::migrated_count('drafts');
+    $total_log_count = block_quickmail\migrator\migrator::total_count('log');
+    $migrated_log_count = block_quickmail\migrator\migrator::migrated_count('log');
+    $task_enabled = block_quickmail\migrator\migrator::is_enabled();
 
-        // display as progress bar
-        $bar = new progress_bar($type . '_bar', 500, true);
-        $bar->update($migrated_count, $total_count, ucfirst($type) . ' (' . number_format($migrated_count) . ' / ' . number_format($total_count) . ')');
+    $status = 'not-begun';
+
+    if ($total_draft_count + $total_log_count == 0) {
+        $status = 'nothing-to-migrate';
+    } else if (($total_draft_count + $total_log_count - $migrated_draft_count - $migrated_log_count) == 0) {
+        $status = 'process-complete';
+    } else if ($migrated_draft_count || $migrated_log_count) {
+        $status = 'needs-more-work';
+    }
+
+    if ($status == 'nothing-to-migrate') {
+        if ($task_enabled) {
+            echo '
+                <h4>Migration Progress: No Data To Migrate</h4>
+                <p>This tool allows you to <strong>migrate historical data from Quickmail v1 to v2</strong>, but it looks like you have no historical data to migrate. However, please note that <strong> the scheduled migration task is still running</strong>. This will not harm anything, but you can safely disable it forever by going to <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel and marking it as disabled.</p>
+            ';
+        } else {
+            echo '
+                <h4>Migration Progress: No Data To Migrate</h4>
+                <p>This tool allows you to <strong>migrate historical data from Quickmail v1 to v2</strong>, but it looks like you have no historical data to migrate.</p>
+            ';
+        }
+    } else if ($status == 'process-complete') {
+        if ($task_enabled) {
+            echo '
+                <h4>Migration Progress: Complete</h4>
+                <p>It looks like all of your old Quickmail data has been migrated over to the new version, congratulations! However, please note that <strong> the scheduled migration task is still running</strong>. This will not harm anything, but you can safely disable it forever. If you want to disable the task, you can go to <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel and mark it as disabled.</p>
+            ';
+        } else {
+            echo '
+                <h4>Migration Progress: Complete</h4>
+                <p>It looks like all of your old Quickmail data has been migrated over to the new version and there is nothing left to do, congratulations!</p>
+            ';
+        }
+    
+    } else if ($status == 'needs-more-work' && ! $task_enabled) {
+        echo '
+            <h4>Migration Progress: Disabled But Incomplete</h4>
+            <p>This tool allows you to <strong>migrate historical data from Quickmail v1 to v2</strong>. It looks like the process was started, but <strong>is now currently disabled</strong>. If you want to continue the migration process, please enable the <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel, then come back to this page to see the progress.</p>
+        ';
+    } else if ( ! $task_enabled) {
+        echo '
+            <h4>Migration Progress: Not Enabled</h4>
+            <p>Things have changed in Quickmail. This tool allows you to <strong>migrate historical data from Quickmail v1 to v2</strong>. If you want to do this, please enable the <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel, then come back to this page to see the progress.</p>
+        ';
+    } else {
+        echo '
+            <h4>Migration Progress: Working</h4>
+            <p>This process is currently running. If you want to stop this process, please disable the <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel. If you want to speed things up, you can try to increase the "Migration Chunk Size" in the <a href="' . $settings_url . '">Quickmail settings</a>. <i>Note: If you disable the task right now, any data that has been migrated up to this point will be retained.</i></p>
+        ';
+
+        // DRAFT MIGRATION STATUS
+        $bar = new progress_bar('drafts_bar', 500, true);
+        $bar->update($migrated_draft_count, $total_draft_count, 'Drafts (' . number_format($migrated_draft_count) . ' / ' . number_format($total_draft_count) . ')');
+
+        // LOG MIGRATION STATUS
+        $bar = new progress_bar('log_bar', 500, true);
+        $bar->update($migrated_log_count, $total_log_count, 'Logs (' . number_format($migrated_log_count) . ' / ' . number_format($total_log_count) . ')');
+    }
+
+    echo '<br><br><h4>Delete Old Tables?</h4>';
+
+    if ($status == 'process-complete') {
+        echo '<p>Since this process is complete, you can now safely drop the old tables:</p>';
+    } else if ($status == 'nothing-to-migrate') {
+        echo '<p>Since there is nothing to migrate, you can now safely drop the old tables:</p>';
+    } else {
+        echo '<p>Although the migration process is still incomplete, you can drop the old tables if you wish. This will, of course, <strong>permanently delete any unmigrated data</strong>. The old tables are:</p>';
+    }
+
+    echo '
+        <pre>block_quickmail_log</pre>
+        <pre>block_quickmail_drafts</pre>
+    ';
+
+    if ($task_enabled) {
+        echo '<p>If you do wish to drop these tables, please disable this migration task first by going to <a href="' . $task_url . '">block_quickmail\tasks\migrate_legacy_data_task</a> in the admin panel and marking it as disabled.';
+    } else {
+        echo '<p>Click the button below to automatically remove them now, or come back to this page at any time to do so.</p>';
+
+        // display a form to allow for deletion of old tables
+        $mform = new block_quickmail\forms\migration_post_actions_form();
+
+        if ($mform->is_cancelled()) {
+            // should not happen, but don't do anything just in case...
+        } else if ($submission = $mform->get_data()) {
+            if (property_exists($submission, 'submitbutton')) {
+                try {
+                    block_quickmail\migrator\migrator::drop_old_tables();
+                    redirect($PAGE->url, 'Old tables have been successfully removed!', 'success');
+                } catch (\Exception $e) {
+                    redirect($PAGE->url, $e->getMessage(), 'error');
+                }
+            }
+        } else {
+            $mform->display();
+        }
     }
 }
 

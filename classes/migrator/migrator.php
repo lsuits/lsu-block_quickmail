@@ -65,6 +65,44 @@ class migrator {
     }
 
     /**
+     * Reports whether or not Quickmail's legacy tables exist
+     * 
+     * @return bool
+     */
+    public static function old_tables_exist()
+    {
+        global $DB;
+        
+        $dbman = $DB->get_manager();
+        
+        return $dbman->table_exists(self::$old_drafts_table) || $dbman->table_exists(self::$old_log_table);
+    }
+
+    /**
+     * Drops old tables
+     * 
+     * @return void
+     */
+    public static function drop_old_tables()
+    {
+        global $DB;
+        
+        $dbman = $DB->get_manager();
+
+        $drafts_table = new \xmldb_table(self::$old_drafts_table);
+
+        if ($dbman->table_exists($drafts_table)) {
+            $dbman->drop_table($drafts_table);
+        }
+
+        $logs_table = new \xmldb_table(self::$old_log_table);
+
+        if ($dbman->table_exists($logs_table)) {
+            $dbman->drop_table($logs_table);
+        }
+    }
+
+    /**
      * Returns a count of all old records of a given type
      * 
      * @param  string  $type  drafts|log
