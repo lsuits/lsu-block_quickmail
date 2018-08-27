@@ -150,8 +150,8 @@ try {
             $redirect_message = 'redirect_back_to_course_from_message_after_queued_send';
         } else {
             $redirect_message = $send_as_task
-                ? 'redirect_back_to_course_from_message_after_immediate_send'
-                : 'redirect_back_to_course_from_message_after_send';
+                ? 'redirect_back_to_course_from_message_after_send'
+                : 'redirect_back_to_course_from_message_after_immediate_send';
         }
 
         $request->redirect_as_success(block_quickmail_string::get($redirect_message, $course->fullname), '/my');
