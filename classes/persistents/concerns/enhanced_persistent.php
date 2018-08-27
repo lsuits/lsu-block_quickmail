@@ -24,6 +24,7 @@
 
 namespace block_quickmail\persistents\concerns;
 
+use block_quickmail_string;
 use \dml_missing_record_exception;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 
@@ -90,7 +91,13 @@ trait enhanced_persistent {
      */
     public function get_readable_date($attr)
     {
-        return date('Y-m-d g:i a', $this->get($attr));
+        $datetime = $this->get($attr);
+
+        if ($datetime && is_numeric($datetime)) {
+            return date('Y-m-d g:i a', $datetime);
+        }
+
+        return block_quickmail_string::get('never');
     }
 
     /**
