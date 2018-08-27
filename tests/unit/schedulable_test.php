@@ -165,7 +165,7 @@ class block_quickmail_schedulable_testcase extends advanced_testcase {
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // create a reminder notification to run soon
-        $reminder_notification = reminder_notification::create_type('non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
+        $reminder_notification = reminder_notification::create_type('course-non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
             'schedule_unit' => 'week',
             'schedule_amount' => 2,
             'schedule_begin_at' => $this->get_soon_time()
@@ -175,7 +175,7 @@ class block_quickmail_schedulable_testcase extends advanced_testcase {
         $this->assertEquals($reminder_notification->get_next_run_time(), $this->get_soon_time());
 
         // create a reminder notification to run past
-        $reminder_notification = reminder_notification::create_type('non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
+        $reminder_notification = reminder_notification::create_type('course-non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
             'schedule_unit' => 'week',
             'schedule_amount' => 2,
             'schedule_begin_at' => $this->get_past_time()
@@ -247,7 +247,7 @@ class block_quickmail_schedulable_testcase extends advanced_testcase {
         // create the schedulable reminder notification record
         $schedulable = new \stdClass();
         $schedulable->notification_id = $notification_id;
-        $schedulable->type = 'non-participation';
+        $schedulable->type = 'course-non-participation';
         $schedulable->object_id = $course->id;
         $schedulable->max_per_interval = $params['max_per_interval'];
         $schedulable->schedule_id = $schedule_id;

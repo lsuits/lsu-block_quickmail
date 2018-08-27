@@ -47,7 +47,7 @@ class block_quickmail_run_schedulable_notification_adhoc_task_testcase extends a
         // set up a course with a teacher and students
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $reminder_notification = $this->create_reminder_notification_for_course_user('non-participation', $course, $user_teacher, null, [
+        $reminder_notification = $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user_teacher, null, [
             'name' => 'My non participation reminder'
         ]);
 

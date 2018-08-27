@@ -71,7 +71,7 @@ class block_quickmail_parses_compose_message_body_testcase extends advanced_test
 
         $body = message_body_constructor::get_formatted_body($message, $first_student, $course);
 
-        $this->assertEquals('Welcome to ' . $course->fullname . '! Let\'s shorten the name to ' . $course->shortname . ' if that\'s ok with you. The ID number will remain as ' . $course->idnumber . ' though. If I had to summarize this course, I\'d say it would be: ' . $course->summary . '. You can always access the course online by going to ' . $courselink . '. The course will begin on ' . date('F j, Y', $course->startdate) . ' and end on ' . date('F j, Y', $course->enddate) . '. Do we have a mutual understanding?', $body);
+        $this->assertEquals('Welcome to ' . $course->fullname . '! Let\'s shorten the name to ' . $course->shortname . ' if that\'s ok with you. The ID number will remain as ' . $course->idnumber . ' though. If I had to summarize this course, I\'d say it would be: ' . $course->summary . '. You can always access the course online by going to ' . $courselink . '. The course will begin on ' . date('F j, Y', $course->startdate) . ' and end on Never. Do we have a mutual understanding?', $body);
     }
 
     public function test_replaces_accessed_message_recipient_compose_message_body_with_course_seensince_data()

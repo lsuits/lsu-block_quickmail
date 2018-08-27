@@ -111,7 +111,7 @@ trait sets_up_notifications {
             'send_to_mentors' => 0,
             'no_reply' => 1,
             //
-            // 'conditions' => '',
+            'conditions' => '',
             'condition_time_amount' => 4,
             'condition_time_unit' => 'day',
             'condition_grade_greater_than' => 40,
