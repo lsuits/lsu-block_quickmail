@@ -40,8 +40,6 @@ use block_quickmail\requests\broadcast_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\filemanager\message_file_handler;
-use block_quickmail\tasks\send_message_to_recipient_adhoc_task;
-use core\task\manager as task_manager;
 use block_quickmail\messenger\message\subject_prepender;
 use block_quickmail\repos\user_repo;
 use moodle_url;
@@ -170,11 +168,15 @@ class messenger implements messenger_interface {
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails($additional_emails);
         
-        // if not sending as a task, and scheduled for delivery later, send now
-        // the ability to do this is not allowed for the end user, but available for testing
-        // TODO: make task-based sending configurable (ie: do not allow scheduled sends)
+        // if not configured to send as a task, and not scheduled for delivery later, send now
         if ( ! $send_as_tasks && ! $message->get_to_send_in_future()) {
-            self::deliver($message, $send_as_tasks);
+            $message->mark_as_sending();
+            
+            $messenger = new self($message);
+
+            $messenger->send();
+
+            return $message->read();
         }
 
         return $message;
@@ -429,32 +431,6 @@ class messenger implements messenger_interface {
 
     /////////////////////////////////////////////////////////////
     ///
-    ///  MESSAGE SENDING METHODS
-    /// 
-    /////////////////////////////////////////////////////////////
-
-    /**
-     * Instantiates a messenger and performs the delivery of the given message to all of its recipients
-     * By default, the message to recipient transactions will be queued to send as adhoc tasks
-     * 
-     * @param  message  $message     message to be sent
-     * @param  bool     $queue_send  if false, the message will be sent immediately
-     * @return bool
-     */
-    public static function deliver(message $message, $queue_send = true)
-    {
-        // is message is currently being sent, bail out
-        if ($message->is_being_sent()) {
-            return false;
-        }
-
-        $messenger = new self($message);
-
-        return $messenger->send($queue_send);
-    }
-    
-    /////////////////////////////////////////////////////////////
-    ///
     ///  MESSENGER INSTANCE METHODS
     /// 
     /////////////////////////////////////////////////////////////
@@ -462,47 +438,23 @@ class messenger implements messenger_interface {
     /**
      * Sends the message to all of its recipients
      * 
-     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task, otherwise will send synchronously right away
-     * @return bool
+     * @return void
      */
-    public function send($queue_send = true)
+    public function send()
     {
-        // if sending synchronously, handle pre-send actions
-        if ( ! $queue_send) {
-            $this->handle_message_pre_send();
-        }
-
         // iterate through all message recipients
         foreach($this->message->get_message_recipients() as $recipient) {
             // if any exceptions are thrown, gracefully move to the next recipient
             try {
-                // if sending synchronously, send to recipient now
-                if ( ! $queue_send) {
-                    // send now
-                    $this->send_to_recipient($recipient);
-                
-                // otherwise, queue a task to handle sending to the recipient
-                } else {
-                    $task = new send_message_to_recipient_adhoc_task();
-
-                    $task->set_custom_data([
-                        'message_id' => $this->message->get('id'),
-                        'recipient_id' => $recipient->get('id'),
-                    ]);
-
-                    task_manager::queue_adhoc_task($task);
-                }
+                // send to recipient now
+                $this->send_to_recipient($recipient);
             } catch (\Exception $e) {
+                // TODO: handle a failed send here?
                 continue;
             }
         }
         
-        // if sending synchronously, handle post-send actions
-        if ( ! $queue_send) {
-            $this->handle_message_post_send();
-        }
-
-        return true;
+        $this->handle_message_post_send();
     }
 
     /**
@@ -520,18 +472,6 @@ class messenger implements messenger_interface {
         $recipient_send_factory->send();
 
         return true;
-    }
-
-    /**
-     * Performs pre-send actions
-     * 
-     * @return void
-     */
-    public function handle_message_pre_send()
-    {
-        $this->message->set('is_sending', 1);
-        $this->message->update();
-        $this->message->read(); // necessary?
     }
 
     /**
@@ -553,7 +493,6 @@ class messenger implements messenger_interface {
         $this->message->set('is_sending', 0);
         $this->message->set('sent_at', time());
         $this->message->update();
-        $this->message->read(); // necessary?
     }
 
     /**

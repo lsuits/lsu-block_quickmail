@@ -123,22 +123,6 @@ interface messenger_interface {
 
     /////////////////////////////////////////////////////////////
     ///
-    ///  MESSAGE SENDING METHODS
-    /// 
-    /////////////////////////////////////////////////////////////
-
-    /**
-     * Instantiates a messenger and performs the delivery of the given message to all of its recipients
-     * By default, the message to recipient transactions will be queued to send as adhoc tasks
-     * 
-     * @param  message  $message     message to be sent
-     * @param  bool     $queue_send  if false, the message will be sent immediately
-     * @return bool
-     */
-    public static function deliver(message $message, $queue_send = true);
-    
-    /////////////////////////////////////////////////////////////
-    ///
     ///  MESSENGER INSTANCE METHODS
     /// 
     /////////////////////////////////////////////////////////////
@@ -146,10 +130,9 @@ interface messenger_interface {
     /**
      * Sends the message to all of its recipients
      * 
-     * @param  bool     $queue_send  if true, will send each delivery as an adhoc task, otherwise will send synchronously right away
-     * @return bool
+     * @return void
      */
-    public function send($queue_send = true);
+    public function send();
 
     /**
      * Sends the message to the given recipient
@@ -158,13 +141,6 @@ interface messenger_interface {
      * @return bool
      */
     public function send_to_recipient($recipient);
-
-    /**
-     * Performs pre-send actions
-     * 
-     * @return void
-     */
-    public function handle_message_pre_send();
 
     /**
      * Performs post-send actions

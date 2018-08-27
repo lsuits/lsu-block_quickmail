@@ -326,6 +326,7 @@ $string['migration_chunk_size'] = 'Migration Chunk Size';
 $string['migration_chunk_size_desc'] = 'Number of records that should be processed by the legacy data migration task each time it is run, if enabled.';
 
 // redirect messages
+$string['redirect_back_to_course_from_message_after_immediate_send'] = 'Your message has been sent.';
 $string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
 $string['redirect_back_to_course_from_message_after_send'] = 'Your message will be sent shortly.';
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';

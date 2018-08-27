@@ -135,14 +135,20 @@ try {
     // SEND
     } else if ($request->to_send_message()) {
 
-        // attempt to send (as task)
-        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, \block_quickmail_config::block('send_as_tasks'));
+        $send_as_task = \block_quickmail_config::block('send_as_tasks');
 
-        // redirect back to course page
-        $redirect_message = $message->is_queued_message()
-            ? 'redirect_back_to_course_from_message_after_queued_send'
-            : 'redirect_back_to_course_from_message_after_send';
+        $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, $send_as_task);
 
+        // resolve redirect message
+        if ($message->is_queued_message()) {
+            $redirect_message = 'redirect_back_to_course_from_message_after_queued_send';
+        } else {
+            $redirect_message = $send_as_task
+                ? 'redirect_back_to_course_from_message_after_immediate_send'
+                : 'redirect_back_to_course_from_message_after_send';
+        }
+
+        // redirect back to course page with message
         $request->redirect_as_success(block_quickmail_string::get($redirect_message, $course->fullname), '/course/view.php', ['id' => $course->id]);
 
     // SAVE DRAFT

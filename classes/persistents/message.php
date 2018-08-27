@@ -452,6 +452,18 @@ class message extends \block_quickmail\persistents\persistent {
         $this->update();
 	}
 
+	/**
+	 * Update this message's sending status to currently sending
+	 * 
+	 * @return void
+	 */
+	public function mark_as_sending()
+	{
+		$this->set('is_sending', 1);
+        
+        $this->update();
+	}
+
 	///////////////////////////////////////////////
 	///
 	///  PERSISTENT HOOKS

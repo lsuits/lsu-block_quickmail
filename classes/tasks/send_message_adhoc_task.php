@@ -44,14 +44,8 @@ class send_message_adhoc_task extends adhoc_task {
             // message is found, instantiate a messenger and send
             $messenger = new messenger($message);
 
-            // prep the message for sending
-            $messenger->handle_message_pre_send();
-            
-            // send the message!
-            $messenger->send(false);
-
-            // send to any "additional emails", and send receipt, if necessary
-            $messenger->handle_message_post_send();
+            // send the message
+            $messenger->send();
         }
     }
 

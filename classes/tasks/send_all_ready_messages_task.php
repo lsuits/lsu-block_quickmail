@@ -51,6 +51,8 @@ class send_all_ready_messages_task extends scheduled_task {
 
         // iterate through each message
         foreach ($messages as $message) {
+            $message->mark_as_sending();
+
             // create a job
             $task = new send_message_adhoc_task();
 

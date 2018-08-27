@@ -138,16 +138,21 @@ try {
     // SEND
     } else if ($request->to_send_message()) {
 
-        // attempt to send (as task)
-        $message = \block_quickmail\messenger\messenger::broadcast($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message, \block_quickmail_config::block('send_as_tasks'));
+        $send_as_task = \block_quickmail_config::block('send_as_tasks');
+        
+        $message = \block_quickmail\messenger\messenger::broadcast($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message, $send_as_task);
         
         // clear any recipient user filtering session data
         $broadcast_recipient_filter->clear_session();
         
-        // redirect back to course page
-        $redirect_message = $message->is_queued_message()
-            ? 'redirect_back_to_course_from_message_after_queued_send'
-            : 'redirect_back_to_course_from_message_after_send';
+        // resolve redirect message
+        if ($message->is_queued_message()) {
+            $redirect_message = 'redirect_back_to_course_from_message_after_queued_send';
+        } else {
+            $redirect_message = $send_as_task
+                ? 'redirect_back_to_course_from_message_after_immediate_send'
+                : 'redirect_back_to_course_from_message_after_send';
+        }
 
         $request->redirect_as_success(block_quickmail_string::get($redirect_message, $course->fullname), '/my');
 
