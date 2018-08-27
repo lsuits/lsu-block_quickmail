@@ -41,7 +41,11 @@ trait belongs_to_a_user {
      * @return stdClass
      */
     public function get_user() {
-        return core_user::get_user($this->get('user_id'));
+        try {
+            return core_user::get_user($this->get('user_id'), '*', MUST_EXIST);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     ///////////////////////////////////////////////

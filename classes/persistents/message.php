@@ -533,12 +533,21 @@ class message extends \block_quickmail\persistents\persistent {
 	 * @param  array         $recipient_user_ids   array of user ids to receive this notification message
 	 * @param  int           $time_to_send   unix timestamp of time this message should be sent, defaults to ASAP
 	 * @return message
+	 * @throws \Exception
 	 */
 	public static function create_from_notification(notification $notification, $recipient_user_ids, $time_to_send = null)
 	{
+		if ( ! $course = $notification->get_course()) {
+			throw new \Exception('Course no longer exists!');
+		}
+
+		if ( ! $user = $notification->get_user()) {
+			throw new \Exception('User no longer exists!');
+		}
+
 		$message = self::create_new([
-			'course_id' => $notification->get_course()->id,
-			'user_id' => $notification->get_user()->id,
+			'course_id' => $course->id,
+			'user_id' => $user->id,
             'message_type' => $notification->get('message_type'),
             'notification_id' => $notification->get('id'),
             'alternate_email_id' => $notification->get('alternate_email_id'),

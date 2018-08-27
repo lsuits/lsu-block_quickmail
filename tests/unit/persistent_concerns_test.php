@@ -91,7 +91,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
 
         $timestamp = $message->get('timecreated');
 
-        $this->assertEquals(date('Y-m-d H:i:s', $timestamp), $message->get_readable_date('timecreated'));
+        $this->assertEquals(date('Y-m-d g:i a', $timestamp), $message->get_readable_date('timecreated'));
     }
 
     public function test_supports_soft_deletes()
@@ -146,6 +146,37 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertEquals($course->id, $message_course->id);
         $this->assertTrue($message->is_owned_by_course($course));
         $this->assertTrue($message->is_owned_by_course($course->id));
+
+        $message = message::create_new([
+            'course_id' => 47,
+            'user_id' => 1,
+            'message_type' => 'email',
+        ]);
+
+        $non_existent_course = $message->get_course();
+
+        $this->assertNull($non_existent_course);
+    }
+
+    public function test_gets_a_course_property()
+    {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $message = message::create_new([
+            'course_id' => $course->id,
+            'user_id' => 1,
+            'message_type' => 'email',
+        ]);
+
+        $shortname = $message->get_course_property('shortname');
+
+        $this->assertEquals($course->shortname, $shortname);
+
+        $shortname = $message->get_course_property('shortname2', 'this instead');
+
+        $this->assertEquals('this instead', $shortname);
     }
 
     public function test_belongs_to_a_message()
@@ -185,6 +216,14 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $message_user->id);
         $this->assertTrue($message->is_owned_by_user($user));
         $this->assertTrue($message->is_owned_by_user($user->id));
+
+        global $DB;
+
+        $DB->delete_records('user', ['id' => $message_user->id]);
+
+        $non_existent_user = $message->get_user();
+
+        $this->assertNull($non_existent_user);
     }
 
 }

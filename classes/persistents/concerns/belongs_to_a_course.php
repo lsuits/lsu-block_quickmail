@@ -25,7 +25,6 @@
 namespace block_quickmail\persistents\concerns;
 
 use lang_string;
-use \dml_missing_record_exception;
 
 trait belongs_to_a_course {
 
@@ -46,6 +45,30 @@ trait belongs_to_a_course {
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    ///////////////////////////////////////////////
+    ///
+    ///  GETTERS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Returns a given property value of the this persistent's course object, defaulting to a given default value
+     * 
+     * @param  string  $property  name of a course property
+     * @param  mixed   $default   default value to return if cannot be retrieved
+     * @return mixed
+     */
+    public function get_course_property($property, $default = null) {
+
+        if ($course = $this->get_course()) {
+            if (property_exists($course, $property)) {
+                return $course->$property;
+            }
+        }
+        
+        return $default;
     }
 
     ///////////////////////////////////////////////

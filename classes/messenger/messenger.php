@@ -581,14 +581,16 @@ class messenger implements messenger_interface {
     {
         $data = (object) [];
 
+        $course = $this->message->get_course();
+
         $data->subject = $this->message->get('subject');
         // TODO - format this course name based off of preference?
-        $data->course_name = $this->message->get_course()->fullname;
+        $data->course_name = $course->fullname;
         $data->recipient_count = $this->message->cached_recipient_count();
         $data->sent_to_mentors = $this->message->get('send_to_mentors') ? get_string('yes') : get_string('no');
         $data->additional_email_count = $this->message->cached_additional_email_count();
         $data->attachment_count = $this->message->cached_attachment_count();
-        $data->sent_message_link = html_writer::link(new moodle_url('/blocks/quickmail/sent.php', ['courseid' => $this->message->get_course()->id]), block_quickmail_string::get('here'));
+        $data->sent_message_link = html_writer::link(new moodle_url('/blocks/quickmail/sent.php', ['courseid' => $course->id]), block_quickmail_string::get('here'));
 
         return block_quickmail_string::get('receipt_email_body', $data);
     }

@@ -72,7 +72,7 @@ class sent_message_index_component extends component implements \renderable {
         foreach ($this->messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
-                'courseName' => $message->get_course()->shortname,
+                'courseName' => $message->get_course_property('shortname', ''),
                 'subjectPreview' => $message->get_subject_preview(24),
                 'messagePreview' => $message->get_body_preview(),
                 'attachmentTotal' => $message->cached_attachment_count(),
