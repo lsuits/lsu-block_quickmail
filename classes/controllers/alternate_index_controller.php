@@ -6,7 +6,7 @@ use block_quickmail\controllers\support\base_controller;
 use block_quickmail\controllers\support\controller_request;
 use block_quickmail_string;
 use block_quickmail\persistents\alternate_email;
-use block_quickmail\services\alternate\alternate_manager;
+use block_quickmail\services\alternate_manager;
 
 class alternate_index_controller extends base_controller {
 

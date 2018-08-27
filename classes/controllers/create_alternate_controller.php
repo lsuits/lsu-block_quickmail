@@ -6,7 +6,7 @@ use block_quickmail\controllers\support\base_controller;
 use block_quickmail\controllers\support\controller_request;
 use block_quickmail_plugin;
 use block_quickmail_string;
-use block_quickmail\services\alternate\alternate_manager;
+use block_quickmail\services\alternate_manager;
 use block_quickmail\repos\role_repo;
 
 class create_alternate_controller extends base_controller {

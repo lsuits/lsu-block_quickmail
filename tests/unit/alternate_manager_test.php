@@ -24,7 +24,7 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\services\alternate\alternate_manager;
+use block_quickmail\services\alternate_manager;
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\exceptions\validation_exception;
 

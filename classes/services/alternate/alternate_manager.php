@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_quickmail\services\alternate;
+namespace block_quickmail\services;
 
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\create_alternate_form_validator;
