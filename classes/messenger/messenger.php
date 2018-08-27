@@ -40,6 +40,7 @@ use block_quickmail\requests\broadcast_request;
 use block_quickmail\exceptions\validation_exception;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\filemanager\message_file_handler;
+use block_quickmail\filemanager\attachment_appender;
 use block_quickmail\messenger\message\subject_prepender;
 use block_quickmail\repos\user_repo;
 use moodle_url;
@@ -511,6 +512,9 @@ class messenger implements messenger_interface {
 
         $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
         
+        // append attachment download links to the formatted body, if any
+        $body = attachment_appender::add_download_links($this->message, $body);
+
         foreach($this->message->get_additional_emails() as $additional_email) {
             if ( ! $additional_email->has_been_sent_to()) {
                 // instantiate an emailer
