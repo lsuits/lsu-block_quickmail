@@ -227,11 +227,13 @@ class create_message_form extends controller_form {
      * @return array
      */
     private function get_from_email_values() {
-        $values = ['-1' => get_config('moodle', 'noreplyaddress')];
+        $values = [];
 
         foreach ($this->get_custom_data('user_alternate_email_array') as $key => $value) {
             $values[(string) $key] = $value;
         }
+
+        $values['-1'] = get_config('moodle', 'noreplyaddress');
 
         return $values;
     }
