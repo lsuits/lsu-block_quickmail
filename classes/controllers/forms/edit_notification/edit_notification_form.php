@@ -167,7 +167,7 @@ class edit_notification_form extends controller_form {
                     'date_time_selector', 
                     'schedule_begin_at', 
                     block_quickmail_string::get('schedule_begin_at'),
-                    $this->get_schedule_time_options(true)
+                    $this->get_schedule_time_options(false)
                 );
 
                 if ( ! empty($this->get_schedule('begin_at'))) {
@@ -187,7 +187,7 @@ class edit_notification_form extends controller_form {
                 'date_time_selector', 
                 'schedule_end_at', 
                 block_quickmail_string::get('schedule_end_at'),
-                $this->get_schedule_time_options(true)
+                $this->get_schedule_time_options(false)
             );
 
             if ( ! empty($this->get_schedule('end_at'))) {

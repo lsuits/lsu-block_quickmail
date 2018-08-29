@@ -117,7 +117,7 @@ class create_schedule_form extends controller_form {
             'date_time_selector', 
             'schedule_end_at', 
             block_quickmail_string::get('schedule_end_at'),
-            $this->get_schedule_time_options()
+            $this->get_schedule_time_options(false)
         );
 
         if ($this->has_session_stored('schedule_end_at')) {

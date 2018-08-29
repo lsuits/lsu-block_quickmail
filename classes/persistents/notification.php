@@ -295,19 +295,17 @@ class notification extends \block_quickmail\persistents\persistent {
             if ($notification_type_interface->is_schedulable()) {
                 $schedule = $notification_type_interface->get_schedule();
                 
-                // get begin_at timestamp value from input, defaulting to 0
-                $begin_at = ! isset($params['schedule_begin_at'])
-                    ? 0
-                    : schedule::get_sanitized_date_time_selector_value($params['schedule_begin_at']);
+                if (isset($params['schedule_begin_at'])) {
+                    $begin_at = schedule::get_sanitized_date_time_selector_value($params['schedule_begin_at'], 0);
+                    
+                    $schedule->set('begin_at', $begin_at);
+                }
 
-                $schedule->set('begin_at', $begin_at);
-
-                // get end_at timestamp value from input, defaulting to 0
-                $end_at = ! isset($params['schedule_end_at'])
-                    ? 0
-                    : schedule::get_sanitized_date_time_selector_value($params['schedule_end_at']);
-
-                $schedule->set('end_at', $end_at);
+                if (isset($params['schedule_end_at'])) {
+                    $end_at = schedule::get_sanitized_date_time_selector_value($params['schedule_end_at'], 0);
+                    
+                    $schedule->set('end_at', $end_at);
+                }
                 
                 $schedule->set('unit', $params['schedule_time_unit']);
                 $schedule->set('amount', $params['schedule_time_amount']);

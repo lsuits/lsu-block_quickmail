@@ -167,20 +167,19 @@ class schedule extends \block_quickmail\persistents\persistent {
      * Returns a timestamp from a given moodle date time selector array, defaulting to null
      * 
      * @param  array  $input
+     * @param  mixed  $default  default value to return, defaults to null
      * @return mixed
      */
-    public static function get_sanitized_date_time_selector_value($input)
+    public static function get_sanitized_date_time_selector_value($input, $default = null)
     {
         if ( ! is_array($input)) {
-            return null;
+            return $default;
         }
 
-        if ( ! isset($input['enabled'])) {
-            return null;
-        }
-
-        if ( ! $input['enabled']) {
-            return null;
+        if (array_key_exists('enabled', $input)) {
+            if ( ! $input['enabled']) {
+                return $default;
+            }
         }
 
         $day = $input['day'];
