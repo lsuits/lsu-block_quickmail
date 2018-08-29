@@ -163,4 +163,35 @@ class schedule extends \block_quickmail\persistents\persistent {
 		return $schedule;
 	}
 
+    /**
+     * Returns a timestamp from a given moodle date time selector array, defaulting to null
+     * 
+     * @param  array  $input
+     * @return mixed
+     */
+    public static function get_sanitized_date_time_selector_value($input)
+    {
+        if ( ! is_array($input)) {
+            return null;
+        }
+
+        if ( ! isset($input['enabled'])) {
+            return null;
+        }
+
+        if ( ! $input['enabled']) {
+            return null;
+        }
+
+        $day = $input['day'];
+        $month = $input['month'];
+        $year = $input['year'];
+        $hour = $input['hour'];
+        $minute = $input['minute'] == '0' ? '00' : $input['minute'];
+
+        $date = \DateTime::createFromFormat('j n Y H i', implode(' ', [$day, $month, $year, $hour, $minute]), \core_date::get_server_timezone_object());
+
+        return $date->getTimestamp();
+    }
+
 }
