@@ -137,7 +137,7 @@ trait is_schedulable {
 
         $next_run_time = empty($this->get_last_run_time())
             ? $schedule->get_begin_time()
-            : $schedule->calculate_next_time_from($this->get_next_run_time());
+            : $schedule->calculate_next_time_from($this->get_last_run_time());
 
         $this->set('next_run_at', $next_run_time);
         $this->update();
