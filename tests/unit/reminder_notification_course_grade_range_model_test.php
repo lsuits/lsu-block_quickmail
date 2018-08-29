@@ -38,77 +38,77 @@ class block_quickmail_reminder_notification_course_grade_range_model_testcase ex
         sets_up_notifications,
         sets_up_notification_models;
 
-    // public function test_gets_correct_user_ids_to_notify()
-    // {
-    //     // reset all changes automatically after this test
-    //     $this->resetAfterTest(true);
+    public function test_gets_correct_user_ids_to_notify()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
 
-    //     // set up a course with a teacher and 4 students
-    //     list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        // set up a course with a teacher and 4 students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-    //     $model = $this->create_reminder_notification_model('course-grade-range', $course, $user_teacher, $course, [
-    //         'name' => 'My Course Grade Range Notification',
-    //         'condition_grade_greater_than' => 30,
-    //         'condition_grade_less_than' => 80,
-    //     ]);
+        $model = $this->create_reminder_notification_model('course-grade-range', $course, $user_teacher, $course, [
+            'name' => 'My Course Grade Range Notification',
+            'condition_grade_greater_than' => 30,
+            'condition_grade_less_than' => 80,
+        ]);
 
-    //     $student1 = $user_students[0];
-    //     $student2 = $user_students[1];
-    //     $student3 = $user_students[2];
-    //     $student4 = $user_students[3];
+        $student1 = $user_students[0];
+        $student2 = $user_students[1];
+        $student3 = $user_students[2];
+        $student4 = $user_students[3];
 
-    //     $gi1 = new grade_item($this->dg()->create_grade_item(['courseid' => $course->id]), false);
-    //     $gi2 = new grade_item($this->dg()->create_grade_item(['courseid' => $course->id]), false);
+        $gi1 = new grade_item($this->dg()->create_grade_item(['courseid' => $course->id]), false);
+        $gi2 = new grade_item($this->dg()->create_grade_item(['courseid' => $course->id]), false);
 
-    //     // grade the first item for all students
-    //     $gi1->update_final_grade($student1->id, 20, 'test');
-    //     $gi1->update_final_grade($student2->id, 40, 'test');
-    //     $gi1->update_final_grade($student3->id, 60, 'test');
-    //     $gi1->update_final_grade($student4->id, 80, 'test');
+        // grade the first item for all students
+        $gi1->update_final_grade($student1->id, 20, 'test');
+        $gi1->update_final_grade($student2->id, 40, 'test');
+        $gi1->update_final_grade($student3->id, 60, 'test');
+        $gi1->update_final_grade($student4->id, 80, 'test');
 
-    //     // grade the second item for all students
-    //     $gi2->update_final_grade($student1->id, 40, 'test');
-    //     $gi2->update_final_grade($student2->id, 60, 'test');
-    //     $gi2->update_final_grade($student3->id, 80, 'test');
-    //     $gi2->update_final_grade($student4->id, 100, 'test');
+        // grade the second item for all students
+        $gi2->update_final_grade($student1->id, 40, 'test');
+        $gi2->update_final_grade($student2->id, 60, 'test');
+        $gi2->update_final_grade($student3->id, 80, 'test');
+        $gi2->update_final_grade($student4->id, 100, 'test');
 
-    //     $cgi = grade_item::fetch_course_item($course->id);
+        $cgi = grade_item::fetch_course_item($course->id);
 
 
-    //     $this->dd($cgi->get_final($student1->id));
+        $this->dd($cgi->get_final($student1->id));
         
 
 
-    //     $ids_to_notify = $model->get_user_ids_to_notify();
+        $ids_to_notify = $model->get_user_ids_to_notify();
 
 
-    //     // four students in course which have never logged in
-    //     $this->assertCount(4, $ids_to_notify);
-    //     $this->assertContains($user_students[0]->id, $ids_to_notify);
-    //     $this->assertContains($user_students[1]->id, $ids_to_notify);
-    //     $this->assertContains($user_students[2]->id, $ids_to_notify);
-    //     $this->assertContains($user_students[3]->id, $ids_to_notify);
-    //     $this->assertNotContains($user_teacher->id, $ids_to_notify);
+        // four students in course which have never logged in
+        $this->assertCount(4, $ids_to_notify);
+        $this->assertContains($user_students[0]->id, $ids_to_notify);
+        $this->assertContains($user_students[1]->id, $ids_to_notify);
+        $this->assertContains($user_students[2]->id, $ids_to_notify);
+        $this->assertContains($user_students[3]->id, $ids_to_notify);
+        $this->assertNotContains($user_teacher->id, $ids_to_notify);
 
-    //     // update access record for one of the students
-    //     $goodstudent = $user_students[0];
-    //     global $DB;
-    //     $DB->insert_record('user_lastaccess', (object) [
-    //         'userid' => $goodstudent->id,
-    //         'courseid' => $course->id,
-    //         'timeaccess' => time(),
-    //     ]);
+        // update access record for one of the students
+        $goodstudent = $user_students[0];
+        global $DB;
+        $DB->insert_record('user_lastaccess', (object) [
+            'userid' => $goodstudent->id,
+            'courseid' => $course->id,
+            'timeaccess' => time(),
+        ]);
 
-    //     $ids_to_notify = $model->get_user_ids_to_notify();
+        $ids_to_notify = $model->get_user_ids_to_notify();
 
-    //     // four students in course which have never logged in
-    //     $this->assertCount(3, $ids_to_notify);
-    //     $this->assertNotContains($goodstudent->id, $ids_to_notify);
-    //     $this->assertContains($user_students[1]->id, $ids_to_notify);
-    //     $this->assertContains($user_students[2]->id, $ids_to_notify);
-    //     $this->assertContains($user_students[3]->id, $ids_to_notify);
-    //     $this->assertNotContains($user_teacher->id, $ids_to_notify);
-    // }
+        // four students in course which have never logged in
+        $this->assertCount(3, $ids_to_notify);
+        $this->assertNotContains($goodstudent->id, $ids_to_notify);
+        $this->assertContains($user_students[1]->id, $ids_to_notify);
+        $this->assertContains($user_students[2]->id, $ids_to_notify);
+        $this->assertContains($user_students[3]->id, $ids_to_notify);
+        $this->assertNotContains($user_teacher->id, $ids_to_notify);
+    }
 
 
 
