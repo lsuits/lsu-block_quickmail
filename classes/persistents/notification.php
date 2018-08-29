@@ -180,6 +180,38 @@ class notification extends \block_quickmail\persistents\persistent {
 		return (bool) $this->get('is_enabled');
 	}
 
+    /**
+     * Reports whether or not this notification should be sent to its course at this moment
+     *
+     * Note: For a course to be notified it must be visible and, if a enddate is set, the enddate must be in the future
+     * 
+     * @return bool
+     */
+    public function should_send_to_course()
+    {
+        $course = $this->get_course();
+
+        if ( ! $course) {
+            return false;
+        }
+
+        if ( ! $course->visible) {
+            return false;
+        }
+
+        if ( ! property_exists($course, 'enddate')) {
+            return true;
+        }
+
+        if (empty($course->enddate)) {
+            return true;
+        }
+
+        return time() < $course->enddate;
+    }
+
+
+
     ///////////////////////////////////////////////
     ///
     ///  STATUS UPDATE METHODS

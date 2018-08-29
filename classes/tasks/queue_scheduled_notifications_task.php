@@ -50,22 +50,24 @@ class queue_scheduled_notifications_task extends scheduled_task {
         if (block_quickmail_config::get('notifications_enabled')) {
             // fetch all schedulables that should be fired right now
             foreach (notification::get_all_ready_schedulables() as $notification) {
+                // only send to a course that is active and visible
+                if ($notification->should_send_to_course()) {
+                    // get the schedulable notification
+                    $schedulable = $notification->get_notification_type_interface();
 
-                // get the schedulable notification
-                $schedulable = $notification->get_notification_type_interface();
+                    // prevent the schedulable from being duplicated preemptively
+                    $schedulable->toggle_running_status(true);
+                    
+                    // fire a task for each
+                    $task = new run_schedulable_notification_adhoc_task();
 
-                // prevent the schedulable from being duplicated preemptively
-                $schedulable->toggle_running_status(true);
-                
-                // fire a task for each
-                $task = new run_schedulable_notification_adhoc_task();
+                    $task->set_custom_data([
+                        'notification_id' => $notification->get('id')
+                    ]);
 
-                $task->set_custom_data([
-                    'notification_id' => $notification->get('id')
-                ]);
-
-                // queue job
-                task_manager::queue_adhoc_task($task);
+                    // queue job
+                    task_manager::queue_adhoc_task($task);
+                }
             }
         }
     }
