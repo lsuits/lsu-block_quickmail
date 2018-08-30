@@ -25,6 +25,7 @@
 namespace block_quickmail\services\grade_calculator;
 
 use block_quickmail\services\grade_calculator\value_type_not_found_exception;
+use block_quickmail\services\grade_calculator\calculation_exception;
 
 class grade_calculator {
 
