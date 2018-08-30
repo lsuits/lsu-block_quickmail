@@ -52,14 +52,11 @@ class block_quickmail_grade_calculator_testcase extends advanced_testcase {
         // grade the second item for the student
         $gi2->update_final_grade($student->id, 40, 'test');
 
-        $cgi = grade_item::fetch_course_item($course->id);
+        // this does not work, need to recalculate grades here ???
 
-        $grade = grade_calculator::get_current($course, $student);
+        $grade = grade_calculator::get_user_grade_in_course($course->id, $student->id, 'round');
 
         $this->dd($grade);
-
-
-        $this->dd($cgi->get_final($student->id));
     }
 
 }

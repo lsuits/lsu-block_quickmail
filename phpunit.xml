@@ -67,7 +67,7 @@
 
             <!-- block utilities -->
             <exclude>tests/unit/alternate_manager_test.php</exclude>
-            <!-- <exclude>tests/unit/grade_calculator_test.php</exclude> -->
+            <exclude>tests/unit/grade_calculator_test.php</exclude>
             <exclude>tests/unit/configuration_test.php</exclude>
             
             <!-- messaging -->
