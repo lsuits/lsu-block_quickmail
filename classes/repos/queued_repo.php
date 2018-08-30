@@ -208,12 +208,14 @@ class queued_repo extends repo implements queued_repo_interface {
 
 		$now = time();
 
-		$sql = 'SELECT m.* 
+		$sql = 'SELECT m.*
 				FROM {block_quickmail_messages} m
-				WHERE m.is_draft = 0 
-				AND m.is_sending = 0 
-				AND m.timedeleted = 0 
-				AND m.to_send_at <= :now AND m.sent_at = 0';
+                                INNER JOIN {block_quickmail_msg_recips} mr ON m.id = mr.message_id
+				WHERE m.is_draft = 0
+				AND m.is_sending = 0
+				AND m.timedeleted = 0
+				AND m.to_send_at <= :now AND mr.sent_at = 0
+                                GROUP BY m.id';
 
 		// pull data, iterate through recordset, instantiate persistents, add to array
 		$data = [];

@@ -446,12 +446,14 @@ class messenger implements messenger_interface {
         // iterate through all message recipients
         foreach($this->message->get_message_recipients() as $recipient) {
             // if any exceptions are thrown, gracefully move to the next recipient
-            try {
-                // send to recipient now
-                $this->send_to_recipient($recipient);
-            } catch (\Exception $e) {
-                // TODO: handle a failed send here?
-                continue;
+            if (!$recipient->has_been_sent_to()) {
+                try {
+                    // send to recipient now
+                   $this->send_to_recipient($recipient);
+                } catch (\Exception $e) {
+                    // TODO: handle a failed send here?
+                    continue;
+                }
             }
         }
         
