@@ -40,7 +40,7 @@ class grade_calculator {
      *
      * @param int  $course_id    course id
      * @param int  $user_id      user id
-     * @param int  $value_type   weight|grade|range|percentage|feedback
+     * @param int  $value_type   weight|grade|range|percentage|feedback|round
      */
     public function __construct($course_id, $user_id, $value_type) {
         $this->course_id = $course_id;
@@ -56,15 +56,38 @@ class grade_calculator {
      * 
      * @param  int     $course_id
      * @param  int     $user_id
-     * @param  string  $value_type        weight|grade|range|percentage|feedback
+     * @param  string  $value_type        weight|grade|range|percentage|feedback|round
      * @return mixed
      * @throws block_quickmail\services\grade_calculator\value_type_not_found_exception
      */
     public static function get_user_grade_in_course($course_id, $user_id, $value_type)
     {
-        $calc = new self($course_id, $user_id, $value_type);
+        $given_value_type = $value_type;
 
-        return $calc->get_course_grade_value_by_type();
+        // if the given type is "round", fetch as percentage first
+        if ($given_value_type == 'round') {
+            $value_type = 'percentage';
+        }
+
+        try {
+            $calc = new self($course_id, $user_id, $value_type);
+            
+            // fetch the grade value for the given type
+            $value = $calc->get_course_grade_value_by_type();
+        } catch (\Exception $e) {
+            throw new calculation_exception('Could not calculate the ' . $this->value_type . ' grade value for this course user.', $this->course_id, $this->user_id);
+        }
+        
+        // if the requested value type is "round", round the value to no decimal places
+        if ($given_value_type == 'round') {
+            $explode = explode(' ', $value);
+
+            $first = reset($explode);
+
+            $value = (int) round($first, 0, PHP_ROUND_HALF_DOWN);
+        }
+
+        return $value;
     }
 
     /**
