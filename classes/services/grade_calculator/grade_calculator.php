@@ -24,17 +24,28 @@
 
 namespace block_quickmail\services\grade_calculator;
 
+use block_quickmail\services\grade_calculator\value_type_not_found_exception;
+
 class grade_calculator {
 
     public $course_id;
     public $user_id;
+    public $value_type;
     public $context;
     public $report;
     public $dom;
 
-    public function __construct($course_id, $user_id) {
+    /**
+     * Constructs the grade calculator
+     *
+     * @param int  $course_id    course id
+     * @param int  $user_id      user id
+     * @param int  $value_type   weight|grade|range|percentage|feedback
+     */
+    public function __construct($course_id, $user_id, $value_type) {
         $this->course_id = $course_id;
         $this->user_id = $user_id;
+        $this->value_type = $value_type;
         $this->set_context();
         $this->set_report();
         $this->set_dom();
@@ -42,16 +53,18 @@ class grade_calculator {
     
     /**
      * Returns a given user's grade of a given type in a given course
+     * 
      * @param  int     $course_id
      * @param  int     $user_id
-     * @param  string  $type        raw|range|percentage
+     * @param  string  $value_type        weight|grade|range|percentage|feedback
      * @return mixed
+     * @throws block_quickmail\services\grade_calculator\value_type_not_found_exception
      */
-    public static function get_user_grade_in_course($course_id, $user_id, $type)
+    public static function get_user_grade_in_course($course_id, $user_id, $value_type)
     {
-        $calc = new self($course_id, $user_id);
+        $calc = new self($course_id, $user_id, $value_type);
 
-        return $calc->get_course_grade_value_by_type($type);
+        return $calc->get_course_grade_value_by_type();
     }
 
     /**
@@ -95,20 +108,40 @@ class grade_calculator {
     }
 
     /**
-     * Returns a course grade value of the given type from the user report
+     * Returns a course grade value for the set type from the user report
      * 
-     * @param  string  $type
      * @return mixed
      */
-    private function get_course_grade_value_by_type($type)
+    private function get_course_grade_value_by_type()
     {
-        $elements = $this->get_course_grade_nodes();
+        $node_list = $this->get_course_grade_nodes();
 
-        // get the element that corresponds to the given grade type
-        $element = $elements->item($elements->length - $this->get_grade_index_offset_by_type($type));
+        $element = $this->get_course_grade_element_of_type($node_list);
 
         // return the content of this element
         return $element->textContent;
+    }
+
+    /**
+     * Iterates through the given element list, returning the element which contains a
+     * 'headers' attribute that includes the set value type
+     * 
+     * @param  \DOMNodeList  $elements
+     * @return \DOMElement
+     */
+    private function get_course_grade_element_of_type($elements)
+    {
+        foreach ($elements as $element) {
+            $header_attr_string = $element->getAttribute('headers');
+
+            $attrs = explode(' ', $header_attr_string);
+
+            if (in_array($this->value_type, $attrs)) {
+                return $element;
+            }
+        }
+
+        throw new value_type_not_found_exception('A ' . $this->value_type . ' was not found for this course user.', $this->course_id, $this->user_id);
     }
 
     /**
@@ -127,30 +160,6 @@ class grade_calculator {
 
         // return a list of this tr's td dom elements
         return $last_tr_node->getElementsByTagName('td');
-    }
-
-    /**
-     * Returns an index offset for the given type, defaulting to raw
-     * 
-     * @param  string  $type
-     * @return int
-     */
-    private function get_grade_index_offset_by_type($type)
-    {
-        switch ($type) {
-            case 'percentage':
-                return 3;
-                break;
-
-            case 'range':
-                return 4;
-                break;
-            
-            default:
-            case 'raw':
-                return 5;
-                break;
-        }
     }
 
 }
