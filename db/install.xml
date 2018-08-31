@@ -80,6 +80,9 @@
         <KEY NAME="message_id" TYPE="foreign" FIELDS="message_id" REFTABLE="block_quickmail_messages" REFFIELDS="id"/>
         <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="msgrec" UNIQUE="false" FIELDS="sent_at"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="block_quickmail_draft_recips" COMMENT="The recipient entity keys of a specific message">
       <FIELDS>
