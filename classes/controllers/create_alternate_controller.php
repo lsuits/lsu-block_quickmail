@@ -8,6 +8,7 @@ use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail\services\alternate_manager;
 use block_quickmail\repos\role_repo;
+use context_course;
 
 class create_alternate_controller extends base_controller {
 
@@ -40,7 +41,8 @@ class create_alternate_controller extends base_controller {
     public function create_alternate(controller_request $request)
     {
         // determine whether or not this user is able to create alternates for the course level
-        $allow_course_alternates = block_quickmail_plugin::user_has_capability('allowcoursealternate', $this->props->user, $this->context);
+        $course_context = context_course::instance($this->props->course_id);
+        $allow_course_alternates = block_quickmail_plugin::user_has_capability('allowcoursealternate', $this->props->user, $course_context);
 
         // fetch the roles that are available to be assigned to use this new alternate email
         $role_selection = $allow_course_alternates
