@@ -80,7 +80,7 @@ if($ADMIN->fulltree) {
 
     // build a $value=>$label array of options
     $block_quickmail_roleselection_options = array_map(function ($role) { 
-        return $role->shortname; 
+        return $role->name; 
     }, $roles);
 
     $settings->add(
