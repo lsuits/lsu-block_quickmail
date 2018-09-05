@@ -128,6 +128,7 @@ class queued_repo extends repo implements queued_repo_interface {
 		// set params for db query
 		$query_params = [
 			'user_id' => $user_id, 
+			'is_draft' => 0, 
 		];
 
 		// conditionally add course id to db query params if appropriate
@@ -192,7 +193,7 @@ class queued_repo extends repo implements queued_repo_interface {
 			$sql .= ' AND m.course_id = :course_id';
 		}
 							
-		$sql .= ' AND m.to_send_at <> 0 AND m.timedeleted = 0 AND m.sent_at = 0 ORDER BY ' . $sort_by . ' ' . $sort_dir;
+		$sql .= ' AND m.to_send_at <> 0 AND m.timedeleted = 0 AND m.sent_at = 0 AND m.is_draft = 0 ORDER BY ' . $sort_by . ' ' . $sort_dir;
 
 		return $sql;
 	}
@@ -210,12 +211,13 @@ class queued_repo extends repo implements queued_repo_interface {
 
 		$sql = 'SELECT m.*
 				FROM {block_quickmail_messages} m
-                                INNER JOIN {block_quickmail_msg_recips} mr ON m.id = mr.message_id
+                INNER JOIN {block_quickmail_msg_recips} mr ON m.id = mr.message_id
 				WHERE m.is_draft = 0
 				AND m.is_sending = 0
 				AND m.timedeleted = 0
-				AND m.to_send_at <= :now AND mr.sent_at = 0
-                                GROUP BY m.id';
+				AND m.to_send_at <= :now 
+				AND mr.sent_at = 0
+                GROUP BY m.id';
 
 		// pull data, iterate through recordset, instantiate persistents, add to array
 		$data = [];
