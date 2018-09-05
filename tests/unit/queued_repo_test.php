@@ -26,6 +26,7 @@ require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\queued_repo;
 use block_quickmail\persistents\message;
+use block_quickmail\persistents\message_recipient;
 use block_quickmail\repos\pagination\paginated;
 
 class block_quickmail_queued_repo_testcase extends advanced_testcase {
@@ -156,7 +157,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
     {
         $this->resetAfterTest(true);
 
-        $this->create_test_queueds();
+        $created_queueds = $this->create_test_queueds();
 
         // get all queueds for user: 1
         $queueds = queued_repo::get_for_user(1, 0);
@@ -168,13 +169,13 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
             'sort' => 'id',
             'dir' => 'asc'
         ]);
-        $this->assertEquals(144000, $queueds->data[0]->get('id'));
+        $this->assertEquals($created_queueds[0]->id, $queueds->data[0]->get('id'));
 
         $queueds = queued_repo::get_for_user(1, 0, [
             'sort' => 'id',
             'dir' => 'desc'
         ]);
-        $this->assertEquals(144006, $queueds->data[0]->get('id'));
+        $this->assertEquals($created_queueds[6]->id, $queueds->data[0]->get('id'));
 
         // sort by course
         $queueds = queued_repo::get_for_user(1, 0, [
@@ -233,7 +234,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
     {
         $this->resetAfterTest(true);
 
-        $this->create_test_queueds();
+        $created_queueds = $this->create_test_queueds();
 
         // get all queueds for user: 1, course: 1
         $queueds = queued_repo::get_for_user(1, 1);
@@ -245,13 +246,13 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
             'sort' => 'id',
             'dir' => 'asc'
         ]);
-        $this->assertEquals(144000, $queueds->data[0]->get('id'));
+        $this->assertEquals($created_queueds[0]->id, $queueds->data[0]->get('id'));
 
         $queueds = queued_repo::get_for_user(1, 1, [
             'sort' => 'id',
             'dir' => 'desc'
         ]);
-        $this->assertEquals(144006, $queueds->data[0]->get('id'));
+        $this->assertEquals($created_queueds[6]->id, $queueds->data[0]->get('id'));
 
         // sort by course
         $queueds = queued_repo::get_for_user(1, 1, [
@@ -346,7 +347,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         // should produce 6 queued messages with send times in the future AND 1 with scheduled time in the past
-        $queueds = $this->create_test_queueds();
+        $created_queueds = $this->create_test_queueds();
 
         $messages = queued_repo::get_all_messages_to_send();
 
@@ -355,11 +356,11 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $now = time();
 
         // update 3 of these messages to have send times in the past
-        foreach ($queueds as $key => $message) {
+        foreach ($created_queueds as $key => $message) {
             if (in_array($key, [1, 3, 5])) {
                 $message = new message($message->id);
-
-                $message->set('to_send_at', $now - $key);
+                $sent_at = $now - $key;
+                $message->set('to_send_at', $sent_at);
                 $message->update();
             }
         }
@@ -369,7 +370,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $this->assertCount(4, $messages);
 
         // change one of these updated messages to a draft
-        $message = new message($queueds[1]->id);
+        $message = new message($created_queueds[1]->id);
         $message->set('is_draft', 1);
         $message->update();
 
@@ -378,16 +379,21 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         $this->assertCount(3, $messages);
 
         // change another one of these updated messages to sent status
-        $message = new message($queueds[3]->id);
-        $message->set('sent_at', $now + 100000);
+        $message = new message($created_queueds[3]->id);
+
+        $sent_at = $now + 100000;
+
+        $message->set('sent_at', $sent_at);
         $message->update();
+
+        $this->mark_message_recips_as_sent_to($message, $sent_at);
 
         $messages = queued_repo::get_all_messages_to_send();
 
         $this->assertCount(2, $messages);
 
         // change another one of these updated messages to sending status
-        $message = new message($queueds[5]->id);
+        $message = new message($created_queueds[5]->id);
         $message->set('is_sending', 1);
         $message->update();
 
@@ -404,12 +410,27 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
     
     private function create_message($is_queued = false)
     {
-        return message::create_new([
+        $message = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
             'message_type' => 'email',
             'to_send_at' => $is_queued ? time() : 0
         ]);
+
+        message_recipient::create_for_message($message, [
+            'user_id' => 1,
+            'sent_at' => 0,
+        ]);
+
+        return $message;
+    }
+
+    private function mark_message_recips_as_sent_to($message, $sent_at)
+    {
+        foreach ($message->get_message_recipients() as $recipient) {
+            $recipient->set('sent_at', $sent_at);
+            $recipient->update();
+        }
     }
 
     /**
