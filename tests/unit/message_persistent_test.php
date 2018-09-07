@@ -130,6 +130,41 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals($user_two->id, $message_recipient_array[1]);
     }
 
+    public function test_get_message_recipient_users()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        $user_one = $this->getDataGenerator()->create_user();
+
+        $one = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_one->id,
+        ]);
+
+        $user_two = $this->getDataGenerator()->create_user();
+
+        $two = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_two->id,
+        ]);
+
+        $user_three = $this->getDataGenerator()->create_user();
+
+        $three = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_three->id,
+        ]);
+
+        $message_recipient_users = $message->get_message_recipient_users('id,email');
+
+        $this->assertInternalType('array', $message_recipient_users);
+        $this->assertCount(3, $message_recipient_users);
+        $this->assertEquals($user_one->id, $message_recipient_users[$user_one->id]->id);
+        $this->assertEquals($user_one->email, $message_recipient_users[$user_one->id]->email);
+    }
+
     public function test_get_additional_emails()
     {
         $this->resetAfterTest(true);

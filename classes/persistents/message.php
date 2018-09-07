@@ -188,6 +188,27 @@ class message extends \block_quickmail\persistents\persistent {
 	}
 
 	/**
+     * Returns an array of this message's recipient user objects which contain the given properties
+     * 
+     * @param  string  $user_properties
+     * @return array
+     */
+    public function get_message_recipient_users($user_properties = 'email,firstname,lastname')
+    {
+        // get an array of user ids from this message's recipients
+        $user_ids = array_map(function($recip) {
+            return $recip->get('user_id');
+        }, $this->get_message_recipients());
+
+        global $DB;
+
+        // fetch limited user object from these ids
+        $users = $DB->get_records_list('user', 'id', $user_ids, '', $user_properties);
+
+        return $users;
+    }
+
+	/**
 	 * Returns any single stored user filter value for this message
 	 *
 	 * Note: this will only return a value for "broadcast" messages with a valid draft recipient filter value set
