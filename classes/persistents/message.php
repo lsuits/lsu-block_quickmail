@@ -190,8 +190,8 @@ class message extends \block_quickmail\persistents\persistent {
 	/**
      * Returns an array of this message's recipient user objects which contain the given properties
      * 
-     * @param  string  $user_properties
-     * @return array
+     * @param  string  $user_properties    moodle user properties that should be included in the return object
+     * @return array   keyed by user id
      */
     public function get_message_recipient_users($user_properties = 'email,firstname,lastname')
     {
