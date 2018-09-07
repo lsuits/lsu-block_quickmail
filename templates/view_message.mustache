@@ -92,8 +92,15 @@
     
     <div style="display: flex;">
         <a href="{{ urlBack }}" class="btn" style="margin-right: 10px;">{{ urlBackLabel }}</a>
-        <a href="{{ urlSendNow }}" class="btn btn-success" style="margin-right: 10px;">{{# str }} send_now, block_quickmail {{/ str }}</a>
-        <a href="{{ urlUnqueue }}" class="btn btn-warning" style="margin-right: 10px;">{{# str }} unqueue, block_quickmail {{/ str }}</a>
+        
+        {{^wasSent}}
+            <a href="{{ urlSendNow }}" class="btn btn-success" style="margin-right: 10px;">{{# str }} send_now, block_quickmail {{/ str }}</a>
+        {{/wasSent}}
+        
+        {{^wasSent}}
+            <a href="{{ urlUnqueue }}" class="btn btn-warning" style="margin-right: 10px;">{{# str }} unqueue, block_quickmail {{/ str }}</a>
+        {{/wasSent}}
+        
         <a href="{{ urlDuplicate }}" class="btn btn-info">{{# str }} duplicate, block_quickmail {{/ str }}</a>
     </div>
     
