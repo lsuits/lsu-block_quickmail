@@ -24,6 +24,7 @@
  
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
+use block_quickmail_string;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_recipient;
@@ -89,8 +90,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals('Id dolore irure nostrud dolor eu elit et...', $message->get_body_preview(40));
         $this->assertEquals(date('Y-m-d g:i a', $message->get('timecreated')), $message->get_readable_created_at());
         $this->assertEquals(date('Y-m-d g:i a', $message->get('timemodified')), $message->get_readable_last_modified_at());
-        $this->assertEquals(date('Y-m-d g:i a', $message->get('sent_at')), $message->get_readable_sent_at());
-        $this->assertEquals(date('Y-m-d g:i a', $message->get('to_send_at')), $message->get_readable_to_send_at());
+        $this->assertEquals(block_quickmail_string::get('never'), $message->get_readable_sent_at());
+        $this->assertEquals(block_quickmail_string::get('never'), $message->get_readable_to_send_at());
     }
 
     public function test_get_message_recipients()
