@@ -1,0 +1,100 @@
+<!-- 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+-->
+
+<div class="block_quickmail_view_message_component">
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 12px;">
+        <h4>{{ messageSubject }}</h4>
+
+        <a href="{{ urlBack }}">{{ urlBackLabel }}</a>
+    </div>
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 12px;">
+        <div style="margin-bottom: 12px; padding-right: 10px;">
+            <p style="margin-bottom: 0px;">{{ status }}</p>
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
+        </div>
+
+        <div style="margin-bottom: 12px; padding-right: 10px;">
+            <p style="margin-bottom: 0px;">{{ fromEmail }}</p>
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} from_email, block_quickmail {{/ str }}</small>
+        </div>
+
+        <div style="margin-bottom: 12px; padding-right: 10px;">
+            <p style="margin-bottom: 0px;">{{ courseName }}</p>
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
+        </div>
+        
+        {{^isSending}}
+            <div style="margin-bottom: 12px; padding-right: 10px;">
+                <p style="margin-bottom: 0px;">{{ sendDate }}</p>
+                <small class="text-muted" style="margin-top: 0px;">Date</small>
+            </div>
+        {{/isSending}}
+    </div>
+
+    <h6>{{ messageType }} Content</h6>
+    <hr>
+
+    <div style="margin-bottom: 30px;">
+        {{{ messageBody }}}
+    </div>
+
+    <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ recipientCount }}</span></h6>
+    <hr>
+
+    <div style="margin-bottom: 30px;">
+        {{#recipientUsers}}
+            <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+        {{/recipientUsers}}
+    </div>
+
+    <h6>{{# str }} additional_emails, block_quickmail {{/ str }} <span class="badge badge-primary">{{ additionalEmailCount }}</span></h6>
+    <hr>
+
+    <div style="margin-bottom: 30px;">
+        {{#additionalEmails}}
+            <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+        {{/additionalEmails}}
+    </div>
+
+    <h6>{{# str }} attachments, block_quickmail {{/ str }} <span class="badge badge-primary">{{ attachmentCount }}</span></h6>
+    <hr>
+
+    <div style="margin-bottom: 30px;">
+        <ul>
+        {{#attachments}}
+            <li>{{{ . }}}</li>
+        {{/attachments}}
+        </ul>
+    </div>
+    
+    <div style="display: flex;">
+        <a href="{{ urlBack }}" class="btn" style="margin-right: 10px;">{{ urlBackLabel }}</a>
+        <a href="{{ urlSendNow }}" class="btn btn-success" style="margin-right: 10px;">{{# str }} send_now, block_quickmail {{/ str }}</a>
+        <a href="{{ urlUnqueue }}" class="btn btn-warning" style="margin-right: 10px;">{{# str }} unqueue, block_quickmail {{/ str }}</a>
+        <a href="{{ urlDuplicate }}" class="btn btn-info">{{# str }} duplicate, block_quickmail {{/ str }}</a>
+    </div>
+    
+</div>

@@ -79,6 +79,7 @@ class queued_message_index_component extends component implements \renderable {
                 'messagePreview' => $message->get_body_preview(),
                 'createdAt' => $message->get_readable_date('timecreated'),
                 'scheduledSendAt' => $message->get_readable_date('to_send_at'),
+                'viewMessageUrl' => new moodle_url('/blocks/quickmail/message.php', ['id' => $message->get('id')])
             ];
         }
 

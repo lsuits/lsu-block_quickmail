@@ -29,6 +29,7 @@ $string['open_compose'] = 'Compose Message';
 $string['manage_drafts'] = 'View Drafts';
 $string['view_queued'] = 'View Scheduled';
 $string['view_sent'] = 'View Sent Messages';
+$string['view_message_detail'] = 'View Message Details';
 $string['manage_signatures'] = 'My Signatures';
 $string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
@@ -59,6 +60,7 @@ $string['actions'] = 'Actions';
 $string['title'] = 'Title';
 $string['status'] = 'Status';
 $string['here'] = 'here';
+$string['view'] = 'View';
 $string['back_to_course'] = 'Back to course';
 $string['back_to_mypage'] = 'Back to My page';
 
@@ -332,6 +334,8 @@ $string['redirect_back_to_course_from_message_after_send'] = 'Your message will 
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
+$string['redirect_back_from_message_detail_message_deleted'] = 'The message you are attempting to view has been deleted.';
+$string['redirect_back_from_message_detail_no_access'] = 'You are not able to view this message.';
 
 
 // validation
