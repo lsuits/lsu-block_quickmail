@@ -49,12 +49,12 @@
         {{^isSending}}
             <div style="margin-bottom: 12px; padding-right: 10px;">
                 <p style="margin-bottom: 0px;">{{ sendDate }}</p>
-                <small class="text-muted" style="margin-top: 0px;">Date</small>
+                <small class="text-muted" style="margin-top: 0px;">{{# str }} date {{/ str }}</small>
             </div>
         {{/isSending}}
     </div>
 
-    <h6>{{ messageType }} Content</h6>
+    <h6>{{ messageType }} {{# str }} content {{/ str }}</h6>
     <hr>
 
     <div style="margin-bottom: 30px;">
