@@ -35,7 +35,8 @@ class view_message_component extends component implements \renderable {
 
     public $message;
     public $user;
-    public $recipient_users;
+    public $sent_recipient_users;
+    public $unsent_recipient_users;
     public $additional_emails;
     public $attachments;
 
@@ -43,7 +44,8 @@ class view_message_component extends component implements \renderable {
         parent::__construct($params);
         $this->message = $this->get_param('message');
         $this->user = $this->get_param('user');
-        $this->recipient_users = $this->transform_recipient_users($this->get_param('recipient_users'));
+        $this->sent_recipient_users = $this->transform_recipient_users($this->get_param('sent_recipient_users'));
+        $this->unsent_recipient_users = $this->transform_recipient_users($this->get_param('unsent_recipient_users'));
         $this->additional_emails = $this->get_param('additional_emails');
         $this->attachments = $this->transform_attachments($this->get_param('attachments'));
     }
@@ -87,8 +89,10 @@ class view_message_component extends component implements \renderable {
             'mentorCopyRequested'    => (bool) $this->message->get('send_to_mentors'),
             'attachmentCount'        => count($this->attachments),
             'attachments'            => $this->attachments,
-            'recipientCount'         => count($this->recipient_users),
-            'recipientUsers'         => $this->recipient_users,
+            'sentRecipientCount'     => count($this->sent_recipient_users),
+            'sentRecipientUsers'     => $this->sent_recipient_users,
+            'unsentRecipientCount'   => count($this->unsent_recipient_users),
+            'unsentRecipientUsers'   => $this->unsent_recipient_users,
             'additionalEmailCount'   => count($this->additional_emails),
             'additionalEmails'       => $this->additional_emails,
             'urlBack'                => $course_id > 1 

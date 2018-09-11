@@ -61,14 +61,47 @@
         {{{ messageBody }}}
     </div>
 
-    <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ recipientCount }}</span></h6>
-    <hr>
+    <!-- if message is queued, show all unsent recipients as "recipients" and do not show unsent -->
+    {{#isQueued}}
+        <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+        <hr>
 
-    <div style="margin-bottom: 30px;">
-        {{#recipientUsers}}
-            <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
-        {{/recipientUsers}}
-    </div>
+        <div style="margin-bottom: 30px;">
+            {{#unsentRecipientUsers}}
+                <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+            {{/unsentRecipientUsers}}
+        </div>
+    {{/isQueued}}
+
+    <!-- if message is not queued then it must be sent or sending, show both sent and unsent recipients individually -->
+    {{^isQueued}}
+        <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ sentRecipientCount }}</span></h6>
+        <small>{{# str }} success_recipients_promise, block_quickmail {{/ str }}</small>
+        <hr>
+
+        <div style="margin-bottom: 30px;">
+            {{#sentRecipientUsers}}
+                <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+            {{/sentRecipientUsers}}
+        </div>
+
+        {{#wasSent}}
+            <h6>{{# str }} failed_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+            <small>{{# str }} failed_recipients_promise, block_quickmail {{/ str }}</small>
+        {{/wasSent}}
+
+        {{#isSending}}
+            <h6>{{# str }} pending_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+            <small>{{# str }} pending_recipients_promise, block_quickmail {{/ str }}</small>
+        {{/isSending}}
+        <hr>
+
+        <div style="margin-bottom: 30px;">
+            {{#unsentRecipientUsers}}
+                <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+            {{/unsentRecipientUsers}}
+        </div>
+    {{/isQueued}}
 
     <h6>{{# str }} additional_emails, block_quickmail {{/ str }} <span class="badge badge-primary">{{ additionalEmailCount }}</span></h6>
     <hr>
