@@ -163,16 +163,49 @@ class message extends \block_quickmail\persistents\persistent {
 	}
 
 	/**
-	 * Returns the message recipients that are associated with this message
+	 * Returns the message recipients of a given status that are associated with this message
 	 *
 	 * Optionally, returns as an array of user ids
 	 *
+	 * @param  string  $status               sent|unsent|all
+	 * @param  bool    $as_user_id_array
 	 * @return array
 	 */
-	public function get_message_recipients($as_user_id_array = false) {
+	public function get_message_recipients($status = 'all', $as_user_id_array = false) {
 		$message_id = $this->get('id');
 
-		$recipients = message_recipient::get_records(['message_id' => $message_id]);
+		// be sure we have a valid status
+		if ( ! in_array($status, ['all', 'sent', 'unsent'])) {
+			$status = 'all';
+		}
+
+		// get recipients based on status
+		
+		// all
+		if ($status == 'all') {
+			$recipients = message_recipient::get_records(['message_id' => $message_id]);
+		
+		// unsent
+		} else if ($status == 'unsent') {
+			$recipients = message_recipient::get_records(['message_id' => $message_id, 'sent_at' => 0]);
+		
+		// sent
+		} else {
+			global $DB;
+
+			$recordset = $DB->get_recordset_sql("
+	            SELECT *
+	            FROM {block_quickmail_msg_recips} mr
+	            WHERE mr.message_id = ?
+	            AND mr.sent_at <> 0", [$message_id]);
+
+	        // iterate through recordset, instantiate persistents, add to array
+	        $recipients = [];
+	        foreach ($recordset as $record) {
+	            $recipients[] = new message_recipient(0, $record);
+	        }
+	        $recordset->close();
+		}
 
 		if ( ! $as_user_id_array) {
 			return $recipients;

@@ -94,40 +94,82 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('never'), $message->get_readable_to_send_at());
     }
 
-    public function test_get_message_recipients()
+    public function test_get_all_message_recipients()
     {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
         $user_one = $this->getDataGenerator()->create_user();
-
         $one = message_recipient::create_new([
             'message_id' => $message->get('id'),
             'user_id' => $user_one->id,
         ]);
 
         $user_two = $this->getDataGenerator()->create_user();
-
         $two = message_recipient::create_new([
             'message_id' => $message->get('id'),
             'user_id' => $user_two->id,
         ]);
 
         $user_three = $this->getDataGenerator()->create_user();
-
         $three = message_recipient::create_new([
             'message_id' => $message->get('id'),
             'user_id' => $user_three->id,
         ]);
 
         $message_recipients = $message->get_message_recipients();
-        $message_recipient_array = $message->get_message_recipients(true);
+        $message_recipient_array = $message->get_message_recipients('all', true);
 
         $this->assertCount(3, $message_recipients);
         $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
         $this->assertCount(3, $message_recipient_array);
         $this->assertEquals($user_two->id, $message_recipient_array[1]);
+    }
+
+    public function test_get_message_recipients_by_status()
+    {
+        $this->resetAfterTest(true);
+
+        $message = $this->create_message();
+
+        // create an unsent-to recip
+        $user_one = $this->getDataGenerator()->create_user();
+        $one = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_one->id,
+        ]);
+
+        // create an sent-to recip
+        $user_two = $this->getDataGenerator()->create_user();
+        $two = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_two->id,
+            'sent_at' => time()
+        ]);
+
+        // create an unsent-to recip
+        $user_three = $this->getDataGenerator()->create_user();
+        $three = message_recipient::create_new([
+            'message_id' => $message->get('id'),
+            'user_id' => $user_three->id,
+        ]);
+
+        $message_recipients = $message->get_message_recipients('unsent');
+        $message_recipient_array = $message->get_message_recipients('unsent', true);
+
+        $this->assertCount(2, $message_recipients);
+        $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
+        $this->assertCount(2, $message_recipient_array);
+        $this->assertEquals($user_three->id, $message_recipient_array[1]);
+
+        $message_recipients = $message->get_message_recipients('sent');
+        $message_recipient_array = $message->get_message_recipients('sent', true);
+
+        $this->assertCount(1, $message_recipients);
+        $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
+        $this->assertCount(1, $message_recipient_array);
+        $this->assertEquals($user_two->id, $message_recipient_array[0]);
     }
 
     public function test_get_message_recipient_users()
@@ -137,21 +179,18 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $message = $this->create_message();
 
         $user_one = $this->getDataGenerator()->create_user();
-
         $one = message_recipient::create_new([
             'message_id' => $message->get('id'),
             'user_id' => $user_one->id,
         ]);
 
         $user_two = $this->getDataGenerator()->create_user();
-
         $two = message_recipient::create_new([
             'message_id' => $message->get('id'),
             'user_id' => $user_two->id,
         ]);
 
         $user_three = $this->getDataGenerator()->create_user();
-
         $three = message_recipient::create_new([
             'message_id' => $message->get('id'),
             'user_id' => $user_three->id,
@@ -215,7 +254,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'user_id' => $user_two->id,
         ]);
 
-        $original_recipient_array = $message->get_message_recipients(true);
+        $original_recipient_array = $message->get_message_recipients('all', true);
         $this->assertCount(2, $original_recipient_array);
 
         // create new users to become recipients
@@ -232,7 +271,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             $user_five->id
         ]);
 
-        $new_recipient_array = $message->get_message_recipients(true);
+        $new_recipient_array = $message->get_message_recipients('all', true);
         $this->assertCount(3, $new_recipient_array);
 
         $this->assertCount(0, array_intersect($original_recipient_array, $new_recipient_array));
