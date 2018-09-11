@@ -111,6 +111,18 @@
             <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
         {{/additionalEmails}}
     </div>
+    
+    <h6>{{# str }} mentors_copied, block_quickmail {{/ str }}</h6>
+    <hr>
+    <div style="margin-bottom: 20px;">
+        {{#mentorCopyRequested}}
+            <small>{{# str }} yes {{/ str }}</small>
+        {{/mentorCopyRequested}}
+
+        {{^mentorCopyRequested}}
+            <small>{{# str }} no {{/ str }}</small>
+        {{/mentorCopyRequested}}
+    </div>
 
     <h6>{{# str }} attachments, block_quickmail {{/ str }} <span class="badge badge-primary">{{ attachmentCount }}</span></h6>
     <hr>
