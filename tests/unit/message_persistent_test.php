@@ -196,7 +196,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'user_id' => $user_three->id,
         ]);
 
-        $message_recipient_users = $message->get_message_recipient_users('id,email');
+        $message_recipient_users = $message->get_message_recipient_users('all', 'id,email');
 
         $this->assertInternalType('array', $message_recipient_users);
         $this->assertCount(3, $message_recipient_users);

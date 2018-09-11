@@ -221,17 +221,18 @@ class message extends \block_quickmail\persistents\persistent {
 	}
 
 	/**
-     * Returns an array of this message's recipient user objects which contain the given properties
+     * Returns an array of this message's recipient of a given status as user objects which contain the given properties
      * 
+     * @param  string  $status             sent|unsent|all
      * @param  string  $user_properties    moodle user properties that should be included in the return object
      * @return array   keyed by user id
      */
-    public function get_message_recipient_users($user_properties = 'email,firstname,lastname')
+    public function get_message_recipient_users($status = 'all', $user_properties = 'email,firstname,lastname')
     {
         // get an array of user ids from this message's recipients
-        $user_ids = array_map(function($recip) {
+        $user_ids = array_map(function($recip) use ($status) {
             return $recip->get('user_id');
-        }, $this->get_message_recipients());
+        }, $this->get_message_recipients($status));
 
         global $DB;
 
