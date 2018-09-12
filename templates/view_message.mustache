@@ -32,31 +32,29 @@
     
     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 12px;">
         <div style="margin-bottom: 12px; padding-right: 10px;">
+            <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
             <p style="margin-bottom: 0px;">{{ status }}</p>
-            <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
         </div>
 
         <div style="margin-bottom: 12px; padding-right: 10px;">
-            <p style="margin-bottom: 0px;">{{ fromEmail }}</p>
             <small class="text-muted" style="margin-top: 0px;">{{# str }} from_email, block_quickmail {{/ str }}</small>
+            <p style="margin-bottom: 0px;">{{ fromEmail }}</p>
         </div>
 
         <div style="margin-bottom: 12px; padding-right: 10px;">
-            <p style="margin-bottom: 0px;">{{ courseName }}</p>
             <small class="text-muted" style="margin-top: 0px;">{{# str }} status, block_quickmail {{/ str }}</small>
+            <p style="margin-bottom: 0px;">{{ courseName }}</p>
         </div>
         
         {{^isSending}}
             <div style="margin-bottom: 12px; padding-right: 10px;">
-                <p style="margin-bottom: 0px;">{{ sendDate }}</p>
                 <small class="text-muted" style="margin-top: 0px;">{{# str }} date {{/ str }}</small>
+                <p style="margin-bottom: 0px;">{{ sendDate }}</p>
             </div>
         {{/isSending}}
     </div>
 
     <h6>{{ messageType }} {{# str }} content {{/ str }}</h6>
-    <hr>
-
     <div style="margin-bottom: 30px;">
         {{{ messageBody }}}
     </div>
@@ -64,11 +62,9 @@
     <!-- if message is queued, show all unsent recipients as "recipients" and do not show unsent -->
     {{#isQueued}}
         <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
-        <hr>
-
         <div style="margin-bottom: 30px;">
             {{#unsentRecipientUsers}}
-                <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+                <span class="label recipients">{{{ . }}}</span>
             {{/unsentRecipientUsers}}
         </div>
     {{/isQueued}}
@@ -77,11 +73,9 @@
     {{^isQueued}}
         <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ sentRecipientCount }}</span></h6>
         <small>{{# str }} success_recipients_promise, block_quickmail {{/ str }}</small>
-        <hr>
-
         <div style="margin-bottom: 30px;">
             {{#sentRecipientUsers}}
-                <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+                <span class="label recipients">{{{ . }}}</span>
             {{/sentRecipientUsers}}
         </div>
 
@@ -94,26 +88,21 @@
             <h6>{{# str }} pending_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
             <small>{{# str }} pending_recipients_promise, block_quickmail {{/ str }}</small>
         {{/isSending}}
-        <hr>
-
         <div style="margin-bottom: 30px;">
             {{#unsentRecipientUsers}}
-                <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+                <span class="label recipients">{{{ . }}}</span>
             {{/unsentRecipientUsers}}
         </div>
     {{/isQueued}}
 
     <h6>{{# str }} additional_emails, block_quickmail {{/ str }} <span class="badge badge-primary">{{ additionalEmailCount }}</span></h6>
-    <hr>
-
     <div style="margin-bottom: 30px;">
         {{#additionalEmails}}
-            <span class="label" style="background-color: transparent; color: grey; border: 1px solid grey; padding: 4px 5px;">{{{ . }}}</span>
+            <span class="label recipients">{{{ . }}}</span>
         {{/additionalEmails}}
     </div>
     
     <h6>{{# str }} mentors_copied, block_quickmail {{/ str }}</h6>
-    <hr>
     <div style="margin-bottom: 20px;">
         {{#mentorCopyRequested}}
             <small>{{# str }} yes {{/ str }}</small>
@@ -125,7 +114,6 @@
     </div>
 
     <h6>{{# str }} attachments, block_quickmail {{/ str }} <span class="badge badge-primary">{{ attachmentCount }}</span></h6>
-    <hr>
 
     <div style="margin-bottom: 30px;">
         <ul>
