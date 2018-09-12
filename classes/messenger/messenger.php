@@ -304,7 +304,7 @@ class messenger implements messenger_interface {
         }
 
         // check that the draft belongs to the given user id
-        if ($original_draft->get('user_id') !== $user->id) {
+        if ( ! $original_draft->is_owned_by_user($user->id)) {
             throw new validation_exception(block_quickmail_string::get('must_be_owner_to_duplicate'));
         }
 
@@ -315,7 +315,7 @@ class messenger implements messenger_interface {
             'message_type' => $original_draft->get('message_type'),
             'alternate_email_id' => $original_draft->get('alternate_email_id'),
             'signature_id' => $original_draft->get('signature_id'),
-            'subject' => $original_draft->get('subject'),
+            'subject' => '(' . get_string('copy') . ') ' . $original_draft->get('subject'),
             'body' => $original_draft->get('body'),
             'editor_format' => $original_draft->get('editor_format'),
             'is_draft' => 1,
@@ -345,6 +345,59 @@ class messenger implements messenger_interface {
 
         // duplicate the message additional emails
         foreach ($original_draft->get_additional_emails() as $additional_email) {
+            message_additional_email::create_new([
+                'message_id' => $new_draft->get('id'),
+                'email' => $additional_email->get('email'),
+            ]);
+        }
+
+        return $new_draft;
+    }
+
+    /**
+     * Creates and returns a new message given a message id
+     *
+     * Note: this does not duplicate the intended recipient data
+     * 
+     * @param  int     $message_id
+     * @param  object  $user         the user duplicating the message
+     * @return message
+     */
+    public static function duplicate_message($message_id, $user)
+    {
+        // get the message to be duplicated
+        if ( ! $original_message = new message($message_id)) {
+            throw new validation_exception(block_quickmail_string::get('could_not_duplicate'));
+        }
+
+        // make sure it's not a draft
+        if ($original_message->is_message_draft()) {
+            throw new validation_exception(block_quickmail_string::get('could_not_duplicate'));
+        }
+
+        // check that the message belongs to the given user id
+        if ( ! $original_message->is_owned_by_user($user->id)) {
+            throw new validation_exception(block_quickmail_string::get('must_be_owner_to_duplicate'));
+        }
+
+        // create a new draft message from the original's data
+        $new_draft = message::create_new([
+            'course_id' => $original_message->get('course_id'),
+            'user_id' => $original_message->get('user_id'),
+            'message_type' => $original_message->get('message_type'),
+            'alternate_email_id' => $original_message->get('alternate_email_id'),
+            'signature_id' => $original_message->get('signature_id'),
+            'subject' => '(' . get_string('copy') . ') ' . $original_message->get('subject'),
+            'body' => $original_message->get('body'),
+            'editor_format' => $original_message->get('editor_format'),
+            'is_draft' => 1,
+            'send_receipt' => $original_message->get('send_receipt'),
+            'no_reply' => $original_message->get('no_reply'),
+            'usermodified' => $user->id
+        ]);
+
+        // duplicate the message additional emails
+        foreach ($original_message->get_additional_emails() as $additional_email) {
             message_additional_email::create_new([
                 'message_id' => $new_draft->get('id'),
                 'email' => $additional_email->get('email'),

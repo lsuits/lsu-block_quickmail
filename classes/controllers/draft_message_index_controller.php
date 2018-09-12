@@ -115,14 +115,22 @@ class draft_message_index_controller extends base_controller {
             $request->redirect_as_error('No message was specified!', static::$base_uri, $this->props->page_params);
         }
 
-        // attempt to fetch the message to send now
-        if ( ! $message = draft_repo::find_for_user_or_null($this->props->page_params['message_id'], $this->props->user->id)) {
+        // attempt to fetch the message which must be non-deleted and belong to this user
+        if ( ! $message = message::find_owned_by_user_or_null($this->props->page_params['message_id'], $this->props->user->id)) {
             // redirect and notify of error
             $request->redirect_as_error(block_quickmail_string::get('draft_no_record'), static::$base_uri, $this->get_form_url_params());
         }
 
-        // attempt to duplicate the draft
-        \block_quickmail\messenger\messenger::duplicate_draft($message->get('id'), $this->props->user);
+        // if this message is a draft
+        if ($message->get('is_draft')) {
+            // attempt to duplicate the draft
+            \block_quickmail\messenger\messenger::duplicate_draft($message->get('id'), $this->props->user);
+        
+        // otherwise, this must be a scheduled, sending, or sent message
+        } else {
+            // attempt to duplicate the non-draft message
+            \block_quickmail\messenger\messenger::duplicate_message($message->get('id'), $this->props->user);
+        }
 
         $request->redirect_as_success(block_quickmail_string::get('redirect_back_to_course_from_message_after_duplicate'), static::$base_uri, $this->get_form_url_params());
     }
