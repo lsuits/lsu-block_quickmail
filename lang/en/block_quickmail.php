@@ -419,10 +419,4 @@ $string['receipt_email_body'] = '
     <strong>Message Body:</strong>
 </p>
 
-{$a->message_body}
-
-<p>
-    --------------------------------<br><br>
-    <i>Note: This message indicates that your message was sent by the system. If any individual failures were detected they will be attempted further.</i>
-</p>
-';
+{$a->message_body}';
