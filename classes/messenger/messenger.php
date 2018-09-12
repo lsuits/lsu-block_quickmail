@@ -596,7 +596,7 @@ class messenger implements messenger_interface {
         $data->sent_to_mentors = $this->message->get('send_to_mentors') ? get_string('yes') : get_string('no');
         $data->additional_email_count = $this->message->cached_additional_email_count();
         $data->attachment_count = $this->message->cached_attachment_count();
-        $data->sent_message_link = html_writer::link(new moodle_url('/blocks/quickmail/sent.php', ['courseid' => $course->id]), block_quickmail_string::get('here'));
+        $data->sent_message_link = html_writer::link(new moodle_url('/blocks/quickmail/message.php', ['id' => $this->message->get('id')]), block_quickmail_string::get('here'));
 
         return block_quickmail_string::get('receipt_email_body', $data);
     }
