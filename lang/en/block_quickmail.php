@@ -1,123 +1,390 @@
 <?php
-$string['allusers'] = ' All Users';
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// block
 $string['pluginname'] = 'Quickmail';
-$string['sendadmin'] = 'Admin Email';
-$string['quickmail:cansend'] = "Allows users to send email through Quickmail";
-$string['quickmail:canconfig'] = "Allows users to configure Quickmail instance.";
-$string['quickmail:canimpersonate'] = "Allows users to log in as other users and view history.";
-$string['quickmail:allowalternate'] = "Allows users to add an alternate email for courses.";
-$string['quickmail:addinstance'] = "Add a new Quickmail block to a course page";
-$string['quickmail:myaddinstance'] = "Add a new Quickmail block to the /my page";
-$string['quickmail:candelete'] = "Allows users to delete email from history.";
-$string['backup_history'] = 'Include Quickmail History';
-$string['backup_block_configuration'] = 'Backup Quickmail Block Level Configuration Settings (Such as [Allow Students to use Quickmail])';
-$string['restore_history'] = 'Restore Quickmail History';
-$string['overwrite_history'] = 'Overwrite Quickmail History';
-$string['alternate'] = 'Alternate Emails';
-$string['eventalternateemailadded'] = 'Alternate email added';
-$string['composenew'] = 'Compose New Email';
-$string['email'] = 'Email';
-$string['drafts'] = 'View Drafts';
-$string['history'] = 'View History';
-$string['log'] = 'View History';
-$string['from'] = 'From &nbsp';
-$string['selected'] = 'Selected Recipients';
-$string['add_button'] = 'Add';
-$string['remove_button'] = 'Remove';
-$string['add_all'] = 'Add All';
-$string['remove_all'] = 'Remove All';
-$string['role_filter'] = 'Role Filter';
-$string['no_filter'] = 'No filter';
-$string['potential_users'] = 'Potential Recipients';
-$string['potential_sections'] = 'Potential Groups';
-$string['no_section'] = 'Not in a group';
-$string['all_sections'] = 'All Groups';
-$string['attachment'] = 'Attachment(s)';
-$string['subject'] = 'Subject';
-$string['message'] = 'Message';
-$string['send_email'] = 'Send Email';
-$string['save_draft'] = 'Save Draft';
+$string['open_broadcast'] = 'Compose Message';
+$string['open_compose'] = 'Compose Message';
+$string['manage_drafts'] = 'View Drafts';
+$string['view_queued'] = 'View Scheduled';
+$string['view_sent'] = 'View Sent Messages';
+$string['view_message_detail'] = 'View Message Details';
+$string['manage_signatures'] = 'My Signatures';
+$string['migrate'] = 'Migrate Data';
+$string['manage_alternates'] = 'Alternate Emails';
+$string['create_notification'] = 'Create Notification';
+$string['notifications'] = 'Notifications';
+$string['messageprovider:quickmessage'] = 'Quickmail message';
+
+// tasks
+$string['send_all_ready_messages_task'] = 'Send all scheduled Quickmail messages';
+$string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail notifications to be sent';
+$string['migrate_legacy_data_task'] = 'Migrate historical data from Quickmail v1 to v2';
+
+// capabilities
+$string['quickmail:cansend'] = 'Send Quickmail messages in a course';
+$string['quickmail:canconfig'] = 'Configure Quickmail settings in a course';
+$string['quickmail:allowalternate'] = 'Create alternate email addresses to send from';
+$string['quickmail:allowcoursealternate'] = 'Create alternate email addresses to share with other course instructors';
+$string['quickmail:addinstance'] = 'Add a new Quickmail block to a course page';
+$string['quickmail:myaddinstance'] = 'Add a new Quickmail block to the /my page';
+$string['quickmail:viewgroupusers'] = 'View all users in every group';
+$string['quickmail:createnotifications'] = 'Create auto notifications in Quickmail';
+
+// general terms
+$string['duplicate'] = 'Duplicate';
+$string['open'] = 'Open';
+$string['create_new'] = 'Create New';
 $string['actions'] = 'Actions';
-$string['signature'] = 'Signatures';
-$string['delete_confirm'] = 'Are you sure you want to delete message with the following details: {$a}';
 $string['title'] = 'Title';
-$string['no'] = 'No';
-$string['new'] = 'New';
-$string['sig'] ='Signature';
-$string['default_flag'] = 'Default';
-$string['config'] = 'Configuration';
-$string['downloads'] = 'Require login for attachments';
-$string['downloads_desc'] = 'This setting determines if attachments are available only to logged in Moodle users';
-$string['download_auth_only'] = 'Authorized Users Only';
-$string['download_open'] = 'Open Downloads';
-$string['receipt'] = 'Receive a copy';
-$string['receipt_help'] = 'Receive a copy of the email being sent';
+$string['status'] = 'Status';
+$string['here'] = 'here';
+$string['view'] = 'View';
+$string['back_to_course'] = 'Back to course';
+$string['back_to_mypage'] = 'Back to My page';
 
-$string['no_alternates'] = 'No alternate emails found for {$a->fullname}. Continue to make one.';
+// message status
+$string['drafted'] = 'Drafted';
+$string['queued'] = 'Scheduled';
+$string['sending'] = 'Sending';
+$string['sent'] = 'Sent';
+$string['deleted'] = 'Deleted';
 
-$string['select_users'] = 'Select Users ...';
-$string['select_groups'] = 'Select Sections ...';
+// messaging terms
+$string['included_ids_label'] = 'To';
+$string['excluded_ids_label'] = 'Exclude';
+$string['compose'] = 'Compose Course Message';
+$string['broadcast'] = 'Compose Admin Message';
+$string['subject'] = 'Subject';
+$string['message_preview'] = 'Message Preview';
+$string['message_details'] = 'Message Details';
+$string['preview_no_subject'] = '(No subject)';
+$string['body'] = 'Body';
+$string['preview_no_body'] = '(No content)';
+$string['send_at'] = 'Send at';
+$string['send_now'] = 'Send Now';
+$string['send_message'] = 'Send Message';
+$string['additional_emails'] = 'Additional Recipient Emails';
+$string['unqueue'] = 'Unqueue';
+$string['no_queued'] = 'You have no scheduled messages.';
+$string['message_no_record'] = 'Could not find that message.';
+$string['queued_no_record'] = 'Could not find that queued message.';
+$string['send_as_tasks'] = 'Send all messages as background tasks.';
+$string['receipt'] = 'Receive a send report';
+$string['mentor_copy'] = 'Send copies to mentors of recipients?';
+$string['mentors_copied'] = 'Send copies to mentors';
+$string['mentor_copy_subject_prefix'] = '[Mentor Copy]';
+$string['mentor_copy_message_prefix'] = '<p><strong>You are receiving this message because you are assigned as the mentor of</strong>: {$a}. The following is a copy of the message that was also sent to your mentee.</p>';
+$string['select_message_type'] = 'Send message as';
+$string['message_type_message'] = 'Moodle Message';
+$string['message_type_email'] = 'Email';
+$string['attached_files'] = 'Attached Files ({$a})';
+$string['download_file_content'] = 'Download File Content';
+$string['included_recipients_desc'] = 'Who should receive this message?';
+$string['no_included_recipients'] = 'No included recipients';
+$string['excluded_recipients_desc'] = 'Who should NOT receive this message?';
+$string['no_excluded_recipients'] = 'No excluded recipients';
+$string['created'] = 'Created';
+$string['last_updated'] = 'Last Updated';
+$string['send_schedule'] = 'Send Schedule';
+$string['scheduled_time'] = 'Scheduled Time';
+$string['last_run_at'] = 'Last Run';
+$string['next_run_at'] = 'Next Run';
+$string['sent_at'] = 'Sent At';
+$string['attachments'] = 'Attachments';
+$string['recipients'] = 'Recipients';
+$string['failed_recipients'] = 'Failed Recipients';
+$string['pending_recipients'] = 'Pending Recipients';
+$string['failed_recipients_promise'] = 'We will continue attempting to send to these recipients until they have been successfully sent.';
+$string['success_recipients_promise'] = 'These recipients were all successfully messaged by the system.';
+$string['pending_recipients_promise'] = 'These recipients are currently being message, check back later to view any failures.';
+$string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
+$string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
+$string['send_now_scheduled_modal_title'] = 'Send Message Now';
+$string['send_now_scheduled_confirm_message'] = 'This will forget the schedule and send the message now, are you sure?';
+$string['send_receipt_subject_addendage'] = 'Sent Message';
+$string['found_filtered_users'] = 'Found {$a} user(s)';
+$string['never'] = 'Never';
+$string['save'] = 'Save';
+$string['courseneveraccessed'] = 'Never Accessed';
 
-$string['moodle_attachments'] = 'Moodle Attachments ({$a})';
-$string['download_all'] = 'Download All';
-$string['qm_contents'] = 'Download File Contents';
+// notifications
+$string['notification_name'] = 'Title';
+$string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
+$string['notification_review'] = 'Review Your Notification';
+$string['notified_by'] = 'Notified By';
+$string['enable_notification'] = 'Enable Notification';
+$string['no_notifications'] = 'You have no created notifications.';
+$string['notification_not_found'] = 'Could not find that notification.';
+$string['notification_created'] = 'Notification created.';
+$string['notification_updated'] = 'Notification updated.';
+$string['notification_not_updated'] = 'Notification updated.';
+$string['notification_model'] = 'Notification Model';
+$string['notification_conditions'] = 'Conditions';
+$string['notification_conditions_description'] = 'Specify this notifications conditions. Any recipients that meets these conditions will be notified.';
+$string['select_notification_model'] = 'Select {$a} Notification Model';
+$string['invalid_notification_model'] = 'Invalid notification model selection.';
 
-// Config form strings
+// notification types
+$string['notification_type'] = 'Notification Type';
+$string['notification_type_reminder'] = 'Reminder';
+$string['notification_type_event'] = 'Event';
+$string['invalid_notification_type'] = 'Notification type must be "Reminder" or "Event".';
+$string['notification_type_reminder_description'] = 'A recurring message that will automatically be sent on a scheduled basis. Reminders can be used to alert recipients of upcoming activities, due dates, class participation, and more.';
+$string['notification_type_event_description'] = 'An automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
+
+// notification models
+
+// reminder: course_non_participation
+$string['notification_model_reminder_course_non_participation'] = 'Course Non-Participation';
+$string['notification_model_reminder_course_non_participation_description'] = 'Notify course participants that have not accessed the course in a given amount of time.';
+$string['notification_model_reminder_course_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
+$string['condition_summary_reminder_course_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
+
+// reminder: course_grade_range
+$string['notification_model_reminder_course_grade_range'] = 'Course Grade Range';
+$string['notification_model_reminder_course_grade_range_description'] = 'Notify course participants which currently have a grade within the given range.';
+$string['notification_model_reminder_course_grade_range_condition_description'] = 'Specify the grade range. If a course participant currently has within this range, they will be notified.';
+$string['condition_summary_reminder_course_grade_range'] = 'All who have a grade between {$a->grade_greater_than} and {$a->grade_less_than}';
+
+// event: assignment_submitted
+$string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
+$string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
+
+// notification conditions
+$string['set_notification_conditions'] = 'Set {$a->model} {$a->type} Notification Conditions';
+$string['time_unit'] = 'Unit of time';
+$string['invalid_time_unit'] = 'Invalid unit of time.';
+$string['invalid_schedule_time_unit'] = 'Invalid unit of time for schedule.';
+$string['invalid_condition_time_unit'] = 'Invalid unit of time for condition.';
+$string['time_amount'] = 'Amount of time';
+$string['invalid_time_amount'] = 'Invalid amount of time.';
+$string['invalid_schedule_time_amount'] = 'Invalid amount of time for schedule.';
+$string['invalid_condition_time_amount'] = 'Invalid amount of time for condition.';
+$string['time_relation'] = 'Before or After';
+$string['invalid_time_relation'] = 'Must be "before" or "after".';
+$string['condition_grade_greater_than'] = 'Grade greater than';
+$string['invalid_condition_grade_greater_than'] = 'Invalid grade greater than value.';
+$string['condition_grade_less_than'] = 'Grade less than';
+$string['invalid_condition_grade_less_than'] = 'Invalid grade less than value.';
+
+// reminder notification schedules
+$string['notification_schedule'] = 'Schedule';
+$string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification Schedule';
+$string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';
+$string['schedule_begin_at'] = 'Begin date';
+$string['schedule_end_at'] = 'End date';
+$string['notification_already_sent'] = 'This notification has already been sent at least once.';
+$string['time_unit_day'] = 'Day';
+$string['time_unit_days'] = 'Days';
+$string['time_unit_week'] = 'Week';
+$string['time_unit_weeks'] = 'Weeks';
+$string['time_unit_month'] = 'Month';
+$string['time_unit_months'] = 'Months';
+
+$string['time_once_a'] = 'Once a';
+$string['time_every'] = 'Every';
+$string['time_beginning'] = 'Beginning';
+$string['time_ending'] = 'Ending';
+
+// create notification message
+$string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
+$string['create_notification_message_description'] = 'Now create the message that you\'d like to be sent when this notification goes out.';
+$string['is_enabled'] = 'Enabled';
+$string['notification_is_enabled'] = 'Notification Enabled';
+$string['notification_is_enabled_help'] = 'If enabled, this notification will be active, otherwise, the notification will be disabled until you enable it.';
+
+// history
+$string['no_sents'] = 'You have no sent message history.';
+$string['sent_messages'] = 'Sent Message History';
+
+// drafts
+$string['drafts'] = 'Drafts';
+$string['no_drafts'] = 'You have no message drafts.';
+$string['save_draft'] = 'Save Draft';
+$string['draft_no_record'] = 'Could not find that draft message.';
+$string['could_not_duplicate'] = 'Could not duplicate this draft. Please try again.';
+$string['must_be_draft_to_duplicate'] = 'Message must be a draft to duplicate.';
+$string['must_be_owner_to_duplicate'] = 'Sorry, that draft does not belong to you and cannot be duplicated.';
+$string['delete_draft_modal_title'] = 'Delete Message Draft';
+$string['delete_draft_confirm_message'] = 'This will permanently delete your draft message, are you sure?';
+$string['duplicate_draft_modal_title'] = 'Duplicate Message Draft';
+$string['duplicate_draft_confirm_message'] = 'This will make a copy of the draft, are you sure?';
+
+// alternates
+$string['alternate'] = 'Alternate Email';
+$string['no_alternates'] = 'You have no alternate emails. Create a new one now!';
+$string['alternate_new'] = 'Add Alternate Address';
+$string['alternate_delete'] = 'Delete Alternate Address';
+$string['alternate_availability'] = 'Who can send from this email?';
+$string['alternate_availability_only'] = 'Only me, in {$a->courseshortname} only';
+$string['alternate_availability_user'] = 'Only me, in any course';
+$string['alternate_availability_course'] = 'All allowed roles in {$a->courseshortname}';
+$string['alternate_resend_confirmation'] = 'Re-send confirm email';
+$string['alternate_created'] = 'Alternate sending email successfully created!';
+$string['alternate_delete_confirm'] = 'This will permanently delete your alternate email, are you sure?';
+$string['alternate_deleted'] = 'Your alternate sending email has been deleted.';
+$string['alternate_confirmed'] = 'Confirmed';
+$string['alternate_email_not_found'] = 'Could not find that alternate email.';
+$string['alternate_owner_must_confirm'] = 'Must be the owner of the email to confirm.';
+$string['alternate_owner_must_delete'] = 'Must be the owner of the email to delete.';
+$string['alternate_already_confirmed'] = 'That email has already been confirmed.';
+$string['alternate_invalid_token'] = 'Invalid token.';
+$string['alternate_waiting'] = 'Waiting';
+$string['alternate_activated'] = 'Alternate email {$a} can now be used!';
+$string['alternate_confirmation_email_resent'] = 'The confirmation email has been resent!';
+$string['eventalternateemailadded'] = 'Alternate email added';
+$string['eventalternateemailadded_desc'] = 'The user with id {$a->user_id} has added an alternate email: {$a->email}';
+$string['alternate_subject'] = 'Alternate email address verification';
+$string['coursealternate_not_allowed'] = 'You are not able to share this alternate email is this course.';
+
+// signatures
+$string['signature'] = 'Signature';
+$string['signatures'] = 'Signatures';
+$string['signature_title_required'] = 'A signature title is required.';
+$string['signature_title_must_be_unique'] = 'The signature title must be unique.';
+$string['signature_signature_required'] = 'A signature is required.';
+$string['select_signature_for_edit'] ='Select Signature To Edit';
+$string['save_signature'] = 'Save Signature';
+$string['delete_signature'] = 'Delete Signature';
+$string['user_signature_deleted'] = 'Your signature has been deleted.';
+$string['no_signatures_create'] = 'You have no signatures. {$a}.';
+$string['delete_signature_modal_title'] = 'Delete Signature';
+$string['delete_signature_confirm_message'] = 'This will permanently delete your signature, are you sure?';
+
+// help buttons
+$string['additional_emails'] = 'Additional emails';
+$string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
+
+ email1@example.com, email2@example.com
+ ';
+$string['receipt_help'] = 'Send a confirmation email to the message sender when the message has been sent by default. This setting is overridable by course configuration.';
+$string['receipt_configuration'] = 'Send a confirmation email to the message sender when the message has been sent. This setting will be the default preference for the sender.';
+$string['receipt_configuration_help'] = 'Send a confirmation email to the message sender when the message has been sent. This setting will be the default preference for the sender.';
+$string['mentor_copy_help'] = 'If selected, any mentors of your recipients will receive a copy of the message.';
+$string['from_email'] = 'Sender email address';
+$string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
+$string['allow_mentor_copy'] = 'Allow senders to automatically message mentors of recipients when sending';
+$string['allow_mentor_copy_help'] = 'If enabled, the sender will have the ability to select whether or not mentors should be copied to any outbound message. This message will only happen if the recipient user has a mentor, otherwise, they will receive the message individually as per normal.';
+$string['send_as_tasks_help'] = 'If selected, will send all messages asynchronously as cron tasks. Otherwise, will send immediately.';
+
+// settings management
+$string['restore_default_modal_title'] = 'Restore Default Configuration';
+$string['restore_default_confirm_message'] = 'This will restore this course\'s Quickmail settings to default, are you sure?';
+$string['reset_success_message'] = 'Quickmail default settings have been restored!';
+
+// configuration
 $string['allowstudents'] = 'Allow students to use Quickmail';
-$string['allowstudentsdesc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
-
-$string['select_roles'] = 'Roles to filter by';
-$string['reset'] = 'Restore System Defaults';
-
-$string['no_type'] = '{$a} is not in the acceptable type viewer. Please use the applciation correctly.';
-$string['no_email'] = 'Could not email {$a->firstname} {$a->lastname}.';
-$string['no_email_address'] = 'Could not email {$a}';
-$string['no_log'] = 'You have no email history yet.';
-$string['no_drafts'] = 'You have no email drafts.';
-$string['no_subject'] = 'You must have a subject';
-$string['no_course'] = 'Invalid Course with id of {$a}';
-$string['no_permission'] = 'You do not have permission to send emails with Quickmail.';
-$string['no_usergroups'] = 'There are no users in your group capable of being emailed.';
-$string['no_users'] = 'There are no users you are capable of emailing.';
-$string['no_selected'] = 'You must select some users for emailing.';
-$string['not_valid'] = 'This is not a valid email log viewer type: {$a}';
-$string['not_valid_user'] = 'You can not view other email history.';
-$string['not_valid_action'] = 'You must provide a valid action: {$a}';
-$string['not_valid_typeid'] = 'You must provide a valid email for {$a}';
-$string['delete_failed'] = 'Failed to delete email';
-$string['required'] = 'Please fill in the required fields.';
+$string['allowstudents_desc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
+$string['selectable_roles'] = 'Selectable roles';
+$string['selectable_roles_desc'] = 'These roles will be available for selection when composing a message. This setting is overridable by course configuration.';
+$string['selectable_roles_configuration'] = 'These roles will be available for selection when composing a message.';
+$string['selectable_roles_configuration_help'] = 'These roles will be available for selection when composing a message.';
 $string['prepend_class'] = 'Prepend Course name';
-$string['prepend_class_desc'] = 'Prepend the course shortname to the subject of
-the email.';
+$string['prepend_class_desc'] = 'Prepend course identifying information to the subject of the message. This setting is overridable by course configuration.';
+$string['prepend_class_configuration'] = 'Prepend course identifying information to the subject of the message.';
+$string['prepend_class_configuration_help'] = 'Prepend course identifying information to the subject of the message.';
 $string['ferpa'] = 'FERPA Mode';
 $string['ferpa_desc'] = 'Allows the system to behave either according to the course groupmode setting, ignoring the groupmode setting but separating groups, or ignoring groups altogether.';
 $string['strictferpa'] = 'Always Separate Groups';
 $string['courseferpa'] = 'Respect Course Mode';
 $string['noferpa'] = 'No Group Respect';
-$string['courselayout'] = 'Course Layout';
-$string['courselayout_desc'] = 'Use _Course_ page layout  when rendering the Quickmail block pages. Enable this setting, if you are getting Moodle form fixed width issues.';
-$string['allow_additional_email'] = 'Allow emails to external email addresses';
-$string['allow_additional_email_desc'] = 'If this option is enabled quickmail emails are also sent to external email adresses the user entered within the form.';
+$string['downloads'] = 'Require login for attachments';
+$string['downloads_desc'] = 'This setting determines if attachments are available only to logged in Moodle users';
+$string['additionalemail'] = 'Allow emails to external email addresses';
+$string['additionalemail_desc'] = 'If this option is enabled, the sender will have the ability to send messages to additional emails outside of Moodle';
+$string['message_type'] = 'Send Quickmail messages as';
+$string['message_type_desc'] = 'Allows Quickmail messages to be sent as a Moodle message, traditional email, or sender preference.';
+$string['default_message_type'] = 'Preferred message sending method';
+$string['default_message_type_configuration'] = 'This setting will be the default sending method for anyone composing a message in this course. The sender will be able to override when composing the message.';
+$string['default_message_type_configuration_help'] = 'This setting will be the default sending method for anyone composing a message in this course. The sender will be able to override when composing the message.';
+$string['default_message_type_desc'] = 'Send your messages as Moodle Messages or traditional email.';
+$string['message_types_available'] = 'Message message type restrictions';
+$string['message_types_available_desc'] = 'Restrict Quickmail messages to be sent as Moodle Messages, traditional emails, or sender preference.';
+$string['message_type_available_all'] = 'No restrictions, sender preference';
+$string['message_type_available_message'] = 'Restrict to Moodle messages only';
+$string['message_type_available_email'] = 'Restrict to traditional email only';
+$string['select_allowed_user_fields'] = 'Supported user data fields';
+$string['select_allowed_user_fields_desc'] = 'Senders will be able to reference the selected fields to make message content dynamic and specific to the recipient. Ex: "[:firstname:]"';
+$string['notifications_enabled'] = 'Enable Quickmail Notifications';
+$string['notifications_enabled_desc'] = 'Allow courses to create automated notifications including reminders and event responses.';
+$string['migration_chunk_size'] = 'Migration Chunk Size';
+$string['migration_chunk_size_desc'] = 'Number of records that should be processed by the legacy data migration task each time it is run, if enabled.';
+$string['send_now_threshold'] = 'Send Now Threshold';
+$string['send_now_threshold_desc'] = 'Force a non-scheduled message to be sent immediately if the number of recipients is this number or less, even if the block is configured to send messages as background tasks. Setting of 0 will ignore this setting.';
 
-$string['are_you_sure'] = 'Are you sure you want to delete {$a->title}? This action
-cannot be reversed.';
+// redirect messages
+$string['redirect_back_to_course_from_message_after_immediate_send'] = 'Your message has been sent.';
+$string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
+$string['redirect_back_to_course_from_message_after_send'] = 'Your message will be sent shortly.';
+$string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
+$string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
+$string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
+$string['redirect_back_from_message_detail_message_deleted'] = 'The message you are attempting to view has been deleted.';
+$string['redirect_back_from_message_detail_no_access'] = 'You are not able to view this message.';
 
-// Alternate Email strings
-$string['alternate_new'] = 'Add Alternate Address';
-$string['sure'] = 'Are you sure you want to delete {$a->address}? This action cannot be undone.';
-$string['valid'] = 'Activation Status';
-$string['approved'] = 'Approved';
-$string['waiting'] = 'Waiting';
-$string['entry_activated'] = 'Alternate email {$a->address} can now be used in {$a->course}.';
-$string['entry_key_not_valid'] = 'Activation link is no longer valid for {$a->address}. Continue to resend activation link.';
-$string['entry_saved'] = 'Alternate address {$a->address} has been saved.';
-$string['entry_success'] = 'An email to verify that the address is valid has been sent to {$a->address}. Instructions on how to activate the address is contained in its contents.';
-$string['entry_failure'] = 'An email could not be sent to {$a->address}. Please verify that {$a->address} exists, and try again.';
-$string['alternate_from'] = 'Moodle: Quickmail';
-$string['alternate_subject'] = 'Alternate email address verification';
+
+// validation
+$string['missing_subject'] = 'Missing subject line.';
+$string['missing_body'] = 'Missing message body.';
+$string['missing_email'] = 'Missing email address.';
+$string['invalid_email'] = 'Invalid email address.';
+$string['missing_firstname'] = 'Missing first name.';
+$string['missing_lastname'] = 'Missing last name.';
+$string['missing_notification_name'] = 'Missing notification name.';
+$string['notification_name_too_long'] = 'Notification name must be 40 characters or less.';
+$string['invalid_availability'] = 'Invalid availability value.';
+$string['no_included_recipients_validation'] = 'You must select at least one recipient.';
+$string['invalid_additional_emails_validation'] = 'Some of the additional emails you entered were invalid.';
+$string['invalid_custom_data_not_allowed'] = 'Custom substitution codes are not allowed for this message.';
+$string['invalid_custom_data_key'] = 'Custom data key "{$a}" is not allowed.';
+$string['invalid_custom_data_delimiters'] = 'Message body substitution codes not formatted properly.';
+$string['invalid_additional_email'] = 'The additional email "{$a}" you entered is invalid';
+$string['invalid_send_method'] = 'That send method is not allowed.';
+
+// errors
+$string['critical_error'] = 'Critical error';
+$string['validation_exception_message'] = 'Validation exception!';
+$string['course_required'] = 'A course is required.';
+
+// caches
+$string['cachedef_qm_msg_recip_count'] = 'Cached message recipient counts.';
+$string['cachedef_qm_msg_deliv_count'] = 'Cached message delievered counts.';
+$string['cachedef_qm_msg_attach_count'] = 'Cached message attachment counts.';
+$string['cachedef_qm_msg_addl_email_count'] = 'Cached message additional email counts.';
+$string['cachedef_qm_controller_store'] = 'Cache store for controller instances.';
+
+// backup/restore
+$string['backup_history'] = 'Include Quickmail History';
+$string['backup_block_configuration'] = 'Backup Quickmail Block Level Configuration Settings (Such as [Allow Students to use Quickmail])';
+$string['restore_history'] = 'Restore Quickmail History';
+$string['overwrite_history'] = 'Overwrite Quickmail History';
+
+// email templates
 $string['alternate_body'] = '
 <p>
-{$a->fullname} added {$a->address} as an alternate sending address for {$a->course}.
+{$a->fullname} added {$a->email} as an alternate sending address for {$a->plugin_name}.
 </p>
 
 <p>
@@ -138,37 +405,18 @@ received it by mistake. Simply discard this message.
 Thank you.
 ';
 
+$string['receipt_email_body'] = '
+<p>Your message has been sent! You can view further details of this sent message {$a->sent_message_link}.</p>
 
-// Strings for Error Reporting
-$string['sent_success'] = 'all messages sent successfully';
-$string['logsuccess'] = 'all messages sent successfully';
-$string['message_failure'] = 'some users did not get message';
-$string['send_again'] = 'send again';
-$string['status'] = 'status';
-$string['failed_to_send_to'] = 'failed to send to';
-$string['users'] = 'users';
-$string['user'] = 'user';
+<p>
+    <strong>Message details summary:</strong><br><br>
+    <strong>Course:</strong> {$a->course_name}<br><br>
+    <strong>Message Subject:</strong> {$a->subject}<br><br>
+    <strong>Recipients:</strong> {$a->recipient_count}<br><br>
+    <strong>Additional Recipient Emails:</strong> {$a->addition_emails_string}<br><br>
+    <strong>Sent To Mentors:</strong> {$a->sent_to_mentors}<br><br>
+    <strong>File Attachment Count:</strong> {$a->attachment_count}<br><br>
+    <strong>Message Body:</strong>
+</p>
 
-$string['draftssuccess'] = "Draft";
-
-//admin
-$string['sendadmin'] = 'Send Admin Email';
-$string['noreply'] = 'No-Reply';
-$string['body'] = 'Body';
-$string['email_error'] = 'Could not email: {$a->firstname} {$a->lastname} ({$a->email})';
-$string['email_error_field'] = 'Can not have an empty: {$a}';
-$string['messageprovider:broadcast'] = 'Send broadcast messages using Admin Email.';
-
-$string['message_sent_to'] = 'Message sent to ';
-$string['warnings'] = 'Warnings';
-$string['message_body_as_follows'] = 'message body as follows ';
-$string['sent_successfully_to_the_following_users'] = 'sent successfully to the following users: ' ;
-$string['seconds'] = 'seconds';
-$string['admin_email_send_receipt'] = 'Admin Email Send Receipt';
-$string['something_broke'] = 'It looks like you either have email sending disabled or things are very broken';
-$string['time_elapsed'] = 'Time Elapsed: ';
-$string['additional_emails'] = 'Additional Emails';
-$string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
-
- email1@example.com, email2@example.com
- ';
+{$a->message_body}';

@@ -1,0 +1,57 @@
+#page-block-quickmail label {
+  font-weight: 500;
+  color: dimgray;
+}
+
+#page-block-quickmail label[for=id_select_signature_id] {
+  display: block !important;
+}
+
+#page-block-quickmail .field-label.user-field-label {
+  margin: 0 10px 5px 0;
+  padding: 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #222222;
+  font-family: sans-serif;
+  border-radius: .25em;
+  border: 1px solid #aaaaaa;
+  background-color: #f3f3f3;
+  display: inline-block;
+}
+
+#page-block-quickmail #create-alternative-modal-container .form-control.has-error {
+  border: 1px solid red;
+}
+
+#page-block-quickmail div.manage_signatures_component img.spinner-img {
+  margin-left: 30px;
+  display: none;
+}
+
+#page-block-quickmail ul.pagination>li.page-item {
+  display: inline;
+}
+
+#page-block-quickmail span.recipients {
+  display: inline-block; 
+  background-color: #666;
+  color: #ffffff;
+  border: none;
+  margin: 3px 6px 3px 0;
+  padding: 3px 6px;
+  border-radius: .5em;
+}
+
+#page-block-quickmail div.block_quickmail_sent_message_index tr:nth-child(even) {
+  background-color: #e5e5e5;
+}
+
+#page-block-quickmail small.text-muted {
+  font-weight: bold;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6 {
+  margin-bottom: 0;
+}
+
