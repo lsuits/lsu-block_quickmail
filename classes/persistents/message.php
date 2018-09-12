@@ -809,6 +809,26 @@ class message extends \block_quickmail\persistents\persistent {
 		return $this->read();
 	}
 
+	/**
+	 * Returns a message of the given id which must belong to the given user id
+	 * 
+	 * @param  int  $message_id
+	 * @param  int  $user_id
+	 * @return mixed
+	 */
+	public static function find_owned_by_user_or_null($message_id, $user_id)
+	{
+		if ( ! $message = self::find_or_null($message_id)) {
+			return null;
+		}
+
+		if ( ! $message->is_owned_by_user($user_id)) {
+			return null;
+		}
+
+		return $message;
+	}
+
 	///////////////////////////////////////////////
 	///
 	///  UTILITIES

@@ -94,6 +94,28 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('never'), $message->get_readable_to_send_at());
     }
 
+    public function test_find_owned_by_user_or_null()
+    {
+        $this->resetAfterTest(true);
+
+        $user_one = $this->getDataGenerator()->create_user();
+        $user_two = $this->getDataGenerator()->create_user();
+        
+        $user_one_draft = $this->create_message(true, 1, $user_one->id);
+        $user_one_sent = $this->create_message(false, 2, $user_one->id);
+        $user_two_draft = $this->create_message(true, 3, $user_two->id);
+        $user_two_sent = $this->create_message(false, 2, $user_two->id);
+
+        $my_message = message::find_owned_by_user_or_null($user_one_draft->get('id'), $user_one->id);
+
+        $this->assertInstanceOf(message::class, $my_message);
+        $this->assertEquals($user_one_draft->get('id'), $my_message->get('id'));
+
+        $not_my_message = message::find_owned_by_user_or_null($user_one_sent->get('id'), $user_two->id);
+
+        $this->assertNull($not_my_message);
+    }
+
     public function test_get_all_message_recipients()
     {
         $this->resetAfterTest(true);
