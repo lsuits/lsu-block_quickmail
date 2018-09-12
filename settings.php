@@ -80,7 +80,7 @@ if($ADMIN->fulltree) {
 
     // build a $value=>$label array of options
     $block_quickmail_roleselection_options = array_map(function ($role) { 
-        return $role->shortname; 
+        return $role->name; 
     }, $roles);
 
     $settings->add(
@@ -106,6 +106,21 @@ if($ADMIN->fulltree) {
             block_quickmail_string::get('send_as_tasks_help'),
             1,  // <-- default
             $no_or_yes_options
+        )
+    );
+
+    ///////////////////////////////////////////////////////////
+    ///
+    ///  SEND NOW RECIPIENT THRESHOLD
+    ///  
+    ///////////////////////////////////////////////////////////
+    
+    $settings->add(
+        new admin_setting_configtext(
+            'block_quickmail_send_now_threshold',
+            block_quickmail_string::get('send_now_threshold'), 
+            block_quickmail_string::get('send_now_threshold_desc'),
+            50 // <-- default
         )
     );
 

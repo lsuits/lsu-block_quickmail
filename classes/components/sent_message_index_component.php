@@ -79,6 +79,9 @@ class sent_message_index_component extends component implements \renderable {
                 'recipientTotal' => $message->cached_recipient_count(),
                 'additionalEmailTotal' => $message->cached_additional_email_count(),
                 'sentAt' => $message->get_readable_date('sent_at'),
+                'openUrl' => (new moodle_url('/blocks/quickmail/message.php', [
+                    'id' => $message->get('id'),
+                ]))->out(false)
             ];
         }
 

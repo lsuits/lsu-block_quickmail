@@ -29,6 +29,7 @@ use block_quickmail\components\queued_message_index_component;
 use block_quickmail\components\sent_message_index_component;
 use block_quickmail\components\alternate_index_component;
 use block_quickmail\components\notification_index_component;
+use block_quickmail\components\view_message_component;
 
 use block_quickmail\components\broadcast_message_component;
 use block_quickmail\components\broadcast_recipient_filter_results_component;
@@ -90,6 +91,10 @@ class block_quickmail_renderer extends plugin_renderer_base {
 
     protected function render_notification_index_component(notification_index_component $notification_index_component) {
         return $this->render_from_template('block_quickmail/notification_index', $notification_index_component->export_for_template($this));
+    }
+
+    protected function render_view_message_component(view_message_component $view_message_component) {
+        return $this->render_from_template('block_quickmail/view_message', $view_message_component->export_for_template($this));
     }
 
     ////////////////////////////////////////

@@ -163,16 +163,49 @@ class message extends \block_quickmail\persistents\persistent {
 	}
 
 	/**
-	 * Returns the message recipients that are associated with this message
+	 * Returns the message recipients of a given status that are associated with this message
 	 *
 	 * Optionally, returns as an array of user ids
 	 *
+	 * @param  string  $status               sent|unsent|all
+	 * @param  bool    $as_user_id_array
 	 * @return array
 	 */
-	public function get_message_recipients($as_user_id_array = false) {
+	public function get_message_recipients($status = 'all', $as_user_id_array = false) {
 		$message_id = $this->get('id');
 
-		$recipients = message_recipient::get_records(['message_id' => $message_id]);
+		// be sure we have a valid status
+		if ( ! in_array($status, ['all', 'sent', 'unsent'])) {
+			$status = 'all';
+		}
+
+		// get recipients based on status
+		
+		// all
+		if ($status == 'all') {
+			$recipients = message_recipient::get_records(['message_id' => $message_id]);
+		
+		// unsent
+		} else if ($status == 'unsent') {
+			$recipients = message_recipient::get_records(['message_id' => $message_id, 'sent_at' => 0]);
+		
+		// sent
+		} else {
+			global $DB;
+
+			$recordset = $DB->get_recordset_sql("
+	            SELECT *
+	            FROM {block_quickmail_msg_recips} mr
+	            WHERE mr.message_id = ?
+	            AND mr.sent_at <> 0", [$message_id]);
+
+	        // iterate through recordset, instantiate persistents, add to array
+	        $recipients = [];
+	        foreach ($recordset as $record) {
+	            $recipients[] = new message_recipient(0, $record);
+	        }
+	        $recordset->close();
+		}
 
 		if ( ! $as_user_id_array) {
 			return $recipients;
@@ -186,6 +219,28 @@ class message extends \block_quickmail\persistents\persistent {
 
 		return $recipient_ids;
 	}
+
+	/**
+     * Returns an array of this message's recipient of a given status as user objects which contain the given properties
+     * 
+     * @param  string  $status             sent|unsent|all
+     * @param  string  $user_properties    moodle user properties that should be included in the return object
+     * @return array   keyed by user id
+     */
+    public function get_message_recipient_users($status = 'all', $user_properties = 'email,firstname,lastname')
+    {
+        // get an array of user ids from this message's recipients
+        $user_ids = array_map(function($recip) use ($status) {
+            return $recip->get('user_id');
+        }, $this->get_message_recipients($status));
+
+        global $DB;
+
+        // fetch limited user object from these ids
+        $users = $DB->get_records_list('user', 'id', $user_ids, '', $user_properties);
+
+        return $users;
+    }
 
 	/**
 	 * Returns any single stored user filter value for this message
@@ -752,6 +807,26 @@ class message extends \block_quickmail\persistents\persistent {
 
 		// return a refreshed message record
 		return $this->read();
+	}
+
+	/**
+	 * Returns a message of the given id which must belong to the given user id
+	 * 
+	 * @param  int  $message_id
+	 * @param  int  $user_id
+	 * @return mixed
+	 */
+	public static function find_owned_by_user_or_null($message_id, $user_id)
+	{
+		if ( ! $message = self::find_or_null($message_id)) {
+			return null;
+		}
+
+		if ( ! $message->is_owned_by_user($user_id)) {
+			return null;
+		}
+
+		return $message;
 	}
 
 	///////////////////////////////////////////////

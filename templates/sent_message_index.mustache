@@ -90,7 +90,9 @@
                     <td>{{ recipientTotal }}</td>
                     <td>{{ additionalEmailTotal }}</td>
                     <td>{{ sentAt }}</td>
-                    <td></td>
+                    <td>
+                        <a href="{{ openUrl }}" class="btn btn-primary btn-sm">{{# str }} view {{/ str }}</a>
+                    </td>
                 </tr>
             {{/ tableRows }}
 

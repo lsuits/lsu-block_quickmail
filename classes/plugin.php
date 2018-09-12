@@ -243,7 +243,7 @@ class block_quickmail_plugin {
         foreach ($roles as $role) {
             $course_user_data['roles'][] = [
                 'id' => $role->id,
-                'name' => $role->shortname,
+                'name' => $role->name,
             ];
         }
 

@@ -29,6 +29,7 @@ $string['open_compose'] = 'Compose Message';
 $string['manage_drafts'] = 'View Drafts';
 $string['view_queued'] = 'View Scheduled';
 $string['view_sent'] = 'View Sent Messages';
+$string['view_message_detail'] = 'View Message Details';
 $string['manage_signatures'] = 'My Signatures';
 $string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
@@ -59,6 +60,7 @@ $string['actions'] = 'Actions';
 $string['title'] = 'Title';
 $string['status'] = 'Status';
 $string['here'] = 'here';
+$string['view'] = 'View';
 $string['back_to_course'] = 'Back to course';
 $string['back_to_mypage'] = 'Back to My page';
 
@@ -112,6 +114,11 @@ $string['next_run_at'] = 'Next Run';
 $string['sent_at'] = 'Sent At';
 $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
+$string['failed_recipients'] = 'Failed Recipients';
+$string['pending_recipients'] = 'Pending Recipients';
+$string['failed_recipients_promise'] = 'We will continue attempting to send to these recipients until they have been successfully sent.';
+$string['success_recipients_promise'] = 'These recipients were all successfully messaged by the system.';
+$string['pending_recipients_promise'] = 'These recipients are currently being message, check back later to view any failures.';
 $string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
 $string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
 $string['send_now_scheduled_modal_title'] = 'Send Message Now';
@@ -324,6 +331,8 @@ $string['notifications_enabled'] = 'Enable Quickmail Notifications';
 $string['notifications_enabled_desc'] = 'Allow courses to create automated notifications including reminders and event responses.';
 $string['migration_chunk_size'] = 'Migration Chunk Size';
 $string['migration_chunk_size_desc'] = 'Number of records that should be processed by the legacy data migration task each time it is run, if enabled.';
+$string['send_now_threshold'] = 'Send Now Threshold';
+$string['send_now_threshold_desc'] = 'Force a non-scheduled message to be sent immediately if the number of recipients is this number or less, even if the block is configured to send messages as background tasks. Setting of 0 will ignore this setting.';
 
 // redirect messages
 $string['redirect_back_to_course_from_message_after_immediate_send'] = 'Your message has been sent.';
@@ -332,6 +341,8 @@ $string['redirect_back_to_course_from_message_after_send'] = 'Your message will 
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
+$string['redirect_back_from_message_detail_message_deleted'] = 'The message you are attempting to view has been deleted.';
+$string['redirect_back_from_message_detail_no_access'] = 'You are not able to view this message.';
 
 
 // validation
@@ -395,19 +406,17 @@ Thank you.
 ';
 
 $string['receipt_email_body'] = '
-<p>This message is to inform you that your message was sent.</p>
+<p>Your message has been sent! You can view further details of this sent message {$a->sent_message_link}.</p>
 
 <p>
-<strong>Message details summary:</strong><br>
-<br>Course: {$a->course_name}
-<br>Message Subject: {$a->subject}
-<br>Recipients: {$a->recipient_count}
-<br>Sent To Mentors: {$a->sent_to_mentors}
-<br>Additional Recipient Emails: {$a->additional_email_count}
-<br>File Attachment Count: {$a->attachment_count}
+    <strong>Message details summary:</strong><br><br>
+    <strong>Course:</strong> {$a->course_name}<br><br>
+    <strong>Message Subject:</strong> {$a->subject}<br><br>
+    <strong>Recipients:</strong> {$a->recipient_count}<br><br>
+    <strong>Additional Recipient Emails:</strong> {$a->addition_emails_string}<br><br>
+    <strong>Sent To Mentors:</strong> {$a->sent_to_mentors}<br><br>
+    <strong>File Attachment Count:</strong> {$a->attachment_count}<br><br>
+    <strong>Message Body:</strong>
 </p>
 
-<p>Note: This message does not guarantee that all messages were received by the potential recipients.</p>
-
-<p>You can view further details of this sent message {$a->sent_message_link}.</p>
-';
+{$a->message_body}';
