@@ -404,19 +404,23 @@ Thank you.
 ';
 
 $string['receipt_email_body'] = '
-<p>This message is to inform you that your message was sent.</p>
+<p>Your message has been sent! You can view further details of this sent message {$a->sent_message_link}.</p>
 
 <p>
-<strong>Message details summary:</strong><br>
-<br>Course: {$a->course_name}
-<br>Message Subject: {$a->subject}
-<br>Recipients: {$a->recipient_count}
-<br>Sent To Mentors: {$a->sent_to_mentors}
-<br>Additional Recipient Emails: {$a->additional_email_count}
-<br>File Attachment Count: {$a->attachment_count}
+    <strong>Message details summary:</strong><br><br>
+    <strong>Course:</strong> {$a->course_name}<br><br>
+    <strong>Message Subject:</strong> {$a->subject}<br><br>
+    <strong>Recipients:</strong> {$a->recipient_count}<br><br>
+    <strong>Additional Recipient Emails:</strong> {$a->addition_emails_string}<br><br>
+    <strong>Sent To Mentors:</strong> {$a->sent_to_mentors}<br><br>
+    <strong>File Attachment Count:</strong> {$a->attachment_count}<br><br>
+    <strong>Message Body:</strong>
 </p>
 
-<p>Note: This message does not guarantee that all messages were received by the potential recipients.</p>
+{$a->message_body}
 
-<p>You can view further details of this sent message {$a->sent_message_link}.</p>
+<p>
+    --------------------------------<br><br>
+    <i>Note: This message indicates that your message was sent by the system. If any individual failures were detected they will be attempted further.</i>
+</p>
 ';

@@ -587,14 +587,23 @@ class messenger implements messenger_interface {
     {
         $data = (object) [];
 
-        $course = $this->message->get_course();
+        // get any additional emails as a single string
+        if ($additional_emails = $this->message->get_additional_emails(true)) {
+            $addition_emails_string = implode(', ', $additional_emails);
+        } else {
+            $addition_emails_string = get_string('none');
+        }
 
-        $data->subject = $this->message->get('subject');
-        // TODO - format this course name based off of preference?
-        $data->course_name = $course->fullname;
+        // get subject with any prepend
+        $data->subject = subject_prepender::format_for_receipt_subject(
+            $this->message->get('subject')
+        );
+
+        $data->course_name = $this->message->get_course_property('fullname', ''); // TODO - format this course name based off of preference?
+        $data->message_body = $this->message->get('body');
         $data->recipient_count = $this->message->cached_recipient_count();
         $data->sent_to_mentors = $this->message->get('send_to_mentors') ? get_string('yes') : get_string('no');
-        $data->additional_email_count = $this->message->cached_additional_email_count();
+        $data->addition_emails_string = $addition_emails_string;
         $data->attachment_count = $this->message->cached_attachment_count();
         $data->sent_message_link = html_writer::link(new moodle_url('/blocks/quickmail/message.php', ['id' => $this->message->get('id')]), block_quickmail_string::get('here'));
 
