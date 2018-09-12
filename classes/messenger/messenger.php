@@ -169,15 +169,20 @@ class messenger implements messenger_interface {
         // clear any existing additional emails, and add those that have been recently submitted
         $message->sync_additional_emails($additional_emails);
         
-        // if not configured to send as a task, and not scheduled for delivery later, send now
-        if ( ! $send_as_tasks && ! $message->get_to_send_in_future()) {
-            $message->mark_as_sending();
+        // if not scheduled for delivery later
+        if ( ! $message->get_to_send_in_future()) {
+            // get the block's configured "send now threshold" setting
+            $send_now_threshold = (int) block_quickmail_config::get('send_now_threshold');
             
-            $messenger = new self($message);
+            // if not configured to send as tasks OR the number of recipients is below the send now threshold
+            if ( ! $send_as_tasks || ( ! empty($send_now_threshold) && count($recipient_user_ids) <= $send_now_threshold)) {
+                // begin sending now
+                $message->mark_as_sending();
+                $messenger = new self($message);
+                $messenger->send();
 
-            $messenger->send();
-
-            return $message->read();
+                return $message->read();
+            }
         }
 
         return $message;

@@ -111,6 +111,21 @@ if($ADMIN->fulltree) {
 
     ///////////////////////////////////////////////////////////
     ///
+    ///  SEND NOW RECIPIENT THRESHOLD
+    ///  
+    ///////////////////////////////////////////////////////////
+    
+    $settings->add(
+        new admin_setting_configtext(
+            'block_quickmail_send_now_threshold',
+            block_quickmail_string::get('send_now_threshold'), 
+            block_quickmail_string::get('send_now_threshold_desc'),
+            50 // <-- default
+        )
+    );
+
+    ///////////////////////////////////////////////////////////
+    ///
     ///  SENDER RECEIVES A COPY ?
     ///  
     ///////////////////////////////////////////////////////////

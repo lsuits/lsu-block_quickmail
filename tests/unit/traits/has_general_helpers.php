@@ -74,6 +74,7 @@ trait has_general_helpers {
         $params['additionalemail'] = array_key_exists('additionalemail', $override_params) ? $override_params['additionalemail'] : (int) get_config('moodle', 'block_quickmail_additionalemail');
         $params['message_types_available'] = array_key_exists('message_types_available', $override_params) ? $override_params['message_types_available'] : $default_message_type;
         $params['default_message_type'] = array_key_exists('default_message_type', $override_params) ? $override_params['default_message_type'] : $default_default_message_type;
+        $params['send_now_threshold'] = array_key_exists('send_now_threshold', $override_params) ? $override_params['send_now_threshold'] : (int) get_config('moodle', 'block_quickmail_send_now_threshold');
 
         return $params;
     }

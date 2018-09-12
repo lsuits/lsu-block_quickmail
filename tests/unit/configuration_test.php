@@ -96,6 +96,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'additionalemail' => '1',
             'default_message_type' => 'email',
             'message_types_available' => 'email',
+            'send_now_threshold' => '32',
         ];
 
         // update the courses config
@@ -148,6 +149,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
             'additionalemail' => '1',
             'default_message_type' => 'message',
             'message_types_available' => 'all',
+            'send_now_threshold' => '32',
         ];
 
         // update the courses config
@@ -169,6 +171,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertEquals($default_params['allow_mentor_copy'], $course_config['allow_mentor_copy']);
         $this->assertEquals($default_params['additionalemail'], $course_config['additionalemail']);
         $this->assertEquals($default_params['message_types_available'], $course_config['message_types_available']);
+        $this->assertEquals($default_params['send_now_threshold'], $course_config['send_now_threshold']);
     }
 
     public function test_restores_a_courses_config_to_default()
@@ -221,6 +224,7 @@ class block_quickmail_configuration_testcase extends advanced_testcase {
         $this->assertEquals($default_params['allow_mentor_copy'], $course_config['allow_mentor_copy']);
         $this->assertEquals($default_params['additionalemail'], $course_config['additionalemail']);
         $this->assertEquals($default_params['message_types_available'], $course_config['message_types_available']);
+        $this->assertEquals($default_params['send_now_threshold'], $course_config['send_now_threshold']);
     }
 
 }

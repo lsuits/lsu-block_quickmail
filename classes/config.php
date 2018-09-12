@@ -69,6 +69,7 @@ class block_quickmail_config {
             'downloads'                 => get_config('moodle', 'block_quickmail_downloads'),
             'additionalemail'           => get_config('moodle', 'block_quickmail_additionalemail'),
             'notifications_enabled'     => get_config('moodle', 'block_quickmail_notifications_enabled'),
+            'send_now_threshold'        => get_config('moodle', 'block_quickmail_send_now_threshold'),
             'message_types_available'   => $default_message_type,
             'default_message_type'      => $default_message_type == 'all' 
                 ? 'email' 
@@ -140,6 +141,7 @@ class block_quickmail_config {
             'message_types_available'   => $block_config['message_types_available'],
             'default_message_type'      => $course_default_message_type,
             'notifications_enabled'     => $block_config['notifications_enabled'],
+            'send_now_threshold'        => $block_config['send_now_threshold'],
         ];
 
         if ($transformed) {
@@ -199,6 +201,7 @@ class block_quickmail_config {
             'message_types_available'   => (string) $params['message_types_available'],
             'default_message_type'      => (string) $params['default_message_type'],
             'notifications_enabled'     => (int) $params['notifications_enabled'],
+            'send_now_threshold'        => (int) $params['send_now_threshold'],
         ];
 
         return $key ? $transformed[$key] : $transformed;
