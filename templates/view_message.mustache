@@ -71,8 +71,8 @@
 
     <!-- if message is not queued then it must be sent or sending, show both sent and unsent recipients individually -->
     {{^isQueued}}
-        <h6>{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ sentRecipientCount }}</span></h6>
-        <small>{{# str }} success_recipients_promise, block_quickmail {{/ str }}</small>
+        <h6 class="success">{{# str }} recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ sentRecipientCount }}</span></h6>
+        <small class="success">{{# str }} success_recipients_promise, block_quickmail {{/ str }}</small>
         <div style="margin-bottom: 30px;">
             {{#sentRecipientUsers}}
                 <span class="label recipients">{{{ . }}}</span>
@@ -80,8 +80,8 @@
         </div>
 
         {{#wasSent}}
-            <h6>{{# str }} failed_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
-            <small>{{# str }} failed_recipients_promise, block_quickmail {{/ str }}</small>
+            <h6 class="failed">{{# str }} failed_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+            <small class="failed">{{# str }} failed_recipients_promise, block_quickmail {{/ str }}</small>
         {{/wasSent}}
 
         {{#isSending}}

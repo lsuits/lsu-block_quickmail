@@ -55,3 +55,10 @@
   margin-bottom: 0;
 }
 
+#page-block-quickmail div.block_quickmail_view_message_component h6.failed {
+  color: red;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6.success {
+  color: green;
+}
