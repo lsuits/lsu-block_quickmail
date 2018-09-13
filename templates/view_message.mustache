@@ -85,7 +85,7 @@
         {{/wasSent}}
 
         {{#isSending}}
-            <h6>{{# str }} pending_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
+            <h6 class="pending">{{# str }} pending_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
             <small class="pending">{{# str }} pending_recipients_promise, block_quickmail {{/ str }}</small>
         {{/isSending}}
         <div style="margin-bottom: 30px;">
@@ -95,7 +95,7 @@
         </div>
     {{/isQueued}}
 
-    <h6>{{# str }} additional_emails, block_quickmail {{/ str }} <span class="badge badge-primary">{{ additionalEmailCount }}</span></h6>
+    <h6 class="additional">{{# str }} additional_emails, block_quickmail {{/ str }} <span class="badge badge-primary">{{ additionalEmailCount }}</span></h6>
     <div style="margin-bottom: 30px;">
         {{#additionalEmails}}
             <span class="label recipients">{{{ . }}}</span>
