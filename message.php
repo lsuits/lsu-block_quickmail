@@ -41,7 +41,7 @@ if ( ! $message = \block_quickmail\persistents\message::find_or_null($page_param
 }
 
 // check that the user can view this message
-if ($message->get('user_id') !== $USER->id || ! is_siteadmin($USER)) {
+if ($message->get('user_id') !== $USER->id) {
     redirect(new \moodle_url('/my'), block_quickmail_string::get('redirect_back_from_message_detail_no_access'), 2, \core\output\notification::NOTIFY_ERROR);
 }
 
