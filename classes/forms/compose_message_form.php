@@ -675,6 +675,8 @@ class compose_message_form extends \moodleform {
     {
         $results = [];
 
+        $results['all'] = block_quickmail_string::get('all_in_course');
+
         foreach(['role', 'group', 'user'] as $type) {
             foreach($this->course_user_data[$type . 's'] as $entity) {
                 $results[$type . '_' . $entity['id']] = $type == 'user' 
@@ -682,8 +684,6 @@ class compose_message_form extends \moodleform {
                     : $entity['name'] . ' (' . ucfirst($type) . ')';
             }            
         }
-
-        $results['all'] = block_quickmail_string::get('all_in_course');
 
         return $results;
     }
