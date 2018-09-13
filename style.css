@@ -34,13 +34,24 @@
 }
 
 #page-block-quickmail span.recipients {
-  display: inline-block; 
-  background-color: #666;
-  color: #ffffff;
+  display: inline-block;
+  background-color: #666666;
+  color: white;
   border: none;
   margin: 3px 6px 3px 0;
   padding: 3px 6px;
   border-radius: .5em;
+}
+
+#page-block-quickmail small.success + div span.recipients {
+  background-color: transparent;
+  color: #333333;
+  font-weight: 100;
+  border: 1px solid #999999;
+}
+
+#page-block-quickmail small.failed + div span.recipients:after, #page-block-quickmail small.failed + div span.recipients:after, #page-block-quickmail small.pending + div span.recipients:after, #page-block-quickmail small.pending + div span.recipients:after {
+  content: " - pending"
 }
 
 #page-block-quickmail div.block_quickmail_sent_message_index tr:nth-child(even) {

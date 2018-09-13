@@ -86,7 +86,7 @@
 
         {{#isSending}}
             <h6>{{# str }} pending_recipients, block_quickmail {{/ str }} <span class="badge badge-primary">{{ unsentRecipientCount }}</span></h6>
-            <small>{{# str }} pending_recipients_promise, block_quickmail {{/ str }}</small>
+            <small class="pending">{{# str }} pending_recipients_promise, block_quickmail {{/ str }}</small>
         {{/isSending}}
         <div style="margin-bottom: 30px;">
             {{#unsentRecipientUsers}}
