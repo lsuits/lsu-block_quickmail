@@ -74,6 +74,7 @@ $string['deleted'] = 'Deleted';
 // messaging terms
 $string['included_ids_label'] = 'To';
 $string['excluded_ids_label'] = 'Exclude';
+$string['all_in_course'] = 'All In Course';
 $string['compose'] = 'Compose Course Message';
 $string['broadcast'] = 'Compose Admin Message';
 $string['subject'] = 'Subject';
