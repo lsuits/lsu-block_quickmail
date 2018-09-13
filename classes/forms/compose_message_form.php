@@ -683,6 +683,8 @@ class compose_message_form extends \moodleform {
             }            
         }
 
+        $results['all'] = block_quickmail_string::get('all_in_course');
+
         return $results;
     }
 
