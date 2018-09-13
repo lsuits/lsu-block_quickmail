@@ -188,6 +188,9 @@ class compose_message_form extends \moodleform {
             'placeholder' => block_quickmail_string::get('included_recipients_desc'),
         ]))->setValue($this->included_draft_recipients);
 
+        // remove "send to all" for exclude selection
+        array_shift($recipient_entities);
+
         $mform->addElement('autocomplete', 'excluded_entity_ids', block_quickmail_string::get('excluded_ids_label'), $recipient_entities, array_merge($options, [
             'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
             'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
