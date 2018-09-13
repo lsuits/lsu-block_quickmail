@@ -213,6 +213,14 @@ class user_repo extends repo implements user_repo_interface {
         $included_entity_ids = array_unique($included_entity_ids);
         $excluded_entity_ids = array_unique($excluded_entity_ids);
 
+        // determine whether or not we're sending to all
+        $sending_to_all = in_array('all', $included_entity_ids);
+
+        // ignore "exclude all"
+        if (($key = array_search('all', $excluded_entity_ids)) !== false) {
+            unset($excluded_entity_ids[$key]);
+        }
+
         //////////////////////////////////////////////////////////////
         /// CREATE A CONTAINER FOR INCLUDED/EXCLUDED ROLE/GROUP IDS
         //////////////////////////////////////////////////////////////
@@ -234,6 +242,11 @@ class user_repo extends repo implements user_repo_interface {
 
         // iterate through (included, excluded)
         foreach ($filtered_entity_ids as $type => $entity) {
+            // if we're sending to all, do not worry about determining included ids
+            if ($sending_to_all && $type == 'included') {
+                continue;
+            }
+
             // iterate through each entity name within this type (role, group)
             foreach ($entity as $name => $keys) {
                 $type_key = $type . '_entity_ids';
@@ -280,18 +293,23 @@ class user_repo extends repo implements user_repo_interface {
         /// PULL ALL USERS FOR EACH INCLUDED/EXCLUDED ROLE/GROUP, ADDING THEM TO THE NEW CONTAINERS
         //////////////////////////////////////////////////////////////
 
-        // pull all selectable roles for the auth user if we're going to be including roles
-        $selectable_role_ids = ! empty($filtered_entity_ids['included']['role'])
+        // if not sending to all, pull all selectable roles for the auth user if we're going to be including roles
+        $selectable_role_ids = ! empty($filtered_entity_ids['included']['role']) && ! $sending_to_all
             ? array_keys(role_repo::get_course_selectable_roles($course, $course_context))
             : [];
         
-        // pull all selectable groups for the auth user if we're going to be including groups
-        $selectable_group_ids = ! empty($filtered_entity_ids['included']['group'])
+        // if not sending to all, pull all selectable groups for the auth user if we're going to be including groups
+        $selectable_group_ids = ! empty($filtered_entity_ids['included']['group']) && ! $sending_to_all
             ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, $course_context))
             : [];
 
         // iterate through initial container of included/excluded role/group
         foreach (['included', 'excluded'] as $type) {
+            // if we're sending to all, do not worry about determining included roles/groups
+            if ($sending_to_all && $type == 'included') {
+                continue;
+            }
+
             foreach (['role', 'group'] as $name) {
                 foreach ($filtered_entity_ids[$type][$name] as $name_id) {
                     // for inclusions, check that the role or group is selectable by the user
@@ -330,11 +348,21 @@ class user_repo extends repo implements user_repo_interface {
             return $user->id;
         }, $course_users);
 
+        // if sending to all, add all course user ids to include user ids
+        if ($sending_to_all) {
+            $included_user_ids = $course_user_ids;
+        }
+
         //////////////////////////////////////////////////////////////
         /// ADD IN EACH EXPLICITLY INCLUDED/EXCLUDED USER TO THE APPROPRIATE CONTAINER
         //////////////////////////////////////////////////////////////
 
         foreach (['included', 'excluded'] as $type) {
+            // if we're sending to all, do not worry about determining included users
+            if ($sending_to_all && $type == 'included') {
+                continue;
+            }
+
             // get name of appropriate (initial) container
             $type_key = $type . '_entity_ids';
 
@@ -373,7 +401,7 @@ class user_repo extends repo implements user_repo_interface {
 
         return array_unique(array_intersect(array_map(function ($user) {
             return $user->id;
-        }, self::get_course_user_selectable_users($course, $user, $course_context)), $result_user_ids));
+        }, $course_users), $result_user_ids));
     }
 
     /**
