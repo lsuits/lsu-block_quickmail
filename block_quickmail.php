@@ -149,7 +149,7 @@ class block_quickmail extends block_list {
             // QUEUED (view/manage your queued messages)
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_queued'),
-                'icon_key' => 'i/calendar',
+                'icon_key' => 'i/scheduled',
                 'page' => 'queued',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
