@@ -42,6 +42,7 @@ use block_quickmail\messenger\factories\course_recipient_send\recipient_send_fac
 use block_quickmail\filemanager\message_file_handler;
 use block_quickmail\filemanager\attachment_appender;
 use block_quickmail\messenger\message\subject_prepender;
+use block_quickmail\messenger\message\signature_appender;
 use block_quickmail\repos\user_repo;
 use moodle_url;
 use html_writer;
@@ -572,6 +573,13 @@ class messenger implements messenger_interface {
 
         $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
         
+        // append a signature to the formatted body, if appropriate
+        $body = signature_appender::append_user_signature_to_body(
+            $body, 
+            $fromuser->id,
+            $this->message->get('signature_id')
+        );
+
         // append attachment download links to the formatted body, if any
         $body = attachment_appender::add_download_links($this->message, $body);
 
