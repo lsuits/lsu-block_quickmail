@@ -36,7 +36,9 @@ class course_config_controller extends base_controller {
     {
         $form = $this->make_form('course_config\course_config_form', [
             'course_config' => block_quickmail_config::get('', $this->props->course),
-            'context' => $this->context
+            'context' => $this->context,
+            'user' => $this->props->user,
+            'user_preferred_picker' => get_user_preferences('block_quickmail_preferred_picker', 'autocomplete', $this->props->user)
         ]);
 
         // list of form submission subactions that may be handled in addition to "back" or "next"
@@ -81,7 +83,28 @@ class course_config_controller extends base_controller {
     {
         block_quickmail_config::update_course_config($this->props->course, (array) $request->input);
 
+        $this->set_user_preferred_picker($request->input);
+
         $request->redirect_as_success(get_string('changessaved'), '/blocks/quickmail/configuration.php', ['courseid' => $this->props->course->id]);
+    }
+
+    /**
+     * Sets the user's personally preferred picker option based on input
+     * 
+     * @param stdClass  $input
+     */
+    private function set_user_preferred_picker($input)
+    {
+        // sanitize input option, defaulting to autocomplete
+        if ( ! property_exists($input, 'preferred_picker')) {
+            $preferred_picker = 'autocomplete';
+        } else if ( ! in_array($input->preferred_picker, ['autocomplete', 'multiselect'])) {
+            $preferred_picker = 'autocomplete';
+        } else {
+            $preferred_picker = $input->preferred_picker;
+        }
+
+        set_user_preference('block_quickmail_preferred_picker', $preferred_picker, $this->props->user);
     }
     
 }

@@ -52,6 +52,7 @@ class compose_message_form extends \moodleform {
     public $included_draft_recipients;
     public $excluded_draft_recipients;
     public $allow_mentor_copy;
+    public $user_preferred_picker;
 
     /**
      * Instantiates and returns a compose message form
@@ -110,6 +111,7 @@ class compose_message_form extends \moodleform {
             'included_draft_recipients' => $included_draft_recipients,
             'excluded_draft_recipients' => $excluded_draft_recipients,
             'allow_mentor_copy' => $allow_mentor_copy,
+            'user_preferred_picker' => get_user_preferences('block_quickmail_preferred_picker', 'autocomplete', $user)
         ], 'post', '', ['id' => 'mform-compose']);
     }
 
@@ -133,6 +135,7 @@ class compose_message_form extends \moodleform {
         $this->included_draft_recipients = $this->_customdata['included_draft_recipients'];
         $this->excluded_draft_recipients = $this->_customdata['excluded_draft_recipients'];
         $this->allow_mentor_copy = $this->_customdata['allow_mentor_copy'];
+        $this->user_preferred_picker = $this->_customdata['user_preferred_picker'];
 
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
@@ -170,32 +173,69 @@ class compose_message_form extends \moodleform {
         }
 
         ////////////////////////////////////////////////////////////
-        ///  included & excluded recipient entities (multiselect)
+        ///  included & excluded recipient entities
         ////////////////////////////////////////////////////////////
         
         $recipient_entities = $this->get_recipient_entities();
-
-        $options = [
-            'multiple' => true,
-            'showsuggestions' => true,
-            'casesensitive' => false,
-            'tags' => false,
-            'ajax' => ''
-        ];
         
-        $mform->addElement('autocomplete', 'included_entity_ids', block_quickmail_string::get('included_ids_label'), $recipient_entities, array_merge($options, [
-            'noselectionstring' => block_quickmail_string::get('no_included_recipients'),
-            'placeholder' => block_quickmail_string::get('included_recipients_desc'),
-        ]))->setValue($this->included_draft_recipients);
+        if ($this->using_multiselect_picker()) {
+            
+            // block_quickmail_string::get('included_ids_label')
 
-        // remove "send to all" for exclude selection
-        array_shift($recipient_entities);
+            $mform->addElement('html', '<div style="display: flex; justify-content: center; align-items: center; flex-wrap: nowrap">');
+                // available included entity ids
+                $mform->addElement('html', '<div style="margin-right: 20px;">');
+                    $mform->addElement('select', 'available_included_entity_ids', '', $recipient_entities, [
+                        'style' => 'height: 300px; width: 300px;',
+                        'multiple' => 'multiple',
+                        'size' => '30',
+                    ]);
+                    $mform->getElement('available_included_entity_ids')->setSelected($this->included_draft_recipients);
+                $mform->addElement('html', '</div>');
 
-        $mform->addElement('autocomplete', 'excluded_entity_ids', block_quickmail_string::get('excluded_ids_label'), $recipient_entities, array_merge($options, [
-            'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
-            'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
-        ]))->setValue($this->excluded_draft_recipients);
+                // buttons
+                $mform->addElement('html', '<div style="display: flex; flex-direction: column; justify-content: center;">');
+                    $mform->addElement('button', 'add_recip', 'Add');
+                    $mform->addElement('button', 'remove_recip', 'Remove');
+                $mform->addElement('html', '</div>');
 
+                // selected included entity ids
+                $mform->addElement('html', '<div>');
+                    $mform->addElement('select', 'selected_included_entity_ids', '', [], [
+                        'style' => 'height: 300px; width: 300px;',
+                        'multiple' => 'multiple',
+                        'size' => '30',
+                    ]);
+                $mform->addElement('html', '</div>');
+            $mform->addElement('html', '</div>');
+
+            $mform->addElement('hidden', 'included_entity_ids', '');
+            $mform->setType('included_entity_ids', PARAM_TEXT);
+
+
+        } else {
+            // autocomplete selection interface
+            $options = [
+                'multiple' => true,
+                'showsuggestions' => true,
+                'casesensitive' => false,
+                'tags' => false,
+                'ajax' => ''
+            ];
+
+            $mform->addElement('autocomplete', 'included_entity_ids', block_quickmail_string::get('included_ids_label'), $recipient_entities, array_merge($options, [
+                'noselectionstring' => block_quickmail_string::get('no_included_recipients'),
+                'placeholder' => block_quickmail_string::get('included_recipients_desc'),
+            ]))->setValue($this->included_draft_recipients);
+
+            // remove "send to all" for exclude selection
+            array_shift($recipient_entities);
+
+            $mform->addElement('autocomplete', 'excluded_entity_ids', block_quickmail_string::get('excluded_ids_label'), $recipient_entities, array_merge($options, [
+                'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
+                'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
+            ]))->setValue($this->excluded_draft_recipients);
+        }
 
         ////////////////////////////////////////////////////////////
         ///  subject (text)
@@ -478,7 +518,11 @@ class compose_message_form extends \moodleform {
 
         // check that we have at least one recipient
         if (empty($data['included_entity_ids'])) {
-            $errors['included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
+            if ($this->using_multiselect_picker()) {
+                $errors['selected_included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
+            } else {
+                $errors['included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
+            }
         }
 
         // additional_emails - make sure each is valid
@@ -689,6 +733,17 @@ class compose_message_form extends \moodleform {
         }
 
         return $results;
+    }
+
+    /**
+     * Reports whether or not this form should be using multiselection input for included recipients,
+     * if not, it is assumed the user is using the standara autocomplete method
+     * 
+     * @return bool
+     */
+    private function using_multiselect_picker()
+    {
+        return $this->user_preferred_picker == 'multiselect';
     }
 
 }

@@ -153,6 +153,25 @@ class course_config_form extends controller_form {
         }
 
         ////////////////////////////////////////////////////////////
+        ///  preferred_recip_picker (select)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'select', 
+            'preferred_picker', 
+            block_quickmail_string::get('picker_style_option_title'),
+            $this->get_preferred_recip_picker_options()
+        );
+        $mform->setDefault(
+            'preferred_picker', 
+            $this->get_custom_data('user_preferred_picker')
+        );
+        $mform->addHelpButton(
+            'preferred_picker', 
+            'picker_style_option_title', 
+            'block_quickmail'
+        );
+
+        ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
@@ -184,6 +203,19 @@ class course_config_form extends controller_form {
         return [
             0 => get_string('no'), 
             1 => get_string('yes')
+        ];
+    }
+
+    /**
+     * Returns a preferred recip picker option selection array
+     * 
+     * @return array
+     */
+    private function get_preferred_recip_picker_options()
+    {
+        return [
+            'autocomplete' => block_quickmail_string::get('picker_style_autocomplete'),
+            'multiselect' => block_quickmail_string::get('picker_style_multiselect'),
         ];
     }
 
