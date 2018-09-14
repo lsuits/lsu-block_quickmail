@@ -263,8 +263,7 @@ class block_quickmail_plugin {
             // if we're including user group info, add that now
             if ($include_user_group_info) {
                 // for each member, add group name to user's key in container
-                foreach ($group->members as $member) {
-                    $user_id = (int) $member;
+                foreach ($group->members as $key => $user_id) {
                     $user_group_names[$user_id][] = $group->name;
                 }
             }

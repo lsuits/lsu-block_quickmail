@@ -66,10 +66,15 @@ class group_repo extends repo implements group_repo_interface {
                 return $g;
             }, $groups);
         } else {
-            // get all groups in the course
-            $groups = groups_get_all_groups($course->id, 0, 0, 'g.*', $include_group_users);
+            $groups = array_map(function($group) use ($include_group_users) {
+                $g = $group;
+                $g->members = $include_group_users
+                    ? array_keys(groups_get_members($group->id, 'u.id'))
+                    : [];
+                return $g;
+            }, groups_get_all_groups($course->id));
         }
-        
+
         return $groups;
     }
 
