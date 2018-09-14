@@ -220,10 +220,11 @@ class block_quickmail_plugin {
      * 
      * @param  object  $course
      * @param  object  $user
+     * @param  bool    $include_user_group_info
      * @param  context $course_context
      * @return array
      */
-    public static function get_compose_message_recipients($course, $user, $course_context) {
+    public static function get_compose_message_recipients($course, $user, $include_user_group_info = false, $course_context) {
 
         // initialize a container for the collection of user data results
         $course_user_data = [
@@ -339,6 +340,17 @@ class block_quickmail_plugin {
             'week' => ucfirst(get_string('weeks')),
             'month' => ucfirst(get_string('months')),
         ];
+    }
+
+    /**
+     * Reports whether or not this user prefers multiselect recipient selection over autocomplete
+     * 
+     * @param  object  $user
+     * @return bool
+     */
+    public static function user_prefers_multiselect_recips($user)
+    {
+        return get_user_preferences('block_quickmail_preferred_picker', 'autocomplete', $user) == 'multiselect';
     }
 
     ////////////////////////////////////////////////////
