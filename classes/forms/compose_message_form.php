@@ -52,7 +52,7 @@ class compose_message_form extends \moodleform {
     public $included_draft_recipients;
     public $excluded_draft_recipients;
     public $allow_mentor_copy;
-    public $user_preferred_picker;
+    public $use_multiselect_picker;
 
     /**
      * Instantiates and returns a compose message form
@@ -111,7 +111,7 @@ class compose_message_form extends \moodleform {
             'included_draft_recipients' => $included_draft_recipients,
             'excluded_draft_recipients' => $excluded_draft_recipients,
             'allow_mentor_copy' => $allow_mentor_copy,
-            'user_preferred_picker' => get_user_preferences('block_quickmail_preferred_picker', 'autocomplete', $user)
+            'use_multiselect_picker' => block_quickmail_plugin::user_prefers_multiselect_recips($user),
         ], 'post', '', ['id' => 'mform-compose']);
     }
 
@@ -135,7 +135,7 @@ class compose_message_form extends \moodleform {
         $this->included_draft_recipients = $this->_customdata['included_draft_recipients'];
         $this->excluded_draft_recipients = $this->_customdata['excluded_draft_recipients'];
         $this->allow_mentor_copy = $this->_customdata['allow_mentor_copy'];
-        $this->user_preferred_picker = $this->_customdata['user_preferred_picker'];
+        $this->use_multiselect_picker = $this->_customdata['use_multiselect_picker'];
 
         ////////////////////////////////////////////////////////////
         ///  from / alternate email (select)
@@ -178,7 +178,7 @@ class compose_message_form extends \moodleform {
         
         $recipient_entities = $this->get_recipient_entities();
         
-        if ($this->using_multiselect_picker()) {
+        if ($this->use_multiselect_picker) {
             
             // block_quickmail_string::get('included_ids_label')
 
@@ -516,7 +516,7 @@ class compose_message_form extends \moodleform {
 
         // check that we have at least one recipient
         if (empty($data['included_entity_ids'])) {
-            if ($this->using_multiselect_picker()) {
+            if ($this->use_multiselect_picker) {
                 $errors['selected_included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
             } else {
                 $errors['included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
@@ -731,17 +731,6 @@ class compose_message_form extends \moodleform {
         }
 
         return $results;
-    }
-
-    /**
-     * Reports whether or not this form should be using multiselection input for included recipients,
-     * if not, it is assumed the user is using the standara autocomplete method
-     * 
-     * @return bool
-     */
-    private function using_multiselect_picker()
-    {
-        return $this->user_preferred_picker == 'multiselect';
     }
 
 }
