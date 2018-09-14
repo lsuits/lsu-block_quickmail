@@ -253,10 +253,22 @@ class block_quickmail_plugin {
         ////////////
 
         // get all groups explicitly selectable for this user
-        $groups = group_repo::get_course_user_selectable_groups($course, $user, $course_context);
+        $groups = group_repo::get_course_user_selectable_groups($course, $user, $include_user_group_info, $course_context);
+
+        // create a user group name container regardless of whether we are including or not
+        $user_group_names = [];
 
         // iterate through each group
         foreach ($groups as $group) {
+            // if we're including user group info, add that now
+            if ($include_user_group_info) {
+                // for each member, add group name to user's key in container
+                foreach ($group->members as $member) {
+                    $user_id = (int) $member;
+                    $user_group_names[$user_id][] = $group->name;
+                }
+            }
+
             // add this group's data to the results container
             $course_user_data['groups'][] = [
                 'id' => $group->id,
@@ -273,9 +285,16 @@ class block_quickmail_plugin {
 
         // add each user to the results collection
         foreach ($users as $user) {
+            $user_name = $user->firstname . ' ' . $user->lastname;
+
+            // if this user belongs to any groups, append them as a list to the user name value
+            if (array_key_exists($user->id, $user_group_names)) {
+                $user_name .= ' (' . implode(', ', $user_group_names[$user->id]) . ')';
+            }
+
             $course_user_data['users'][] = [
                 'id' => $user->id,
-                'name' => $user->firstname . ' ' . $user->lastname,
+                'name' => $user_name,
             ];
         }
 

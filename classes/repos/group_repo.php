@@ -42,10 +42,11 @@ class group_repo extends repo implements group_repo_interface {
      *
      * @param  object  $course
      * @param  object  $user
+     * @param  bool    $include_group_users    if true, group users will be return in the results
      * @param  object  $course_context  optional, if not given, will be resolved
      * @return array   keyed by group id
      */
-    public static function get_course_user_selectable_groups($course, $user, $course_context = null)
+    public static function get_course_user_selectable_groups($course, $user, $include_group_users = false, $course_context = null)
     {
         // if a context was not passed, pull one now
         $course_context = $course_context ?: \context_course::instance($course->id);
@@ -57,9 +58,16 @@ class group_repo extends repo implements group_repo_interface {
             
             // transform this array to an array of groups
             $groups = self::transform_grouping_array_to_groups($grouping_array);
+
+            // add a "members" property to the result objects to be consistent
+            $groups = array_map(function($group) {
+                $g = $group;
+                $g->members = [];
+                return $g;
+            }, $groups);
         } else {
             // get all groups in the course
-            $groups = groups_get_all_groups($course->id);
+            $groups = groups_get_all_groups($course->id, 0, 0, 'g.*', $include_group_users);
         }
         
         return $groups;
