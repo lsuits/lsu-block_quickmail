@@ -50,7 +50,7 @@ block_quickmail_plugin::require_user_capability('canconfig', $USER, $course_cont
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
 $PAGE->navbar->add(get_string('configuration'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));

@@ -80,3 +80,67 @@
 #page-block-quickmail div.block_quickmail_view_message_component h6.success {
   color: green;
 }
+
+#page-block-quickmail div.qm_links a.qml {
+  display: inline-block;
+  margin: 1em;
+  width: 10em;
+  height: 10em;
+  border: 1px solid lightgray;
+  border-radius: .5em;
+  padding: 1em;
+  text-align: center;
+  vertical-align: bottom;
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+  background-color: #ffffff;
+}
+
+#page-block-quickmail div.qm_links a.qml:hover {
+  background-size: 80%;
+  color: transparent;
+  transition: background-size .25s, color .1s;
+}
+
+#page-block-quickmail div.qm_links a.qml:active {
+  background-size: 400%;
+  color: transparent;
+  transition: background-size .5s;
+}
+
+#page-block-quickmail div.qm_links a.qml.compose {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/email.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.draft {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/e/template.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.queued {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/i/calendar.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.sent {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/message.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.signatures {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/i/edit.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.alternate {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/add.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.configuration {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/config.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.notifications {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/e/insert_time.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.create_notification {
+  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/i/calendar.svg');
+}
