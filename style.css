@@ -80,3 +80,41 @@
 #page-block-quickmail div.block_quickmail_view_message_component h6.success {
   color: green;
 }
+
+#page-block-quickmail div.msflex {
+   display: flex; 
+   justify-content: center; 
+   align-items: center; 
+   flex-wrap: nowrap;
+   width: 90%;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom, #page-block-quickmail div.msflex div.multiselectto {
+  width: auto;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom select, #page-block-quickmail div.msflex div.multiselectto select {
+  min-width: 10em;
+  width: auto;
+  height: 24.5em;
+  overflow: auto;
+  margin: 0;
+}
+
+#page-block-quickmail div.msflex div.msbuttons {
+  text-align: center;
+  width: auto;
+  margin: 0 1em;
+}
+
+#page-block-quickmail div.msflex div.msbuttons div.femptylabel div.fitemtitle {
+  display: none;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom div.fitem_fselect.multiselectfrom div.fitemtitle, #page-block-quickmail div.msflex div.multiselectto div.fitem_fselect.multiselectto div.fitemtitle {
+  display: none!important;
+}
+
+#page-block-quickmail div.msflex div.femptylabel div.felement {
+  margin: 0;
+}

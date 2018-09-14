@@ -182,29 +182,27 @@ class compose_message_form extends \moodleform {
             
             // block_quickmail_string::get('included_ids_label')
 
-            $mform->addElement('html', '<div style="display: flex; justify-content: center; align-items: center; flex-wrap: nowrap">');
+            $mform->addElement('html', '<div class="msflex">');
                 // available included entity ids
-                $mform->addElement('html', '<div style="margin-right: 20px;">');
+                $mform->addElement('html', '<div class="multiselectfrom">');
                     $mform->addElement('select', 'available_included_entity_ids', '', $recipient_entities, [
-                        'style' => 'height: 300px; width: 300px;',
-                        'multiple' => 'multiple',
-                        'size' => '30',
+                        'class' => 'multiselectfrom',
+                        'multiple' => 'multiple'
                     ]);
                     $mform->getElement('available_included_entity_ids')->setSelected($this->included_draft_recipients);
                 $mform->addElement('html', '</div>');
 
                 // buttons
-                $mform->addElement('html', '<div style="display: flex; flex-direction: column; justify-content: center;">');
+                $mform->addElement('html', '<div class="msbuttons">');
                     $mform->addElement('button', 'add_recip', 'Add');
                     $mform->addElement('button', 'remove_recip', 'Remove');
                 $mform->addElement('html', '</div>');
 
                 // selected included entity ids
-                $mform->addElement('html', '<div>');
+                $mform->addElement('html', '<div class="multiselectto">');
                     $mform->addElement('select', 'selected_included_entity_ids', '', [], [
-                        'style' => 'height: 300px; width: 300px;',
-                        'multiple' => 'multiple',
-                        'size' => '30',
+                        'class' => 'multiselectto',
+                        'multiple' => 'multiple'
                     ]);
                 $mform->addElement('html', '</div>');
             $mform->addElement('html', '</div>');
