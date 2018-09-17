@@ -52,7 +52,13 @@ class compose_transformer extends transformer {
      */
     public function get_transformed_included_entity_ids()
     {
-        return empty($this->form_data->included_entity_ids) ? [] : $this->form_data->included_entity_ids;
+        if (empty($this->form_data->included_entity_ids)) {
+            return [];
+        } else if (is_string($this->form_data->included_entity_ids)) {
+            return explode(',', $this->form_data->included_entity_ids);
+        }
+
+        return $this->form_data->included_entity_ids;
     }
 
     /**

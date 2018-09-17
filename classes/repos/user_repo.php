@@ -300,7 +300,7 @@ class user_repo extends repo implements user_repo_interface {
         
         // if not sending to all, pull all selectable groups for the auth user if we're going to be including groups
         $selectable_group_ids = ! empty($filtered_entity_ids['included']['group']) && ! $sending_to_all
-            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, $course_context))
+            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, false, $course_context))
             : [];
 
         // iterate through initial container of included/excluded role/group

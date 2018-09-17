@@ -7,9 +7,12 @@ module.exports = function (grunt) {
     grunt.loadGruntfile("../../Gruntfile.js");
  
     // Load all grunt tasks.
-    grunt.loadNpmTasks("grunt-contrib-sass");
-    grunt.loadNpmTasks("grunt-contrib-watch");
-    grunt.loadNpmTasks("grunt-contrib-clean");
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-eslint');
+    grunt.loadNpmTasks('grunt-stylelint');
  
     grunt.initConfig({
         sass: {
@@ -25,5 +28,6 @@ module.exports = function (grunt) {
         }
     });
     // The default task (running "grunt" in console).
+    // grunt.registerTask("default");
     grunt.registerTask("default", ["sass"]);
 };

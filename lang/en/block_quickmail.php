@@ -334,6 +334,10 @@ $string['migration_chunk_size'] = 'Migration Chunk Size';
 $string['migration_chunk_size_desc'] = 'Number of records that should be processed by the legacy data migration task each time it is run, if enabled.';
 $string['send_now_threshold'] = 'Send Now Threshold';
 $string['send_now_threshold_desc'] = 'Force a non-scheduled message to be sent immediately if the number of recipients is this number or less, even if the block is configured to send messages as background tasks. Setting of 0 will ignore this setting.';
+$string['picker_style_option_title'] = 'My Preferred Recipient Picker Style';
+$string['picker_style_option_title_help'] = 'Your personally preferred interface for selecting recipients when composing a message.';
+$string['picker_style_autocomplete'] = 'Autocomplete';
+$string['picker_style_multiselect'] = 'Multiselect';
 
 // redirect messages
 $string['redirect_back_to_course_from_message_after_immediate_send'] = 'Your message has been sent.';
