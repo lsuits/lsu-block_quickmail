@@ -405,17 +405,19 @@ class user_repo extends repo implements user_repo_interface {
      */
     public static function get_prepended_mentors_of_user($user)
     {
-        $users = array();
-
+        global $CFG;
+        $profile_key = $CFG->block_quickmail_mentor_profile_key;
+        
         profile_load_custom_fields($user);
+        $users = array();
 
         foreach($user->profile as $field => $value) {
             if (! is_string($value)) {
-                return [];
+                break;
             }
             
-            $email = preg_replace('/\s/', '', $value);
-            if (strpos($field, "mentor") > -1) {
+            if (strpos($field, $profile_key) > -1) {
+                $email = preg_replace('/\s/', '', $value);
                 $fakeuser = new stdClass();
                 $fakeuser->id = 99999900;
                 $fakeuser->email = $email;
