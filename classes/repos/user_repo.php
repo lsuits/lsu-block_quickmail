@@ -29,6 +29,8 @@ use block_quickmail\repos\interfaces\user_repo_interface;
 use context_course;
 use block_quickmail\repos\role_repo;
 use block_quickmail\repos\group_repo;
+use \stdClass;
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 class user_repo extends repo implements user_repo_interface {
 
@@ -393,6 +395,37 @@ class user_repo extends repo implements user_repo_interface {
         }
 
         return $DB->get_records_list('user', 'id', array_keys($result));
+    }
+
+    /**
+     * Returns and array of mentor emails that are assigned to the "mentee" through profile field prepends
+     * 
+     * @param object $user
+     * @return array fake mentor users
+     */
+    public static function get_prepended_mentors_of_user($user)
+    {
+        $users = array();
+
+        profile_load_custom_fields($user);
+
+        foreach($user->profile as $field => $value) {
+            if (! is_string($value)) {
+                return [];
+            }
+            
+            $email = preg_replace('/\s/', '', $value);
+            if (strpos($field, "mentor") > -1) {
+                $fakeuser = new stdClass();
+                $fakeuser->id = 99999900;
+                $fakeuser->email = $email;
+                $fakeuser->username = $email;
+                $fakeuser->mailformat = 1;
+                $users[] = $fakeuser;
+            }
+        }
+
+        return $users;
     }
 
 }
