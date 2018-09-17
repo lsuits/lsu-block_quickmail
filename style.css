@@ -81,13 +81,18 @@
   color: green;
 }
 
+#page-block-quickmail div.qm_links {
+  text-align: center;
+}
+
 #page-block-quickmail div.qm_links a.qml {
+  text-align: center;
   display: inline-block;
   margin: 1em;
-  width: 10em;
-  height: 10em;
+  width: 15em;
+  height: 15em;
   border: 1px solid lightgray;
-  border-radius: .5em;
+  border-radius: 1.5em;
   padding: 1em;
   text-align: center;
   vertical-align: bottom;
@@ -95,11 +100,13 @@
   background-size: 50%;
   background-position: center;
   background-color: #ffffff;
+  font-size: 12px;
 }
 
 #page-block-quickmail div.qm_links a.qml:hover {
   background-size: 80%;
   color: transparent;
+  text-decoration: none;
   transition: background-size .25s, color .1s;
 }
 
@@ -110,39 +117,39 @@
 }
 
 #page-block-quickmail div.qm_links a.qml.compose {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/email.svg');
+  background-image: url('assets/email.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.draft {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/e/template.svg');
+  background-image: url('assets/template.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.queued {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/i/calendar.svg');
+  background-image: url('assets/calendar.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.sent {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/message.svg');
+  background-image: url('assets/message.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.signatures {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/i/edit.svg');
+  background-image: url('assets/edit.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.alternate {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/add.svg');
+  background-image: url('assets/add.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.configuration {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/t/config.svg');
+  background-image: url('assets/preferences.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.notifications {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/e/insert_time.svg');
+  background-image: url('assets/insert_time.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.create_notification {
-  background-image: url('https://elearning-testrusso.lsu.edu/31/theme/essential/pix_core/i/calendar.svg');
+  background-image: url('assets/calendar.svg');
 }
 
 #page-block-quickmail div.msflex {
