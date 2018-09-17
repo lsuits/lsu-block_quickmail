@@ -158,6 +158,21 @@ if($ADMIN->fulltree) {
 
     ///////////////////////////////////////////////////////////
     ///
+    ///  SET MENTOR PROFILE FIELD KEY
+    ///  
+    ///////////////////////////////////////////////////////////
+
+    $settings->add(
+        new admin_setting_configtext(
+            'block_quickmail_mentor_profile_key',
+            block_quickmail_string::get('mentor_profile_key'),
+            block_quickmail_string::get('mentor_profile_key_desc'),
+            'qm_mentor_'
+        )
+    );
+
+    ///////////////////////////////////////////////////////////
+    ///
     ///  SUBJECT PREPEND OPTIONS
     ///  
     ///////////////////////////////////////////////////////////

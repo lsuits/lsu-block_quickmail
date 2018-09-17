@@ -121,10 +121,15 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     public function send_to_mentors()
     {
         $mentor_users = $this->get_recipient_mentors();
+        $prepended_mentor_users = $this->get_recipient_prepended_mentors();
 
         $mentee_user = $this->recipient->get_user();
 
         foreach ($mentor_users as $mentor_user) {
+            $this->send_email_to_mentor_user($mentor_user, $mentee_user);
+        }
+
+        foreach ($prepended_mentor_users as $mentor_user) {
             $this->send_email_to_mentor_user($mentor_user, $mentee_user);
         }
     }
