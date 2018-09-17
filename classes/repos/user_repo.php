@@ -410,6 +410,10 @@ class user_repo extends repo implements user_repo_interface {
         profile_load_custom_fields($user);
 
         foreach($user->profile as $field => $value) {
+            if (! is_string($value)) {
+                return [];
+            }
+            
             $email = preg_replace('/\s/', '', $value);
             if (strpos($field, "mentor") > -1) {
                 $fakeuser = new stdClass();
