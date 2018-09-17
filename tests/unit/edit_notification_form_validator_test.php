@@ -303,72 +303,76 @@ class block_quickmail_edit_notification_form_validator_testcase extends advanced
         $this->assertFalse($validator->has_errors());
     }
 
-    public function test_validate_condition_time_unit_is_valid_for_notification_with_required_keys()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
+    // commenting out as this validation is now being done on front-end during user input
+
+    // public function test_validate_condition_time_unit_is_valid_for_notification_with_required_keys()
+    // {
+    //     // reset all changes automatically after this test
+    //     $this->resetAfterTest(true);
  
-        $input = $this->get_notification_input(['condition_time_unit' => 'decade']);
+    //     $input = $this->get_notification_input(['condition_time_unit' => 'decade']);
 
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-            'required_condition_keys' => ['time_unit', 'time_amount'],
-        ]);
-        $validator->validate();
+    //     $validator = new edit_notification_form_validator($input, [
+    //         'notification_type' => 'reminder',
+    //         'required_condition_keys' => ['time_unit', 'time_amount'],
+    //     ]);
+    //     $validator->validate();
 
-        $this->assertTrue($validator->has_errors());
-        $this->assertEquals('Invalid unit of time for condition.', $validator->errors[0]);
+    //     $this->assertTrue($validator->has_errors());
+    //     $this->assertEquals('Invalid unit of time for condition.', $validator->errors[0]);
 
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
+    //     // reset all changes automatically after this test
+    //     $this->resetAfterTest(true);
  
-        $input = $this->get_notification_input(['schedule_time_unit' => 'day']);
+    //     $input = $this->get_notification_input(['schedule_time_unit' => 'day']);
 
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-        ]);
-        $validator->validate();
+    //     $validator = new edit_notification_form_validator($input, [
+    //         'notification_type' => 'reminder',
+    //     ]);
+    //     $validator->validate();
 
-        $this->assertFalse($validator->has_errors());
-    }
+    //     $this->assertFalse($validator->has_errors());
+    // }
 
-    public function test_validate_condition_time_amount_is_valid_for_notification_with_required_keys()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
+    // commenting out as this validation is now being done on front-end during user input
+    
+    // public function test_validate_condition_time_amount_is_valid_for_notification_with_required_keys()
+    // {
+    //     // reset all changes automatically after this test
+    //     $this->resetAfterTest(true);
  
-        $input = $this->get_notification_input(['condition_time_amount' => '']);
+    //     $input = $this->get_notification_input(['condition_time_amount' => '']);
 
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-            'required_condition_keys' => ['time_unit', 'time_amount'],
-        ]);
-        $validator->validate();
+    //     $validator = new edit_notification_form_validator($input, [
+    //         'notification_type' => 'reminder',
+    //         'required_condition_keys' => ['time_unit', 'time_amount'],
+    //     ]);
+    //     $validator->validate();
 
-        $this->assertTrue($validator->has_errors());
-        $this->assertEquals('Invalid amount of time for condition.', $validator->errors[0]);
+    //     $this->assertTrue($validator->has_errors());
+    //     $this->assertEquals('Invalid amount of time for condition.', $validator->errors[0]);
 
-        $input = $this->get_notification_input(['condition_time_amount' => 'longtime']);
+    //     $input = $this->get_notification_input(['condition_time_amount' => 'longtime']);
 
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-            'required_condition_keys' => ['time_unit', 'time_amount'],
-        ]);
-        $validator->validate();
+    //     $validator = new edit_notification_form_validator($input, [
+    //         'notification_type' => 'reminder',
+    //         'required_condition_keys' => ['time_unit', 'time_amount'],
+    //     ]);
+    //     $validator->validate();
 
-        $this->assertTrue($validator->has_errors());
-        $this->assertEquals('Invalid amount of time for condition.', $validator->errors[0]);
+    //     $this->assertTrue($validator->has_errors());
+    //     $this->assertEquals('Invalid amount of time for condition.', $validator->errors[0]);
 
-        $input = $this->get_notification_input(['condition_time_amount' => '2']);
+    //     $input = $this->get_notification_input(['condition_time_amount' => '2']);
 
-        $validator = new edit_notification_form_validator($input, [
-            'notification_type' => 'reminder',
-            'required_condition_keys' => ['time_unit', 'time_amount'],
-        ]);
-        $validator->validate();
+    //     $validator = new edit_notification_form_validator($input, [
+    //         'notification_type' => 'reminder',
+    //         'required_condition_keys' => ['time_unit', 'time_amount'],
+    //     ]);
+    //     $validator->validate();
 
-        $this->assertFalse($validator->has_errors());
-    }
+    //     $this->assertFalse($validator->has_errors());
+    // }
 
     public function test_validate_conditions_for_notification_with_no_required_keys()
     {

@@ -119,12 +119,18 @@ class edit_notification_form extends controller_form {
 
             ////////////////////////////////////////////////////////////
             ///  schedule_time_unit (select)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - value must equal: 'day', 'week' or 'month'
             ////////////////////////////////////////////////////////////
+            $time_unit_options = $this->get_time_unit_options();
+
             $mform->addElement(
                 'select', 
                 'schedule_time_unit', 
                 block_quickmail_string::get('time_unit'), 
-                $this->get_time_unit_options()
+                $time_unit_options
             );
 
             $mform->setDefault(
@@ -133,9 +139,16 @@ class edit_notification_form extends controller_form {
             );
 
             $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
+            $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($time_unit_options) { return in_array($value, array_keys($time_unit_options));}, 'server');
 
             ////////////////////////////////////////////////////////////
             ///  schedule_time_amount (text)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - numeric
+            ///  - integer
+            ///  - greater than 0
             ////////////////////////////////////////////////////////////
             $mform->addElement(
                 'text', 
@@ -156,7 +169,8 @@ class edit_notification_form extends controller_form {
 
             $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
             $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
-            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nonzero', '', 'server');
+            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nopunctuation', '', 'server');
+            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { return $value >= 1;}, 'server');
 
             ////////////////////////////////////////////////////////////
             ///  schedule_begin_at (date/time)
@@ -208,16 +222,23 @@ class edit_notification_form extends controller_form {
 
             ////////////////////////////////////////////////////////////
             ///  condition_time_unit (select)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - value must equal: 'day', 'week' or 'month'
             ////////////////////////////////////////////////////////////
             if ($this->requires_condition('time_unit')) {
+                $time_unit_options = $this->get_time_unit_options();
+
                 $mform->addElement(
                     'select', 
                     'condition_time_unit', 
                     block_quickmail_string::get('time_unit'), 
-                    $this->get_time_unit_options()
+                    $time_unit_options
                 );
 
                 $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
+                $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($time_unit_options) { return in_array($value, array_keys($time_unit_options));}, 'server');
 
                 $mform->setDefault(
                     'condition_time_unit', 
@@ -227,6 +248,12 @@ class edit_notification_form extends controller_form {
 
             ////////////////////////////////////////////////////////////
             ///  condition_time_amount (text)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - numeric
+            ///  - integer
+            ///  - greater than 0
             ////////////////////////////////////////////////////////////
             if ($this->requires_condition('time_amount')) {
                 $mform->addElement(
@@ -248,11 +275,16 @@ class edit_notification_form extends controller_form {
 
                 $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
                 $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
-                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nonzero', '', 'server');
+                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nopunctuation', '', 'server');
+                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { return $value >= 1;}, 'server');
             }
 
             ////////////////////////////////////////////////////////////
             ///  condition_time_relation (select)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - value must equal: 'before' or 'after'
             ////////////////////////////////////////////////////////////
             if ($this->requires_condition('time_relation')) {
                 $mform->addElement(
@@ -273,6 +305,13 @@ class edit_notification_form extends controller_form {
 
             ////////////////////////////////////////////////////////////
             ///  condition_grade_greater_than (text)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - numeric
+            ///  - integer
+            ///  - greater than or equal to 0
+            ///  - less than 100
             ////////////////////////////////////////////////////////////
             if ($this->requires_condition('grade_greater_than')) {
                 $mform->addElement(
@@ -294,10 +333,19 @@ class edit_notification_form extends controller_form {
 
                 $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'required', '', 'server');
                 $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'numeric', '', 'server');
+                $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'nopunctuation', '', 'server');
+                $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'callback', function($value) { return $value >= 0 && $value < 100;}, 'server');
             }
 
             ////////////////////////////////////////////////////////////
             ///  condition_grade_less_than (text)
+            ///  
+            ///  validation (if necessary for this model):
+            ///  - required
+            ///  - numeric
+            ///  - integer
+            ///  - greater than 0
+            ///  - less than or equal to 100
             ////////////////////////////////////////////////////////////
             if ($this->requires_condition('grade_less_than')) {
                 $mform->addElement(
@@ -319,7 +367,8 @@ class edit_notification_form extends controller_form {
 
                 $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'required', '', 'server');
                 $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'numeric', '', 'server');
-                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'callback', function($value) { return $value > 0;}, 'server');
+                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'nopunctuation', '', 'server');
+                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'callback', function($value) { return $value > 0 && $value <= 100;}, 'server');
             }
         }
 

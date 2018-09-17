@@ -54,9 +54,11 @@ class edit_notification_form_validator extends validator {
 
         $this->validate_message_type();
 
-        $this->validate_schedule_params();
+        // commenting out as this should now be handled by front-end validation rules
+        // $this->validate_schedule_params();
 
-        $this->validate_condition_params();
+        // commenting out as this should now be handled by front-end validation rules
+        // $this->validate_condition_params();
     }
 
     /**
