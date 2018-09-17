@@ -37,5 +37,6 @@ interface user_repo_interface {
     public static function get_course_role_users($course_context, $role_id, $active_only = true, $user_fields = null);
     public static function get_unique_course_user_ids_from_selected_entities($course, $user, $included_entity_ids = [], $excluded_entity_ids = []);
     public static function get_mentors_of_user($user);
+    public static function get_prepended_mentors_of_user($user);
 
 }

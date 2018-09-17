@@ -136,6 +136,18 @@ abstract class recipient_send_factory {
     }
 
     /**
+     * Returns any existing mentors of this recipient from profile fields
+     * 
+     * @return array
+     */
+    public function get_recipient_prepended_mentors()
+    {
+        $mentor_users = user_repo::get_prepended_mentors_of_user($this->recipient->get_user());
+
+        return $mentor_users;
+    }
+
+    /**
      * Returns a subject prefix, if any, from the given options. Defaults to empty string.
      * 
      * @param  array  $options
