@@ -264,7 +264,7 @@ class edit_notification_form extends controller_form {
 
                 $mform->setDefault(
                     'condition_time_relation', 
-                    $this->get_assigned_condition('condition_time_relation') ?: ''
+                    $this->get_assigned_condition('time_relation') ?: ''
                 );
 
                 $mform->addRule('condition_time_relation', block_quickmail_string::get('invalid_time_relation'), 'required', '', 'server');
@@ -289,7 +289,7 @@ class edit_notification_form extends controller_form {
 
                 $mform->setDefault(
                     'condition_grade_greater_than', 
-                    $this->get_assigned_condition('condition_grade_greater_than') ?: ''
+                    $this->get_assigned_condition('grade_greater_than') ?: ''
                 );
 
                 $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'required', '', 'server');
@@ -314,7 +314,7 @@ class edit_notification_form extends controller_form {
 
                 $mform->setDefault(
                     'condition_grade_less_than', 
-                    $this->get_assigned_condition('condition_grade_less_than') ?: ''
+                    $this->get_assigned_condition('grade_less_than') ?: ''
                 );
 
                 $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'required', '', 'server');
