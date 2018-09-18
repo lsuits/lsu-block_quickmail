@@ -77,8 +77,8 @@ class select_model_form extends controller_form {
         ////////////////////////////////////////////////////////////
         $buttons = [
             // $mform->createElement('cancel', 'cancel', get_string('cancel')),
-            $mform->createElement('submit', 'back', 'Back'),
-            $mform->createElement('submit', 'next', 'Next'),
+            $mform->createElement('submit', 'back', get_string('back')),
+            $mform->createElement('submit', 'next', get_string('next')),
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);

@@ -100,7 +100,7 @@ class select_type_form extends controller_form {
         ////////////////////////////////////////////////////////////
         $buttons = [
             $mform->createElement('cancel', 'cancelbutton', get_string('cancel')),
-            $mform->createElement('submit', 'next', 'Next'),
+            $mform->createElement('submit', 'next', get_string('next')),
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
