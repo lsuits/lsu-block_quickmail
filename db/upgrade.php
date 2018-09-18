@@ -666,23 +666,26 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018081501, 'quickmail');
     }
 
-    // add an "has_migrated" field log and drafts tables
+    // add an "has_migrated" field log and drafts tables if they exist
 
     if ($oldversion < 2018082100) {
         
         foreach (['block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
             $table = new xmldb_table($table_name);
-            $field = new xmldb_field('has_migrated', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+            
+            if ($dbman->table_exists($table)) {
+                $field = new xmldb_field('has_migrated', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-            // add field if not already existing
-            if ( ! $dbman->field_exists($table, $field)) {
-                $dbman->add_field($table, $field);
-            }
+                // add field if not already existing
+                if ( ! $dbman->field_exists($table, $field)) {
+                    $dbman->add_field($table, $field);
+                }
 
-            // Add index to new has_migrated field.
-            if ($table_name == 'block_quickmail_log') {
-                $index = new xmldb_index('bloquilog_has_ix', XMLDB_INDEX_NOTUNIQUE, array('has_migrated'));
-                $dbman->add_index($table, $index);
+                // Add index to new has_migrated field.
+                if ($table_name == 'block_quickmail_log') {
+                    $index = new xmldb_index('bloquilog_has_ix', XMLDB_INDEX_NOTUNIQUE, array('has_migrated'));
+                    $dbman->add_index($table, $index);
+                }
             }
         }
 
