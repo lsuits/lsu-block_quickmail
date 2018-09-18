@@ -115,7 +115,7 @@ class select_type_form extends controller_form {
         return [
             '' => get_string('select'),
             'reminder' => block_quickmail_string::get('notification_type_reminder'),
-            'event' => block_quickmail_string::get('notification_type_event')
+            // 'event' => block_quickmail_string::get('notification_type_event')
         ];
     }
 
