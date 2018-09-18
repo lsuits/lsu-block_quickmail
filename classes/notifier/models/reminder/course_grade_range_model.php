@@ -28,7 +28,7 @@ class course_grade_range_model extends reminder_notification_model implements re
         }
 
         // make sure a grade_less_than boundary is set
-        if ($less_than = $this->condition->get_value('grade_less_than')) {
+        if ( ! $less_than = $this->condition->get_value('grade_less_than')) {
             return [];
         }
 
