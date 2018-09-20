@@ -425,3 +425,26 @@ $string['receipt_email_body'] = '
 </p>
 
 {$a->message_body}';
+
+// privacy api
+$string['privacy:metadata:core_files'] = 'This block stores files which may have been attached by the user to the user\'s own outbound messages.';
+$string['privacy:metadata:block_quickmail_alt_emails:user_id'] = 'The ID of the user who created this alternate email.';
+$string['privacy:metadata:block_quickmail_alt_emails:email'] = 'The email address of this alternate email.';
+$string['privacy:metadata:block_quickmail_alt_emails:firstname'] = 'The first name that is displayed when sending from this alternate email.';
+$string['privacy:metadata:block_quickmail_alt_emails:lastname'] = 'The last name that is displayed when sending from this alternate email.';
+$string['privacy:metadata:block_quickmail_alt_emails'] = 'Alternate email addresses which a user may send a message from.';
+$string['privacy:metadata:block_quickmail_messages:user_id'] = 'The ID of the user who created this message.';
+$string['privacy:metadata:block_quickmail_messages:subject'] = 'The subject of the message created by the user.';
+$string['privacy:metadata:block_quickmail_messages:body'] = 'The body of the message created by the user.';
+$string['privacy:metadata:block_quickmail_messages'] = 'Messages that may have been sent, are in the process of sending, or scheduled to be sent by the user.';
+$string['privacy:metadata:block_quickmail_msg_recips:user_id'] = 'The ID of the user who received this message.';
+$string['privacy:metadata:block_quickmail_msg_recips'] = 'Records of a user having received a specific message.';
+$string['privacy:metadata:block_quickmail_notifs:user_id'] = 'The ID of the user who created this notification.';
+$string['privacy:metadata:block_quickmail_notifs:subject'] = 'The subject of the notification message to be sent on behalf of the user.';
+$string['privacy:metadata:block_quickmail_notifs:body'] = 'The body of the notification message to be sent on behalf of the user.';
+$string['privacy:metadata:block_quickmail_notifs'] = 'Automated notifications to be sent to a specific course, either on a scheduled basis or in reaction to specific events in Moodle.';
+$string['privacy:metadata:block_quickmail_signatures:user_id'] = 'The ID of the user who created this signature.';
+$string['privacy:metadata:block_quickmail_signatures:title'] = 'The identifying title of the signature.';
+$string['privacy:metadata:block_quickmail_signatures:signature'] = 'The content of the signature.';
+$string['privacy:metadata:block_quickmail_signatures'] = 'Signatures which may be appended to a message sent on behalf of a user.';
+$string['privacy:metadata:preference:block_quickmail_preferred_picker'] = 'The user-preferred recipient-picker interface to be displayed when composing a message.';
