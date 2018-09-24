@@ -336,25 +336,16 @@ class block_quickmail_plugin {
     ////////////////////////////////////////////////////
 
     /**
-     * Returns the available time unit values
-     * 
-     * @return array
-     */
-    public static function get_time_unit_values()
-    {
-        return ['day', 'week', 'month'];
-    }
-
-    /**
      * Returns an array for time unit form selection
      *
-     * @param  array  $includes   a list of time units to include in the selection
+     * @param  array   $includes      a list of time units to include in the selection
+     * @param  string  $default_text  lang string to display for default (empty) selection, default to "select"
      * @return array
      */
-    public static function get_time_unit_selection_array($includes = [])
+    public static function get_time_unit_selection_array($includes = [], $default_text = 'select')
     {
         $options = [
-            '' => get_string('select'),
+            '' => get_string($default_text),
             'minute' => ucfirst(get_string('minutes')),
             'hour' => ucfirst(get_string('hours')),
             'day' => ucfirst(get_string('days')),
