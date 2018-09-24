@@ -25,7 +25,6 @@
 namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
-use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\messenger\message\body_substitution_code_parser;
