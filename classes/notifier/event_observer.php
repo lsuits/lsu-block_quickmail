@@ -19,13 +19,13 @@ class event_observer {
         $course_id = $event->courseid;
 
         // POC
-        global $DB;
-        $touser = $DB->get_record('user', ['id' => $user_id]);
-        $fromuser = $DB->get_record('user', ['id' => '25']);
-        $emailer = new block_quickmail_emailer($fromuser, 'subject', 'one fine body');
-        $emailer->to_user($touser);
-        $emailer->reply_to($fromuser->email, fullname($fromuser));
-        $emailer->send();
+        // global $DB;
+        // $touser = $DB->get_record('user', ['id' => $user_id]);
+        // $fromuser = $DB->get_record('user', ['id' => '25']);
+        // $emailer = new block_quickmail_emailer($fromuser, 'subject', 'one fine body');
+        // $emailer->to_user($touser);
+        // $emailer->reply_to($fromuser->email, fullname($fromuser));
+        // $emailer->send();
     }
 
 }

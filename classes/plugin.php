@@ -322,7 +322,8 @@ class block_quickmail_plugin {
                 'course_grade_range'
             ],
             'event' => [
-                'assignment_submitted'
+                'course_entered',
+                // 'assignment_submitted'
             ]
         ];
 
