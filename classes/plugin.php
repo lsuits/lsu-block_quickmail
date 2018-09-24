@@ -347,17 +347,24 @@ class block_quickmail_plugin {
 
     /**
      * Returns an array for time unit form selection
-     * 
+     *
+     * @param  array  $includes   a list of time units to include in the selection
      * @return array
      */
-    public static function get_time_unit_selection_array()
+    public static function get_time_unit_selection_array($includes = [])
     {
-        return [
+        $options = [
             '' => get_string('select'),
+            'minute' => ucfirst(get_string('minutes')),
+            'hour' => ucfirst(get_string('hours')),
             'day' => ucfirst(get_string('days')),
             'week' => ucfirst(get_string('weeks')),
             'month' => ucfirst(get_string('months')),
         ];
+
+        return self::array_filter_key($options, function($unit) use ($includes) {
+            return in_array($unit, $includes) || $unit == '';
+        });
     }
 
     /**

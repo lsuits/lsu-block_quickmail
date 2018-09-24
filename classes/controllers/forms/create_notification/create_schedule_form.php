@@ -146,7 +146,7 @@ class create_schedule_form extends controller_form {
      */
     private function get_time_unit_options()
     {
-        return block_quickmail_plugin::get_time_unit_selection_array();
+        return block_quickmail_plugin::get_time_unit_selection_array(['day', 'week', 'month']);
     }
 
     /**
