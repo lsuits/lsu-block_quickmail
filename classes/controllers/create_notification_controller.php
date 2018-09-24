@@ -45,8 +45,8 @@ class create_notification_controller extends base_controller {
             'schedule_max_per_interval',
         ],
         'set_event_details' => [
-            'event_delay_time_unit',
-            'event_delay_time_amount',
+            'time_delay_unit',
+            'time_delay_amount',
         ],
         'create_message' => [
             'message_alternate_email_id',
@@ -216,6 +216,8 @@ class create_notification_controller extends base_controller {
     //////////////////////////////////
 
     // select_object
+    // for events...
+        // if event requires conditions (maybe on object?) then direct to set conditions, otherwise set_event_details
 
     //////////////////////////////////
     ///
@@ -374,6 +376,77 @@ class create_notification_controller extends base_controller {
 
     //////////////////////////////////
     ///
+    ///  SET EVENT DETAILS
+    /// 
+    //////////////////////////////////
+
+    /**
+     * Specify details for this event notification
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function set_event_details(controller_request $request)
+    {
+        $form = $this->make_form('create_notification\set_event_details_form');
+
+        // route the form submission, if any
+        if ($form->is_validated_next()) {
+            // grab the manipulated moodle post to handle timestamp conversion
+            $form_data = $form->get_data();
+
+            return $this->post($request, 'set_event_details', 'next');
+        } else if ($form->is_submitted_back()) {
+            return $this->post($request, 'set_event_details', 'back');
+        }
+
+        $this->render_form($form, [
+            'heading' => block_quickmail_string::get('set_event_details', (object) [
+                'model' => block_quickmail_string::get('notification_model_event_' . $this->stored('notification_model')),
+                'type' => block_quickmail_string::get('notification_type_' . $this->stored('notification_type'))
+            ])
+        ]);
+    }
+
+    /**
+     * Handles post of set_event_details form, next subaction
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_set_event_details_next(controller_request $request)
+    {
+        // persist inputs in session
+        $this->store($request->input, $this->view_data_keys('set_event_details'));
+
+        return $this->view($request, 'create_message');
+    }
+
+    /**
+     * Handles post of set_event_details form, back subaction
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_set_event_details_back(controller_request $request)
+    {
+        // if the selected model requires conditions to be set
+        if (notification_model_helper::model_requires_conditions($this->stored('notification_type'), $this->stored('notification_model'))) {
+            // go to set conditions view
+            return $this->view($request, 'set_conditions');
+        }
+
+        // if the selected model requires object to be set
+        if (notification_model_helper::model_requires_object($this->stored('notification_type'), $this->stored('notification_model'))) {
+            // go to select object view
+            return $this->view($request, 'select_object');
+        }
+        
+        return $this->view($request, 'select_model');
+    }
+
+    //////////////////////////////////
+    ///
     ///  CREATE MESSAGE
     /// 
     //////////////////////////////////
@@ -446,17 +519,23 @@ class create_notification_controller extends base_controller {
      */
     public function post_create_message_back(controller_request $request)
     {
-        if ($this->stored('notification_type') == 'reminder') {
-            // go to set conditions view
-            return $this->view($request, 'create_schedule');
-        }
+        switch ($this->stored('notification_type')) {
+            case 'reminder':
+                // go to create schedule
+                return $this->view($request, 'create_schedule');
+                break;
 
-        if ($this->stored('notification_type') == 'reminder') {
-            // go to set conditions view
-            return $this->view($request, 'set_event_details');
+            case 'event':
+                // go to set event details
+                return $this->view($request, 'set_event_details');
+                break;
+            
+            default:
+                // otherwise, something is broken :/ this should not happen unless session is cleared
+                // send back to start
+                return $this->view($request, 'select_type');
+                break;
         }
-
-        return $this->view($request, 'select_model');
     }
 
     //////////////////////////////////
@@ -494,6 +573,7 @@ class create_notification_controller extends base_controller {
             'edit_select_type',
             'edit_set_conditions',
             'edit_create_schedule',
+            'edit_set_event_details',
             'edit_create_message',
         ];
 
@@ -504,6 +584,8 @@ class create_notification_controller extends base_controller {
             return $this->post($request, 'review', 'edit_set_conditions');
         } else if ($form->is_submitted_subaction('edit_create_schedule', $subactions)) {
             return $this->post($request, 'review', 'edit_create_schedule');
+        } else if ($form->is_submitted_subaction('edit_set_event_details', $subactions)) {
+            return $this->post($request, 'review', 'edit_set_event_details');
         } else if ($form->is_submitted_subaction('edit_create_message', $subactions)) {
             return $this->post($request, 'review', 'edit_create_message');
         } else if ($form->is_validated_next()) {
@@ -546,6 +628,17 @@ class create_notification_controller extends base_controller {
     public function post_review_edit_create_schedule(controller_request $request)
     {
         return $this->view($request, 'create_schedule');
+    }
+
+    /**
+     * Handles post of review form, edit_set_event_details subaction
+     * 
+     * @param  controller_request  $request
+     * @return mixed
+     */
+    public function post_review_edit_set_event_details(controller_request $request)
+    {
+        return $this->view($request, 'set_event_details');
     }
 
     /**

@@ -27,9 +27,10 @@ namespace block_quickmail\controllers\forms\create_notification;
 require_once $CFG->libdir . '/formslib.php';
 
 use block_quickmail\controllers\support\controller_form;
+use block_quickmail_plugin;
 use block_quickmail_string;
 
-class select_type_form extends controller_form {
+class set_event_details_form extends controller_form {
 
     /*
      * Moodle form definition
@@ -46,60 +47,64 @@ class select_type_form extends controller_form {
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
         ////////////////////////////////////////////////////////////
-        ///  name (text)
+        ///  descriptive text
+        ////////////////////////////////////////////////////////////
+        
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_event_details_description') . '</div>');
+
+        ////////////////////////////////////////////////////////////
+        ///  time_delay_unit (select)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'select', 
+            'time_delay_unit', 
+            block_quickmail_string::get('time_delay_unit'), 
+            $this->get_time_unit_options()
+        );
+
+        $mform->setDefault(
+            'time_delay_unit', 
+            $this->has_session_stored('time_delay_unit') ? $this->get_session_stored('time_delay_unit') : ''
+        );
+
+        $mform->addHelpButton(
+            'time_delay_unit', 
+            'time_delay_unit', 
+            'block_quickmail'
+        );
+
+        ////////////////////////////////////////////////////////////
+        ///  time_delay_amount (text)
         ////////////////////////////////////////////////////////////
         $mform->addElement(
             'text', 
-            'notification_name', 
-            block_quickmail_string::get('notification_name'),
-            ['size' => 40, 'placeholder' => 'My New Notification Title']
+            'time_delay_amount', 
+            block_quickmail_string::get('time_amount'), 
+            ['size' => 4]
         );
-
+        
         $mform->setType(
-            'notification_name', 
+            'time_delay_amount', 
             PARAM_TEXT
         );
 
         $mform->setDefault(
-            'notification_name', 
-            $this->has_session_stored('notification_name') ? $this->get_session_stored('notification_name') : ''
+            'time_delay_amount', 
+            $this->has_session_stored('time_delay_amount') ? $this->get_session_stored('time_delay_amount') : '0'
         );
 
-        $mform->addRule('notification_name', get_string('required'), 'required', '', 'server');
-        $mform->addRule('notification_name', get_string('err_maxlength', 'form', (object)['format' => 40]), 'maxlength', 40, 'server');
-
-        $mform->addHelpButton(
-            'notification_name', 
-            'notification_name', 
-            'block_quickmail'
-        );
-
-        $mform->addElement('static', 'reminder_description', '', '<strong>Reminder</strong>: ' . block_quickmail_string::get('notification_type_reminder_description'));
-        $mform->addElement('static', 'event_description', '', '<strong>Event</strong>: ' . block_quickmail_string::get('notification_type_event_description'));
-
-        ////////////////////////////////////////////////////////////
-        ///  notification_type (select)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'notification_type', 
-            block_quickmail_string::get('notification_type'), 
-            $this->get_notification_type_options()
-        );
-
-        $mform->setDefault(
-            'notification_type', 
-            $this->has_session_stored('notification_type') ? $this->get_session_stored('notification_type') : ''
-        );
-
-        $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'required', '', 'server');
-        $mform->addRule('notification_type', block_quickmail_string::get('invalid_notification_type'), 'callback', function($value) { return in_array($value, ['reminder', 'event']); }, 'server');
+        $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+            return empty($value)
+                ? true
+                : is_numeric($value);
+        }, 'server');
 
         ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [
-            $mform->createElement('cancel', 'cancelbutton', get_string('cancel')),
+            // $mform->createElement('cancel', 'cancel', get_string('cancel')),
+            $mform->createElement('submit', 'back', get_string('back')),
             $mform->createElement('submit', 'next', get_string('next')),
         ];
         
@@ -107,16 +112,13 @@ class select_type_form extends controller_form {
     }
 
     /**
-     * Returns the options for notification type selection
+     * Returns the options time_delay_unit selection
      * 
      * @return array
      */
-    private function get_notification_type_options() {
-        return [
-            '' => get_string('select'),
-            'reminder' => block_quickmail_string::get('notification_type_reminder'),
-            'event' => block_quickmail_string::get('notification_type_event')
-        ];
+    private function get_time_unit_options()
+    {
+        return block_quickmail_plugin::get_time_unit_selection_array(['minute', 'hour', 'day'], 'none');
     }
 
 }
