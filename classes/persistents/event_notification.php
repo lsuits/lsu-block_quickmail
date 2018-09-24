@@ -144,7 +144,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 	}
 
 	/**
-	 * Returns the calculate time_delay (seconds) from the given creation params, if any
+	 * Returns the calculated time_delay (seconds) from the given creation params, if any
 	 * 
 	 * @param  array  $params
 	 * @return int
