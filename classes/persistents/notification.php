@@ -210,8 +210,6 @@ class notification extends \block_quickmail\persistents\persistent {
         return time() < $course->enddate;
     }
 
-
-
     ///////////////////////////////////////////////
     ///
     ///  STATUS UPDATE METHODS
@@ -351,7 +349,6 @@ class notification extends \block_quickmail\persistents\persistent {
 
         return $this->read();
     }
-    
 
 	///////////////////////////////////////////////
 	///

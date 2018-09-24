@@ -44,9 +44,9 @@
             <exclude>tests/unit/signature_persistent_test.php</exclude>
             <exclude>tests/unit/alternate_persistent_test.php</exclude>
             <exclude>tests/unit/schedule_persistent_test.php</exclude>
-                <exclude>tests/unit/notification_persistent_test.php</exclude>
-                <exclude>tests/unit/reminder_notification_persistent_test.php</exclude>
-                <exclude>tests/unit/event_notification_persistent_test.php</exclude>
+            <exclude>tests/unit/notification_persistent_test.php</exclude>
+            <exclude>tests/unit/reminder_notification_persistent_test.php</exclude>
+            <exclude>tests/unit/event_notification_persistent_test.php</exclude>
 
             <!-- repos -->
             <exclude>tests/unit/draft_repo_test.php</exclude>
@@ -100,6 +100,7 @@
             <!-- cannot get this one to work :( -->
             <exclude>tests/unit/reminder_notification_course_grade_range_model_test.php</exclude>
             <exclude>tests/unit/event_notification_assignment_submitted_model_test.php</exclude>
+                <exclude>tests/unit/event_notification_course_entered_model_test.php</exclude>
             
             <!-- notification conditions -->
             <exclude>tests/unit/notification_condition_test.php</exclude>

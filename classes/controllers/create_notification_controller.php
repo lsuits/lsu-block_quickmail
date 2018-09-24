@@ -707,11 +707,12 @@ class create_notification_controller extends base_controller {
     {
         return event_notification::create_type(
             str_replace('_', '-', $this->stored('notification_model')), 
-            $this->props->course, 
-            $this->props->course, // need to pull the object here!
+            $this->props->course, // need to pull the object here! 
+            $this->props->course,
             $this->props->user, 
             array_merge($this->get_notification_params(), [
-                // 'time_delay' => $this->stored('event_time_delay'),
+                'time_delay_unit' => $this->stored('time_delay_unit'),
+                'time_delay_amount' => $this->stored('time_delay_amount'),
             ])
         );
     }

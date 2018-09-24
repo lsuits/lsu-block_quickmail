@@ -48,11 +48,12 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
         
         // create
-        $event_notification = event_notification::create_type('assignment-submitted', $course, $user_teacher, $this->get_event_notification_params());
+        $event_notification = event_notification::create_type('course-entered', $course, $course, $user_teacher, $this->get_event_notification_params());
 
         $this->assertInstanceOf(event_notification::class, $event_notification);
-        $this->assertEquals('assignment-submitted', $event_notification->get('model'));
-        $this->assertEquals($this->get_event_notification_params('time_delay'), $event_notification->get('time_delay'));
+        $this->assertEquals('course-entered', $event_notification->get('model'));
+        // 5 min given = 300 seconds
+        $this->assertEquals(300, $event_notification->get('time_delay'));
         $this->assertFalse($event_notification->is_schedulable());
 
         // get notification from event_notification
@@ -89,7 +90,7 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // create an event notification
-        $event_notification = event_notification::create_type('assignment-submitted', $course, $user_teacher, $this->get_event_notification_params());
+        $event_notification = event_notification::create_type('course-entered', $course, $course, $user_teacher, $this->get_event_notification_params());
 
         $event_notification_model = $event_notification->get_notification_model();
 
