@@ -425,3 +425,14 @@ $string['receipt_email_body'] = '
 </p>
 
 {$a->message_body}';
+
+// qm_page
+$string['ms_compose'] = 'Compose';
+$string['ms_drafts'] = 'Drafts';
+$string['ms_queued'] = 'Scheduled';
+$string['ms_sent'] = 'Sent Emails';
+$string['ms_signatures'] = 'My Signatures';
+$string['ms_alternate'] = 'Alternate Emails';
+$string['ms_config'] = 'Configure';
+$string['ms_notifications'] = 'Notifications';
+$string['ms_create_notification'] = 'Create Notification';

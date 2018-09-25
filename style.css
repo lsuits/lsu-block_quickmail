@@ -89,8 +89,8 @@
   text-align: center;
   display: inline-block;
   margin: 1em;
-  width: 15em;
-  height: 15em;
+  width: 12em;
+  height: 12em;
   border: 1px solid lightgray;
   border-radius: 1.5em;
   padding: 1em;
@@ -98,21 +98,28 @@
   vertical-align: bottom;
   background-repeat: no-repeat;
   background-size: 50%;
-  background-position: center;
+  background-position: 50% 65%;
   background-color: #ffffff;
-  font-size: 12px;
+  font-size: 10px;
+}
+
+.device-type-mobile div.qm_links a.qml {
+  width: 9em!important;
+  height: 9em!important;
 }
 
 #page-block-quickmail div.qm_links a.qml:hover {
-  background-size: 80%;
+  background-size: 90%;
   color: transparent;
   text-decoration: none;
-  transition: background-size .25s, color .1s;
+  background-position: 50% 50%;
+  transition: background-size .25s, color .1s, background-position .25s;
 }
 
 #page-block-quickmail div.qm_links a.qml:active {
-  background-size: 400%;
+  background-size: 1000%;
   color: transparent;
+  transition-timing-function: ease-out;
   transition: background-size .5s;
 }
 
@@ -125,7 +132,7 @@
 }
 
 #page-block-quickmail div.qm_links a.qml.queued {
-  background-image: url('assets/calendar.svg');
+  background-image: url('assets/duration.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.sent {
@@ -141,7 +148,7 @@
 }
 
 #page-block-quickmail div.qm_links a.qml.configuration {
-  background-image: url('assets/preferences.svg');
+  background-image: url('assets/cogs.svg');
 }
 
 #page-block-quickmail div.qm_links a.qml.notifications {

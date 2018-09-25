@@ -25,6 +25,9 @@
 require_once('../../config.php');
 require_once 'lib.php';
 
+////////////////////////////////////////
+/// SET UP PARAMS
+////////////////////////////////////////
 $page_params = [
     'courseid' => required_param('courseid', PARAM_INT)
 ];
@@ -46,29 +49,39 @@ block_quickmail_plugin::require_user_can_send('compose', $USER, $course_context)
 ////////////////////////////////////////
 /// CONSTRUCT PAGE
 ////////////////////////////////////////
-
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname'));
 $PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $courseid)));
 $PAGE->set_heading(block_quickmail_string::get('pluginname'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
+$coursenode = $PAGE->navigation->find($courseid, navigation_node::TYPE_COURSE);
+$qmnode = $coursenode->add(get_string('pluginname', 'block_quickmail'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $courseid)));
+$qmnode->make_active();
 
-//$renderer = $PAGE->get_renderer('block_quickmail');
+////////////////////////////////////////
+/// CONSTRUCT LINKS
+////////////////////////////////////////
+$composelink = html_writer::link(new moodle_url('/blocks/quickmail/compose.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_compose'), array('class' => 'qml compose'));
+$draftlink = html_writer::link(new moodle_url('/blocks/quickmail/drafts.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_drafts'), array('class' => 'qml draft'));
+$queuedlink = html_writer::link(new moodle_url('/blocks/quickmail/queued.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_queued'), array('class' => 'qml queued'));
+$sentlink = html_writer::link(new moodle_url('/blocks/quickmail/sent.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_sent'), array('class' => 'qml sent'));
+$signaturelink = html_writer::link(new moodle_url('/blocks/quickmail/signatures.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_signatures'), array('class' => 'qml signatures'));
+$alternatelink = block_quickmail_plugin::user_has_capability('allowalternate', $USER, $course_context) ? html_writer::link(new moodle_url('/blocks/quickmail/alternate.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_alternate'), array('class' => 'qml alternate')) : '';
+$configurelink = block_quickmail_plugin::user_has_capability('canconfig', $USER, $course_context) ? html_writer::link(new moodle_url('/blocks/quickmail/configuration.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_config'), array('class' => 'qml configuration')) : '';
+$notificationlink = block_quickmail_plugin::user_can_create_notifications($USER, $course_context) ? html_writer::link(new moodle_url('/blocks/quickmail/notifications.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_notifications'), array('class' => 'qml notifications')) : '';
+$create_notificationlink = block_quickmail_plugin::user_can_create_notifications($USER, $course_context) ? html_writer::link(new moodle_url('/blocks/quickmail/create_notification.php', array('courseid' => $courseid)), block_quickmail_string::get('ms_create_notification'), array('class' => 'qml create_notification')) : '';
 
+////////////////////////////////////////
+/// OUTPUT PAGE
+////////////////////////////////////////
+$out = html_writer::div($composelink . $draftlink . $queuedlink, 'qm_links');
+$out .= html_writer::div($sentlink . $signaturelink . $alternatelink, 'qm_links');
+$out .= html_writer::div($configurelink . $notificationlink . $create_notificationlink, 'qm_links');
+
+////////////////////////////////////////
+/// ECHO OUTPUT
+////////////////////////////////////////
 echo $OUTPUT->header();
-echo '<div class="qm_links">';
-echo '<a class="qml compose" href="' . new moodle_url("/blocks/quickmail/compose.php", array("courseid" => $courseid)) . '">compose</a> ';
-echo '<a class="qml draft" href="' . new moodle_url("/blocks/quickmail/drafts.php", array("courseid" => $courseid)) . '">drafts</a> ';
-echo '<a class="qml queued" href="' . new moodle_url("/blocks/quickmail/queued.php", array("courseid" => $courseid)) . '">view scheduled</a> ';
-echo '</div><div class="qm_links">';
-echo '<a class="qml sent" href="' . new moodle_url("/blocks/quickmail/sent.php", array("courseid" => $courseid)) . '">view sent messages</a> ';
-echo '<a class="qml signatures" href="' . new moodle_url("/blocks/quickmail/signatures.php", array("courseid" => $courseid)) . '">my signatures</a> ';
-echo '<a class="qml alternate" href="' . new moodle_url("/blocks/quickmail/alternate.php", array("courseid" => $courseid)) . '">alternate emails</a> ';
-echo '</div><div class="qm_links">';
-echo '<a class="qml configuration" href="' . new moodle_url("/blocks/quickmail/configuration.php", array("courseid" => $courseid)) . '">configuration</a> ';
-echo '<a class="qml notifications" href="' . new moodle_url("/blocks/quickmail/notifications.php", array("courseid" => $courseid)) . '">notifications</a> ';
-echo '<a class="qml create_notification" href="' . new moodle_url("/blocks/quickmail/create_notification.php", array("courseid" => $courseid)) . '">create notification</a> ';
-echo '</div>';
+echo $out;
 echo $OUTPUT->footer();
-
