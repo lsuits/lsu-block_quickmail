@@ -20,7 +20,7 @@ class event_observer {
         // course that was viewed
         $course_id = $event->courseid;
 
-        event_notification_handler::course_entered($user->id, $course->id);
+        event_notification_handler::course_entered($user_id, $course_id);
     }
 
     // for testing...
