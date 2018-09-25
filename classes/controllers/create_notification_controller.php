@@ -47,6 +47,8 @@ class create_notification_controller extends base_controller {
         'set_event_details' => [
             'time_delay_unit',
             'time_delay_amount',
+            'mute_time_unit',
+            'mute_time_amount',
         ],
         'create_message' => [
             'message_alternate_email_id',
@@ -713,6 +715,8 @@ class create_notification_controller extends base_controller {
             array_merge($this->get_notification_params(), [
                 'time_delay_unit' => $this->stored('time_delay_unit'),
                 'time_delay_amount' => $this->stored('time_delay_amount'),
+                'mute_time_unit' => $this->stored('mute_time_unit'),
+                'mute_time_amount' => $this->stored('mute_time_amount'),
             ])
         );
     }

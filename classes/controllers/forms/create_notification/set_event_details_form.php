@@ -100,6 +100,53 @@ class set_event_details_form extends controller_form {
         }, 'server');
 
         ////////////////////////////////////////////////////////////
+        ///  mute_time_unit (select)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'select', 
+            'mute_time_unit', 
+            block_quickmail_string::get('mute_time_unit'), 
+            $this->get_time_unit_options()
+        );
+
+        $mform->setDefault(
+            'mute_time_unit', 
+            $this->has_session_stored('mute_time_unit') ? $this->get_session_stored('mute_time_unit') : ''
+        );
+
+        $mform->addHelpButton(
+            'mute_time_unit', 
+            'mute_time_unit', 
+            'block_quickmail'
+        );
+
+        ////////////////////////////////////////////////////////////
+        ///  mute_time_amount (text)
+        ////////////////////////////////////////////////////////////
+        $mform->addElement(
+            'text', 
+            'mute_time_amount', 
+            block_quickmail_string::get('time_amount'), 
+            ['size' => 4]
+        );
+        
+        $mform->setType(
+            'mute_time_amount', 
+            PARAM_TEXT
+        );
+
+        $mform->setDefault(
+            'mute_time_amount', 
+            $this->has_session_stored('mute_time_amount') ? $this->get_session_stored('mute_time_amount') : '0'
+        );
+
+        $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+            return empty($value)
+                ? true
+                : is_numeric($value);
+        }, 'server');
+
+        ////////////////////////////////////////////////////////////
         ///  buttons
         ////////////////////////////////////////////////////////////
         $buttons = [

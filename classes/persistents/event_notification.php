@@ -31,6 +31,7 @@ use block_quickmail\persistents\concerns\is_notification_type;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\persistents\message;
+use block_quickmail_plugin;
  
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -174,17 +175,41 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 		// created the parent notification
 		$notification = notification::create_for_course_user('event', $course, $user, $params);
 
-		// calculate the time delay amount (if any) from the given params
-		$time_delay = self::calculate_time_delay_from_params($params);
+        // calculate the input time_delay and mute_time, if any
+        list($time_delay, $mute_time) = self::get_event_creation_param_seconds($params);
 
 		// create the event notification
 		$event_notification = self::create_for_notification($notification, array_merge([
 			'object_id' => ! empty($object) ? $object->id : 0, // may need to write helper class to get this id
-			'time_delay' => $time_delay,
+            'time_delay' => $time_delay,
+            'mute_time' => $mute_time,
 		], $params));
 
 		return $event_notification;
 	}
+
+    /**
+     * Returns an array of time_delay and mute_time seconds for event notification creation
+     * 
+     * @param  array  $params  raw event notification creation params
+     * @return array
+     */
+    private static function get_event_creation_param_seconds($params)
+    {
+        $time_delay = 0;
+        $mute_time = 0;
+
+        foreach (['time_delay', 'mute_time'] as $type) {
+            // calculate amount of seconds for type (if any) from the given params
+            if (array_key_exists($type . '_unit', $params) && array_key_exists($type . '_amount', $params)) {
+                $$type = block_quickmail_plugin::calculate_seconds_from_time_params($params[$type . '_unit'], $params[$type . '_amount']);
+            }
+        }
+
+        return [$time_delay, $mute_time];
+    }
+
+
 
 	/**
 	 * Creates and returns an event notification to be associated with the given notification
@@ -218,35 +243,35 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 		return $event_notification;
 	}
 
-	/**
-	 * Returns the calculated time_delay (seconds) from the given creation params, if any
-	 * 
-	 * @param  array  $params
-	 * @return int
-	 */
-	public static function calculate_time_delay_from_params($params)
-	{
-		$time_delay = 0;
+	// /**
+	//  * Returns the calculated time_delay (seconds) from the given creation params, if any
+	//  * 
+	//  * @param  array  $params
+	//  * @return int
+	//  */
+	// public static function calculate_time_delay_from_params($params)
+	// {
+	// 	$time_delay = 0;
 
-		if (array_key_exists('time_delay_unit', $params) && array_key_exists('time_delay_amount', $params)) {
-			$amount = (int) $params['time_delay_amount'];
+	// 	if (array_key_exists('time_delay_unit', $params) && array_key_exists('time_delay_amount', $params)) {
+	// 		$amount = (int) $params['time_delay_amount'];
 
-			if (in_array($params['time_delay_unit'], ['minute', 'hour', 'day']) && $amount > 0) {
-				$seconds = 60;
-				$mult = 1;
+	// 		if (in_array($params['time_delay_unit'], ['minute', 'hour', 'day']) && $amount > 0) {
+	// 			$seconds = 60;
+	// 			$mult = 1;
 				
-				if ($params['time_delay_unit'] == 'hour') {
-					$mult = 60;
-				} else if ($params['time_delay_unit'] == 'day') {
-					$mult = 1440;
-				}
+	// 			if ($params['time_delay_unit'] == 'hour') {
+	// 				$mult = 60;
+	// 			} else if ($params['time_delay_unit'] == 'day') {
+	// 				$mult = 1440;
+	// 			}
 
-				$time_delay = $amount * $seconds * $mult;
-			}
-		}
+	// 			$time_delay = $amount * $seconds * $mult;
+	// 		}
+	// 	}
 
-		return $time_delay;
-	}
+	// 	return $time_delay;
+	// }
 
 	///////////////////////////////////////////////
     ///

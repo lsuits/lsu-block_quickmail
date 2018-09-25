@@ -124,7 +124,14 @@ class review_form extends controller_form {
                 'static', 
                 'time_delay_summary', 
                 block_quickmail_string::get('time_delay_summary'),
-                $this->get_time_delay_summary()
+                $this->get_time_summary('time_delay')
+            );
+
+            $mform->addElement(
+                'static', 
+                'mute_time_summary', 
+                block_quickmail_string::get('mute_time_summary'),
+                $this->get_time_summary('mute_time')
             );
 
             $mform->addGroup([
@@ -225,19 +232,20 @@ class review_form extends controller_form {
     }
 
     /**
-     * Returns a descriptive summary of the event time delay, if any
-     * 
+     * Returns a descriptive summary of the given type of time parameter
+     *
+     * @param  string  $type  time_delay|mute_time
      * @return string
      */
-    private function get_time_delay_summary()
+    private function get_time_summary($type)
     {
-        if ($time_delay_unit = $this->get_session_stored('time_delay_unit')) {
-            if ($time_delay_amount = $this->get_session_stored('time_delay_amount')) {
-                $string_key = (int) $time_delay_amount > 1
-                    ? $time_delay_unit . 's'
-                    : $time_delay_unit;
+        if ($unit = $this->get_session_stored($type . '_unit')) {
+            if ($amount = $this->get_session_stored($type . '_amount')) {
+                $string_key = (int) $amount > 1
+                    ? $unit . 's'
+                    : $unit;
 
-                return $time_delay_amount . ' ' . ucfirst(get_string($string_key));
+                return $amount . ' ' . ucfirst(get_string($string_key));
             }
         }
 

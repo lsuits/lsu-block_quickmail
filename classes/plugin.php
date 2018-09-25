@@ -406,4 +406,37 @@ class block_quickmail_plugin {
         return $CFG->wwwroot . '/blocks/quickmail/';
     }
 
+    /**
+     * Returns a calculated amount of seconds from the given params, if any
+     *
+     * Note: time_unit currently limited to: minute, hour, or day
+     * 
+     * @param  string  $time_unit
+     * @param  string  $time_amount
+     * @return int
+     */
+    public static function calculate_seconds_from_time_params($time_unit = '', $time_amount = '')
+    {
+        $result = 0;
+
+        if ($time_unit && $time_amount) {
+            $amount = (int) $time_amount;
+
+            if (in_array($time_unit, ['minute', 'hour', 'day']) && $amount > 0) {
+                $seconds = 60;
+                $mult = 1;
+                
+                if ($time_unit == 'hour') {
+                    $mult = 60;
+                } else if ($time_unit == 'day') {
+                    $mult = 1440;
+                }
+
+                $result = $amount * $seconds * $mult;
+            }
+        }
+
+        return $result;
+    }
+
 }
