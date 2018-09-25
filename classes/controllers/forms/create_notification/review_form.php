@@ -127,12 +127,14 @@ class review_form extends controller_form {
                 $this->get_time_summary('time_delay')
             );
 
-            $mform->addElement(
-                'static', 
-                'mute_time_summary', 
-                block_quickmail_string::get('mute_time_summary'),
-                $this->get_time_summary('mute_time')
-            );
+            if ( ! $this->get_custom_data('is_one_time_event')) {
+                $mform->addElement(
+                    'static', 
+                    'mute_time_summary', 
+                    block_quickmail_string::get('mute_time_summary'),
+                    $this->get_time_summary('mute_time')
+                );
+            }
 
             $mform->addGroup([
                 $mform->createElement('submit', 'edit_set_event_details', block_quickmail_string::get('edit_event_details'))

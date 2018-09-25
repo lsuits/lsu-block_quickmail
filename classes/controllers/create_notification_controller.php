@@ -390,7 +390,9 @@ class create_notification_controller extends base_controller {
      */
     public function set_event_details(controller_request $request)
     {
-        $form = $this->make_form('create_notification\set_event_details_form');
+        $form = $this->make_form('create_notification\set_event_details_form', [
+            'is_one_time_event' => notification_model_helper::model_is_one_time_event($this->stored('notification_model'))
+        ]);
 
         // route the form submission, if any
         if ($form->is_validated_next()) {
@@ -567,7 +569,8 @@ class create_notification_controller extends base_controller {
                 'time_unit' => $this->stored('schedule_time_unit'),
                 'begin_at' => $this->stored('schedule_begin_at'),
                 'end_at' => $this->stored('schedule_end_at'),
-            ])
+            ]),
+            'is_one_time_event' => notification_model_helper::model_is_one_time_event($this->stored('notification_model'))
         ]);
 
         // list of form submission subactions that may be handled in addition to "back" or "next"

@@ -209,8 +209,6 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
         return [$time_delay, $mute_time];
     }
 
-
-
 	/**
 	 * Creates and returns an event notification to be associated with the given notification
 	 * 
@@ -242,36 +240,6 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 
 		return $event_notification;
 	}
-
-	// /**
-	//  * Returns the calculated time_delay (seconds) from the given creation params, if any
-	//  * 
-	//  * @param  array  $params
-	//  * @return int
-	//  */
-	// public static function calculate_time_delay_from_params($params)
-	// {
-	// 	$time_delay = 0;
-
-	// 	if (array_key_exists('time_delay_unit', $params) && array_key_exists('time_delay_amount', $params)) {
-	// 		$amount = (int) $params['time_delay_amount'];
-
-	// 		if (in_array($params['time_delay_unit'], ['minute', 'hour', 'day']) && $amount > 0) {
-	// 			$seconds = 60;
-	// 			$mult = 1;
-				
-	// 			if ($params['time_delay_unit'] == 'hour') {
-	// 				$mult = 60;
-	// 			} else if ($params['time_delay_unit'] == 'day') {
-	// 				$mult = 1440;
-	// 			}
-
-	// 			$time_delay = $amount * $seconds * $mult;
-	// 		}
-	// 	}
-
-	// 	return $time_delay;
-	// }
 
 	///////////////////////////////////////////////
     ///
