@@ -30,6 +30,7 @@ use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\is_notification_type;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
+use block_quickmail\persistents\message;
  
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -54,6 +55,11 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 
 	public static $default_creation_params = [
         'time_delay' => 0,
+        'mute_time' => 0,
+    ];
+
+    public static $one_time_events = [
+        'course-entered',
     ];
 
 	/**
@@ -73,12 +79,79 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 				'type' => PARAM_INT,
 				'default' => 0,
 			],
+			'mute_time' => [
+				'type' => PARAM_INT,
+				'default' => 0,
+			],
 			'timedeleted' => [
 				'type' => PARAM_INT,
 				'default' => 0,
 			],
 		];
 	}
+
+	///////////////////////////////////////////////
+    ///
+    ///  GETTERS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Reports whether or not this event notification should notify the given
+     * user_id at this moment
+     *
+     * For one-time events: this notification must not have ever been sent user
+     * 
+     * For non-one-time events: this notification may not be sent until the
+     * "next available send time" (NOW - mute_time + time_delay)
+     * 
+     * @return bool
+     */
+    private function should_notify_user_now($user_id)
+    {
+    	return $this->is_one_time_event()
+    		? ! $this->has_ever_notified_user($user_id)
+    		: $this->sufficient_time_since_last_notification($user_id);
+    }
+
+    /**
+	 * Reports whether or not this event notification is a "one time" event
+	 * 
+	 * One time events will only be fired once per event notification instance
+	 * 
+	 * @return bool
+	 */
+    private function is_one_time_event()
+    {
+    	return in_array($this->get('model'), static::$one_time_events);
+    }
+
+    /**
+     * Returns a timestamp in which this notification should be scheduled to send at
+     * when successfully triggered
+     * 
+     * @return int
+     */
+    private function calculated_send_time()
+   	{
+		return time() + (int) $this->get('time_delay');
+   	}
+
+   	/**
+     * Returns the earliest timestamp at which this notification should be sent next
+     * 
+     * @return int
+     */
+    private function next_available_send_time()
+   	{
+		return $this->calculated_send_time() - (int) $this->get('mute_time');
+   	}
+
+    ///////////////////////////////////////////////
+    ///
+    ///  CREATION METHODS
+    /// 
+    ///////////////////////////////////////////////
 
 	/**
 	 * Creates and returns an event notification of the given model key and object for the given course and user
@@ -107,7 +180,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 		// create the event notification
 		$event_notification = self::create_for_notification($notification, array_merge([
 			'object_id' => ! empty($object) ? $object->id : 0, // may need to write helper class to get this id
-			'time_delay' => $time_delay
+			'time_delay' => $time_delay,
 		], $params));
 
 		return $event_notification;
@@ -124,6 +197,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 	{
 		$params = self::sanitize_creation_params($params, [
 			'time_delay', 
+			'mute_time', 
 			'model',
 			'object_id',
 		]);
@@ -133,6 +207,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 				'notification_id' => $notification->get('id'),
 				'model' => $params['model'],
 				'time_delay' => $params['time_delay'],
+				'mute_time' => $params['mute_time'],
 			]);
 		
 		// if there was an error during creation
@@ -179,9 +254,96 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
     /// 
     ///////////////////////////////////////////////
 
-	public function notify()
+	/**
+	 * Creates a new message instance to be sent to the given user id, if appropriate
+	 *
+	 * @param  int  $user_id  (note: for this implementaion, the user_id should always be given)
+	 * @return void
+	 */
+	public function notify($user_id = null)
 	{
-		// this is where the magic happens
+		// make sure this notification should be sent right now based upon configuration
+		if ($this->should_notify_user_now($user_id)) {
+			try {
+				// get the parent notification
+				$notification = $this->get_notification();
+				
+				// determine when this notification should be sent
+				$send_at = $this->calculated_send_time();
+
+				// schedule a message
+				message::create_from_notification($notification, [$user_id], $send_at);
+                
+				// note that this event has been sent to this user at this time
+				$this->note_sent_to_user($user_id, $send_at);
+			} catch (\Exception $e) {
+				// message not created, fail gracefully
+			}
+		}
+	}
+
+	///////////////////////////////////////////////
+    ///
+    ///  EVENT RECIPIENT METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+	/**
+	 * Reports whether or not this event notification has been sent to the given user before
+	 * 
+	 * @param  int  $user_id
+	 * @return bool
+	 */
+	private function has_ever_notified_user($user_id)
+	{
+		global $DB;
+
+        return $DB->record_exists('block_quickmail_event_recips', [
+            'event_notification_id' => $this->get('id'),
+            'user_id' => $user_id
+        ]);
+	}
+
+	/**
+	 * Reports whether or not enough time has elapsed since last time this notification
+	 * notified the user, if at all
+	 * 
+	 * @param  int  $user_id
+	 * @return bool
+	 */
+	private function sufficient_time_since_last_notification($user_id)
+	{
+		global $DB;
+
+    	// may not be notified until next available send time
+    	$result = $DB->get_records_sql(
+    		"SELECT * FROM {block_quickmail_event_recips} 
+    		 WHERE event_notification_id = ?
+    		 AND user_id = ? 
+    		 AND notified_at > ?",
+    		[$this->get('id'), $user_id, $this->next_available_send_time()]
+    	);
+
+        return empty($result);
+	}
+
+	/**
+	 * Inserts a record of the given user being notified by this notification at the
+	 * given time
+	 * 
+	 * @param  int  $user_id
+	 * @param  int  $notified_at   unix timestamp
+	 * @return void
+	 */
+	private function note_sent_to_user($user_id, $notified_at)
+	{
+		global $DB;
+
+		$DB->insert_record('block_quickmail_event_recips', (object) [
+			'event_notification_id' => $this->get('id'),
+			'user_id' => $user_id,
+			'notified_at' => $notified_at,
+		], false);
 	}
 
 }

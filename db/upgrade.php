@@ -693,6 +693,43 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018082100, 'quickmail');
     }
 
+    if ($oldversion < 2018092500) {
+
+        ///////////////////////////////////////////////
+        ///
+        ///  CREATE TABLE: block_quickmail_event_recips
+        /// 
+        ///////////////////////////////////////////////
+        
+        $table = new xmldb_table('block_quickmail_event_recips');
+
+        // define fields
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('event_notification_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('notified_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        // define keys
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        
+        // make table
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // add mute_time to event notifications table, after time_delay column
+        $table = new xmldb_table('block_quickmail_event_notifs');
+        $field = new xmldb_field('mute_time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'time_delay');
+        
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018092500, 'quickmail');
+    }
+
 
     return $result;
 }

@@ -91,6 +91,7 @@ trait sets_up_notifications {
             'name' => 'My Event Notification',
             'time_delay_unit' => 'minute',
             'time_delay_amount' => '5',
+            'mute_time' => '0'
         ]);
     }
 

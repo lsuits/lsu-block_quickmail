@@ -9,8 +9,6 @@ class course_entered_model extends event_notification_model implements event_not
 
     public static $object_type = 'course';
 
-    public static $is_one_time = true;
-
     public static $condition_keys = [];
 
 }

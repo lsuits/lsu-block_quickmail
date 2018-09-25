@@ -2,11 +2,13 @@
 
 namespace block_quickmail\notifier;
 
+use block_quickmail\notifier\event_notification_handler;
 use block_quickmail_emailer;
 
 /*
- * This class is responsible for observing native moodle events, formatting the event data,
- * and then calling the appropriate event notification mapper function
+ * This class is responsible for observing native moodle events, and then
+ * calling the corresponding event notification handler method using
+ * those event details
  */
 class event_observer {
 
@@ -18,14 +20,26 @@ class event_observer {
         // course that was viewed
         $course_id = $event->courseid;
 
-        // POC
-        // global $DB;
-        // $touser = $DB->get_record('user', ['id' => $user_id]);
-        // $fromuser = $DB->get_record('user', ['id' => '25']);
-        // $emailer = new block_quickmail_emailer($fromuser, 'subject', 'one fine body');
-        // $emailer->to_user($touser);
-        // $emailer->reply_to($fromuser->email, fullname($fromuser));
-        // $emailer->send();
+        event_notification_handler::course_entered($user->id, $course->id);
+    }
+
+    // for testing...
+
+    /**
+     * Send a test email from an arbitrary user to the given user_id
+     * 
+     * @param  int  $user_id
+     * @return void
+     */
+    private static function send_test_email($user_id)
+    {
+        global $DB;
+        $touser = $DB->get_record('user', ['id' => $user_id]);
+        $fromuser = $DB->get_record('user', ['id' => '25']);
+        $emailer = new block_quickmail_emailer($fromuser, 'subject', 'one fine body');
+        $emailer->to_user($touser);
+        $emailer->reply_to($fromuser->email, fullname($fromuser));
+        $emailer->send();
     }
 
 }
