@@ -55,8 +55,10 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 	];
 
 	public static $default_creation_params = [
-        'time_delay' => 0,
-        'mute_time' => 0,
+        'time_delay_amount' => 0,
+        'time_delay_unit' => '',
+        'mute_time_amount' => 0,
+        'mute_time_unit' => '',
     ];
 
     public static $one_time_events = [
@@ -76,14 +78,22 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 			'model' => [
 				'type' => PARAM_TEXT,
 			],
-			'time_delay' => [
+			'time_delay_amount' => [
 				'type' => PARAM_INT,
 				'default' => 0,
 			],
-			'mute_time' => [
-				'type' => PARAM_INT,
-				'default' => 0,
-			],
+            'time_delay_unit' => [
+                'type' => PARAM_TEXT,
+                'default' => null,
+            ],
+			'mute_time_amount' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+            ],
+            'mute_time_unit' => [
+                'type' => PARAM_TEXT,
+                'default' => null,
+            ],
 			'timedeleted' => [
 				'type' => PARAM_INT,
 				'default' => 0,
@@ -98,6 +108,26 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
     ///////////////////////////////////////////////
 
     /**
+     * Returns a calculate amount of seconds for this event notification's time delay
+     * 
+     * @return int
+     */
+    public function time_delay()
+    {
+        return block_quickmail_plugin::calculate_seconds_from_time_params($this->get('time_delay_unit'), $this->get('time_delay_amount'));
+    }
+
+    /**
+     * Returns a calculate amount of seconds for this event notification's time delay
+     * 
+     * @return int
+     */
+    public function mute_time()
+    {
+        return block_quickmail_plugin::calculate_seconds_from_time_params($this->get('mute_time_unit'), $this->get('mute_time_amount'));
+    }
+
+    /**
      * Reports whether or not this event notification should notify the given
      * user_id at this moment
      *
@@ -108,7 +138,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
      * 
      * @return bool
      */
-    private function should_notify_user_now($user_id)
+    public function should_notify_user_now($user_id)
     {
     	return $this->is_one_time_event()
     		? ! $this->has_ever_notified_user($user_id)
@@ -122,7 +152,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 	 * 
 	 * @return bool
 	 */
-    private function is_one_time_event()
+    public function is_one_time_event()
     {
     	return in_array($this->get('model'), static::$one_time_events);
     }
@@ -133,9 +163,9 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
      * 
      * @return int
      */
-    private function calculated_send_time()
+    public function calculated_send_time()
    	{
-		return time() + (int) $this->get('time_delay');
+		return time() + $this->time_delay();
    	}
 
    	/**
@@ -143,9 +173,9 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
      * 
      * @return int
      */
-    private function next_available_send_time()
+    public function next_available_send_time()
    	{
-		return $this->calculated_send_time() - (int) $this->get('mute_time');
+		return $this->calculated_send_time() - $this->mute_time();
    	}
 
     ///////////////////////////////////////////////
@@ -175,39 +205,13 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 		// created the parent notification
 		$notification = notification::create_for_course_user('event', $course, $user, $params);
 
-        // calculate the input time_delay and mute_time, if any
-        list($time_delay, $mute_time) = self::get_event_creation_param_seconds($params);
-
 		// create the event notification
 		$event_notification = self::create_for_notification($notification, array_merge([
 			'object_id' => ! empty($object) ? $object->id : 0, // may need to write helper class to get this id
-            'time_delay' => $time_delay,
-            'mute_time' => $mute_time,
 		], $params));
 
 		return $event_notification;
 	}
-
-    /**
-     * Returns an array of time_delay and mute_time seconds for event notification creation
-     * 
-     * @param  array  $params  raw event notification creation params
-     * @return array
-     */
-    private static function get_event_creation_param_seconds($params)
-    {
-        $time_delay = 0;
-        $mute_time = 0;
-
-        foreach (['time_delay', 'mute_time'] as $type) {
-            // calculate amount of seconds for type (if any) from the given params
-            if (array_key_exists($type . '_unit', $params) && array_key_exists($type . '_amount', $params)) {
-                $$type = block_quickmail_plugin::calculate_seconds_from_time_params($params[$type . '_unit'], $params[$type . '_amount']);
-            }
-        }
-
-        return [$time_delay, $mute_time];
-    }
 
 	/**
 	 * Creates and returns an event notification to be associated with the given notification
@@ -219,8 +223,10 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 	private static function create_for_notification($notification, $params)
 	{
 		$params = self::sanitize_creation_params($params, [
-			'time_delay', 
-			'mute_time', 
+            'time_delay_amount', 
+            'time_delay_unit', 
+			'mute_time_amount', 
+            'mute_time_unit', 
 			'model',
 			'object_id',
 		]);
@@ -229,8 +235,10 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 			$event_notification = self::create_new([
 				'notification_id' => $notification->get('id'),
 				'model' => $params['model'],
-				'time_delay' => $params['time_delay'],
-				'mute_time' => $params['mute_time'],
+                'time_delay_amount' => $params['time_delay_amount'],
+                'time_delay_unit' => $params['time_delay_unit'],
+				'mute_time_amount' => $params['mute_time_amount'],
+                'mute_time_unit' => $params['mute_time_unit'],
 			]);
 		
 		// if there was an error during creation

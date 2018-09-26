@@ -108,7 +108,7 @@
             <exclude>tests/unit/notification_schedule_summary_test.php</exclude>
 
             <!-- event notification handling -->
-            <!-- <exclude>tests/unit/event_notification_handler_test.php</exclude> -->
+            <exclude>tests/unit/event_notification_handler_test.php</exclude>
 
         </testsuite>
     </testsuites>

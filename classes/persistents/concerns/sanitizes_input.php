@@ -81,6 +81,8 @@ trait sanitizes_input {
         foreach (self::$default_creation_params as $key => $value) {
             if ( ! array_key_exists($key, $params)) {
                 $params[$key] = $value;
+            } else if (empty($params[$key])) {
+                $params[$key] = $value;
             }
         }
 

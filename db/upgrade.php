@@ -730,6 +730,56 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018092500, 'quickmail');
     }
 
+    if ($oldversion < 2018092601) {
+
+        $table = new xmldb_table('block_quickmail_event_notifs');
+        
+        // drop time_delay field :(
+
+        $time_delay_field = new xmldb_field('time_delay');
+
+        if ($dbman->field_exists($table, $time_delay_field)) {
+            $dbman->drop_field($table, $time_delay_field);
+        }
+
+        // drop mute_time field :(
+
+        $mute_time_field = new xmldb_field('mute_time');
+
+        if ($dbman->field_exists($table, $mute_time_field)) {
+            $dbman->drop_field($table, $mute_time_field);
+        }
+
+        // add time_delay and mute_time fields as separate units and amounts :)
+        
+        $time_delay_amount_field = new xmldb_field('time_delay_amount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'model');
+        $time_delay_unit_field = new xmldb_field('time_delay_unit', XMLDB_TYPE_CHAR, '10', null, false, false, null, 'time_delay_amount');
+        $mute_time_amount_field = new xmldb_field('mute_time_amount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'time_delay_unit');
+        $mute_time_unit_field = new xmldb_field('mute_time_unit', XMLDB_TYPE_CHAR, '10', null, false, false, null, 'mute_time_amount');
+        
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $time_delay_amount_field)) {
+            $dbman->add_field($table, $time_delay_amount_field);
+        }
+
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $time_delay_unit_field)) {
+            $dbman->add_field($table, $time_delay_unit_field);
+        }
+
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $mute_time_amount_field)) {
+            $dbman->add_field($table, $mute_time_amount_field);
+        }
+
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $mute_time_unit_field)) {
+            $dbman->add_field($table, $mute_time_unit_field);
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018092601, 'quickmail');
+    }
 
     return $result;
 }
