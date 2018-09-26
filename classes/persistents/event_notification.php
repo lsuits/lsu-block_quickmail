@@ -32,6 +32,7 @@ use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\persistents\message;
 use block_quickmail_plugin;
+use block_quickmail_cache;
  
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -147,6 +148,35 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
    	{
 		return $this->calculated_send_time() - (int) $this->get('mute_time');
    	}
+
+    /**
+     * Returns the cached timestamp for when this event notification was last fired
+     *
+     * Attempts to set the time in the cache if not found, defaulting to 0
+     *
+     * @param  bool  $readable   if true and contains value, will return a human-readable data, defaulting to empty string
+     * @return mixed|int|string
+     */
+    public function cached_last_fired_at($readable = false)
+    {
+        $event_notification = $this;
+
+        $timestamp = (int) block_quickmail_cache::store('qm_event_notif_last_fired_at')->add($this->get('id'), function() use ($event_notification) {
+            if ($recip = $event_notification->get_last_recip()) {
+                return $recip->notified_at;
+            } else {
+                return 0;
+            }
+        });
+
+        if ( ! $readable) {
+            return $timestamp;
+        }
+
+        return ! empty($timestamp)
+            ? date('Y-m-d g:i a', $timestamp)
+            : '';
+    }
 
     ///////////////////////////////////////////////
     ///
@@ -337,6 +367,27 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 			'user_id' => $user_id,
 			'notified_at' => $notified_at,
 		], false);
+
+        block_quickmail_cache::store('qm_event_notif_last_fired_at')->forget($this->get('id'));
 	}
+
+    /**
+     * Returns the last event_recip record for this event notification, if any
+     * 
+     * @return mixed|stdClass|false
+     */
+    public function get_last_recip()
+    {
+        global $DB;
+
+        $result = $DB->get_record_sql(
+            "SELECT * FROM {block_quickmail_event_recips} 
+             WHERE event_notification_id = ?
+             ORDER BY id DESC LIMIT 1",
+            [$this->get('id')]
+        );
+
+        return $result;
+    }
 
 }

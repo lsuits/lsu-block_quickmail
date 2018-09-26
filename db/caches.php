@@ -47,5 +47,10 @@ $definitions = [
         'mode' => cache_store::MODE_SESSION,
         'simplekeys' => true,
         'simpledata' => true,
-    ]
+    ],
+    'qm_event_notif_last_fired_at' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
 ];
