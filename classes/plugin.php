@@ -322,7 +322,8 @@ class block_quickmail_plugin {
                 'course_grade_range'
             ],
             'event' => [
-                'assignment_submitted'
+                'course_entered',
+                // 'assignment_submitted'
             ]
         ];
 
@@ -336,28 +337,26 @@ class block_quickmail_plugin {
     ////////////////////////////////////////////////////
 
     /**
-     * Returns the available time unit values
-     * 
-     * @return array
-     */
-    public static function get_time_unit_values()
-    {
-        return ['day', 'week', 'month'];
-    }
-
-    /**
      * Returns an array for time unit form selection
-     * 
+     *
+     * @param  array   $includes      a list of time units to include in the selection
+     * @param  string  $default_text  lang string to display for default (empty) selection, default to "select"
      * @return array
      */
-    public static function get_time_unit_selection_array()
+    public static function get_time_unit_selection_array($includes = [], $default_text = 'select')
     {
-        return [
-            '' => get_string('select'),
+        $options = [
+            '' => get_string($default_text),
+            'minute' => ucfirst(get_string('minutes')),
+            'hour' => ucfirst(get_string('hours')),
             'day' => ucfirst(get_string('days')),
             'week' => ucfirst(get_string('weeks')),
             'month' => ucfirst(get_string('months')),
         ];
+
+        return self::array_filter_key($options, function($unit) use ($includes) {
+            return in_array($unit, $includes) || $unit == '';
+        });
     }
 
     /**
@@ -405,6 +404,39 @@ class block_quickmail_plugin {
         global $CFG;
 
         return $CFG->wwwroot . '/blocks/quickmail/';
+    }
+
+    /**
+     * Returns a calculated amount of seconds from the given params, if any
+     *
+     * Note: time_unit currently limited to: minute, hour, or day
+     * 
+     * @param  string  $time_unit
+     * @param  string  $time_amount
+     * @return int
+     */
+    public static function calculate_seconds_from_time_params($time_unit = '', $time_amount = '')
+    {
+        $result = 0;
+
+        if ($time_unit && $time_amount) {
+            $amount = (int) $time_amount;
+
+            if (in_array($time_unit, ['minute', 'hour', 'day']) && $amount > 0) {
+                $seconds = 60;
+                $mult = 1;
+                
+                if ($time_unit == 'hour') {
+                    $mult = 60;
+                } else if ($time_unit == 'day') {
+                    $mult = 1440;
+                }
+
+                $result = $amount * $seconds * $mult;
+            }
+        }
+
+        return $result;
     }
 
 }

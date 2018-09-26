@@ -30,7 +30,7 @@ interface notification_type_interface {
 
     public function get_notification();
     public function get_notification_model();
-    public function notify();
+    public function notify($user_id = null);
     public function is_schedulable();
     public function get_title();
     public function get_description();
