@@ -51,7 +51,7 @@ $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('create_notification'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('create_notification'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
 $PAGE->navbar->add(block_quickmail_string::get('create_notification'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 
