@@ -213,6 +213,23 @@ class edit_notification_form extends controller_form {
         }
 
         // if this notification requires any conditions
+        if ($this->get_custom_data('notification_type') == 'event') {
+            $mform->addElement('html', '<hr>');
+
+            $mform->addElement('html', '<div style=""><strong>' . block_quickmail_string::get('edit_event_details') . '</strong></div>');
+
+            ///////////////////////////////////////////////////////////////////
+
+            // show time delay edit
+
+            if ( ! $this->get_custom_data('is_one_time_event')) {
+                // show mute time edit
+            }
+
+            ///////////////////////////////////////////////////////////////////
+        }
+
+        // if this notification requires any conditions
         if ( ! empty($this->get_custom_data('required_condition_keys'))) {
             $mform->addElement('html', '<hr>');
 

@@ -123,7 +123,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 	 * 
 	 * @return bool
 	 */
-    private function is_one_time_event()
+    public function is_one_time_event()
     {
     	return in_array($this->get('model'), static::$one_time_events);
     }

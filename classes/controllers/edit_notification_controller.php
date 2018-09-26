@@ -55,6 +55,8 @@ class edit_notification_controller extends base_controller {
         $form = $this->make_form('edit_notification\edit_notification_form', [
             'context' => $this->context,
             'notification' => $notification,
+            'notification_type' => $notification->get('type'),
+            'is_one_time_event' => $notification_type_interface->is_one_time_event(),
             'notification_object_type' => notification_model_helper::get_object_type_for_model($notification->get('type'), $notification_type_interface->get('model')),
             'notification_type_interface' => $notification_type_interface,
             'schedule' => $notification_type_interface->is_schedulable() ? $notification_type_interface->get_schedule() : null,
