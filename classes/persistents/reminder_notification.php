@@ -32,7 +32,6 @@ use block_quickmail\persistents\concerns\is_schedulable;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\persistents\interfaces\schedulable_interface;
-use block_quickmail\notifier\models\reminder_notification_model;
 use block_quickmail\persistents\schedule;
 use block_quickmail\persistents\message;
 use block_quickmail\repos\user_repo;
@@ -284,9 +283,10 @@ class reminder_notification extends \block_quickmail\persistents\persistent impl
 	 *
 	 * Note: if no users can be found, no message is created or sent
 	 * 
+	 * @param  int  $user_id  (note: for this implementaion, the user_id should always be null)
 	 * @return void
 	 */
-	public function notify()
+	public function notify($user_id = null)
 	{
 		// instantiate this notification_type_interface's notification model
 		$model = $this->get_notification_model();

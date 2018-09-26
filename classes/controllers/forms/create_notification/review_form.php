@@ -64,7 +64,7 @@ class review_form extends controller_form {
         );
 
         $mform->addGroup([
-            $mform->createElement('submit', 'edit_select_type', 'Edit Notification')
+            $mform->createElement('submit', 'edit_select_type', block_quickmail_string::get('edit_notification'))
         ], 'actions', '&nbsp;', array(' '), false);
 
         $mform->addElement('html', '<hr>');
@@ -90,7 +90,7 @@ class review_form extends controller_form {
             );
 
             $mform->addGroup([
-                $mform->createElement('submit', 'edit_set_conditions', 'Edit Conditions')
+                $mform->createElement('submit', 'edit_set_conditions', block_quickmail_string::get('edit_conditions'))
             ], 'actions', '&nbsp;', array(' '), false);
 
             $mform->addElement('html', '<hr>');
@@ -109,7 +109,35 @@ class review_form extends controller_form {
             );
 
             $mform->addGroup([
-                $mform->createElement('submit', 'edit_create_schedule', 'Edit Schedule')
+                $mform->createElement('submit', 'edit_create_schedule', block_quickmail_string::get('edit_schedule'))
+            ], 'actions', '&nbsp;', array(' '), false);
+
+            $mform->addElement('html', '<hr>');
+        }
+
+        ////////////////////////////////////////////////////////////
+        ///  event details (if event notification)
+        ////////////////////////////////////////////////////////////
+
+        if ($this->is_notification_type('event')) {
+            $mform->addElement(
+                'static', 
+                'time_delay_summary', 
+                block_quickmail_string::get('time_delay_summary'),
+                $this->get_time_summary('time_delay')
+            );
+
+            if ( ! $this->get_custom_data('is_one_time_event')) {
+                $mform->addElement(
+                    'static', 
+                    'mute_time_summary', 
+                    block_quickmail_string::get('mute_time_summary'),
+                    $this->get_time_summary('mute_time')
+                );
+            }
+
+            $mform->addGroup([
+                $mform->createElement('submit', 'edit_set_event_details', block_quickmail_string::get('edit_event_details'))
             ], 'actions', '&nbsp;', array(' '), false);
 
             $mform->addElement('html', '<hr>');
@@ -153,7 +181,7 @@ class review_form extends controller_form {
         }
 
         $mform->addGroup([
-            $mform->createElement('submit', 'edit_create_message', 'Edit Message')
+            $mform->createElement('submit', 'edit_create_message', block_quickmail_string::get('edit_message'))
         ], 'actions', '&nbsp;', array(' '), false);
 
         $mform->addElement('html', '<hr>');
@@ -194,9 +222,36 @@ class review_form extends controller_form {
         $mform->addElement('html', '<hr>');
     }
 
+    /**
+     * Reports whether or not the notification being created is of the given type
+     * 
+     * @param  string  $type
+     * @return bool
+     */
     private function is_notification_type($type)
     {
         return $this->get_session_stored('notification_type') == $type;
+    }
+
+    /**
+     * Returns a descriptive summary of the given type of time parameter
+     *
+     * @param  string  $type  time_delay|mute_time
+     * @return string
+     */
+    private function get_time_summary($type)
+    {
+        if ($unit = $this->get_session_stored($type . '_unit')) {
+            if ($amount = $this->get_session_stored($type . '_amount')) {
+                $string_key = (int) $amount > 1
+                    ? $unit . 's'
+                    : $unit;
+
+                return $amount . ' ' . ucfirst(get_string($string_key));
+            }
+        }
+
+        return get_string('none');
     }
 
 }

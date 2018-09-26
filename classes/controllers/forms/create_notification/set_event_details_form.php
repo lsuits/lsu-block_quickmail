@@ -30,7 +30,7 @@ use block_quickmail\controllers\support\controller_form;
 use block_quickmail_plugin;
 use block_quickmail_string;
 
-class create_schedule_form extends controller_form {
+class set_event_details_form extends controller_form {
 
     /*
      * Moodle form definition
@@ -50,81 +50,105 @@ class create_schedule_form extends controller_form {
         ///  descriptive text
         ////////////////////////////////////////////////////////////
         
-        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_event_details_description') . '</div>');
 
         ////////////////////////////////////////////////////////////
-        ///  schedule_time_unit (select)
+        ///  time_delay_unit (select)
         ////////////////////////////////////////////////////////////
         $mform->addElement(
             'select', 
-            'schedule_time_unit', 
-            block_quickmail_string::get('time_unit'), 
+            'time_delay_unit', 
+            block_quickmail_string::get('time_delay_unit'), 
             $this->get_time_unit_options()
         );
 
         $mform->setDefault(
-            'schedule_time_unit', 
-            $this->has_session_stored('schedule_time_unit') ? $this->get_session_stored('schedule_time_unit') : ''
+            'time_delay_unit', 
+            $this->has_session_stored('time_delay_unit') ? $this->get_session_stored('time_delay_unit') : ''
         );
 
-        $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
+        $mform->addHelpButton(
+            'time_delay_unit', 
+            'time_delay_unit', 
+            'block_quickmail'
+        );
 
         ////////////////////////////////////////////////////////////
-        ///  schedule_time_amount (text)
+        ///  time_delay_amount (text)
         ////////////////////////////////////////////////////////////
         $mform->addElement(
             'text', 
-            'schedule_time_amount', 
+            'time_delay_amount', 
             block_quickmail_string::get('time_amount'), 
             ['size' => 4]
         );
         
         $mform->setType(
-            'schedule_time_amount', 
+            'time_delay_amount', 
             PARAM_TEXT
         );
 
         $mform->setDefault(
-            'schedule_time_amount', 
-            $this->has_session_stored('schedule_time_amount') ? $this->get_session_stored('schedule_time_amount') : ''
+            'time_delay_amount', 
+            $this->has_session_stored('time_delay_amount') ? $this->get_session_stored('time_delay_amount') : '0'
         );
 
-        $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
-        $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
-        $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nonzero', '', 'server');
+        $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+            return empty($value)
+                ? true
+                : is_numeric($value);
+        }, 'server');
 
         ////////////////////////////////////////////////////////////
-        ///  schedule_begin_at (date/time)
+        ///  mute_time_unit (select)
         ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'date_time_selector', 
-            'schedule_begin_at', 
-            block_quickmail_string::get('schedule_begin_at'),
-            $this->get_schedule_time_options(false)
-        );
-
-        if ($this->has_session_stored('schedule_begin_at')) {
-            $mform->setDefault(
-                'schedule_begin_at',
-                $this->get_session_stored('schedule_begin_at')
-            );
-        }
         
-        ////////////////////////////////////////////////////////////
-        ///  schedule_end_at (date/time)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'date_time_selector', 
-            'schedule_end_at', 
-            block_quickmail_string::get('schedule_end_at'),
-            $this->get_schedule_time_options(false)
-        );
-
-        if ($this->has_session_stored('schedule_end_at')) {
-            $mform->setDefault(
-                'schedule_end_at',
-                $this->get_session_stored('schedule_end_at')
+        if ( ! $this->get_custom_data('is_one_time_event')) {
+            $mform->addElement(
+                'select', 
+                'mute_time_unit', 
+                block_quickmail_string::get('mute_time_unit'), 
+                $this->get_time_unit_options()
             );
+
+            $mform->setDefault(
+                'mute_time_unit', 
+                $this->has_session_stored('mute_time_unit') ? $this->get_session_stored('mute_time_unit') : ''
+            );
+
+            $mform->addHelpButton(
+                'mute_time_unit', 
+                'mute_time_unit', 
+                'block_quickmail'
+            );
+
+            ////////////////////////////////////////////////////////////
+            ///  mute_time_amount (text)
+            ////////////////////////////////////////////////////////////
+            $mform->addElement(
+                'text', 
+                'mute_time_amount', 
+                block_quickmail_string::get('time_amount'), 
+                ['size' => 4]
+            );
+            
+            $mform->setType(
+                'mute_time_amount', 
+                PARAM_TEXT
+            );
+
+            $mform->setDefault(
+                'mute_time_amount', 
+                $this->has_session_stored('mute_time_amount') ? $this->get_session_stored('mute_time_amount') : '0'
+            );
+
+            $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+                return empty($value)
+                    ? true
+                    : is_numeric($value);
+            }, 'server');
+        } else {
+            //
         }
 
         ////////////////////////////////////////////////////////////
@@ -140,31 +164,13 @@ class create_schedule_form extends controller_form {
     }
 
     /**
-     * Returns the options schedule_time_unit selection
+     * Returns the options time_delay_unit selection
      * 
      * @return array
      */
     private function get_time_unit_options()
     {
-        return block_quickmail_plugin::get_time_unit_selection_array(['day', 'week', 'month']);
-    }
-
-    /**
-     * Returns the options for schedule time selection
-     * 
-     * @param  bool  $optional  whether or not this field is optional
-     * @return array
-     */
-    private function get_schedule_time_options($optional = true) {
-        $current_year = date("Y");
-
-        return [
-            'startyear' => $current_year,
-            'stopyear' => $current_year + 1,
-            'timezone' => 99,
-            'step' => 15,
-            'optional' => $optional
-        ];
+        return block_quickmail_plugin::get_time_unit_selection_array(['minute', 'hour', 'day'], 'none');
     }
 
 }

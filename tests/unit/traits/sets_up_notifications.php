@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////
 
 use block_quickmail\persistents\reminder_notification;
+use block_quickmail\persistents\event_notification;
 
 trait sets_up_notifications {
 
@@ -39,6 +40,15 @@ trait sets_up_notifications {
         $params = $this->get_reminder_notification_params([], $overrides);
 
         $notification = reminder_notification::create_type($model_key, $object, $course, $user, $params);
+
+        return $notification;
+    }
+
+    public function create_event_notification_for_course_user($model_key, $course, $user, $object = null, $overrides = [])
+    {
+        $params = $this->get_event_notification_params([], $overrides);
+
+        $notification = event_notification::create_type($model_key, $object, $course, $user, $params);
 
         return $notification;
     }
@@ -79,7 +89,9 @@ trait sets_up_notifications {
     {
         return array_merge($this->get_default_notification_params(), [
             'name' => 'My Event Notification',
-            'time_delay' => 0,
+            'time_delay_unit' => 'minute',
+            'time_delay_amount' => '5',
+            'mute_time' => '0'
         ]);
     }
 

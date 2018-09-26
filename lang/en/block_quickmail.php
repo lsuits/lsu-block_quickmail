@@ -146,6 +146,17 @@ $string['notification_conditions'] = 'Conditions';
 $string['notification_conditions_description'] = 'Specify this notifications conditions. Any recipients that meets these conditions will be notified.';
 $string['select_notification_model'] = 'Select {$a} Notification Model';
 $string['invalid_notification_model'] = 'Invalid notification model selection.';
+$string['time_delay_unit'] = 'Time Delay';
+$string['time_delay_summary'] = 'Time Delay';
+$string['time_delay_unit_help'] = 'An optional amount of time to wait before the notification is sent.';
+$string['mute_time_unit'] = 'Mute Time';
+$string['mute_time_summary'] = 'Mute Time';
+$string['mute_time_unit_help'] = 'An optional amount of time that must pass in between this notification being automatically sent.';
+$string['edit_notification'] = 'Edit Notification';
+$string['edit_conditions'] = 'Edit Conditions';
+$string['edit_schedule'] = 'Edit Schedule';
+$string['edit_event_details'] = 'Edit Event Details';
+$string['edit_message'] = 'Edit Message';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -169,9 +180,13 @@ $string['notification_model_reminder_course_grade_range_description'] = 'Notify 
 $string['notification_model_reminder_course_grade_range_condition_description'] = 'Specify the grade range. If a course participant currently has within this range, they will be notified.';
 $string['condition_summary_reminder_course_grade_range'] = 'All who have a grade between {$a->grade_greater_than} and {$a->grade_less_than}';
 
+// event: course_entered
+$string['notification_model_event_course_entered'] = 'Course Entered';
+$string['notification_model_event_course_entered_description'] = 'Notify a course participant when they access the course for the first time.';
+
 // event: assignment_submitted
-$string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
-$string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
+// $string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
+// $string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
 
 // notification conditions
 $string['set_notification_conditions'] = 'Set {$a->model} {$a->type} Notification Conditions';
@@ -208,6 +223,10 @@ $string['time_once_a'] = 'Once a';
 $string['time_every'] = 'Every';
 $string['time_beginning'] = 'Beginning';
 $string['time_ending'] = 'Ending';
+
+// event notification details
+$string['set_event_details'] = 'Set {$a->model} Event Notification Details';
+$string['set_event_details_description'] = 'Specify additional options about the event.';
 
 // create notification message
 $string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
