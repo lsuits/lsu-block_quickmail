@@ -190,9 +190,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="notification_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The parent notification id for this event notification."/>
         <FIELD NAME="model" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="The key representing the event notification model."/>
-        <FIELD NAME="time_delay_amount" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that this event notification will be delayed once triggered to send."/>
+        <FIELD NAME="time_delay_amount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that this event notification will be delayed once triggered to send."/>
         <FIELD NAME="time_delay_unit" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Unit of time that this event notification will be delayed once triggered to send."/>
-        <FIELD NAME="mute_time_amount" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that must elapse since last trigger before triggering again."/>
+        <FIELD NAME="mute_time_amount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Amount of time that must elapse since last trigger before triggering again."/>
         <FIELD NAME="mute_time_unit" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Unit of time that must elapse since last trigger before triggering again."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
