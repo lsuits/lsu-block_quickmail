@@ -391,7 +391,8 @@ class create_notification_controller extends base_controller {
     public function set_event_details(controller_request $request)
     {
         $form = $this->make_form('create_notification\set_event_details_form', [
-            'is_one_time_event' => notification_model_helper::model_is_one_time_event($this->stored('notification_model'))
+            'is_one_time_event' => notification_model_helper::model_is_one_time_event($this->stored('notification_model')),
+            'can_set_delay_time' => block_quickmail_config::block('send_as_tasks')
         ]);
 
         // route the form submission, if any

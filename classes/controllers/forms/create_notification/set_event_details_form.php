@@ -52,52 +52,54 @@ class set_event_details_form extends controller_form {
         
         $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_event_details_description') . '</div>');
 
-        ////////////////////////////////////////////////////////////
-        ///  time_delay_unit (select)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'select', 
-            'time_delay_unit', 
-            block_quickmail_string::get('time_delay_unit'), 
-            $this->get_time_unit_options()
-        );
+        if ($this->get_custom_data('can_set_delay_time')) {
+            ////////////////////////////////////////////////////////////
+            ///  time_delay_unit (select)
+            ////////////////////////////////////////////////////////////
+            $mform->addElement(
+                'select', 
+                'time_delay_unit', 
+                block_quickmail_string::get('time_delay_unit'), 
+                $this->get_time_unit_options()
+            );
 
-        $mform->setDefault(
-            'time_delay_unit', 
-            $this->has_session_stored('time_delay_unit') ? $this->get_session_stored('time_delay_unit') : ''
-        );
+            $mform->setDefault(
+                'time_delay_unit', 
+                $this->has_session_stored('time_delay_unit') ? $this->get_session_stored('time_delay_unit') : ''
+            );
 
-        $mform->addHelpButton(
-            'time_delay_unit', 
-            'time_delay_unit', 
-            'block_quickmail'
-        );
+            $mform->addHelpButton(
+                'time_delay_unit', 
+                'time_delay_unit', 
+                'block_quickmail'
+            );
 
-        ////////////////////////////////////////////////////////////
-        ///  time_delay_amount (text)
-        ////////////////////////////////////////////////////////////
-        $mform->addElement(
-            'text', 
-            'time_delay_amount', 
-            block_quickmail_string::get('time_amount'), 
-            ['size' => 4]
-        );
-        
-        $mform->setType(
-            'time_delay_amount', 
-            PARAM_TEXT
-        );
+            ////////////////////////////////////////////////////////////
+            ///  time_delay_amount (text)
+            ////////////////////////////////////////////////////////////
+            $mform->addElement(
+                'text', 
+                'time_delay_amount', 
+                block_quickmail_string::get('time_amount'), 
+                ['size' => 4]
+            );
+            
+            $mform->setType(
+                'time_delay_amount', 
+                PARAM_TEXT
+            );
 
-        $mform->setDefault(
-            'time_delay_amount', 
-            $this->has_session_stored('time_delay_amount') ? $this->get_session_stored('time_delay_amount') : '0'
-        );
+            $mform->setDefault(
+                'time_delay_amount', 
+                $this->has_session_stored('time_delay_amount') ? $this->get_session_stored('time_delay_amount') : '0'
+            );
 
-        $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
-            return empty($value)
-                ? true
-                : is_numeric($value);
-        }, 'server');
+            $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+                return empty($value)
+                    ? true
+                    : is_numeric($value);
+            }, 'server');
+        }
 
         ////////////////////////////////////////////////////////////
         ///  mute_time_unit (select)
@@ -147,8 +149,6 @@ class set_event_details_form extends controller_form {
                     ? true
                     : is_numeric($value);
             }, 'server');
-        } else {
-            //
         }
 
         ////////////////////////////////////////////////////////////
