@@ -120,12 +120,14 @@ class review_form extends controller_form {
         ////////////////////////////////////////////////////////////
 
         if ($this->is_notification_type('event')) {
-            $mform->addElement(
-                'static', 
-                'time_delay_summary', 
-                block_quickmail_string::get('time_delay_summary'),
-                $this->get_time_summary('time_delay')
-            );
+            if ($this->get_custom_data('can_set_delay_time')) {
+                $mform->addElement(
+                    'static', 
+                    'time_delay_summary', 
+                    block_quickmail_string::get('time_delay_summary'),
+                    $this->get_time_summary('time_delay')
+                );
+            }
 
             if ( ! $this->get_custom_data('is_one_time_event')) {
                 $mform->addElement(
@@ -136,11 +138,13 @@ class review_form extends controller_form {
                 );
             }
 
-            $mform->addGroup([
-                $mform->createElement('submit', 'edit_set_event_details', block_quickmail_string::get('edit_event_details'))
-            ], 'actions', '&nbsp;', array(' '), false);
+            if ($this->get_custom_data('can_set_delay_time') || ! $this->get_custom_data('is_one_time_event')) {
+                $mform->addGroup([
+                    $mform->createElement('submit', 'edit_set_event_details', block_quickmail_string::get('edit_event_details'))
+                ], 'actions', '&nbsp;', array(' '), false);
 
-            $mform->addElement('html', '<hr>');
+                $mform->addElement('html', '<hr>');
+            }
         }
 
         ////////////////////////////////////////////////////////////
