@@ -57,7 +57,6 @@ class edit_notification_controller extends base_controller {
             'notification' => $notification,
             'notification_type' => $notification->get('type'),
             'is_one_time_event' => $notification_type_interface->is_one_time_event(),
-            'can_set_delay_time' => block_quickmail_config::block('send_as_tasks'),
             'notification_object_type' => notification_model_helper::get_object_type_for_model($notification->get('type'), $notification_type_interface->get('model')),
             'notification_type_interface' => $notification_type_interface,
             'schedule' => $notification_type_interface->is_schedulable() ? $notification_type_interface->get_schedule() : null,

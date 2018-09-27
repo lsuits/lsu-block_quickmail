@@ -392,7 +392,6 @@ class create_notification_controller extends base_controller {
     {
         $form = $this->make_form('create_notification\set_event_details_form', [
             'is_one_time_event' => notification_model_helper::model_is_one_time_event($this->stored('notification_model')),
-            'can_set_delay_time' => block_quickmail_config::block('send_as_tasks')
         ]);
 
         // route the form submission, if any
@@ -572,7 +571,6 @@ class create_notification_controller extends base_controller {
                 'end_at' => $this->stored('schedule_end_at'),
             ]),
             'is_one_time_event' => notification_model_helper::model_is_one_time_event($this->stored('notification_model')),
-            'can_set_delay_time' => block_quickmail_config::block('send_as_tasks')
         ]);
 
         // list of form submission subactions that may be handled in addition to "back" or "next"

@@ -31,10 +31,8 @@ use block_quickmail\persistents\concerns\is_notification_type;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\persistents\message;
-use block_quickmail\messenger\messenger;
 use block_quickmail_plugin;
 use block_quickmail_cache;
-use block_quickmail_config;
  
 // if ( ! class_exists('\core\persistent')) {
 //     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
@@ -304,16 +302,9 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 				// determine when this notification should be sent
 				$send_at = $this->calculated_send_time();
 
-				// create a message
-				$message = message::create_from_notification($notification, [$user_id], $send_at);
+				// schedule a message
+				message::create_from_notification($notification, [$user_id], $send_at);
                 
-                // if not configured to send as tasks, send the message now
-                if ( ! block_quickmail_config::block('send_as_tasks')) {
-                    $message->mark_as_sending();
-                    $messenger = new messenger($message);
-                    $messenger->send();
-                }
-
 				// note that this event has been sent to this user at this time
 				$this->note_sent_to_user($user_id, $send_at);
 			} catch (\Exception $e) {

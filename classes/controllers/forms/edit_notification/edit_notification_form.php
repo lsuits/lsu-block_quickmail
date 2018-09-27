@@ -220,10 +220,8 @@ class edit_notification_form extends controller_form {
 
             ///////////////////////////////////////////////////////////////////
 
-            if ($this->get_custom_data('can_set_delay_time')) {
-                // show time delay edit
-                $mform->addElement('html', '<p>delay time</p>');
-            }
+            // show time delay edit
+            $mform->addElement('html', '<p>delay time</p>');
 
             if ( ! $this->get_custom_data('is_one_time_event')) {
                 // show mute time edit
