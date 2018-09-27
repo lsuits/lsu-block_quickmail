@@ -147,8 +147,6 @@ class set_event_details_form extends controller_form {
                     ? true
                     : is_numeric($value);
             }, 'server');
-        } else {
-            //
         }
 
         ////////////////////////////////////////////////////////////

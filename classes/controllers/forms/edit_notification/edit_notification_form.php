@@ -44,15 +44,6 @@ class edit_notification_form extends controller_form {
         $mform->addElement('html', '<div style=""><strong>' . $this->get_notification_type_interface()->get_title() . ' (' . ucfirst($this->get_notification('type')) . ')</strong></div>');
         $mform->addElement('html', '<div style="margin-bottom: 20px;">' . $this->get_notification_type_interface()->get_description() . '</div>');
 
-        // notification_name
-        // notification_is_enabled
-        // message_subject
-        // message_body
-        // schedule_time_unit
-        // schedule_time_amount
-        // schedule_begin_at
-        // schedule_end_at
-
         ////////////////////////////////////////////////////////////
         ///  notification_name (text)
         ////////////////////////////////////////////////////////////
@@ -124,13 +115,13 @@ class edit_notification_form extends controller_form {
             ///  - required
             ///  - value must equal: 'day', 'week' or 'month'
             ////////////////////////////////////////////////////////////
-            $time_unit_options = $this->get_time_unit_options();
+            $schedule_time_unit_options = $this->get_time_unit_options(['day', 'week', 'month']);
 
             $mform->addElement(
                 'select', 
                 'schedule_time_unit', 
                 block_quickmail_string::get('time_unit'), 
-                $time_unit_options
+                $schedule_time_unit_options
             );
 
             $mform->setDefault(
@@ -139,7 +130,7 @@ class edit_notification_form extends controller_form {
             );
 
             $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
-            $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($time_unit_options) { return in_array($value, array_keys($time_unit_options));}, 'server');
+            $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($schedule_time_unit_options) { return in_array($value, array_keys($schedule_time_unit_options));}, 'server');
 
             ////////////////////////////////////////////////////////////
             ///  schedule_time_amount (text)
@@ -213,6 +204,135 @@ class edit_notification_form extends controller_form {
         }
 
         // if this notification requires any conditions
+        if ($this->get_custom_data('notification_type') == 'event') {
+            $mform->addElement('html', '<hr>');
+
+            $mform->addElement('html', '<div style=""><strong>' . block_quickmail_string::get('edit_event_details') . '</strong></div>');
+
+            $event_time_unit_options = $this->get_time_unit_options(['minute', 'hour', 'day']);
+            
+            ////////////////////////////////////////////////////////////
+            ///  time_delay_unit (select)
+            ///  
+            ///  validation (if given):
+            ///  - value must equal: 'minute', 'hour', or 'day'
+            ////////////////////////////////////////////////////////////
+
+            $mform->addElement(
+                'select', 
+                'time_delay_unit', 
+                block_quickmail_string::get('time_delay_unit'), 
+                $event_time_unit_options
+            );
+
+            $mform->setDefault(
+                'time_delay_unit', 
+                $this->get_notification_type_interface('time_delay_unit')
+            );
+
+            $mform->addRule('time_delay_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($event_time_unit_options) { return in_array($value, array_keys($event_time_unit_options));}, 'server');
+
+            ////////////////////////////////////////////////////////////
+            ///  time_delay_amount (text)
+            ///  
+            ///  validation (if given):
+            ///  - numeric
+            ///  - greater than 0
+            ////////////////////////////////////////////////////////////
+            $mform->addElement(
+                'text', 
+                'time_delay_amount', 
+                block_quickmail_string::get('time_amount'), 
+                ['size' => 4]
+            );
+            
+            $mform->setType(
+                'time_delay_amount', 
+                PARAM_TEXT
+            );
+
+            $mform->setDefault(
+                'time_delay_amount', 
+                $this->get_notification_type_interface('time_delay_amount')
+            );
+
+            $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+                if (empty($value)) {
+                    return true;
+                }
+
+                if ( ! is_numeric($value)) {
+                    return false;
+                }
+
+                return $value >=1;
+            }, 'server');
+
+            if ( ! $this->get_custom_data('is_one_time_event')) {
+                
+                ////////////////////////////////////////////////////////////
+                ///  mute_time_unit (select)
+                ///  
+                ///  validation (if given):
+                ///  - value must equal: 'minute', 'hour', or 'day'
+                ////////////////////////////////////////////////////////////
+
+                $mform->addElement(
+                    'select', 
+                    'mute_time_unit', 
+                    block_quickmail_string::get('mute_time_unit'), 
+                    $event_time_unit_options
+                );
+
+                $mform->setDefault(
+                    'mute_time_unit', 
+                    $this->get_notification_type_interface('mute_time_unit')
+                );
+
+                $mform->addRule('mute_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($event_time_unit_options) { return in_array($value, array_keys($event_time_unit_options));}, 'server');
+
+                ////////////////////////////////////////////////////////////
+                ///  mute_time_amount (text)
+                ///  
+                ///  validation (if necessary for this model):
+                ///  - required
+                ///  - numeric
+                ///  - integer
+                ///  - greater than 0
+                ////////////////////////////////////////////////////////////
+                $mform->addElement(
+                    'text', 
+                    'mute_time_amount', 
+                    block_quickmail_string::get('time_amount'), 
+                    ['size' => 4]
+                );
+                
+                $mform->setType(
+                    'mute_time_amount', 
+                    PARAM_TEXT
+                );
+
+                $mform->setDefault(
+                    'mute_time_amount', 
+                    $this->get_notification_type_interface('mute_time_amount')
+                );
+
+                $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+                    if (empty($value)) {
+                        return true;
+                    }
+
+                    if ( ! is_numeric($value)) {
+                        return false;
+                    }
+
+                    return $value >=1;
+                }, 'server');
+
+            }
+        }
+
+        // if this notification requires any conditions
         if ( ! empty($this->get_custom_data('required_condition_keys'))) {
             $mform->addElement('html', '<hr>');
 
@@ -228,17 +348,17 @@ class edit_notification_form extends controller_form {
             ///  - value must equal: 'day', 'week' or 'month'
             ////////////////////////////////////////////////////////////
             if ($this->requires_condition('time_unit')) {
-                $time_unit_options = $this->get_time_unit_options();
+                $condition_time_unit_options = $this->get_time_unit_options(['day', 'week', 'month']);
 
                 $mform->addElement(
                     'select', 
                     'condition_time_unit', 
                     block_quickmail_string::get('time_unit'), 
-                    $time_unit_options
+                    $condition_time_unit_options
                 );
 
                 $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
-                $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($time_unit_options) { return in_array($value, array_keys($time_unit_options));}, 'server');
+                $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($condition_time_unit_options) { return in_array($value, array_keys($condition_time_unit_options));}, 'server');
 
                 $mform->setDefault(
                     'condition_time_unit', 
@@ -601,13 +721,13 @@ class edit_notification_form extends controller_form {
     }
 
     /**
-     * Returns the options schedule_time_unit selection
+     * Returns an array of time unit options for selection
      * 
      * @return array
      */
-    private function get_time_unit_options()
+    private function get_time_unit_options($units)
     {
-        return block_quickmail_plugin::get_time_unit_selection_array(['day', 'week', 'month']);
+        return block_quickmail_plugin::get_time_unit_selection_array($units);
     }
 
     /**
