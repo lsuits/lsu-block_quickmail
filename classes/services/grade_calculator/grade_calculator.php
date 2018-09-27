@@ -76,7 +76,7 @@ class grade_calculator {
             // fetch the grade value for the given type
             $value = $calc->get_course_grade_value_by_type();
         } catch (\Exception $e) {
-            throw new calculation_exception('Could not calculate the ' . $this->value_type . ' grade value for this course user.', $this->course_id, $this->user_id);
+            throw new calculation_exception('Could not calculate the ' . $value_type . ' grade value for this course user.', $course_id, $user_id);
         }
         
         // if the requested value type is "round", round the value to no decimal places
