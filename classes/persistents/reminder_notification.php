@@ -195,6 +195,44 @@ class reminder_notification extends \block_quickmail\persistents\persistent impl
 
 	///////////////////////////////////////////////
     ///
+    ///  UPDATE METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Updates and returns an event notification from the given params
+     * 
+     * @param  array         $params
+     * @return event_notification
+     */
+    public function update_self($params)
+    {
+        // update schedule details if necessary
+        if ($schedule = $this->get_schedule()) {
+	        if (isset($params['schedule_begin_at'])) {
+	            $begin_at = schedule::get_sanitized_date_time_selector_value($params['schedule_begin_at'], 0);
+	            
+	            $schedule->set('begin_at', $begin_at);
+	        }
+
+	        if (isset($params['schedule_end_at'])) {
+	            $end_at = schedule::get_sanitized_date_time_selector_value($params['schedule_end_at'], 0);
+	            
+	            $schedule->set('end_at', $end_at);
+	        }
+	        
+	        $schedule->set('unit', $params['schedule_time_unit']);
+	        $schedule->set('amount', $params['schedule_time_amount']);
+	        $schedule->update();
+	        
+	        $this->set_next_run_time();
+        }
+
+        return $this;
+    }
+
+	///////////////////////////////////////////////
+    ///
     ///  GETTERS
     /// 
     ///////////////////////////////////////////////

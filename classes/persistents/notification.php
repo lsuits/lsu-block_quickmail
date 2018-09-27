@@ -321,28 +321,8 @@ class notification extends \block_quickmail\persistents\persistent {
             $this->set('send_to_mentors', $params['message_send_to_mentors']);
             $this->update();
             
-            // update schedule details if necessary
-            if ($notification_type_interface->is_schedulable()) {
-                $schedule = $notification_type_interface->get_schedule();
-                
-                if (isset($params['schedule_begin_at'])) {
-                    $begin_at = schedule::get_sanitized_date_time_selector_value($params['schedule_begin_at'], 0);
-                    
-                    $schedule->set('begin_at', $begin_at);
-                }
+            $notification_type_interface->update_self($params);
 
-                if (isset($params['schedule_end_at'])) {
-                    $end_at = schedule::get_sanitized_date_time_selector_value($params['schedule_end_at'], 0);
-                    
-                    $schedule->set('end_at', $end_at);
-                }
-                
-                $schedule->set('unit', $params['schedule_time_unit']);
-                $schedule->set('amount', $params['schedule_time_amount']);
-                $schedule->update();
-            }
-
-            $notification_type_interface->set_next_run_time();
         } catch (\Exception $e) {
             throw new \Exception(block_quickmail_string::get('notification_not_updated'));
         }

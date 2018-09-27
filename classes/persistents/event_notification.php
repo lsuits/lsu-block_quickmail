@@ -279,6 +279,36 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
 		return $event_notification;
 	}
 
+    ///////////////////////////////////////////////
+    ///
+    ///  UPDATE METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Updates and returns an event notification from the given params
+     * 
+     * @param  array         $params
+     * @return event_notification
+     */
+    public function update_self($params)
+    {
+        $this->set('time_delay_unit', $params['time_delay_unit']);
+        $this->set('time_delay_amount', (int) $params['time_delay_amount']);
+        
+        if (array_key_exists('mute_time_unit', $params)) {
+            $this->set('mute_time_unit', $params['mute_time_unit']);
+        }
+
+        if (array_key_exists('mute_time_amount', $params)) {
+            $this->set('mute_time_amount', (int) $params['mute_time_amount']);
+        }
+        
+        $this->update();
+
+        return $this;
+    }
+
 	///////////////////////////////////////////////
     ///
     ///  NOTIFICATION TYPE INTERFACE
