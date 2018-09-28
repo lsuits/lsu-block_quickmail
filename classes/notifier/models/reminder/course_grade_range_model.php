@@ -24,12 +24,12 @@ class course_grade_range_model extends reminder_notification_model implements re
     {
         // make sure a grade_greater_than boundary is set
         if ( ! $greater_than = $this->condition->get_value('grade_greater_than')) {
-            return [];
+            $greater_than = 0;
         }
 
         // make sure a grade_less_than boundary is set
         if ( ! $less_than = $this->condition->get_value('grade_less_than')) {
-            return [];
+            $less_than = 0; // ?
         }
 
         // get distinct user ids 
