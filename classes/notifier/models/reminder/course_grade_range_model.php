@@ -4,7 +4,7 @@ namespace block_quickmail\notifier\models\reminder;
 
 use block_quickmail\notifier\models\interfaces\reminder_notification_model_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
-use block_quickmail\services\grade_calculator\grade_calculator;
+use block_quickmail\services\grade_calculator\course_grade_calculator
 
 class course_grade_range_model extends reminder_notification_model implements reminder_notification_model_interface {
 
@@ -53,9 +53,15 @@ class course_grade_range_model extends reminder_notification_model implements re
         // set a default return container
         $results = [];
 
+        // attempt to instantiate a grade calculator for this course, if cannot be
+        // constructed, fail gracefully by returning empty results
+        if ( ! $calculator = course_grade_calculator::for_course($this->get_course_id())) {
+            return $results;
+        }
+
         foreach ($course_user_ids as $user_id) {
             // fetch "round" grade for this course user
-            $round_grade = grade_calculator::get_user_grade_in_course($this->get_course_id(), $user_id, 'round');
+            $round_grade = $calculator->get_user_course_grade($user_id, 'round');
 
             // the user's calculated grade falls within the boundaries
             if ($round_grade >= $greater_than && $round_grade <= $less_than) {
