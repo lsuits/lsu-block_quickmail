@@ -60,13 +60,17 @@ class course_grade_range_model extends reminder_notification_model implements re
         }
 
         foreach ($course_user_ids as $user_id) {
-            // fetch "round" grade for this course user
-            $round_grade = $calculator->get_user_course_grade($user_id, 'round');
+            try {
+                // fetch "round" grade for this course user
+                $round_grade = $calculator->get_user_course_grade($user_id, 'round');
 
-            // the user's calculated grade falls within the boundaries
-            if ($round_grade >= $greater_than && $round_grade <= $less_than) {
-                // add to the results
-                $results[] = $user_id;
+                // the user's calculated grade falls within the boundaries
+                if ($round_grade >= $greater_than && $round_grade <= $less_than) {
+                    // add to the results
+                    $results[] = $user_id;
+                }
+            } catch (\Exception $e) {
+                //
             }
         }
 
