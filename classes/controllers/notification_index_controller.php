@@ -5,6 +5,7 @@ namespace block_quickmail\controllers;
 use block_quickmail\controllers\support\base_controller;
 use block_quickmail\controllers\support\controller_request;
 use block_quickmail\repos\notification_repo;
+use block_quickmail\persistents\notification;
 use block_quickmail_string;
 
 class notification_index_controller extends base_controller {
@@ -18,6 +19,7 @@ class notification_index_controller extends base_controller {
     public static $actions = [
         'disable',
         'enable',
+        'delete',
     ];
 
     /**
@@ -80,6 +82,22 @@ class notification_index_controller extends base_controller {
     public function action_enable(controller_request $request)
     {
         $this->handle_status_action($request, 'enable');
+    }
+
+    /**
+     * Delete notification action
+     * 
+     * @param  controller_request  $request
+     * @return void
+     */
+    public function action_delete(controller_request $request)
+    {
+        if ($notification = notification::find_or_null($this->props->page_params['notificationid'])) {
+            $notification->delete_self();
+        }
+
+        // redirect back to index as success
+        $request->redirect_as_success(block_quickmail_string::get('notification_deleted'), static::$base_uri, $this->get_form_url_params());
     }
 
     /**

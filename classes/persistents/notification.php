@@ -330,6 +330,28 @@ class notification extends \block_quickmail\persistents\persistent {
         return $this->read();
     }
 
+    ///////////////////////////////////////////////
+    ///
+    ///  DELETION METHODS
+    /// 
+    ///////////////////////////////////////////////
+    
+    /**
+     * Delete this notification
+     * 
+     * @return void
+     */
+    public function delete_self()
+    {
+        // first, delete the type interface
+        if ($notification_type_interface = $this->get_notification_type_interface()) {
+            $notification_type_interface->soft_delete();
+        }
+
+        // next, delete this notification
+        $this->soft_delete();
+    }
+
 	///////////////////////////////////////////////
 	///
 	///  CONDITIONS

@@ -140,6 +140,7 @@ $string['no_notifications'] = 'You have no created notifications.';
 $string['notification_not_found'] = 'Could not find that notification.';
 $string['notification_created'] = 'Notification created.';
 $string['notification_updated'] = 'Notification updated.';
+$string['notification_deleted'] = 'Notification deleted.';
 $string['notification_not_updated'] = 'Notification updated.';
 $string['notification_model'] = 'Notification Model';
 $string['notification_conditions'] = 'Conditions';
