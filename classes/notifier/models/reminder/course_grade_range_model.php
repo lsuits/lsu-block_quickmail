@@ -4,7 +4,7 @@ namespace block_quickmail\notifier\models\reminder;
 
 use block_quickmail\notifier\models\interfaces\reminder_notification_model_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
-use block_quickmail\services\grade_calculator\course_grade_calculator
+use block_quickmail\services\grade_calculator\course_grade_calculator;
 
 class course_grade_range_model extends reminder_notification_model implements reminder_notification_model_interface {
 
