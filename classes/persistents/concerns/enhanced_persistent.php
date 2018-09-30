@@ -94,7 +94,9 @@ trait enhanced_persistent {
         $datetime = $this->get($attr);
 
         if ($datetime && is_numeric($datetime)) {
-            return date('Y-m-d g:i a', $datetime);
+            return userdate($datetime, str_replace('%y','%Y',get_string('strftimedatefullshort', 'langconfig')).
+                ' '.
+                userdate($datetime, get_string('strftimetime', 'langconfig')));
         }
 
         return block_quickmail_string::get('never');
