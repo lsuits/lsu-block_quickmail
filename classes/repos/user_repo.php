@@ -29,6 +29,9 @@ use block_quickmail\repos\interfaces\user_repo_interface;
 use context_course;
 use block_quickmail\repos\role_repo;
 use block_quickmail\repos\group_repo;
+use block_quickmail_plugin;
+use block_quickmail_config;
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 class user_repo extends repo implements user_repo_interface {
 
@@ -51,10 +54,10 @@ class user_repo extends repo implements user_repo_interface {
     public static function get_course_user_selectable_users($course, $user, $course_context = null)
     {
         // if a context was not passed, pull one now
-        $course_context = $course_context ?: \context_course::instance($course->id);
+        $course_context = $course_context ?: context_course::instance($course->id);
 
         // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! \block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+        if ( ! block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && block_quickmail_config::be_ferpa_strict_for_course($course)) {
             // get all users with non-"group limited role"'s
             $allaccess_users = get_enrolled_users($course_context, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
 
