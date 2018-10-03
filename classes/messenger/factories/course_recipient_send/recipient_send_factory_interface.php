@@ -29,6 +29,6 @@ interface recipient_send_factory_interface {
     public function set_factory_params();
     public function set_factory_computed_params();
     public function send();
-    public function send_to_mentors();
+    public function send_to_mentor_users();
 
 }

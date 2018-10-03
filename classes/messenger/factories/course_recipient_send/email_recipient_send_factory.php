@@ -114,18 +114,17 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     }
 
     /**
-     * Sends this formatted message to any existing mentors of this recipient user
+     * Sends this formatted message to any existing mentor users of this recipient user
+     * which are configured by context in moodle (see: docs.moodle.org/35/en/Parent_role)
      * 
      * @return void
      */
-    public function send_to_mentors()
+    public function send_to_mentor_users()
     {
         $mentor_users = $this->get_recipient_mentors();
 
-        $mentee_user = $this->recipient->get_user();
-
         foreach ($mentor_users as $mentor_user) {
-            $this->send_email_to_mentor_user($mentor_user, $mentee_user);
+            $this->send_email_to_mentor_user($mentor_user, $this->message_params->userto);
         }
     }
 
