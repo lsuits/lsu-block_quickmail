@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-global $CFG;
+global $CFG, $DB;
 
 if (block_quickmail\migrator\migrator::old_tables_exist()) {
     $msp = get_string('pluginname', 'block_quickmail') . ' ' . get_string('migrate', 'block_quickmail');
@@ -39,6 +39,12 @@ if($ADMIN->fulltree) {
     $no_or_yes_options = [
         0 => get_string('no'), 
         1 => get_string('yes')
+    ];
+
+    $no_yes_or_force_options = [
+        0 => get_string('no'), 
+        1 => get_string('yes'),
+        2 => get_string('force'), 
     ];
 
     ///////////////////////////////////////////////////////////
@@ -152,7 +158,32 @@ if($ADMIN->fulltree) {
             block_quickmail_string::get('allow_mentor_copy'), 
             block_quickmail_string::get('allow_mentor_copy_help'),
             0,  // <-- default
-            $no_or_yes_options
+            $no_yes_or_force_options
+        )
+    );
+
+    ///////////////////////////////////////////////////////////
+    ///
+    ///  EMAIL PROFILE FIELDS
+    ///  
+    ///////////////////////////////////////////////////////////
+
+    // get array of profile fields
+    $user_profile_fields = [];
+
+    if ($profile_fields = $DB->get_records('user_info_field')) {
+        foreach ($profile_fields as $profile_field) {
+            $user_profile_fields[$profile_field->shortname] = $profile_field->name;
+        }
+    }
+
+    $settings->add(
+        new admin_setting_configmultiselect(
+            'block_quickmail_email_profile_fields',
+            block_quickmail_string::get('email_profile_fields'), 
+            block_quickmail_string::get('email_profile_fields_desc'),
+            [], // <-- default
+            $user_profile_fields
         )
     );
 
