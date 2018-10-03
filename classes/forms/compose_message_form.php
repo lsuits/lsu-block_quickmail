@@ -627,7 +627,9 @@ class compose_message_form extends \moodleform {
      * @return bool
      */
     private function should_show_copy_mentor() {
-        return (bool) ($this->allow_mentor_copy && $this->course_config_array['allow_mentor_copy']);
+        $mentor_setting = (int) $this->course_config_array['allow_mentor_copy'];
+
+        return (bool) ($this->allow_mentor_copy && $mentor_setting == 1);
     }
 
     /**
