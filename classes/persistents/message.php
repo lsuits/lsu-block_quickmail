@@ -37,6 +37,7 @@ use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_additional_email;
 use block_quickmail\persistents\message_attachment;
 use block_quickmail\persistents\notification;
+use block_quickmail\messenger\messenger;
 use block_quickmail\messenger\message\substitution_code;
  
 // if ( ! class_exists('\core\persistent')) {
@@ -796,20 +797,6 @@ class message extends \block_quickmail\persistents\persistent {
 	}
 
 	/**
-	 * Updates this message to be sent now rather than later
-	 * 
-	 * @return message
-	 */
-	public function changed_queued_to_now()
-	{
-		$this->set('to_send_at', 0);
-		$this->update();
-
-		// return a refreshed message record
-		return $this->read();
-	}
-
-	/**
 	 * Returns a message of the given id which must belong to the given user id
 	 * 
 	 * @param  int  $message_id
@@ -827,6 +814,26 @@ class message extends \block_quickmail\persistents\persistent {
 		}
 
 		return $message;
+	}
+
+	///////////////////////////////////////////////
+	///
+	///  SEND METHODS
+	/// 
+	///////////////////////////////////////////////
+
+	/**
+	 * Attempt to send this message immediately
+	 * 
+	 * @return void
+	 */
+	public function send()
+	{
+		// instantiate a messenger of this message
+		$messenger = new messenger($this);
+
+		// send the message
+		$messenger->send();
 	}
 
 	///////////////////////////////////////////////

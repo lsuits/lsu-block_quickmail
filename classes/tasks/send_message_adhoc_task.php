@@ -25,7 +25,6 @@
 namespace block_quickmail\tasks;
 
 use core\task\adhoc_task;
-use block_quickmail\messenger\messenger;
 use block_quickmail\persistents\message;
 
 class send_message_adhoc_task extends adhoc_task {
@@ -41,11 +40,8 @@ class send_message_adhoc_task extends adhoc_task {
 
         // attempt to fetch the message
         if ($message = message::find_or_null($data->message_id)) {
-            // message is found, instantiate a messenger and send
-            $messenger = new messenger($message);
-
             // send the message
-            $messenger->send();
+            $message->send();
         }
     }
 

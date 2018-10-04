@@ -83,7 +83,7 @@ class queued_message_index_controller extends base_controller {
             $this->props->page_params['action'] = '';
 
             // redirect back to index with error
-            $request->redirect_as_error('No message was specified!', static::$base_uri, $this->props->page_params);
+            $request->redirect_as_error(block_quickmail_string::get('message_not_found'), static::$base_uri, $this->props->page_params);
         }
 
         // attempt to fetch the message to unqueue
@@ -95,7 +95,7 @@ class queued_message_index_controller extends base_controller {
         // attempt to unqueue
         $message->unqueue();
 
-        $request->redirect_as_success('Message unqueued!', static::$base_uri, $this->get_form_url_params());
+        $request->redirect_as_success(block_quickmail_string::get('message_unqueued'), static::$base_uri, $this->get_form_url_params());
     }
 
     /**
@@ -112,7 +112,7 @@ class queued_message_index_controller extends base_controller {
             $this->props->page_params['action'] = '';
 
             // redirect back to index with error
-            $request->redirect_as_error('No message was specified!', static::$base_uri, $this->props->page_params);
+            $request->redirect_as_error(block_quickmail_string::get('message_not_found'), static::$base_uri, $this->props->page_params);
         }
 
         // attempt to fetch the message to send now
@@ -122,9 +122,9 @@ class queued_message_index_controller extends base_controller {
         }
 
         // attempt to force the queued message to be sent now
-        $message->changed_queued_to_now();
+        $message->send();
 
-        $request->redirect_as_success('Message will be sent now!', static::$base_uri, $this->get_form_url_params());
+        $request->redirect_as_success(block_quickmail_string::get('message_sent_now'), static::$base_uri, $this->get_form_url_params());
     }
 
 }
