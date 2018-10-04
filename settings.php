@@ -168,22 +168,13 @@ if($ADMIN->fulltree) {
     ///  
     ///////////////////////////////////////////////////////////
 
-    // get array of profile fields
-    $user_profile_fields = [];
-
-    if ($profile_fields = $DB->get_records('user_info_field')) {
-        foreach ($profile_fields as $profile_field) {
-            $user_profile_fields[$profile_field->shortname] = $profile_field->name;
-        }
-    }
-
     $settings->add(
         new admin_setting_configmultiselect(
             'block_quickmail_email_profile_fields',
             block_quickmail_string::get('email_profile_fields'), 
             block_quickmail_string::get('email_profile_fields_desc'),
             [], // <-- default
-            $user_profile_fields
+            block_quickmail_plugin::get_user_profile_field_array()
         )
     );
 

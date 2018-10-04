@@ -26,6 +26,7 @@ namespace block_quickmail\messenger;
 
 use block_quickmail\messenger\messenger_interface;
 use block_quickmail_config;
+use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail_emailer;
 use block_quickmail\persistents\message;
@@ -50,10 +51,14 @@ use html_writer;
 class messenger implements messenger_interface {
 
     public $message;
+    public $all_profile_fields;
+    public $selected_profile_fields;
 
     public function __construct(message $message)
     {
         $this->message = $message;
+        $this->all_profile_fields = block_quickmail_plugin::get_user_profile_field_array();
+        $this->selected_profile_fields = block_quickmail_config::block('email_profile_fields');
     }
 
     /////////////////////////////////////////////////////////////
@@ -528,7 +533,7 @@ class messenger implements messenger_interface {
     public function send_to_recipient($recipient)
     {
         // instantiate recipient_send_factory
-        $recipient_send_factory = recipient_send_factory::make($this->message, $recipient);
+        $recipient_send_factory = recipient_send_factory::make($this->message, $recipient, $this->all_profile_fields, $this->selected_profile_fields);
 
         // send recipient_send_factory
         $recipient_send_factory->send();

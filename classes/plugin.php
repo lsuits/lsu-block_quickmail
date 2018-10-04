@@ -439,4 +439,24 @@ class block_quickmail_plugin {
         return $result;
     }
 
+    /**
+     * Returns the system's custom user profile fields as array
+     * 
+     * @return array  [shortname => name]
+     */
+    public static function get_user_profile_field_array()
+    {
+        global $DB;
+
+        $user_profile_fields = [];
+
+        if ($profile_fields = $DB->get_records('user_info_field')) {
+            foreach ($profile_fields as $profile_field) {
+                $user_profile_fields[$profile_field->shortname] = $profile_field->name;
+            }
+        }
+
+        return $user_profile_fields;
+    }
+
 }

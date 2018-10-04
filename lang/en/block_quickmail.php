@@ -97,6 +97,7 @@ $string['mentor_copy'] = 'Send copies to mentors of recipients?';
 $string['mentors_copied'] = 'Send copies to mentors';
 $string['mentor_copy_subject_prefix'] = '[Mentor Copy]';
 $string['mentor_copy_message_prefix'] = '<p><strong>You are receiving this message because you are assigned as the mentor of</strong>: {$a}. The following is a copy of the message that was also sent to your mentee.</p>';
+$string['profile_mentor_copy_message_prefix'] = '<p><strong>You are receiving this message because you are assigned as {$a} of the intended recipient</strong>. The following is a copy of what was sent to the recipient.</p>';
 $string['select_message_type'] = 'Send message as';
 $string['message_type_message'] = 'Moodle Message';
 $string['message_type_email'] = 'Email';
