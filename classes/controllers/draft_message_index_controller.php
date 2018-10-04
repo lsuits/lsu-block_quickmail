@@ -83,7 +83,7 @@ class draft_message_index_controller extends base_controller {
             $this->props->page_params['action'] = '';
 
             // redirect back to index with error
-            $request->redirect_as_error('No message was specified!', static::$base_uri, $this->props->page_params);
+            $request->redirect_as_error(block_quickmail_string::get('message_not_found'), static::$base_uri, $this->props->page_params);
         }
 
         // attempt to fetch the draft message
@@ -95,7 +95,7 @@ class draft_message_index_controller extends base_controller {
         // attempt to hard delete draft
         $message->hard_delete();
 
-        $request->redirect_as_success('Message deleted!', static::$base_uri, $this->get_form_url_params());
+        $request->redirect_as_success(block_quickmail_string::get('message_deleted'), static::$base_uri, $this->get_form_url_params());
     }
 
     /**
@@ -112,7 +112,7 @@ class draft_message_index_controller extends base_controller {
             $this->props->page_params['action'] = '';
 
             // redirect back to index with error
-            $request->redirect_as_error('No message was specified!', static::$base_uri, $this->props->page_params);
+            $request->redirect_as_error(block_quickmail_string::get('message_not_found'), static::$base_uri, $this->props->page_params);
         }
 
         // attempt to fetch the message which must be non-deleted and belong to this user

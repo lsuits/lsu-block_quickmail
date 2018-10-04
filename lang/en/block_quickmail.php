@@ -130,6 +130,12 @@ $string['found_filtered_users'] = 'Found {$a} user(s)';
 $string['never'] = 'Never';
 $string['save'] = 'Save';
 $string['courseneveraccessed'] = 'Never Accessed';
+$string['message_sent_now'] = 'Message sent';
+$string['message_queued'] = 'Message scheduled to be sent';
+$string['message_sent_asap'] = 'Message will be sent shortly';
+$string['message_unqueued'] = 'Message unscheduled';
+$string['message_not_found'] = 'Could not find that message';
+$string['message_deleted'] = 'Message deleted';
 
 // notifications
 $string['notification_name'] = 'Title';
@@ -272,7 +278,7 @@ $string['alternate_email_not_found'] = 'Could not find that alternate email.';
 $string['alternate_owner_must_confirm'] = 'Must be the owner of the email to confirm.';
 $string['alternate_owner_must_delete'] = 'Must be the owner of the email to delete.';
 $string['alternate_already_confirmed'] = 'That email has already been confirmed.';
-$string['alternate_invalid_token'] = 'Invalid token.';
+$string['alternate_invalid_token'] = 'Invalid confirmation token.';
 $string['alternate_waiting'] = 'Waiting';
 $string['alternate_activated'] = 'Alternate email {$a} can now be used!';
 $string['alternate_confirmation_email_resent'] = 'The confirmation email has been resent!';
@@ -363,15 +369,11 @@ $string['picker_style_autocomplete'] = 'Autocomplete';
 $string['picker_style_multiselect'] = 'Multiselect';
 
 // redirect messages
-$string['redirect_back_to_course_from_message_after_immediate_send'] = 'Your message has been sent.';
-$string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
-$string['redirect_back_to_course_from_message_after_send'] = 'Your message will be sent shortly.';
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
 $string['redirect_back_from_message_detail_message_deleted'] = 'The message you are attempting to view has been deleted.';
 $string['redirect_back_from_message_detail_no_access'] = 'You are not able to view this message.';
-
 
 // validation
 $string['missing_subject'] = 'Missing subject line.';

@@ -143,11 +143,11 @@ try {
 
         // resolve redirect message
         if ($message->is_sent_message()) {
-            $redirect_message = 'redirect_back_to_course_from_message_after_immediate_send';
+            $redirect_message = 'message_sent_now';
         } else if ($message->is_queued_message()) {
-            $redirect_message = 'redirect_back_to_course_from_message_after_queued_send';
+            $redirect_message = 'message_queued';
         } else {
-            $redirect_message = 'redirect_back_to_course_from_message_after_send';
+            $redirect_message = 'message_sent_asap';
         }
 
         // redirect back to course page with message
