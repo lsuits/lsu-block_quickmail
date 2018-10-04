@@ -38,7 +38,7 @@ class compose_transformer extends transformer {
         $this->transformed_data->signature_id = $this->get_transformed_signature_id();
         $this->transformed_data->message_type = $this->get_transformed_message_type();
         $this->transformed_data->receipt = (bool) $this->form_data->receipt;
-        $this->transformed_data->mentor_copy = (bool) $this->form_data->mentor_copy;
+        $this->transformed_data->mentor_copy = $this->get_transformed_mentor_copy();
         $this->transformed_data->alternate_email_id = $this->get_transformed_alternate_email_id();
         $this->transformed_data->to_send_at = $this->get_transformed_to_send_at();
         $this->transformed_data->attachments_draftitem_id = $this->get_transformed_attachments_draftitem_id();
@@ -115,6 +115,20 @@ class compose_transformer extends transformer {
         return ! empty($this->form_data->message_type) 
             ? (string) $this->form_data->message_type 
             : block_quickmail_config::get('default_message_type');
+    }
+
+
+    /**
+     * Returns whether or not this composed message should be sent to mentors based on
+     * input and system configuration
+     * 
+     * @return bool
+     */
+    public function get_transformed_mentor_copy()
+    {
+        return block_quickmail_config::block('allow_mentor_copy') == 2
+            ? true
+            : (bool) $this->form_data->mentor_copy;
     }
 
     /**

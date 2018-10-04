@@ -306,8 +306,8 @@ $string['receipt_configuration_help'] = 'Send a confirmation email to the messag
 $string['mentor_copy_help'] = 'If selected, any mentors of your recipients will receive a copy of the message.';
 $string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
-$string['allow_mentor_copy'] = 'Allow senders to automatically message mentors of recipients when sending';
-$string['allow_mentor_copy_help'] = 'If enabled, the sender will have the ability to select whether or not mentors should be copied to any outbound message. This message will only happen if the recipient user has a mentor, otherwise, they will receive the message individually as per normal.';
+$string['allow_mentor_copy'] = 'Allow senders to automatically message a recipient\'s mentors when sending';
+$string['allow_mentor_copy_help'] = 'If no, this option will not be visible to senders and mentors will never be copied. If yes, the sender will have the option to choose per message. If forced, this option will be forced with no option for de-selecting.';
 $string['send_as_tasks_help'] = 'If selected, will send all messages asynchronously as cron tasks. Otherwise, will send immediately.';
 
 // settings management
@@ -322,6 +322,8 @@ $string['selectable_roles'] = 'Selectable roles';
 $string['selectable_roles_desc'] = 'These roles will be available for selection when composing a message. This setting is overridable by course configuration.';
 $string['selectable_roles_configuration'] = 'These roles will be available for selection when composing a message.';
 $string['selectable_roles_configuration_help'] = 'These roles will be available for selection when composing a message.';
+$string['email_profile_fields'] = 'Email profile fields';
+$string['email_profile_fields_desc'] = 'These profile fields will be automatically emailed if they are set for the recipient user.';
 $string['prepend_class'] = 'Prepend Course name';
 $string['prepend_class_desc'] = 'Prepend course identifying information to the subject of the message. This setting is overridable by course configuration.';
 $string['prepend_class_configuration'] = 'Prepend course identifying information to the subject of the message.';
