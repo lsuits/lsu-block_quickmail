@@ -27,6 +27,7 @@ namespace block_quickmail\messenger\factories\course_recipient_send;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory_interface;
 use block_quickmail\persistents\alternate_email;
+use block_quickmail\persistents\template;
 use block_quickmail_string;
 
 class email_recipient_send_factory extends recipient_send_factory implements recipient_send_factory_interface {
@@ -86,7 +87,7 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
             $this->message_params->userfrom,
             $this->get_subject_prefix($options) . $this->message_params->subject,
             $this->get_message_prefix($options) . $this->message_params->fullmessage,
-            $this->get_message_prefix($options) . $this->message_params->fullmessagehtml,
+            $this->get_formatted_html_content($options),
             $this->message_params->attachment,
             $this->message_params->attachname,
             $this->message_params->usetrueaddress,
@@ -96,6 +97,23 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
         );
 
         return $success;
+    }
+
+    /**
+     * Returns the fully formatted email message content
+     * 
+     * @param  array  $options
+     * @return string
+     */
+    private function get_formatted_html_content($options)
+    {
+        $body = $this->get_message_prefix($options) . $this->message_params->fullmessagehtml;
+
+        if ( ! $template = template::get_default_template()) {
+            return $body;
+        }
+
+        return $template->get_formatted($body);
     }
 
     /**

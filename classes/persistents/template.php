@@ -193,6 +193,34 @@ class template extends \block_quickmail\persistents\persistent {
 
     ///////////////////////////////////////////////
     ///
+    ///  FORMATTING METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Returns an html string for the given body content, formatted according to this template's
+     * design
+     * 
+     * @param  string  $body
+     * @return string
+     */
+    public function get_formatted($body = '')
+    {
+        // prepend the header, if any
+        if ($header = $this->get('header_content')) {
+            $body = $header . '<br>' . $body;
+        }
+
+        // append the footer, if any
+        if ($footer = $this->get('footer_content')) {
+            $body = $body . '<br>' . $footer;
+        }
+
+        return $body;
+    }
+
+    ///////////////////////////////////////////////
+    ///
     ///  CUSTOM METHODS
     /// 
     ///////////////////////////////////////////////
