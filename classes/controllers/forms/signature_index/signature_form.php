@@ -154,7 +154,7 @@ class signature_form extends controller_form {
      */
     private function get_user_signature_options()
     {
-        return [0 => 'Create New'] + $this->get_custom_data('user_signature_array');
+        return [0 => get_string('createnew', 'moodle')] + $this->get_custom_data('user_signature_array');
     }
 
     /**
