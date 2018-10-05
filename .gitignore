@@ -1,1 +1,7 @@
-phpunit.xml
+.DS_Store
+node_modules/
+.sass-cache/
+npm-debug.log
+package-lock.json
+stuff.txt
+testy.php

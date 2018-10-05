@@ -53,7 +53,7 @@ $PAGE->set_url(new moodle_url('/blocks/quickmail/signatures.php', $page_params))
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $page_params['courseid'])));
 $PAGE->navbar->add(block_quickmail_string::get('signatures'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));

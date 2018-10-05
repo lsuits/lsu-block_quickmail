@@ -40,6 +40,7 @@ require_course_login($course, false);
 $course_context = context_course::instance($course->id);
 $PAGE->set_context($course_context);
 $PAGE->set_url(new moodle_url('/blocks/quickmail/compose.php', $page_params));
+$PAGE->requires->js_call_amd('block_quickmail/compose', 'init');
 
 // throw an exception if user does not have capability to compose messages
 block_quickmail_plugin::require_user_can_send('compose', $USER, $course_context);
@@ -51,6 +52,7 @@ block_quickmail_plugin::require_user_can_send('compose', $USER, $course_context)
 $course_user_data = block_quickmail_plugin::get_compose_message_recipients(
     $course, 
     $USER,
+    block_quickmail_plugin::user_prefers_multiselect_recips($USER),
     $course_context
 );
 
@@ -61,7 +63,7 @@ $course_user_data = block_quickmail_plugin::get_compose_message_recipients(
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('compose'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
 $PAGE->navbar->add(block_quickmail_string::get('compose'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('compose'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
@@ -140,12 +142,12 @@ try {
         $message = \block_quickmail\messenger\messenger::compose($USER, $course, $compose_form->get_data(), $draft_message, $send_as_task);
 
         // resolve redirect message
-        if ($message->is_queued_message()) {
-            $redirect_message = 'redirect_back_to_course_from_message_after_queued_send';
+        if ($message->is_sent_message()) {
+            $redirect_message = 'message_sent_now';
+        } else if ($message->is_queued_message()) {
+            $redirect_message = 'message_queued';
         } else {
-            $redirect_message = $send_as_task
-                ? 'redirect_back_to_course_from_message_after_send'
-                : 'redirect_back_to_course_from_message_after_immediate_send';
+            $redirect_message = 'message_sent_asap';
         }
 
         // redirect back to course page with message

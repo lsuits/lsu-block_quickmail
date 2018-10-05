@@ -75,7 +75,7 @@ class select_type_form extends controller_form {
         );
 
         $mform->addElement('static', 'reminder_description', '', '<strong>Reminder</strong>: ' . block_quickmail_string::get('notification_type_reminder_description'));
-        // $mform->addElement('static', 'event_description', '', '<strong>Event</strong>: ' . block_quickmail_string::get('notification_type_event_description'));
+        $mform->addElement('static', 'event_description', '', '<strong>Event</strong>: ' . block_quickmail_string::get('notification_type_event_description'));
 
         ////////////////////////////////////////////////////////////
         ///  notification_type (select)
@@ -100,7 +100,7 @@ class select_type_form extends controller_form {
         ////////////////////////////////////////////////////////////
         $buttons = [
             $mform->createElement('cancel', 'cancelbutton', get_string('cancel')),
-            $mform->createElement('submit', 'next', 'Next'),
+            $mform->createElement('submit', 'next', get_string('next')),
         ];
         
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
@@ -115,7 +115,7 @@ class select_type_form extends controller_form {
         return [
             '' => get_string('select'),
             'reminder' => block_quickmail_string::get('notification_type_reminder'),
-            // 'event' => block_quickmail_string::get('notification_type_event')
+            'event' => block_quickmail_string::get('notification_type_event')
         ];
     }
 

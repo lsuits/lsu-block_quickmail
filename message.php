@@ -41,7 +41,7 @@ if ( ! $message = \block_quickmail\persistents\message::find_or_null($page_param
 }
 
 // check that the user can view this message
-if ($message->get('user_id') !== $USER->id || ! is_siteadmin($USER)) {
+if ($message->get('user_id') !== $USER->id) {
     redirect(new \moodle_url('/my'), block_quickmail_string::get('redirect_back_from_message_detail_no_access'), 2, \core\output\notification::NOTIFY_ERROR);
 }
 
@@ -56,12 +56,12 @@ $PAGE->set_url(new moodle_url('/blocks/quickmail/message.php', $page_params));
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('view_message_detail'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+
+$course_id = $message->get('course_id');
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course_id)));
 $PAGE->navbar->add(block_quickmail_string::get('view_message_detail'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('view_message_detail'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
-// $PAGE->requires->jquery();
-// $PAGE->requires->js(new moodle_url('/blocks/quickmail/js/sent-index.js'));
 
 block_quickmail\controllers\view_message_controller::handle($PAGE, [
     'context' => $user_context,

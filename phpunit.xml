@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="lib/phpunit/phpunit.xsd"
+        bootstrap="/var/www/public/lib/phpunit/bootstrap.php"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        stopOnError="false"
+        stopOnFailure="true"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        printerClass="Hint_ResultPrinter"
+        testSuiteLoaderClass="phpunit_autoloader"
+        colors="true"
+        verbose="true"
+        >
+
+    <php>
+        <!--<const name="PHPUNIT_LONGTEST" value="1"/> uncomment to execute also slow or otherwise expensive tests-->
+        <!-- <const name="PHPUNIT_SEQUENCE_START" value="183000"/> -->
+
+        <!--Following constants instruct tests to fetch external test files from alternative location or skip tests if empty, clone https://github.com/moodlehq/moodle-exttests to local web server-->
+        <!--<const name="TEST_EXTERNAL_FILES_HTTP_URL" value="http://download.moodle.org/unittest"/> uncomment and alter to fetch external test files from alternative location-->
+        <!--<const name="TEST_EXTERNAL_FILES_HTTPS_URL" value="https://download.moodle.org/unittest"/> uncomment and alter to fetch external test files from alternative location-->
+    </php>
+
+<!--All core suites need to be manually added here-->
+
+    <testsuites>
+        <testsuite name="block_quickmail_testsuite">
+            <directory suffix="_test.php">tests/unit</directory>
+            <!-- general utilities -->
+            <exclude>tests/unit/cache_test.php</exclude>
+            <exclude>tests/unit/paginator_test.php</exclude>
+            <exclude>tests/unit/emailer_test.php</exclude>
+            
+            <!-- persistents -->
+            <exclude>tests/unit/persistent_concerns_test.php</exclude>
+            <exclude>tests/unit/message_persistent_test.php</exclude>
+            <exclude>tests/unit/signature_persistent_test.php</exclude>
+            <exclude>tests/unit/alternate_persistent_test.php</exclude>
+            <exclude>tests/unit/schedule_persistent_test.php</exclude>
+            <exclude>tests/unit/notification_persistent_test.php</exclude>
+            <exclude>tests/unit/reminder_notification_persistent_test.php</exclude>
+            <exclude>tests/unit/event_notification_persistent_test.php</exclude>
+
+            <!-- repos -->
+            <exclude>tests/unit/draft_repo_test.php</exclude>
+            <exclude>tests/unit/sent_repo_test.php</exclude>
+            <exclude>tests/unit/queued_repo_test.php</exclude>
+            <exclude>tests/unit/role_repo_test.php</exclude>
+            <exclude>tests/unit/group_repo_test.php</exclude>
+            <exclude>tests/unit/user_repo_test.php</exclude>
+            <exclude>tests/unit/course_repo_test.php</exclude>
+                <exclude>tests/unit/notification_repo_test.php</exclude>
+
+            <!-- forms -->
+            <exclude>tests/unit/message_form_validator_test.php</exclude>
+            <exclude>tests/unit/save_draft_message_validator_test.php</exclude>
+                <exclude>tests/unit/edit_notification_form_validator_test.php</exclude>
+                <exclude>tests/unit/edit_reminder_notification_form_validator_test.php</exclude>
+                <exclude>tests/unit/edit_event_notification_form_validator_test.php</exclude>
+
+            <!-- block utilities -->
+            <exclude>tests/unit/alternate_manager_test.php</exclude>
+            <exclude>tests/unit/grade_calculator_test.php</exclude>
+            <exclude>tests/unit/configuration_test.php</exclude>
+            
+            <!-- messaging -->
+            <exclude>tests/unit/subject_prepender_test.php</exclude>
+            <exclude>tests/unit/substitution_code_test.php</exclude>
+            <exclude>tests/unit/body_substitution_code_parser_test.php</exclude>
+            <exclude>tests/unit/formats_message_recipient_compose_message_body_test.php</exclude>
+            <exclude>tests/unit/signature_appender_test.php</exclude>
+            <exclude>tests/unit/course_recipient_send_factory_test.php</exclude>
+            <exclude>tests/unit/messenger_compose_test.php</exclude>
+            <exclude>tests/unit/messenger_drafting_test.php</exclude>
+
+            <!-- schedulable -->
+            <exclude>tests/unit/schedulable_test.php</exclude>
+
+            <!-- schedulable notification tasks -->
+            <!-- NOTE: must modify config in class to run these -->
+            <exclude>tests/unit/queue_scheduled_notifications_task_test.php</exclude>
+            <exclude>tests/unit/run_schedulable_notification_adhoc_task_test.php</exclude>
+            
+            <!-- messaging tasks -->
+            <!-- NOTE: must modify config in class to run these -->
+            <exclude>tests/unit/send_all_ready_messages_task_test.php</exclude>
+            <exclude>tests/unit/send_message_adhoc_task_test.php</exclude>
+
+            <!-- notification models -->
+            <exclude>tests/unit/notification_model_helper_test.php</exclude>
+            
+            <exclude>tests/unit/reminder_notification_course_non_participation_model_test.php</exclude>
+            <exclude>tests/unit/reminder_notification_course_grade_range_model_test.php</exclude>
+            
+            <exclude>tests/unit/event_notification_course_entered_model_test.php</exclude>
+            <exclude>tests/unit/event_notification_assignment_submitted_model_test.php</exclude>
+            
+            <!-- notification conditions -->
+            <exclude>tests/unit/notification_condition_test.php</exclude>
+            <exclude>tests/unit/notification_condition_summary_test.php</exclude>
+            <exclude>tests/unit/notification_schedule_summary_test.php</exclude>
+
+            <!-- event notification handling -->
+            <exclude>tests/unit/event_notification_handler_test.php</exclude>
+
+        </testsuite>
+    </testsuites>
+
+</phpunit>

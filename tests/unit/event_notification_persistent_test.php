@@ -48,12 +48,27 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
         
         // create
-        $event_notification = event_notification::create_type('assignment-submitted', $course, $user_teacher, $this->get_event_notification_params());
+        $event_notification = event_notification::create_type('course-entered', $course, $course, $user_teacher, $this->get_event_notification_params());
 
         $this->assertInstanceOf(event_notification::class, $event_notification);
-        $this->assertEquals('assignment-submitted', $event_notification->get('model'));
-        $this->assertEquals($this->get_event_notification_params('time_delay'), $event_notification->get('time_delay'));
+        $this->assertEquals('course-entered', $event_notification->get('model'));
+        $this->assertEquals(5, $event_notification->get('time_delay_amount'));
+        $this->assertEquals('minute', $event_notification->get('time_delay_unit'));
+        $this->assertEquals(2, $event_notification->get('mute_time_amount'));
+        $this->assertEquals('day', $event_notification->get('mute_time_unit'));
         $this->assertFalse($event_notification->is_schedulable());
+
+        // test getters
+        
+        // 5 minutes = 300 seconds
+        $this->assertEquals(300, $event_notification->time_delay());
+        // 2 days = 172800 seconds
+        $this->assertEquals(172800, $event_notification->mute_time());
+        // may be some race conditions for these two...
+        // send time = now + time_delay
+        $this->assertEquals(time() + $event_notification->time_delay(), $event_notification->calculated_send_time());
+        // send time = now + time_delay - mute_time
+        $this->assertEquals(time() + $event_notification->time_delay() - $event_notification->mute_time(), $event_notification->next_available_send_time());
 
         // get notification from event_notification
         $notification = $event_notification->get_notification();
@@ -80,6 +95,64 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         $this->assertInstanceOf(event_notification::class, $notification_type_interface);
     }
 
+    public function test_creates_an_event_notification_with_no_time_delay()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        // create
+        $event_notification = event_notification::create_type('course-entered', $course, $course, $user_teacher, $this->get_event_notification_params([], [
+            'time_delay_amount' => '',
+            'time_delay_unit' => '',
+        ]));
+
+        $this->assertEquals(0, $event_notification->get('time_delay_amount'));
+        $this->assertEquals(null, $event_notification->get('time_delay_unit'));
+        $this->assertEquals(2, $event_notification->get('mute_time_amount'));
+        $this->assertEquals('day', $event_notification->get('mute_time_unit'));
+
+        // test getters
+        $this->assertEquals(0, $event_notification->time_delay());
+
+        // may be some race conditions for these two...
+        // send time = now
+        $this->assertEquals(time(), $event_notification->calculated_send_time());
+        // send time = now + time_delay - mute_time
+        $this->assertEquals(time() - $event_notification->mute_time(), $event_notification->next_available_send_time());
+    }
+
+    public function test_creates_an_event_notification_with_no_mute_time()
+    {
+        // reset all changes automatically after this test
+        $this->resetAfterTest(true);
+        
+        // set up a course with a teacher and students
+        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        
+        // create
+        $event_notification = event_notification::create_type('course-entered', $course, $course, $user_teacher, $this->get_event_notification_params([], [
+            'mute_time_amount' => '',
+            'mute_time_unit' => '',
+        ]));
+
+        $this->assertEquals(5, $event_notification->get('time_delay_amount'));
+        $this->assertEquals('minute', $event_notification->get('time_delay_unit'));
+        $this->assertEquals(0, $event_notification->get('mute_time_amount'));
+        $this->assertEquals(null, $event_notification->get('mute_time_unit'));
+
+        // test getters
+        $this->assertEquals(0, $event_notification->mute_time());
+
+        // may be some race conditions for these two...
+        // send time = now + time_delay
+        $this->assertEquals(time() + $event_notification->time_delay(), $event_notification->calculated_send_time());
+        // send time = now + time_delay
+        $this->assertEquals(time() + $event_notification->time_delay(), $event_notification->next_available_send_time());
+    }
+
     public function test_gets_an_event_notification_model_from_event_notification()
     {
         // reset all changes automatically after this test
@@ -89,7 +162,7 @@ class block_quickmail_event_notification_persistent_testcase extends advanced_te
         list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
         // create an event notification
-        $event_notification = event_notification::create_type('assignment-submitted', $course, $user_teacher, $this->get_event_notification_params());
+        $event_notification = event_notification::create_type('course-entered', $course, $course, $user_teacher, $this->get_event_notification_params());
 
         $event_notification_model = $event_notification->get_notification_model();
 

@@ -33,14 +33,32 @@
   display: inline;
 }
 
-#page-block-quickmail span.recipients {
-  display: inline-block; 
-  background-color: #666;
-  color: #ffffff;
+#page-block-quickmail div.block_quickmail_view_message_component span.recipients {
+  display: inline-block;
+  background-color: #666666;
+  color: white;
   border: none;
   margin: 3px 6px 3px 0;
   padding: 3px 6px;
   border-radius: .5em;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component small.success + div span.recipients {
+  background-color: transparent;
+  color: #333333;
+  font-weight: 100;
+  border: 1px solid #999999;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6.additional + div span.recipients {
+  background-color: transparent;
+  color: #333333;
+  font-weight: 100;
+  border: 1px solid #999999;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component small.failed + div span.recipients:after, #page-block-quickmail div.block_quickmail_view_message_component small.failed + div span.recipients:after, #page-block-quickmail div.block_quickmail_view_message_component small.pending + div span.recipients:after, #page-block-quickmail div.block_quickmail_view_message_component small.pending + div span.recipients:after {
+  content: " - pending"
 }
 
 #page-block-quickmail div.block_quickmail_sent_message_index tr:nth-child(even) {
@@ -55,3 +73,127 @@
   margin-bottom: 0;
 }
 
+#page-block-quickmail div.block_quickmail_view_message_component h6.failed {
+  color: red;
+}
+
+#page-block-quickmail div.block_quickmail_view_message_component h6.success {
+  color: green;
+}
+
+#page-block-quickmail div.qm_links {
+  text-align: center;
+}
+
+#page-block-quickmail div.qm_links a.qml {
+  text-align: center;
+  display: inline-block;
+  margin: 1em;
+  width: 12em;
+  height: 12em;
+  border: 1px solid lightgray;
+  border-radius: 1.5em;
+  padding: 1em;
+  text-align: center;
+  vertical-align: bottom;
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: 50% 65%;
+  background-color: #ffffff;
+  font-size: 10px;
+}
+
+.device-type-mobile div.qm_links a.qml {
+  width: 9em!important;
+  height: 9em!important;
+}
+
+#page-block-quickmail div.qm_links a.qml:hover {
+  background-size: 90%;
+  color: transparent;
+  text-decoration: none;
+  background-position: 50% 50%;
+  transition: background-size .25s, color .1s, background-position .25s;
+}
+
+#page-block-quickmail div.qm_links a.qml:active {
+  background-size: 1000%;
+  color: transparent;
+  transition-timing-function: ease-out;
+  transition: background-size .5s;
+}
+
+#page-block-quickmail div.qm_links a.qml.compose {
+  background-image: url('assets/email.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.draft {
+  background-image: url('assets/template.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.queued {
+  background-image: url('assets/duration.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.sent {
+  background-image: url('assets/message.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.signatures {
+  background-image: url('assets/edit.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.alternate {
+  background-image: url('assets/add.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.configuration {
+  background-image: url('assets/cogs.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.notifications {
+  background-image: url('assets/insert_time.svg');
+}
+
+#page-block-quickmail div.qm_links a.qml.create_notification {
+  background-image: url('assets/calendar.svg');
+}
+
+#page-block-quickmail div.msflex {
+   display: flex; 
+   justify-content: center; 
+   align-items: center; 
+   flex-wrap: nowrap;
+   width: 90%;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom, #page-block-quickmail div.msflex div.multiselectto {
+  width: auto;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom select, #page-block-quickmail div.msflex div.multiselectto select {
+  min-width: 10em;
+  width: auto;
+  height: 24.5em;
+  overflow: auto;
+  margin: 0;
+  font-size: .8em;
+}
+
+#page-block-quickmail div.msflex div.msbuttons {
+  text-align: center;
+  width: auto;
+  margin: 0 1em;
+}
+
+#page-block-quickmail div.msflex div.msbuttons div.femptylabel div.fitemtitle {
+  display: none;
+}
+
+#page-block-quickmail div.msflex div.multiselectfrom div.fitem_fselect.multiselectfrom div.fitemtitle, #page-block-quickmail div.msflex div.multiselectto div.fitem_fselect.multiselectto div.fitemtitle {
+  display: none!important;
+}
+
+#page-block-quickmail div.msflex div.femptylabel div.felement {
+  margin: 0;
+}

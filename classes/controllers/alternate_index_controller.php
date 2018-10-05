@@ -64,7 +64,7 @@ class alternate_index_controller extends base_controller {
         // validate params
         if ( ! $this->props->page_params['alternate_id']) {
             // redirect back to index with error
-            $request->redirect_as_error('No alternate was specified!', static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('alternate_email_not_found'), static::$base_uri, $this->get_form_url_params());
         }
 
         try {
@@ -88,7 +88,7 @@ class alternate_index_controller extends base_controller {
         // validate params
         if ( ! $this->props->page_params['alternate_id'] || ! $this->props->page_params['token']) {
             // redirect back to index with error
-            $request->redirect_as_error('Invalid confirmation token!', static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('alternate_invalid_token'), static::$base_uri, $this->get_form_url_params());
         }
 
         try {
@@ -116,14 +116,14 @@ class alternate_index_controller extends base_controller {
         // validate params
         if ( ! $this->props->page_params['alternate_id']) {
             // redirect back to index with error
-            $request->redirect_as_error('No alternate was specified!', static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('alternate_email_not_found'), static::$base_uri, $this->get_form_url_params());
         }
 
         try {
             // attempt to delete the alternate email
             alternate_manager::delete_alternate_email_for_user($this->props->page_params['alternate_id'], $this->props->user);
             
-            $request->redirect_as_success('Alternate deleted!', static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_success(block_quickmail_string::get('alternate_deleted'), static::$base_uri, $this->get_form_url_params());
         } catch (\Exception $e) {
             $request->redirect_as_error($e->getMessage(), static::$base_uri, $this->get_form_url_params());
         }

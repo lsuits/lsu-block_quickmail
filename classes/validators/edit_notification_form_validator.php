@@ -25,7 +25,6 @@
 namespace block_quickmail\validators;
 
 use block_quickmail\validators\validator;
-use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail_config;
 use block_quickmail\messenger\message\body_substitution_code_parser;
@@ -54,9 +53,11 @@ class edit_notification_form_validator extends validator {
 
         $this->validate_message_type();
 
-        $this->validate_schedule_params();
+        // commenting out as this should now be handled by front-end validation rules
+        // $this->validate_schedule_params();
 
-        $this->validate_condition_params();
+        // commenting out as this should now be handled by front-end validation rules
+        // $this->validate_condition_params();
     }
 
     /**
@@ -158,7 +159,7 @@ class edit_notification_form_validator extends validator {
     {
         if ($this->is_schedulable_notification()) {
             // if the submitted time unit is not supported
-            if ( ! in_array($this->form_data->schedule_time_unit, block_quickmail_plugin::get_time_unit_values())) {
+            if ( ! in_array($this->form_data->schedule_time_unit, ['day', 'week', 'month'])) {
                 $this->add_error(block_quickmail_string::get('invalid_schedule_time_unit'));
             }
 
@@ -178,7 +179,7 @@ class edit_notification_form_validator extends validator {
     {
         if ( ! empty($this->get_required_condition_keys())) {
             // if the submitted time unit is not supported
-            if ( ! in_array($this->form_data->condition_time_unit, block_quickmail_plugin::get_time_unit_values())) {
+            if ( ! in_array($this->form_data->condition_time_unit, ['day', 'week', 'month'])) {
                 $this->add_error(block_quickmail_string::get('invalid_condition_time_unit'));
             }
 

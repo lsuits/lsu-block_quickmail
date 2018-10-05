@@ -29,6 +29,9 @@ use block_quickmail\repos\interfaces\user_repo_interface;
 use context_course;
 use block_quickmail\repos\role_repo;
 use block_quickmail\repos\group_repo;
+use block_quickmail_plugin;
+use block_quickmail_config;
+require_once($CFG->dirroot.'/user/profile/lib.php');
 
 class user_repo extends repo implements user_repo_interface {
 
@@ -51,10 +54,10 @@ class user_repo extends repo implements user_repo_interface {
     public static function get_course_user_selectable_users($course, $user, $course_context = null)
     {
         // if a context was not passed, pull one now
-        $course_context = $course_context ?: \context_course::instance($course->id);
+        $course_context = $course_context ?: context_course::instance($course->id);
 
         // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! \block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+        if ( ! block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && block_quickmail_config::be_ferpa_strict_for_course($course)) {
             // get all users with non-"group limited role"'s
             $allaccess_users = get_enrolled_users($course_context, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
 
@@ -213,6 +216,14 @@ class user_repo extends repo implements user_repo_interface {
         $included_entity_ids = array_unique($included_entity_ids);
         $excluded_entity_ids = array_unique($excluded_entity_ids);
 
+        // determine whether or not we're sending to all
+        $sending_to_all = in_array('all', $included_entity_ids);
+
+        // ignore "exclude all"
+        if (($key = array_search('all', $excluded_entity_ids)) !== false) {
+            unset($excluded_entity_ids[$key]);
+        }
+
         //////////////////////////////////////////////////////////////
         /// CREATE A CONTAINER FOR INCLUDED/EXCLUDED ROLE/GROUP IDS
         //////////////////////////////////////////////////////////////
@@ -234,6 +245,11 @@ class user_repo extends repo implements user_repo_interface {
 
         // iterate through (included, excluded)
         foreach ($filtered_entity_ids as $type => $entity) {
+            // if we're sending to all, do not worry about determining included ids
+            if ($sending_to_all && $type == 'included') {
+                continue;
+            }
+
             // iterate through each entity name within this type (role, group)
             foreach ($entity as $name => $keys) {
                 $type_key = $type . '_entity_ids';
@@ -280,18 +296,23 @@ class user_repo extends repo implements user_repo_interface {
         /// PULL ALL USERS FOR EACH INCLUDED/EXCLUDED ROLE/GROUP, ADDING THEM TO THE NEW CONTAINERS
         //////////////////////////////////////////////////////////////
 
-        // pull all selectable roles for the auth user if we're going to be including roles
-        $selectable_role_ids = ! empty($filtered_entity_ids['included']['role'])
+        // if not sending to all, pull all selectable roles for the auth user if we're going to be including roles
+        $selectable_role_ids = ! empty($filtered_entity_ids['included']['role']) && ! $sending_to_all
             ? array_keys(role_repo::get_course_selectable_roles($course, $course_context))
             : [];
         
-        // pull all selectable groups for the auth user if we're going to be including groups
-        $selectable_group_ids = ! empty($filtered_entity_ids['included']['group'])
-            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, $course_context))
+        // if not sending to all, pull all selectable groups for the auth user if we're going to be including groups
+        $selectable_group_ids = ! empty($filtered_entity_ids['included']['group']) && ! $sending_to_all
+            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, false, $course_context))
             : [];
 
         // iterate through initial container of included/excluded role/group
         foreach (['included', 'excluded'] as $type) {
+            // if we're sending to all, do not worry about determining included roles/groups
+            if ($sending_to_all && $type == 'included') {
+                continue;
+            }
+
             foreach (['role', 'group'] as $name) {
                 foreach ($filtered_entity_ids[$type][$name] as $name_id) {
                     // for inclusions, check that the role or group is selectable by the user
@@ -330,11 +351,21 @@ class user_repo extends repo implements user_repo_interface {
             return $user->id;
         }, $course_users);
 
+        // if sending to all, add all course user ids to include user ids
+        if ($sending_to_all) {
+            $included_user_ids = $course_user_ids;
+        }
+
         //////////////////////////////////////////////////////////////
         /// ADD IN EACH EXPLICITLY INCLUDED/EXCLUDED USER TO THE APPROPRIATE CONTAINER
         //////////////////////////////////////////////////////////////
 
         foreach (['included', 'excluded'] as $type) {
+            // if we're sending to all, do not worry about determining included users
+            if ($sending_to_all && $type == 'included') {
+                continue;
+            }
+
             // get name of appropriate (initial) container
             $type_key = $type . '_entity_ids';
 
@@ -373,7 +404,7 @@ class user_repo extends repo implements user_repo_interface {
 
         return array_unique(array_intersect(array_map(function ($user) {
             return $user->id;
-        }, self::get_course_user_selectable_users($course, $user, $course_context)), $result_user_ids));
+        }, $course_users), $result_user_ids));
     }
 
     /**

@@ -56,7 +56,7 @@ $course = get_course($page_params['courseid']);
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('broadcast'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
 $PAGE->navbar->add(block_quickmail_string::get('broadcast'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('broadcast'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
@@ -146,12 +146,12 @@ try {
         $broadcast_recipient_filter->clear_session();
         
         // resolve redirect message
-        if ($message->is_queued_message()) {
-            $redirect_message = 'redirect_back_to_course_from_message_after_queued_send';
+        if ($message->is_sent_message()) {
+            $redirect_message = 'message_sent_now';
+        } else if ($message->is_queued_message()) {
+            $redirect_message = 'message_queued';
         } else {
-            $redirect_message = $send_as_task
-                ? 'redirect_back_to_course_from_message_after_send'
-                : 'redirect_back_to_course_from_message_after_immediate_send';
+            $redirect_message = 'message_sent_asap';
         }
 
         $request->redirect_as_success(block_quickmail_string::get($redirect_message, $course->fullname), '/my');

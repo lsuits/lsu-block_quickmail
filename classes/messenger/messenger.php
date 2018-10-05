@@ -26,6 +26,7 @@ namespace block_quickmail\messenger;
 
 use block_quickmail\messenger\messenger_interface;
 use block_quickmail_config;
+use block_quickmail_plugin;
 use block_quickmail_string;
 use block_quickmail_emailer;
 use block_quickmail\persistents\message;
@@ -42,6 +43,7 @@ use block_quickmail\messenger\factories\course_recipient_send\recipient_send_fac
 use block_quickmail\filemanager\message_file_handler;
 use block_quickmail\filemanager\attachment_appender;
 use block_quickmail\messenger\message\subject_prepender;
+use block_quickmail\messenger\message\signature_appender;
 use block_quickmail\repos\user_repo;
 use moodle_url;
 use html_writer;
@@ -49,10 +51,14 @@ use html_writer;
 class messenger implements messenger_interface {
 
     public $message;
+    public $all_profile_fields;
+    public $selected_profile_fields;
 
     public function __construct(message $message)
     {
         $this->message = $message;
+        $this->all_profile_fields = block_quickmail_plugin::get_user_profile_field_array();
+        $this->selected_profile_fields = block_quickmail_config::block('email_profile_fields');
     }
 
     /////////////////////////////////////////////////////////////
@@ -527,7 +533,7 @@ class messenger implements messenger_interface {
     public function send_to_recipient($recipient)
     {
         // instantiate recipient_send_factory
-        $recipient_send_factory = recipient_send_factory::make($this->message, $recipient);
+        $recipient_send_factory = recipient_send_factory::make($this->message, $recipient, $this->all_profile_fields, $this->selected_profile_fields);
 
         // send recipient_send_factory
         $recipient_send_factory->send();
@@ -572,6 +578,13 @@ class messenger implements messenger_interface {
 
         $body = $this->message->get('body'); // @TODO - find some way to clean out any custom data fields for this fake user (??)
         
+        // append a signature to the formatted body, if appropriate
+        $body = signature_appender::append_user_signature_to_body(
+            $body, 
+            $fromuser->id,
+            $this->message->get('signature_id')
+        );
+
         // append attachment download links to the formatted body, if any
         $body = attachment_appender::add_download_links($this->message, $body);
 

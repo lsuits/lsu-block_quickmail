@@ -4,6 +4,7 @@ namespace block_quickmail\notifier\models;
 
 use block_quickmail_plugin;
 use block_quickmail_string;
+use block_quickmail\persistents\event_notification;
 
 class notification_model_helper {
 
@@ -107,6 +108,17 @@ class notification_model_helper {
     public static function get_condition_summary_lang_string($notification_type, $model_key)
     {
         return 'condition_summary_' . $notification_type . '_' . $model_key;
+    }
+
+    /**
+     * Reports whether or not the given model key is a "one time event"
+     * 
+     * @param  string  $model_name  ex: course_entered
+     * @return bool
+     */
+    public static function model_is_one_time_event($model_name)
+    {
+        return in_array(str_replace('_', '-', $model_name), event_notification::$one_time_events);
     }
 
 }

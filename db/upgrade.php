@@ -666,23 +666,26 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018081501, 'quickmail');
     }
 
-    // add an "has_migrated" field log and drafts tables
+    // add an "has_migrated" field log and drafts tables if they exist
 
     if ($oldversion < 2018082100) {
         
         foreach (['block_quickmail_log', 'block_quickmail_drafts'] as $table_name) {
             $table = new xmldb_table($table_name);
-            $field = new xmldb_field('has_migrated', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+            
+            if ($dbman->table_exists($table)) {
+                $field = new xmldb_field('has_migrated', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
 
-            // add field if not already existing
-            if ( ! $dbman->field_exists($table, $field)) {
-                $dbman->add_field($table, $field);
-            }
+                // add field if not already existing
+                if ( ! $dbman->field_exists($table, $field)) {
+                    $dbman->add_field($table, $field);
+                }
 
-            // Add index to new has_migrated field.
-            if ($table_name == 'block_quickmail_log') {
-                $index = new xmldb_index('bloquilog_has_ix', XMLDB_INDEX_NOTUNIQUE, array('has_migrated'));
-                $dbman->add_index($table, $index);
+                // Add index to new has_migrated field.
+                if ($table_name == 'block_quickmail_log') {
+                    $index = new xmldb_index('bloquilog_has_ix', XMLDB_INDEX_NOTUNIQUE, array('has_migrated'));
+                    $dbman->add_index($table, $index);
+                }
             }
         }
 
@@ -690,6 +693,93 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018082100, 'quickmail');
     }
 
+    if ($oldversion < 2018092500) {
+
+        ///////////////////////////////////////////////
+        ///
+        ///  CREATE TABLE: block_quickmail_event_recips
+        /// 
+        ///////////////////////////////////////////////
+        
+        $table = new xmldb_table('block_quickmail_event_recips');
+
+        // define fields
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('event_notification_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('notified_at', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        // define keys
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        
+        // make table
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // add mute_time to event notifications table, after time_delay column
+        $table = new xmldb_table('block_quickmail_event_notifs');
+        $field = new xmldb_field('mute_time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'time_delay');
+        
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018092500, 'quickmail');
+    }
+
+    if ($oldversion < 2018092601) {
+
+        $table = new xmldb_table('block_quickmail_event_notifs');
+        
+        // drop time_delay field :(
+
+        $time_delay_field = new xmldb_field('time_delay');
+
+        if ($dbman->field_exists($table, $time_delay_field)) {
+            $dbman->drop_field($table, $time_delay_field);
+        }
+
+        // drop mute_time field :(
+
+        $mute_time_field = new xmldb_field('mute_time');
+
+        if ($dbman->field_exists($table, $mute_time_field)) {
+            $dbman->drop_field($table, $mute_time_field);
+        }
+
+        // add time_delay and mute_time fields as separate units and amounts :)
+        
+        $time_delay_amount_field = new xmldb_field('time_delay_amount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'model');
+        $time_delay_unit_field = new xmldb_field('time_delay_unit', XMLDB_TYPE_CHAR, '10', null, false, false, null, 'time_delay_amount');
+        $mute_time_amount_field = new xmldb_field('mute_time_amount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'time_delay_unit');
+        $mute_time_unit_field = new xmldb_field('mute_time_unit', XMLDB_TYPE_CHAR, '10', null, false, false, null, 'mute_time_amount');
+        
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $time_delay_amount_field)) {
+            $dbman->add_field($table, $time_delay_amount_field);
+        }
+
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $time_delay_unit_field)) {
+            $dbman->add_field($table, $time_delay_unit_field);
+        }
+
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $mute_time_amount_field)) {
+            $dbman->add_field($table, $mute_time_amount_field);
+        }
+
+        // add field if not already existing
+        if ( ! $dbman->field_exists($table, $mute_time_unit_field)) {
+            $dbman->add_field($table, $mute_time_unit_field);
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018092601, 'quickmail');
+    }
 
     return $result;
 }

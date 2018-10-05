@@ -220,10 +220,11 @@ class block_quickmail_plugin {
      * 
      * @param  object  $course
      * @param  object  $user
+     * @param  bool    $include_user_group_info
      * @param  context $course_context
      * @return array
      */
-    public static function get_compose_message_recipients($course, $user, $course_context) {
+    public static function get_compose_message_recipients($course, $user, $include_user_group_info = false, $course_context) {
 
         // initialize a container for the collection of user data results
         $course_user_data = [
@@ -252,10 +253,21 @@ class block_quickmail_plugin {
         ////////////
 
         // get all groups explicitly selectable for this user
-        $groups = group_repo::get_course_user_selectable_groups($course, $user, $course_context);
+        $groups = group_repo::get_course_user_selectable_groups($course, $user, $include_user_group_info, $course_context);
+
+        // create a user group name container regardless of whether we are including or not
+        $user_group_names = [];
 
         // iterate through each group
         foreach ($groups as $group) {
+            // if we're including user group info, add that now
+            if ($include_user_group_info) {
+                // for each member, add group name to user's key in container
+                foreach ($group->members as $key => $user_id) {
+                    $user_group_names[$user_id][] = $group->name;
+                }
+            }
+
             // add this group's data to the results container
             $course_user_data['groups'][] = [
                 'id' => $group->id,
@@ -272,9 +284,16 @@ class block_quickmail_plugin {
 
         // add each user to the results collection
         foreach ($users as $user) {
+            $user_name = $user->firstname . ' ' . $user->lastname;
+
+            // if this user belongs to any groups, append them as a list to the user name value
+            if (array_key_exists($user->id, $user_group_names)) {
+                $user_name .= ' (' . implode(', ', $user_group_names[$user->id]) . ')';
+            }
+
             $course_user_data['users'][] = [
                 'id' => $user->id,
-                'name' => $user->firstname . ' ' . $user->lastname,
+                'name' => $user_name,
             ];
         }
 
@@ -300,10 +319,11 @@ class block_quickmail_plugin {
         $models = [
             'reminder' => [
                 'course_non_participation',
-                // 'course_grade_range'
+                'course_grade_range'
             ],
             'event' => [
-                'assignment_submitted'
+                'course_entered',
+                // 'assignment_submitted'
             ]
         ];
 
@@ -317,28 +337,37 @@ class block_quickmail_plugin {
     ////////////////////////////////////////////////////
 
     /**
-     * Returns the available time unit values
-     * 
-     * @return array
-     */
-    public static function get_time_unit_values()
-    {
-        return ['day', 'week', 'month'];
-    }
-
-    /**
      * Returns an array for time unit form selection
-     * 
+     *
+     * @param  array   $includes      a list of time units to include in the selection
+     * @param  string  $default_text  lang string to display for default (empty) selection, default to "select"
      * @return array
      */
-    public static function get_time_unit_selection_array()
+    public static function get_time_unit_selection_array($includes = [], $default_text = 'select')
     {
-        return [
-            '' => get_string('select'),
+        $options = [
+            '' => get_string($default_text),
+            'minute' => ucfirst(get_string('minutes')),
+            'hour' => ucfirst(get_string('hours')),
             'day' => ucfirst(get_string('days')),
             'week' => ucfirst(get_string('weeks')),
             'month' => ucfirst(get_string('months')),
         ];
+
+        return self::array_filter_key($options, function($unit) use ($includes) {
+            return in_array($unit, $includes) || $unit == '';
+        });
+    }
+
+    /**
+     * Reports whether or not this user prefers multiselect recipient selection over autocomplete
+     * 
+     * @param  object  $user
+     * @return bool
+     */
+    public static function user_prefers_multiselect_recips($user)
+    {
+        return get_user_preferences('block_quickmail_preferred_picker', 'autocomplete', $user) == 'multiselect';
     }
 
     ////////////////////////////////////////////////////
@@ -375,6 +404,59 @@ class block_quickmail_plugin {
         global $CFG;
 
         return $CFG->wwwroot . '/blocks/quickmail/';
+    }
+
+    /**
+     * Returns a calculated amount of seconds from the given params, if any
+     *
+     * Note: time_unit currently limited to: minute, hour, or day
+     * 
+     * @param  string  $time_unit
+     * @param  string  $time_amount
+     * @return int
+     */
+    public static function calculate_seconds_from_time_params($time_unit = '', $time_amount = '')
+    {
+        $result = 0;
+
+        if ($time_unit && $time_amount) {
+            $amount = (int) $time_amount;
+
+            if (in_array($time_unit, ['minute', 'hour', 'day']) && $amount > 0) {
+                $seconds = 60;
+                $mult = 1;
+                
+                if ($time_unit == 'hour') {
+                    $mult = 60;
+                } else if ($time_unit == 'day') {
+                    $mult = 1440;
+                }
+
+                $result = $amount * $seconds * $mult;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns the system's custom user profile fields as array
+     * 
+     * @return array  [shortname => name]
+     */
+    public static function get_user_profile_field_array()
+    {
+        global $DB;
+
+        $user_profile_fields = [];
+
+        if ($profile_fields = $DB->get_records('user_info_field')) {
+            foreach ($profile_fields as $profile_field) {
+                $user_profile_fields[$profile_field->shortname] = $profile_field->name;
+            }
+        }
+
+        return $user_profile_fields;
     }
 
 }

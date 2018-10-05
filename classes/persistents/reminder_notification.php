@@ -32,7 +32,6 @@ use block_quickmail\persistents\concerns\is_schedulable;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\persistents\interfaces\schedulable_interface;
-use block_quickmail\notifier\models\reminder_notification_model;
 use block_quickmail\persistents\schedule;
 use block_quickmail\persistents\message;
 use block_quickmail\repos\user_repo;
@@ -196,6 +195,44 @@ class reminder_notification extends \block_quickmail\persistents\persistent impl
 
 	///////////////////////////////////////////////
     ///
+    ///  UPDATE METHODS
+    /// 
+    ///////////////////////////////////////////////
+
+    /**
+     * Updates and returns an event notification from the given params
+     * 
+     * @param  array         $params
+     * @return event_notification
+     */
+    public function update_self($params)
+    {
+        // update schedule details if necessary
+        if ($schedule = $this->get_schedule()) {
+	        if (isset($params['schedule_begin_at'])) {
+	            $begin_at = schedule::get_sanitized_date_time_selector_value($params['schedule_begin_at'], 0);
+	            
+	            $schedule->set('begin_at', $begin_at);
+	        }
+
+	        if (isset($params['schedule_end_at'])) {
+	            $end_at = schedule::get_sanitized_date_time_selector_value($params['schedule_end_at'], 0);
+	            
+	            $schedule->set('end_at', $end_at);
+	        }
+	        
+	        $schedule->set('unit', $params['schedule_time_unit']);
+	        $schedule->set('amount', $params['schedule_time_amount']);
+	        $schedule->update();
+	        
+	        $this->set_next_run_time();
+        }
+
+        return $this;
+    }
+
+	///////////////////////////////////////////////
+    ///
     ///  GETTERS
     /// 
     ///////////////////////////////////////////////
@@ -284,9 +321,10 @@ class reminder_notification extends \block_quickmail\persistents\persistent impl
 	 *
 	 * Note: if no users can be found, no message is created or sent
 	 * 
+	 * @param  int  $user_id  (note: for this implementaion, the user_id should always be null)
 	 * @return void
 	 */
-	public function notify()
+	public function notify($user_id = null)
 	{
 		// instantiate this notification_type_interface's notification model
 		$model = $this->get_notification_model();

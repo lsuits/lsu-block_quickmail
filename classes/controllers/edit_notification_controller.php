@@ -46,7 +46,7 @@ class edit_notification_controller extends base_controller {
         // grab the notification which must belong to this course and user
         if ( ! $notification = notification_repo::get_notification_for_course_user_or_null($this->props->notification_id, $this->props->course->id, $this->props->user->id)) {
             // redirect back to index with error
-            $request->redirect_as_error('Could not find that notification!', static::$base_uri, $this->get_form_url_params());
+            $request->redirect_as_error(block_quickmail_string::get('notification_not_found'), static::$base_uri, $this->get_form_url_params());
         }
 
         // get this notification's type interface
@@ -55,6 +55,10 @@ class edit_notification_controller extends base_controller {
         $form = $this->make_form('edit_notification\edit_notification_form', [
             'context' => $this->context,
             'notification' => $notification,
+            'notification_type' => $notification->get('type'),
+            'is_one_time_event' => $notification->get('type') == 'event'
+                ? $notification_type_interface->is_one_time_event()
+                : false,
             'notification_object_type' => notification_model_helper::get_object_type_for_model($notification->get('type'), $notification_type_interface->get('model')),
             'notification_type_interface' => $notification_type_interface,
             'schedule' => $notification_type_interface->is_schedulable() ? $notification_type_interface->get_schedule() : null,

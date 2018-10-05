@@ -74,6 +74,7 @@ $string['deleted'] = 'Deleted';
 // messaging terms
 $string['included_ids_label'] = 'To';
 $string['excluded_ids_label'] = 'Exclude';
+$string['all_in_course'] = 'All In Course';
 $string['compose'] = 'Compose Course Message';
 $string['broadcast'] = 'Compose Admin Message';
 $string['subject'] = 'Subject';
@@ -96,6 +97,7 @@ $string['mentor_copy'] = 'Send copies to mentors of recipients?';
 $string['mentors_copied'] = 'Send copies to mentors';
 $string['mentor_copy_subject_prefix'] = '[Mentor Copy]';
 $string['mentor_copy_message_prefix'] = '<p><strong>You are receiving this message because you are assigned as the mentor of</strong>: {$a}. The following is a copy of the message that was also sent to your mentee.</p>';
+$string['profile_mentor_copy_message_prefix'] = '<p><strong>You are receiving this message because you are assigned as {$a} of the intended recipient</strong>. The following is a copy of what was sent to the recipient.</p>';
 $string['select_message_type'] = 'Send message as';
 $string['message_type_message'] = 'Moodle Message';
 $string['message_type_email'] = 'Email';
@@ -114,11 +116,11 @@ $string['next_run_at'] = 'Next Run';
 $string['sent_at'] = 'Sent At';
 $string['attachments'] = 'Attachments';
 $string['recipients'] = 'Recipients';
-$string['failed_recipients'] = 'Failed Recipients';
+$string['failed_recipients'] = 'Failed or Pending Recipients';
 $string['pending_recipients'] = 'Pending Recipients';
-$string['failed_recipients_promise'] = 'We will continue attempting to send to these recipients until they have been successfully sent.';
+$string['failed_recipients_promise'] = 'We will continue attempting to send to these recipients until the message has been successfully sent.';
 $string['success_recipients_promise'] = 'These recipients were all successfully messaged by the system.';
-$string['pending_recipients_promise'] = 'These recipients are currently being message, check back later to view any failures.';
+$string['pending_recipients_promise'] = 'These recipients are currently being messaged, check back later to view any failures.';
 $string['unqueue_scheduled_modal_title'] = 'Unqueue Scheduled Message';
 $string['unqueue_scheduled_confirm_message'] = 'This will unschedule this message to be sent and save the message as a draft, are you sure?';
 $string['send_now_scheduled_modal_title'] = 'Send Message Now';
@@ -128,6 +130,12 @@ $string['found_filtered_users'] = 'Found {$a} user(s)';
 $string['never'] = 'Never';
 $string['save'] = 'Save';
 $string['courseneveraccessed'] = 'Never Accessed';
+$string['message_sent_now'] = 'Message sent';
+$string['message_queued'] = 'Message scheduled to be sent';
+$string['message_sent_asap'] = 'Message will be sent shortly';
+$string['message_unqueued'] = 'Message unscheduled';
+$string['message_not_found'] = 'Could not find that message';
+$string['message_deleted'] = 'Message deleted';
 
 // notifications
 $string['notification_name'] = 'Title';
@@ -139,12 +147,24 @@ $string['no_notifications'] = 'You have no created notifications.';
 $string['notification_not_found'] = 'Could not find that notification.';
 $string['notification_created'] = 'Notification created.';
 $string['notification_updated'] = 'Notification updated.';
+$string['notification_deleted'] = 'Notification deleted.';
 $string['notification_not_updated'] = 'Notification updated.';
 $string['notification_model'] = 'Notification Model';
 $string['notification_conditions'] = 'Conditions';
 $string['notification_conditions_description'] = 'Specify this notifications conditions. Any recipients that meets these conditions will be notified.';
 $string['select_notification_model'] = 'Select {$a} Notification Model';
 $string['invalid_notification_model'] = 'Invalid notification model selection.';
+$string['time_delay_unit'] = 'Time Delay';
+$string['time_delay_summary'] = 'Time Delay';
+$string['time_delay_unit_help'] = 'An optional amount of time to wait before the notification is sent.';
+$string['mute_time_unit'] = 'Mute Time';
+$string['mute_time_summary'] = 'Mute Time';
+$string['mute_time_unit_help'] = 'An optional amount of time that must pass in between this notification being automatically sent.';
+$string['edit_notification'] = 'Edit Notification';
+$string['edit_conditions'] = 'Edit Conditions';
+$string['edit_schedule'] = 'Edit Schedule';
+$string['edit_event_details'] = 'Edit Event Details';
+$string['edit_message'] = 'Edit Message';
 
 // notification types
 $string['notification_type'] = 'Notification Type';
@@ -168,9 +188,13 @@ $string['notification_model_reminder_course_grade_range_description'] = 'Notify 
 $string['notification_model_reminder_course_grade_range_condition_description'] = 'Specify the grade range. If a course participant currently has within this range, they will be notified.';
 $string['condition_summary_reminder_course_grade_range'] = 'All who have a grade between {$a->grade_greater_than} and {$a->grade_less_than}';
 
+// event: course_entered
+$string['notification_model_event_course_entered'] = 'Course Entered';
+$string['notification_model_event_course_entered_description'] = 'Notify a course participant when they access the course for the first time.';
+
 // event: assignment_submitted
-$string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
-$string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
+// $string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
+// $string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
 
 // notification conditions
 $string['set_notification_conditions'] = 'Set {$a->model} {$a->type} Notification Conditions';
@@ -207,6 +231,10 @@ $string['time_once_a'] = 'Once a';
 $string['time_every'] = 'Every';
 $string['time_beginning'] = 'Beginning';
 $string['time_ending'] = 'Ending';
+
+// event notification details
+$string['set_event_details'] = 'Set {$a->model} Event Notification Details';
+$string['set_event_details_description'] = 'Specify additional options about the event.';
 
 // create notification message
 $string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
@@ -250,7 +278,7 @@ $string['alternate_email_not_found'] = 'Could not find that alternate email.';
 $string['alternate_owner_must_confirm'] = 'Must be the owner of the email to confirm.';
 $string['alternate_owner_must_delete'] = 'Must be the owner of the email to delete.';
 $string['alternate_already_confirmed'] = 'That email has already been confirmed.';
-$string['alternate_invalid_token'] = 'Invalid token.';
+$string['alternate_invalid_token'] = 'Invalid confirmation token.';
 $string['alternate_waiting'] = 'Waiting';
 $string['alternate_activated'] = 'Alternate email {$a} can now be used!';
 $string['alternate_confirmation_email_resent'] = 'The confirmation email has been resent!';
@@ -285,8 +313,8 @@ $string['receipt_configuration_help'] = 'Send a confirmation email to the messag
 $string['mentor_copy_help'] = 'If selected, any mentors of your recipients will receive a copy of the message.';
 $string['from_email'] = 'Sender email address';
 $string['from_email_help'] = 'The email address that this message will be sent from. You may add additional alternate addresses through the block menu on the course page.';
-$string['allow_mentor_copy'] = 'Allow senders to automatically message mentors of recipients when sending';
-$string['allow_mentor_copy_help'] = 'If enabled, the sender will have the ability to select whether or not mentors should be copied to any outbound message. This message will only happen if the recipient user has a mentor, otherwise, they will receive the message individually as per normal.';
+$string['allow_mentor_copy'] = 'Allow senders to automatically message a recipient\'s mentors when sending';
+$string['allow_mentor_copy_help'] = 'If no, this option will not be visible to senders and mentors will never be copied. If yes, the sender will have the option to choose per message. If forced, this option will be forced with no option for de-selecting.';
 $string['send_as_tasks_help'] = 'If selected, will send all messages asynchronously as cron tasks. Otherwise, will send immediately.';
 
 // settings management
@@ -301,6 +329,8 @@ $string['selectable_roles'] = 'Selectable roles';
 $string['selectable_roles_desc'] = 'These roles will be available for selection when composing a message. This setting is overridable by course configuration.';
 $string['selectable_roles_configuration'] = 'These roles will be available for selection when composing a message.';
 $string['selectable_roles_configuration_help'] = 'These roles will be available for selection when composing a message.';
+$string['email_profile_fields'] = 'Email profile fields';
+$string['email_profile_fields_desc'] = 'These profile fields will be automatically emailed if they are set for the recipient user.';
 $string['prepend_class'] = 'Prepend Course name';
 $string['prepend_class_desc'] = 'Prepend course identifying information to the subject of the message. This setting is overridable by course configuration.';
 $string['prepend_class_configuration'] = 'Prepend course identifying information to the subject of the message.';
@@ -333,17 +363,17 @@ $string['migration_chunk_size'] = 'Migration Chunk Size';
 $string['migration_chunk_size_desc'] = 'Number of records that should be processed by the legacy data migration task each time it is run, if enabled.';
 $string['send_now_threshold'] = 'Send Now Threshold';
 $string['send_now_threshold_desc'] = 'Force a non-scheduled message to be sent immediately if the number of recipients is this number or less, even if the block is configured to send messages as background tasks. Setting of 0 will ignore this setting.';
+$string['picker_style_option_title'] = 'My Preferred Recipient Picker Style';
+$string['picker_style_option_title_help'] = 'Your personally preferred interface for selecting recipients when composing a message.';
+$string['picker_style_autocomplete'] = 'Autocomplete';
+$string['picker_style_multiselect'] = 'Multiselect';
 
 // redirect messages
-$string['redirect_back_to_course_from_message_after_immediate_send'] = 'Your message has been sent.';
-$string['redirect_back_to_course_from_message_after_queued_send'] = 'Your message is now scheduled to be sent.';
-$string['redirect_back_to_course_from_message_after_send'] = 'Your message will be sent shortly.';
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
 $string['redirect_back_from_message_detail_message_deleted'] = 'The message you are attempting to view has been deleted.';
 $string['redirect_back_from_message_detail_no_access'] = 'You are not able to view this message.';
-
 
 // validation
 $string['missing_subject'] = 'Missing subject line.';
@@ -420,3 +450,14 @@ $string['receipt_email_body'] = '
 </p>
 
 {$a->message_body}';
+
+// qm_page
+$string['ms_compose'] = 'Compose';
+$string['ms_drafts'] = 'Drafts';
+$string['ms_queued'] = 'Scheduled';
+$string['ms_sent'] = 'Sent Emails';
+$string['ms_signatures'] = 'My Signatures';
+$string['ms_alternate'] = 'Alternate Emails';
+$string['ms_config'] = 'Configure';
+$string['ms_notifications'] = 'Notifications';
+$string['ms_create_notification'] = 'Create Notification';
