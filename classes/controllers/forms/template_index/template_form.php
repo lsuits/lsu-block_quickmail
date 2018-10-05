@@ -97,7 +97,7 @@ class template_form extends controller_form {
             'textarea', 
             'header_content', 
             block_quickmail_string::get('template_header_content'), 
-            'wrap="virtual" rows="20" cols="50"'
+            'wrap="virtual" rows="14" cols="50"'
         );
 
         $mform->setDefault(
@@ -115,7 +115,7 @@ class template_form extends controller_form {
             'textarea', 
             'footer_content', 
             block_quickmail_string::get('template_footer_content'), 
-            'wrap="virtual" rows="20" cols="50"'
+            'wrap="virtual" rows="14" cols="50"'
         );
 
         $mform->setDefault(
