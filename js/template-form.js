@@ -26,4 +26,10 @@ $(function() {
             e.preventDefault();
         }
     });
+
+    $('#id_preview').click(function(e) {
+        let previewUrl = '/blocks/quickmail/template_preview.php?id=' + selectedTemplateId;
+        window.open(previewUrl, '_blank');
+        e.preventDefault();
+    });
 });

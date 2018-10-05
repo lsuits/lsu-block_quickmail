@@ -32,6 +32,7 @@ $string['view_sent'] = 'View Sent Messages';
 $string['view_message_detail'] = 'View Message Details';
 $string['manage_signatures'] = 'My Signatures';
 $string['manage_templates'] = 'My Templates';
+$string['template_preview'] = 'Template Preview';
 $string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['create_notification'] = 'Create Notification';

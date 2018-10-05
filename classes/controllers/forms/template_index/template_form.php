@@ -150,6 +150,7 @@ class template_form extends controller_form {
         if ($this->get_selected_template('id')) {
             $buttons = array_merge($buttons, [
                 $mform->createElement('submit', 'update', get_string('update')),
+                $mform->createElement('button', 'preview', get_string('preview')),
                 $mform->createElement('submit', 'delete', get_string('delete')),
             ]);
         } else {
