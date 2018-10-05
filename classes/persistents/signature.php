@@ -279,7 +279,7 @@ class signature extends \block_quickmail\persistents\persistent {
             $value = $signature->get('title');
 
             if ($signature->get('default_flag')) {
-                $value .= ' (default)';
+                $value .= ' (' . get_string('default', 'moodle') . ')';
             }
 
             $carry[$signature->get('id')] = $value;
