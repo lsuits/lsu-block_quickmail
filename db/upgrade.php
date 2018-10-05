@@ -781,5 +781,32 @@ function xmldb_block_quickmail_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2018092601, 'quickmail');
     }
 
+    if ($oldversion < 2018100400) {
+        // Define table block_quickmail_templates to be created
+        $table = new xmldb_table('block_quickmail_templates');
+
+        // Adding fields to table block_quickmail_templates
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('header_content', XMLDB_TYPE_TEXT, 'longtext', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('footer_content', XMLDB_TYPE_TEXT, 'longtext', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('is_default', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timedeleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table block_quickmail_templates
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for block_quickmail_templates
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Quickmail savepoint reached.
+        upgrade_block_savepoint(true, 2018100400, 'quickmail');
+    }
+
     return $result;
 }

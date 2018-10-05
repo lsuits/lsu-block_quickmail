@@ -251,5 +251,21 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="block_quickmail_templates" COMMENT="Stores email design templates">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The user-friendly title of this template."/>
+        <FIELD NAME="header_content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The html content of the template header."/>
+        <FIELD NAME="footer_content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The html content of the template footer."/>
+        <FIELD NAME="is_default" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean flag indicating if this is the default template to use."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user who created/modified the object. It is automatically set."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The timestamp at which the record was modified. It is automatically set, and defaults to 0."/>
+        <FIELD NAME="timedeleted" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The timestamp at which the record was deleted. It is automatically set, and defaults to 0."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>
