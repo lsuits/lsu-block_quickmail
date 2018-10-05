@@ -31,10 +31,12 @@ $string['view_queued'] = 'View Scheduled';
 $string['view_sent'] = 'View Sent Messages';
 $string['view_message_detail'] = 'View Message Details';
 $string['manage_signatures'] = 'My Signatures';
+$string['manage_templates'] = 'My Templates';
 $string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['create_notification'] = 'Create Notification';
 $string['notifications'] = 'Notifications';
+$string['templates'] = 'Templates';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // tasks

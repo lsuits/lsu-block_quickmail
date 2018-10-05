@@ -15,7 +15,6 @@ $(function() {
         if (selectedSignatureId != this.value) {
             let qs = {
                 id: this.value,
-                courseid: signaturedata.courseid
             };
 
             window.location.href = 'signatures.php?' + $.param(qs);

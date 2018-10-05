@@ -109,4 +109,15 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
+
+    'block/quickmail:managetemplates' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'frontpage' => CAP_PREVENT,
+            'user' => CAP_PREVENT
+        )
+    ),
 );
