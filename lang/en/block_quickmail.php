@@ -36,7 +36,6 @@ $string['migrate'] = 'Migrate Data';
 $string['manage_alternates'] = 'Alternate Emails';
 $string['create_notification'] = 'Create Notification';
 $string['notifications'] = 'Notifications';
-$string['templates'] = 'Templates';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
 // tasks
@@ -302,6 +301,17 @@ $string['user_signature_deleted'] = 'Your signature has been deleted.';
 $string['no_signatures_create'] = 'You have no signatures. {$a}.';
 $string['delete_signature_modal_title'] = 'Delete Signature';
 $string['delete_signature_confirm_message'] = 'This will permanently delete your signature, are you sure?';
+
+// templates
+$string['template'] = 'Template';
+$string['templates'] = 'Templates';
+$string['template_title_required'] = 'A template title is required.';
+$string['template_title_must_be_unique'] = 'The template title must be unique.';
+$string['template_header_content_required'] = 'A template header is required.';
+$string['select_template_for_edit'] ='Select Template To Edit';
+$string['template_header_content'] ='Template Header Content';
+$string['template_footer_content'] ='Template Footer Content';
+$string['template_deleted'] = 'Your template has been deleted.';
 
 // help buttons
 $string['additional_emails'] = 'Additional emails';

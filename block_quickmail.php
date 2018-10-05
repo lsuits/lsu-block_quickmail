@@ -243,6 +243,14 @@ class block_quickmail extends block_list {
                 'page' => 'sent',
                 'query_string' => ['courseid' => $this->course->id]
             ]);
+
+            // TEMPLATES (view your templates)
+            $this->add_item_to_content([
+                'lang_key' => block_quickmail_string::get('templates'),
+                'icon_key' => 'e/template',
+                'page' => 'templates',
+                'query_string' => []
+            ]);
         }
 
         return $this->content;
