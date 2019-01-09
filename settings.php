@@ -85,8 +85,12 @@ if($ADMIN->fulltree) {
     }));
 
     // build a $value=>$label array of options
-    $block_quickmail_roleselection_options = array_map(function ($role) { 
-        return $role->name; 
+    $block_quickmail_roleselection_options = array_map(function ($role) {
+        if($role->name == '') {
+            return $role->shortname;
+        } else {
+            return $role->name;
+        }
     }, $roles);
 
     $settings->add(
@@ -167,16 +171,17 @@ if($ADMIN->fulltree) {
     ///  EMAIL PROFILE FIELDS
     ///  
     ///////////////////////////////////////////////////////////
-
-    $settings->add(
-        new admin_setting_configmultiselect(
-            'block_quickmail_email_profile_fields',
-            block_quickmail_string::get('email_profile_fields'), 
-            block_quickmail_string::get('email_profile_fields_desc'),
-            [], // <-- default
-            block_quickmail_plugin::get_user_profile_field_array()
-        )
-    );
+    if (block_quickmail_plugin::get_user_profile_field_array()) {
+        $settings->add(
+            new admin_setting_configmultiselect(
+                'block_quickmail_email_profile_fields',
+                block_quickmail_string::get('email_profile_fields'), 
+                block_quickmail_string::get('email_profile_fields_desc'),
+                [], // <-- default
+                block_quickmail_plugin::get_user_profile_field_array()
+            )
+        );
+    }
 
     ///////////////////////////////////////////////////////////
     ///
