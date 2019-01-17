@@ -47,7 +47,8 @@ class view_message_component extends component implements \renderable {
         $this->sent_recipient_users = $this->transform_recipient_users($this->get_param('sent_recipient_users'));
         $this->unsent_recipient_users = $this->transform_recipient_users($this->get_param('unsent_recipient_users'));
         $this->additional_emails = $this->get_param('additional_emails');
-        $this->attachments = $this->transform_attachments($this->get_param('attachments'));
+        $this->attachmentcounts = $this->get_param('attachments');
+        $this->attachments = $this->get_param('attachmentlinks');
     }
 
     /**
@@ -87,7 +88,7 @@ class view_message_component extends component implements \renderable {
             'messageBody'            => $this->get_message_body(),
             'receiptReportRequested' => (bool) $this->message->get('send_receipt'),
             'mentorCopyRequested'    => (bool) $this->message->get('send_to_mentors'),
-            'attachmentCount'        => count($this->attachments),
+            'attachmentCount'        => count($this->attachmentcounts),
             'attachments'            => $this->attachments,
             'sentRecipientCount'     => count($this->sent_recipient_users),
             'sentRecipientUsers'     => $this->sent_recipient_users,

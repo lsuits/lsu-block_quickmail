@@ -116,11 +116,9 @@
     <h6>{{# str }} attachments, block_quickmail {{/ str }} <span class="badge badge-primary">{{ attachmentCount }}</span></h6>
 
     <div style="margin-bottom: 30px;">
-        <ul>
         {{#attachments}}
-            <li>{{{ . }}}</li>
+            <p>{{{ . }}}</p>
         {{/attachments}}
-        </ul>
     </div>
     
     <div style="display: flex;">

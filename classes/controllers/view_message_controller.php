@@ -4,6 +4,7 @@ namespace block_quickmail\controllers;
 
 use block_quickmail\controllers\support\base_controller;
 use block_quickmail\controllers\support\controller_request;
+use block_quickmail\filemanager\attachment_appender;
 
 class view_message_controller extends base_controller {
 
@@ -47,13 +48,17 @@ class view_message_controller extends base_controller {
         // get message file attachments
         $attachments = $this->props->message->get_message_attachments();
 
+        // get message file attachment links
+        $attachmentlinks = attachment_appender::add_individual_links($this->props->message, $attachments);
+
         $this->render_component('view_message', [
             'message' => $this->props->message,
             'user' => $this->props->user,
             'sent_recipient_users' => $sent_recipient_users,
             'unsent_recipient_users' => $unsent_recipient_users,
             'additional_emails' => $additional_emails,
-            'attachments' => $attachments
+            'attachments' => $attachments,
+            'attachmentlinks' => $attachmentlinks
         ]);
     }
 
