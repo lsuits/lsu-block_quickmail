@@ -33,16 +33,16 @@ class restore_quickmail_log_structure_step extends restore_structure_step {
             $params = array(
                 'backupid' => $this->get_restoreid(),
                 'itemname' => 'context',
-                'newitemid' => $context->id
+                'newitemid' => $current->id
             );
 
             $id = $DB->get_record('backup_ids_temp', $params)->itemid;
 
             foreach ($data->emaillogs['log'] as $log) {
-                $this->process_log($log, $id, $context);
+                $this->process_log($log, $id, $current);
             }
-        }
 
+        }
         if(isset($data->emaillogs['block_level_setting'])){
             foreach ($data->emaillogs['block_level_setting'] as $block_level_setting) {
                 $this->process_block_level_setting($block_level_setting, $this->get_courseid());
@@ -68,40 +68,16 @@ class restore_quickmail_log_structure_step extends restore_structure_step {
 
         $log = (object) $log;
         $oldid = $log->id;
-
-        $mailedusers = explode(',', $log->mailto);
-        $validusers = array();
-
-        foreach ($mailedusers as $userid) {
-            $validusers[] = $this->get_mappingid('user', $userid);
-        }
-
-        $log->courseid = $this->get_courseid();
-        $log->userid = $this->get_mappingid('user', $log->userid);
-        $log->mailto = implode(',', $validusers);
+        $log->course_id = $this->get_courseid();
+        $log->user_id = $this->get_mappingid('user', $log->user_id);
         $log->time = $this->apply_date_offset($log->time);
 
         // TODO: correctly convert alternate ids
         $log->alternateid = null;
 
-        $newid = $DB->insert_record('block_quickmail_log', $log);
+        $newid = $DB->insert_record('block_quickmail_messages', $log);
 
         $this->set_mapping('log', $oldid, $newid);
 
-        foreach (array('log', 'attachment_log') as $filearea) {
-            restore_dbops::send_files_to_pool(
-                $this->get_basepath(), $this->get_restoreid(),
-                'block_quickmail', $filearea, $oldctx, $log->userid
-            );
-
-            $sql = 'UPDATE {files} SET
-                itemid = :newid WHERE contextid = :ctxt AND itemid = :oldid';
-
-            $params = array(
-                'newid' => $newid, 'oldid' => $oldid, 'ctxt' => $context->id
-            );
-
-            $DB->execute($sql, $params);
-        }
     }
 }
