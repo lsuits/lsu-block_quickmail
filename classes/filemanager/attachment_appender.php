@@ -84,6 +84,44 @@ class attachment_appender {
     }
 
     /**
+     * Appends individual download links to the view message page, if any
+     *
+     * @param message  $message
+     * @param string  $body
+     */
+    public static function add_individual_links($message, $links='')
+    {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $appender = new self($message, $links);
+
+        // if there are no attachments for this message, return body as is
+        if ( ! count($appender->message_attachments)) {
+            return;
+        }
+
+        // append a download link for each individual file
+        $appender->add_individual_link();
+
+        // append a download link for all files
+        if (count($appender->message_attachments) > 1) {
+            $appender->add_download_all_link();
+        }
+        // run through the moodle cleanser thing
+        $appender->links = file_rewrite_pluginfile_urls(
+            $appender->links,
+            'pluginfile.php',
+            $appender->course_context->id,
+            'block_quickmail',
+            'attachments',
+            $appender->message->get('id')
+        );
+
+        return $appender->links;
+    }
+
+    /**
      * Appends "download all" links (both short and full) to the body
      */
     private function add_download_all_links()
@@ -93,6 +131,17 @@ class attachment_appender {
             $this->body .= block_quickmail_string::get('attached_files', $this->get_download_all_link());
             $this->body .= $this->br();
             $this->body .= $this->get_download_all_link(true);
+        }
+    }
+
+    /**
+     * Appends "download all" link
+     */
+    private function add_download_all_link()
+    {
+        if ($this->has_attachments()) {
+            $this->links ? $this->links .= $this->br() : $this->links = '';
+            $this->links .= $this->get_download_all_link(false);
         }
     }
 
@@ -133,6 +182,17 @@ class attachment_appender {
         }
     }
 
+    private function add_individual_link()
+    {
+        if ($this->has_attachments()) {
+            isset($this->links) ? $this->links .= $this->br() : $this->links = '';
+            // iterate through each attachment, adding a link and line break
+            foreach ($this->message_attachments as $attachment) {
+                $this->links .= html_writer::link($this->generate_url($attachment->get('path'), $attachment->get('filename')), $attachment->get_full_filepath());
+                $this->links .= $this->br();
+            }
+        }
+    }
     /**
      * Returns a URL pointing to a file with the given path and filename
      * 
