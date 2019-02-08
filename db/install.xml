@@ -201,10 +201,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id"/>
-        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
-        <KEY NAME="alternate_email_id" TYPE="foreign" FIELDS="alternate_email_id" REFTABLE="block_quickmail_alt_emails" REFFIELDS="id"/>
-        <KEY NAME="signature_id" TYPE="foreign" FIELDS="signature_id" REFTABLE="block_quickmail_signatures" REFFIELDS="id"/>
+        <KEY NAME="notification_id" TYPE="foreign" FIELDS="notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="block_quickmail_rem_notifs" COMMENT="Reminder based notification type instances extending a parent notification record.">
@@ -242,7 +240,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="schedule_id" TYPE="foreign" FIELDS="schedule_id" REFTABLE="block_quickmail_schedules" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="block_quickmail_event_recips" COMMENT="The recipient users of a specific event notification">
@@ -254,6 +252,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="event_notification_id" TYPE="foreign" FIELDS="event_notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
