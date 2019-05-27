@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,51 +21,45 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_quickmail_cache {
-
     public static $name = 'block_quickmail';
-
     public $store;
-
     public function __construct($store) {
         $this->store = $store;
     }
 
     /**
      * Instantiates and returns a quickmail cache instance for the given store name
-     * 
-     * @param  string  $store_name   provider name in block config
+     *
+     * @param  string  $storename   provider name in block config
      * @return self
      */
-    public static function store($store_name)
-    {
-        $store = self::get_cache_store($store_name);
-
+    public static function store($storename) {
+        $store = self::get_cache_store($storename);
         $instance = new self($store);
-
         return $instance;
     }
 
     /**
      * Returns the given key, or default value if missing
-     * 
+     *
      * @param  string|int  $key
      * @param  mixed   $default   a default value to return, can also be a closure
      * @return mixed
      */
-    public function get($key, $default = null)
-    {
+    public function get($key, $default = null) {
         $value = $this->store->get($key);
-
-        // if missing (moodle returns false as no value)
+        // If missing (moodle returns false as no value).
         if ($value === false) {
-            // and the default is a closure
+            // And the default is a closure.
             if (is_callable($default)) {
-                // return closure
+                // Return closure.
                 return call_user_func($default);
             }
 
-            // otherwise, default or null if no default given
+            // Otherwise, default or null if no default given.
             return $default === null ? null : $default;
         }
 
@@ -75,12 +68,11 @@ class block_quickmail_cache {
 
     /**
      * Reports whether or not the given cache key exists in the store
-     * 
+     *
      * @param  string|int  $key
      * @return bool
      */
-    public function check($key)
-    {
+    public function check($key) {
         $value = $this->get($key);
 
         return $value !== null;
@@ -88,34 +80,32 @@ class block_quickmail_cache {
 
     /**
      * Stores a value in the cache only if an existing value does not exist
-     * 
+     *
      * @param  string|int  $key
      * @param  mixed   $value   can be a closure
      * @return mixed
      */
-    public function add($key, $value)
-    {
-        $existing_value = $this->get($key);
+    public function add($key, $value) {
+        $existingvalue = $this->get($key);
 
-        if ($existing_value !== null) {
-            return $existing_value;
+        if ($existingvalue !== null) {
+            return $existingvalue;
         }
 
-        $new_value = $this->put($key, $value);
+        $newvalue = $this->put($key, $value);
 
-        return $new_value;
+        return $newvalue;
     }
 
     /**
      * Stores a value in the cache, overriding the existing value if any exists
-     * 
+     *
      * @param  string|int  $key
      * @param  mixed   $value   can be a closure
      * @return mixed
      */
-    public function put($key, $value)
-    {
-        // if the value is a closure
+    public function put($key, $value) {
+        // If the value is a closure.
         if (is_callable($value)) {
             $value = call_user_func($value);
         }
@@ -129,13 +119,12 @@ class block_quickmail_cache {
      * Stores a value in the cache only if an existing value does not exist
      *
      * (Similar to add() for now...)
-     * 
+     *
      * @param  string|int  $key
      * @param  mixed   $value   can be a closure
      * @return mixed
      */
-    public function remember($key, $value)
-    {
+    public function remember($key, $value) {
         $existing = $this->get($key);
 
         if ($existing === null) {
@@ -147,12 +136,11 @@ class block_quickmail_cache {
 
     /**
      * Fetches and then deletes an item from the cache
-     * 
+     *
      * @param  string|int  $key
      * @return mixed
      */
-    public function pull($key)
-    {
+    public function pull($key) {
         $value = $this->get($key);
 
         $this->forget($key);
@@ -162,12 +150,11 @@ class block_quickmail_cache {
 
     /**
      * Deletes an item from the cache
-     * 
+     *
      * @param  string|int  $key
      * @return bool  result of deletion
      */
-    public function forget($key)
-    {
+    public function forget($key) {
         $result = $this->store->delete($key);
 
         return $result;
@@ -175,15 +162,13 @@ class block_quickmail_cache {
 
     /**
      * Instantiates and returns a moodle cache instance for the given "store name" (provider name)
-     * 
-     * @param  string  $store_name   provider name in block config
+     *
+     * @param  string  $storename   provider name in block config
      * @return cache object
      */
-    public static function get_cache_store($store_name)
-    {
-        $cache_store = \cache::make(self::$name, $store_name);
+    public static function get_cache_store($storename) {
+        $cachestore = \cache::make(self::$name, $storename);
 
-        return $cache_store;
+        return $cachestore;
     }
-
 }

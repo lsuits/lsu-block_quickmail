@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,9 +21,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\forms;
 
-require_once $CFG->libdir . '/formslib.php';
+require_once($CFG->libdir . '/formslib.php');
 
 use block_quickmail\forms\concerns\is_quickmail_form;
 use block_quickmail_plugin;
@@ -42,75 +43,74 @@ class compose_message_form extends \moodleform {
     public $context;
     public $user;
     public $course;
-    public $course_user_data;
-    public $user_can_select_alternate;
-    public $user_alternate_email_array;
-    public $user_signature_array;
-    public $user_default_signature_id;
-    public $course_config_array;
-    public $draft_message;
-    public $included_draft_recipients;
-    public $excluded_draft_recipients;
-    public $allow_mentor_copy;
-    public $use_multiselect_picker;
+    public $courseuserdata;
+    public $usercanselectalternate;
+    public $useralternateemailarray;
+    public $usersignaturearray;
+    public $userdefaultsignatureid;
+    public $courseconfigarray;
+    public $draftmessage;
+    public $includeddraftrecipients;
+    public $excludeddraftrecipients;
+    public $allowmentorcopy;
+    public $usemultiselectpicker;
 
     /**
      * Instantiates and returns a compose message form
-     * 
+     *
      * @param  object    $context
      * @param  object    $user               (auth user)
      * @param  object    $course             moodle course
-     * @param  array.    $course_user_data   array including all role, group and user data for this course
-     * @param  message   $draft_message
+     * @param  array.    $courseuserdata   array including all role, group and user data for this course
+     * @param  message   $draftmessage
      * @return \block_quickmail\forms\compose_message_form
      */
-    public static function make($context, $user, $course, $course_user_data = [], $draft_message = null)
-    {
-        $target_url = self::generate_target_url([
+    public static function make($context, $user, $course, $courseuserdata = [], $draftmessage = null) {
+        $targeturl = self::generate_target_url([
             'courseid' => $course->id,
-            'draftid' => ! empty($draft_message) ? $draft_message->get('id') : 0,
+            'draftid' => !empty($draftmessage) ? $draftmessage->get('id') : 0,
         ]);
 
-        // determine whether or not the user can select an alternate email to send from
-        $user_can_select_alternate = block_quickmail_plugin::user_has_capability('allowalternate', $user, $context);
+        // Determine whether or not the user can select an alternate email to send from.
+        $usercanselectalternate = block_quickmail_plugin::user_has_capability('allowalternate', $user, $context);
 
-        // get the user's available alternate emails for this course
-        $user_alternate_email_array = alternate_email::get_flat_array_for_course_user($course->id, $user);
+        // Get the user's available alternate emails for this course.
+        $useralternateemailarray = alternate_email::get_flat_array_for_course_user($course->id, $user);
 
-        // get the user's current signatures as array (id => title)
-        $user_signature_array = signature::get_flat_array_for_user($user->id);
+        // Get the user's current signatures as array (id => title).
+        $usersignaturearray = signature::get_flat_array_for_user($user->id);
 
-        // get the user's default signature id, if any, defaulting to 0
+        // Get the user's default signature id, if any, defaulting to 0.
         if ($signature = signature::get_default_signature_for_user($user->id)) {
-            $user_default_signature_id = $signature->get('id');
+            $userdefaultsignatureid = $signature->get('id');
         } else {
-            $user_default_signature_id = 0;
+            $userdefaultsignatureid = 0;
         }
 
-        // get config variables for this course, defaulting to block level
-        $course_config_array = block_quickmail_config::get('', $course);
+        // Get config variables for this course, defaulting to block level.
+        $courseconfigarray = block_quickmail_config::get('', $course);
 
-        // if this is a draft message, get any included/excluded draft recipients formatted as key arrays
-        $included_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('include', true) : [];
-        $excluded_draft_recipients = ! empty($draft_message) ? $draft_message->get_message_draft_recipients('exclude', true) : [];
-        
-        // only allow users with hard set capabilities (not students) to copy mentors
-        $allow_mentor_copy = block_quickmail_plugin::user_can_send('compose', $user, $context, false);
+        // If this is a draft message, get any included/excluded draft recipients formatted as key arrays.
+        $includeddraftrecipients = !empty($draftmessage) ? $draftmessage->get_message_draft_recipients('include', true) : [];
+        $excludeddraftrecipients = !empty($draftmessage) ? $draftmessage->get_message_draft_recipients('exclude', true) : [];
 
-        return new self($target_url, [
+        // Only allow users with hard set capabilities (not students) to copy mentors.
+        $allowmentorcopy = block_quickmail_plugin::user_can_send('compose', $user, $context, false);
+
+        return new self($targeturl, [
             'context' => $context,
             'user' => $user,
             'course' => $course,
-            'course_user_data' => $course_user_data,
-            'user_can_select_alternate' => $user_can_select_alternate,
-            'user_alternate_email_array' => $user_alternate_email_array,
-            'user_signature_array' => $user_signature_array,
-            'user_default_signature_id' => $user_default_signature_id,
-            'course_config_array' => $course_config_array,
-            'draft_message' => $draft_message,
-            'included_draft_recipients' => $included_draft_recipients,
-            'excluded_draft_recipients' => $excluded_draft_recipients,
-            'allow_mentor_copy' => $allow_mentor_copy,
+            'course_user_data' => $courseuserdata,
+            'user_can_select_alternate' => $usercanselectalternate,
+            'user_alternate_email_array' => $useralternateemailarray,
+            'user_signature_array' => $usersignaturearray,
+            'user_default_signature_id' => $userdefaultsignatureid,
+            'course_config_array' => $courseconfigarray,
+            'draft_message' => $draftmessage,
+            'included_draft_recipients' => $includeddraftrecipients,
+            'excluded_draft_recipients' => $excludeddraftrecipients,
+            'allow_mentor_copy' => $allowmentorcopy,
             'use_multiselect_picker' => block_quickmail_plugin::user_prefers_multiselect_recips($user),
         ], 'post', '', ['id' => 'mform-compose']);
     }
@@ -137,68 +137,61 @@ class compose_message_form extends \moodleform {
         $this->allow_mentor_copy = $this->_customdata['allow_mentor_copy'];
         $this->use_multiselect_picker = $this->_customdata['use_multiselect_picker'];
 
-        ////////////////////////////////////////////////////////////
-        ///  from / alternate email (select)
-        ////////////////////////////////////////////////////////////
+        // From / alternate email (select).
         if ($this->user_can_select_alternate) {
             $mform->addElement(
-                'select', 
-                'from_email_id', 
-                get_string('from'), 
+                'select',
+                'from_email_id',
+                get_string('from'),
                 $this->get_from_email_values()
             );
             $mform->addHelpButton(
-                'from_email_id', 
-                'from_email', 
+                'from_email_id',
+                'from_email',
                 'block_quickmail'
             );
 
-            // inject default if draft mesage
+            // Inject default if draft mesage.
             if ($this->is_draft_message()) {
                 $mform->setDefault(
-                    'from_email_id', 
+                    'from_email_id',
                     $this->draft_message->get('alternate_email_id')
                 );
             }
         } else {
             $mform->addElement(
-                'hidden', 
+                'hidden',
                 'from_email_id',
                 0
             );
             $mform->setType(
-                'from_email_id', 
+                'from_email_id',
                 PARAM_INT
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  included & excluded recipient entities
-        ////////////////////////////////////////////////////////////
-        
-        $recipient_entities = $this->get_recipient_entities();
-        
+        // Included & excluded recipient entities.
+        $recipiententities = $this->get_recipient_entities();
+
         if ($this->use_multiselect_picker) {
-            
-            // block_quickmail_string::get('included_ids_label')
 
             $mform->addElement('html', '<div class="msflex">');
-                // available included entity ids
+                // Available included entity ids.
                 $mform->addElement('html', '<div class="multiselectfrom">');
-                    $mform->addElement('select', 'available_included_entity_ids', '', $recipient_entities, [
+                    $mform->addElement('select', 'available_included_entity_ids', '', $recipiententities, [
                         'class' => 'multiselectfrom',
                         'multiple' => 'multiple'
                     ]);
                     $mform->getElement('available_included_entity_ids')->setSelected($this->included_draft_recipients);
                 $mform->addElement('html', '</div>');
 
-                // buttons
+                // Buttons!
                 $mform->addElement('html', '<div class="msbuttons">');
                     $mform->addElement('button', 'add_recip', 'Add');
                     $mform->addElement('button', 'remove_recip', 'Remove');
                 $mform->addElement('html', '</div>');
 
-                // selected included entity ids
+                // Selected included entity ids.
                 $mform->addElement('html', '<div class="multiselectto">');
                     $mform->addElement('select', 'selected_included_entity_ids', '', [], [
                         'class' => 'multiselectto',
@@ -210,9 +203,8 @@ class compose_message_form extends \moodleform {
             $mform->addElement('hidden', 'included_entity_ids', '');
             $mform->setType('included_entity_ids', PARAM_TEXT);
 
-
         } else {
-            // autocomplete selection interface
+            // Autocomplete selection interface.
             $options = [
                 'multiple' => true,
                 'showsuggestions' => true,
@@ -221,187 +213,176 @@ class compose_message_form extends \moodleform {
                 'ajax' => ''
             ];
 
-            $mform->addElement('autocomplete', 'included_entity_ids', block_quickmail_string::get('included_ids_label'), $recipient_entities, array_merge($options, [
-                'noselectionstring' => block_quickmail_string::get('no_included_recipients'),
-                'placeholder' => block_quickmail_string::get('included_recipients_desc'),
-            ]))->setValue($this->included_draft_recipients);
+            $mform->addElement('autocomplete', 'included_entity_ids',
+                block_quickmail_string::get('included_ids_label'), $recipiententities, array_merge($options, [
+                    'noselectionstring' => block_quickmail_string::get('no_included_recipients'),
+                    'placeholder' => block_quickmail_string::get('included_recipients_desc'),
+                ]))->setValue($this->included_draft_recipients);
 
-            // remove "send to all" for exclude selection
-            array_shift($recipient_entities);
+            // Remove "send to all" for exclude selection.
+            array_shift($recipiententities);
 
-            $mform->addElement('autocomplete', 'excluded_entity_ids', block_quickmail_string::get('excluded_ids_label'), $recipient_entities, array_merge($options, [
-                'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
-                'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
-            ]))->setValue($this->excluded_draft_recipients);
+            $mform->addElement('autocomplete', 'excluded_entity_ids',
+                block_quickmail_string::get('excluded_ids_label'), $recipiententities, array_merge($options, [
+                    'noselectionstring' => block_quickmail_string::get('no_excluded_recipients'),
+                    'placeholder' => block_quickmail_string::get('excluded_recipients_desc'),
+                ]))->setValue($this->excluded_draft_recipients);
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  subject (text)
-        ////////////////////////////////////////////////////////////
+        // Subject (text).
         $mform->addElement(
-            'text', 
-            'subject', 
+            'text',
+            'subject',
             block_quickmail_string::get('subject')
         );
         $mform->setType(
-            'subject', 
+            'subject',
             PARAM_TEXT
         );
-        
-        // inject default if draft mesage
+
+        // Inject default if draft mesage.
         if ($this->is_draft_message()) {
             $mform->setDefault(
-                'subject', 
+                'subject',
                 $this->draft_message->get('subject')
             );
         }
-        
-        ////////////////////////////////////////////////////////////
-        ///  additional_emails (text)
-        ////////////////////////////////////////////////////////////
+
+        // Additional_emails (text).
         if ($this->should_show_additional_email_input()) {
             $mform->addElement(
-                'text', 
-                'additional_emails', 
+                'text',
+                'additional_emails',
                 block_quickmail_string::get('additional_emails')
             );
             $mform->setType(
-                'additional_emails', 
+                'additional_emails',
                 PARAM_TEXT
             );
-            // $mform->addRule('additional_emails', 'One or more email addresses is invalid', 'callback', 'block_quickmail_mycallback', 'client');
             $mform->addHelpButton(
-                'additional_emails', 
-                'additional_emails', 
+                'additional_emails',
+                'additional_emails',
                 'block_quickmail'
             );
 
-            // inject default if draft mesage
+            // Inject default if draft mesage.
             if ($this->is_draft_message()) {
                 $mform->setDefault(
-                    'additional_emails', 
+                    'additional_emails',
                     implode(', ', $this->draft_message->get_additional_emails(true))
                 );
             }
         } else {
             $mform->addElement(
-                'hidden', 
+                'hidden',
                 'additional_emails',
                 ''
             );
             $mform->setType(
-                'additional_emails', 
+                'additional_emails',
                 PARAM_TEXT
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  message_editor (textarea)
-        ////////////////////////////////////////////////////////////
-        
-        // inject default if draft mesage
-        $default_text = $this->is_draft_message() 
-            ? $this->draft_message->get('body') 
+        // Message_editor (textarea).
+
+        // Inject default if draft message.
+        $defaulttext = $this->is_draft_message()
+            ? $this->draft_message->get('body')
             : '';
-        
+
         $mform->addElement(
-            'editor', 
-            'message_editor',  
-            block_quickmail_string::get('body'), 
-            '', 
+            'editor',
+            'message_editor',
+            block_quickmail_string::get('body'),
+            '',
             $this->get_editor_options()
         )->setValue([
-            'text' => $default_text
+            'text' => $defaulttext
         ]);
         $mform->setType(
-            'message_editor', 
+            'message_editor',
             PARAM_RAW
         );
 
         $mform->addElement('html', '<div class="col-md-3"></div>');
         $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
 
-        ////////////////////////////////////////////////////////////
-        ///  attachments (filemanager)
-        ////////////////////////////////////////////////////////////
-
+        // Attachments (filemanager).
         $mform->addElement(
-            'filemanager', 
-            'attachments', 
-            get_string('attachedfiles', 'repository'), 
+            'filemanager',
+            'attachments',
+            get_string('attachedfiles', 'repository'),
             null,
             block_quickmail_config::get_filemanager_options()
         );
-        // $mform->setDefault('attachments', file_get_submitted_draft_itemid('attachments'));
 
-        ////////////////////////////////////////////////////////////
-        ///  signatures (select)
-        ////////////////////////////////////////////////////////////
+        // Signatures (select).
         if ($this->should_show_signature_selection()) {
             $mform->addElement(
-                'select', 
-                'signature_id', 
-                block_quickmail_string::get('signature'), 
+                'select',
+                'signature_id',
+                block_quickmail_string::get('signature'),
                 $this->get_user_signature_options()
             );
 
-            // inject default for draft mesage
+            // Inject default for draft mesage.
             if ($this->is_draft_message()) {
                 $mform->setDefault(
-                    'signature_id', 
+                    'signature_id',
                     $this->draft_message->get('signature_id')
                 );
 
-            // otherwise, set to user's default signature, if any
+                // Otherwise, set to user's default signature, if any.
             } else {
                 $mform->setDefault(
-                    'signature_id', 
+                    'signature_id',
                     $this->user_default_signature_id
                 );
             }
         } else {
             $mform->addElement(
-                'static', 
-                'add_signature_text', 
-                block_quickmail_string::get('signature'), 
-                block_quickmail_string::get('no_signatures_create', '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">' . block_quickmail_string::get('create_new') . '</a>')
+                'static',
+                'add_signature_text',
+                block_quickmail_string::get('signature'),
+                block_quickmail_string::get('no_signatures_create',
+                '<a href="' . $this->get_create_signature_url() . '" id="create-signature-btn">'
+                    . block_quickmail_string::get('create_new') . '</a>')
             );
             $mform->addElement(
-                'hidden', 
-                'signature_id', 
+                'hidden',
+                'signature_id',
                 0
             );
             $mform->setType(
-                'signature_id', 
+                'signature_id',
                 PARAM_INT
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  message_type (select)
-        ////////////////////////////////////////////////////////////
+        // Message_type (select).
         if ($this->should_show_message_type_selection()) {
             $mform->addElement(
-                'select', 
-                'message_type', 
-                block_quickmail_string::get('select_message_type'), 
+                'select',
+                'message_type',
+                block_quickmail_string::get('select_message_type'),
                 $this->get_message_type_options()
             );
-            
-            // inject default if draft mesage
+
+            // Inject default if draft mesage.
             $mform->setDefault(
-                'message_type', 
+                'message_type',
                 $this->is_draft_message()
                     ? $this->draft_message->get('message_type')
                     : $this->course_config_array['default_message_type']
             );
         } else {
             $mform->addElement(
-                'hidden', 
+                'hidden',
                 'message_type'
             );
             $mform->setDefault(
-                'message_type', 
+                'message_type',
                 $this->course_config_array['default_message_type']
             );
             $mform->setType(
@@ -410,17 +391,15 @@ class compose_message_form extends \moodleform {
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  to_send_at (date/time)
-        ////////////////////////////////////////////////////////////
+        // To_send_at (date/time).
         $mform->addElement(
-            'date_time_selector', 
-            'to_send_at', 
+            'date_time_selector',
+            'to_send_at',
             block_quickmail_string::get('send_at'),
             $this->get_to_send_at_options()
         );
 
-        // inject default if draft mesage AND time to send is in the future
+        // Inject default if draft mesage AND time to send is in the future.
         if ($this->should_set_default_time()) {
             $mform->setDefault(
                 'to_send_at',
@@ -428,83 +407,77 @@ class compose_message_form extends \moodleform {
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  receipt (radio) - receive a copy or not?
-        ////////////////////////////////////////////////////////////
-        $receipt_options = [
+        // Receipt (radio) - receive a copy or not?
+        $receiptoptions = [
             $mform->createElement('radio', 'receipt', '', get_string('yes'), 1),
             $mform->createElement('radio', 'receipt', '', get_string('no'), 0)
         ];
 
         $mform->addGroup(
-            $receipt_options, 
-            'receipt_action', 
-            block_quickmail_string::get('receipt'), 
-            [' '], 
+            $receiptoptions,
+            'receipt_action',
+            block_quickmail_string::get('receipt'),
+            [' '],
             false
         );
         $mform->addHelpButton(
-            'receipt_action', 
-            'receipt', 
+            'receipt_action',
+            'receipt',
             'block_quickmail'
         );
 
         $mform->setDefault(
-            'receipt', 
-            $this->is_draft_message() 
-            ? $this->draft_message->get('send_receipt') // inject default if draft mesage
-            : ! empty($this->course_config_array['receipt']) // otherwise, go with this course's config
+            'receipt',
+            $this->is_draft_message()
+            ? $this->draft_message->get('send_receipt') // Inject default if draft mesage.
+            : !empty($this->course_config_array['receipt']) // Otherwise, go with this course's config.
         );
 
-        ////////////////////////////////////////////////////////////
-        ///  mentor_copy (radio) - copy mentors of recipients or not?
-        ////////////////////////////////////////////////////////////
+        // Mentor_copy (radio) - copy mentors of recipients or not?
         if ($this->should_show_copy_mentor()) {
-            $mentor_copy_options = [
+            $mentorcopyoptions = [
                 $mform->createElement('radio', 'mentor_copy', '', get_string('yes'), 1),
                 $mform->createElement('radio', 'mentor_copy', '', get_string('no'), 0)
             ];
 
             $mform->addGroup(
-                $mentor_copy_options, 
-                'mentor_copy_action', 
-                block_quickmail_string::get('mentor_copy'), 
-                [' '], 
+                $mentorcopyoptions,
+                'mentor_copy_action',
+                block_quickmail_string::get('mentor_copy'),
+                [' '],
                 false
             );
             $mform->addHelpButton(
-                'mentor_copy_action', 
-                'mentor_copy', 
+                'mentor_copy_action',
+                'mentor_copy',
                 'block_quickmail'
             );
 
             $mform->setDefault(
-                'mentor_copy', 
-                $this->is_draft_message() 
-                ? $this->draft_message->get('send_to_mentors') // inject default if draft mesage
-                : 0 // otherwise, default to no
+                'mentor_copy',
+                $this->is_draft_message()
+                ? $this->draft_message->get('send_to_mentors') // Inject default if draft mesage.
+                : 0 // Otherwise, default to no.
             );
         } else {
             $mform->addElement(
-                'hidden', 
-                'mentor_copy', 
+                'hidden',
+                'mentor_copy',
                 0
             );
             $mform->setType(
-                'mentor_copy', 
+                'mentor_copy',
                 PARAM_INT
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  buttons
-        ////////////////////////////////////////////////////////////
+        // Buttons!
         $buttons = [
             $mform->createElement('submit', 'send', block_quickmail_string::get('send_message')),
             $mform->createElement('submit', 'save', block_quickmail_string::get('save_draft')),
             $mform->createElement('cancel', 'cancelbutton', get_string('cancel')),
         ];
-        
+
         $mform->addGroup($buttons, 'actions', '&nbsp;', [' '], false);
     }
 
@@ -514,7 +487,7 @@ class compose_message_form extends \moodleform {
     public function validation($data, $files) {
         $errors = [];
 
-        // check that we have at least one recipient
+        // Check that we have at least one recipient.
         if (empty($data['included_entity_ids'])) {
             if ($this->use_multiselect_picker) {
                 $errors['selected_included_entity_ids'] = block_quickmail_string::get('no_included_recipients_validation');
@@ -523,11 +496,11 @@ class compose_message_form extends \moodleform {
             }
         }
 
-        // additional_emails - make sure each is valid
-        $cleansed_additional_emails = preg_replace('/\s+/', '', $data['additional_emails']);
-        
-        if ( ! empty($cleansed_additional_emails) && count(array_filter(explode(',', $cleansed_additional_emails), function($email) {
-            return ! filter_var($email, FILTER_VALIDATE_EMAIL);
+        // Additional_emails - make sure each is valid.
+        $cleansedadditionalemails = preg_replace('/\s+/', '', $data['additional_emails']);
+
+        if (!empty($cleansedadditionalemails) && count(array_filter(explode(',', $cleansedadditionalemails), function($email) {
+            return !filter_var($email, FILTER_VALIDATE_EMAIL);
         }))) {
             $errors['additional_emails'] = block_quickmail_string::get('invalid_additional_emails_validation');
         }
@@ -537,16 +510,16 @@ class compose_message_form extends \moodleform {
 
     /**
      * Reports whether or not this is a draft message
-     * 
+     *
      * @return bool
      */
     private function is_draft_message() {
-        return ! empty($this->draft_message);
+        return!empty($this->draft_message);
     }
 
     /**
      * Returns an array of text editor master options
-     * 
+     *
      * @return array
      */
     private function get_editor_options() {
@@ -555,7 +528,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Reports whether or not this form should display the "additional emails" input
-     * 
+     *
      * @return bool
      */
     private function should_show_additional_email_input() {
@@ -564,7 +537,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Returns an array of user-relative data fields that may be injected into the message body
-     * 
+     *
      * @return array
      */
     private function get_allowed_user_fields() {
@@ -573,7 +546,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Returns the HTML that should be displayed as the content of the "user substitution codes" helper display
-     * 
+     *
      * @return string
      */
     private function get_user_fields_html() {
@@ -588,7 +561,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Returns an array of available sending email options
-     * 
+     *
      * @return array
      */
     private function get_from_email_values() {
@@ -597,7 +570,7 @@ class compose_message_form extends \moodleform {
         foreach ($this->user_alternate_email_array as $key => $value) {
             $values[(string) $key] = $value;
         }
-        
+
         $values['-1'] = get_config('moodle', 'noreplyaddress');
 
         return $values;
@@ -605,7 +578,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Reports whether or not this form should display the signature selection input
-     * 
+     *
      * @return bool
      */
     private function should_show_signature_selection() {
@@ -614,7 +587,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Reports whether or not this form should display the message type selection input
-     * 
+     *
      * @return bool
      */
     private function should_show_message_type_selection() {
@@ -623,18 +596,18 @@ class compose_message_form extends \moodleform {
 
     /**
      * Reports whether or not this form should display the "copy mentor" input
-     * 
+     *
      * @return bool
      */
     private function should_show_copy_mentor() {
-        $mentor_setting = (int) $this->course_config_array['allow_mentor_copy'];
+        $mentorsetting = (int) $this->course_config_array['allow_mentor_copy'];
 
-        return (bool) ($this->allow_mentor_copy && $mentor_setting == 1);
+        return (bool) ($this->allow_mentor_copy && $mentorsetting == 1);
     }
 
     /**
      * Returns the current user's signatures for selection, plus a "none" option
-     * 
+     *
      * @return array
      */
     private function get_user_signature_options() {
@@ -643,7 +616,7 @@ class compose_message_form extends \moodleform {
 
     /**
      * Returns the options for message type selection
-     * 
+     *
      * @return array
      */
     private function get_message_type_options() {
@@ -655,30 +628,30 @@ class compose_message_form extends \moodleform {
 
     /**
      * Returns the options for the "send at" time selection
-     * 
+     *
      * @return array
      */
     private function get_to_send_at_options() {
-        $current_year = date("Y");
+        $currentyear = date("Y");
 
-        if ( ! $this->is_draft_message()) {
-            $is_optional = true;
+        if (!$this->is_draft_message()) {
+            $isoptional = true;
         } else {
-            $is_optional = ! $this->draft_message->get_to_send_in_future();
+            $isoptional = !$this->draft_message->get_to_send_in_future();
         }
 
         return [
-            'startyear' => $current_year,
-            'stopyear' => $current_year + 1,
+            'startyear' => $currentyear,
+            'stopyear' => $currentyear + 1,
             'timezone' => 99,
             'step' => 15,
-            'optional' => $is_optional
+            'optional' => $isoptional
         ];
     }
 
     /**
      * Returns a string URL for signature creation
-     * 
+     *
      * @return string
      */
     private function get_create_signature_url() {
@@ -689,11 +662,11 @@ class compose_message_form extends \moodleform {
 
     /**
      * Report whether or not a default time should be set
-     * 
+     *
      * @return bool
      */
     private function should_set_default_time() {
-        if ( ! $this->is_draft_message()) {
+        if (!$this->is_draft_message()) {
             return false;
         }
 
@@ -702,34 +675,33 @@ class compose_message_form extends \moodleform {
 
     /**
      * Returns the default timestamp for this message
-     * 
+     *
      * @return int
      */
     private function get_draft_default_send_time() {
-        $to_send_at = $this->draft_message->get('to_send_at');
+        $tosendat = $this->draft_message->get('to_send_at');
 
         return make_timestamp(
-            date("Y", $to_send_at), 
-            date("n", $to_send_at), 
-            date("j", $to_send_at), 
-            date("G", $to_send_at), 
-            date("i", $to_send_at), 
-            date("s", $to_send_at)
+            date("Y", $tosendat),
+            date("n", $tosendat),
+            date("j", $tosendat),
+            date("G", $tosendat),
+            date("i", $tosendat),
+            date("s", $tosendat)
         );
     }
 
-    private function get_recipient_entities()
-    {
+    private function get_recipient_entities() {
         $results = [];
 
         $results['all'] = block_quickmail_string::get('all_in_course');
 
-        foreach(['role', 'group', 'user'] as $type) {
-            foreach($this->course_user_data[$type . 's'] as $entity) {
-                $results[$type . '_' . $entity['id']] = $type == 'user' 
-                    ? $entity['name'] 
+        foreach (['role', 'group', 'user'] as $type) {
+            foreach ($this->course_user_data[$type . 's'] as $entity) {
+                $results[$type . '_' . $entity['id']] = $type == 'user'
+                    ? $entity['name']
                     : $entity['name'] . ' (' . ucfirst($type) . ')';
-            }            
+            }
         }
 
         return $results;

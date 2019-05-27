@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,13 +21,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_quickmail extends block_list {
-    
+
     public $course;
     public $user;
     public $content;
-    public $system_context;
-    public $course_context;
+    public $systemcontext;
+    public $coursecontext;
 
     public function init() {
         $this->title = $this->get_title();
@@ -56,81 +57,74 @@ class block_quickmail extends block_list {
 
     /**
      * Returns the system context
-     * 
+     *
      * @return context
      */
-    private function set_system_context()
-    {
+    private function set_system_context() {
         $this->system_context = context_system::instance();
     }
 
     /**
      * Returns this course's context
-     * 
+     *
      * @return context
      */
-    private function set_course_context()
-    {
+    private function set_course_context() {
         $this->course_context = context_course::instance($this->course->id);
     }
 
     /**
      * Indicates which pages types this block may be added to
-     * 
+     *
      * @return array
      */
     public function applicable_formats() {
         $formats = [
-            'course-view' => true, 
+            'course-view' => true,
             'mod-scorm-view' => true
         ];
 
         if (block_quickmail_plugin::user_can_send('broadcast', $this->user, $this->system_context)) {
             return array_merge($formats, [
-                'site' => true, 
-                'my' => true, 
+                'site' => true,
+                'my' => true,
             ]);
         } else {
             return array_merge($formats, [
-                'site' => false, 
-                'my' => false, 
+                'site' => false,
+                'my' => false,
             ]);
         }
     }
-    
+
     /**
      * Indicates that this block has its own configuration settings
-     * 
+     *
      * @return bool
      */
     public function has_config() {
         return true;
     }
-    
+
     /**
      * Sets the content to be rendered when displaying this block
-     * 
+     *
      * @return object
      */
     public function get_content() {
-        if ( ! empty($this->content)) {
+        if (!empty($this->content)) {
             return $this->content;
         }
 
-        // create a fresh content container
+        // Create a fresh content container.
         $this->content = $this->get_new_content_container();
 
-        $course_context = context_course::instance($this->course->id);
-        $system_context = context_system::instance();
+        $coursecontext = context_course::instance($this->course->id);
+        $systemcontext = context_system::instance();
 
-        ///////////////////////////////////////////
-        /// 
-        /// Course-level Features (compose)
-        /// 
-        ///////////////////////////////////////////
-
-        if ( ! $this->is_site_course() && block_quickmail_plugin::user_can_send('compose', $this->user, $this->course_context)) {
-            // COMPOSE (course-scoped message)
+        // Course-level Features (compose).
+        if (!$this->is_site_course() && block_quickmail_plugin::user_can_send('compose', $this->user, $this->course_context)) {
+            // COMPOSE (course-scoped message).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('compose'),
                 'icon_key' => 't/email',
@@ -138,7 +132,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // DRAFTS (manage your personal message drafts)
+            // DRAFTS (manage your personal message drafts).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('manage_drafts'),
                 'icon_key' => 'e/template',
@@ -146,7 +140,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // QUEUED (view/manage your queued messages)
+            // QUEUED (view/manage your queued messages).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_queued'),
                 'icon_key' => 'i/scheduled',
@@ -154,7 +148,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // SENT (view your sent messages)
+            // SENT (view your sent messages).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_sent'),
                 'icon_key' => 't/message',
@@ -162,7 +156,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // SIGNATURES (manage your personal signatures)
+            // SIGNATURES (manage your personal signatures).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('manage_signatures'),
                 'icon_key' => 'i/edit',
@@ -170,7 +164,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // ALTERNATES (manage your alternate send-from emails)
+            // ALTERNATES (manage your alternate send-from emails).
             if (block_quickmail_plugin::user_has_capability('allowalternate', $this->user, $this->course_context)) {
                 $this->add_item_to_content([
                     'lang_key' => block_quickmail_string::get('manage_alternates'),
@@ -180,7 +174,7 @@ class block_quickmail extends block_list {
                 ]);
             }
 
-            // CONFIGURATION (settings for course-level messaging preferences)
+            // CONFIGURATION (settings for course-level messaging preferences).
             if (block_quickmail_plugin::user_has_capability('canconfig', $this->user, $this->course_context)) {
                 $this->add_item_to_content([
                     'lang_key' => get_string('configuration'),
@@ -190,7 +184,7 @@ class block_quickmail extends block_list {
                 ]);
             }
 
-            // NOTIFICATIONS
+            // NOTIFICATIONS.
             if (block_quickmail_plugin::user_can_create_notifications($this->user, $this->course_context)) {
                 $this->add_item_to_content([
                     'lang_key' => block_quickmail_string::get('notifications'),
@@ -206,21 +200,20 @@ class block_quickmail extends block_list {
                     'query_string' => ['courseid' => $this->course->id]
                 ]);
             }
-        
-        ///////////////////////////////////////////
-        /// 
-        /// Site-level Features (broadcast)
-        /// 
-        ///////////////////////////////////////////
-        } else if ($this->is_site_course() && block_quickmail_plugin::user_can_send('broadcast', $this->user, $this->system_context)) {
-            // BROADCAST (site-scoped admin message)
+
+            // Site-level Features (broadcast).
+        } else if ($this->is_site_course() && block_quickmail_plugin::user_can_send(
+                      'broadcast',
+                      $this->user,
+                      $this->system_context)) {
+            // BROADCAST (site-scoped admin message).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('open_broadcast'),
                 'icon_key' => 't/email',
                 'page' => 'broadcast',
             ]);
 
-            // DRAFTS (manage your personal message drafts)
+            // DRAFTS (manage your personal message drafts).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('manage_drafts'),
                 'icon_key' => 'e/template',
@@ -228,7 +221,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // QUEUED (view/manage your queued messages)
+            // QUEUED (view/manage your queued messages).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_queued'),
                 'icon_key' => 'i/calendar',
@@ -236,7 +229,7 @@ class block_quickmail extends block_list {
                 'query_string' => ['courseid' => $this->course->id]
             ]);
 
-            // SENT (view your sent messages)
+            // SENT (view your sent messages).
             $this->add_item_to_content([
                 'lang_key' => block_quickmail_string::get('view_sent'),
                 'icon_key' => 't/message',
@@ -250,13 +243,12 @@ class block_quickmail extends block_list {
 
     /**
      * Builds and adds an item to the content container for the given params
-     * 
+     *
      * @param  array $params  [lang_key, icon_key, page, query_string]
      * @return void
      */
-    private function add_item_to_content($params)
-    {
-        if ( ! array_key_exists('query_string', $params)) {
+    private function add_item_to_content($params) {
+        if (!array_key_exists('query_string', $params)) {
             $params['query_string'] = [];
         }
 
@@ -267,16 +259,14 @@ class block_quickmail extends block_list {
 
     /**
      * Builds a content item (link) for the given params
-     * 
+     *
      * @param  array $params  [lang_key, icon_key, page, query_string]
      * @return string
      */
-    private function build_item($params)
-    {
+    private function build_item($params) {
         global $OUTPUT;
 
         $label = $params['lang_key'];
-        
         $icon = $OUTPUT->pix_icon($params['icon_key'], $label, 'moodle', ['class' => 'icon']);
 
         return html_writer::link(
@@ -287,13 +277,11 @@ class block_quickmail extends block_list {
 
     /**
      * Returns an empty "block list" content container to be filled with content
-     * 
+     *
      * @return object
      */
-    private function get_new_content_container()
-    {
+    private function get_new_content_container() {
         $content = new stdClass;
-        
         $content->items = [];
         $content->icons = [];
         $content->footer = '';
@@ -303,11 +291,10 @@ class block_quickmail extends block_list {
 
     /**
      * Reports whether or not this is a site-level course
-     * 
+     *
      * @return boolean
      */
-    private function is_site_course()
-    {
+    private function is_site_course() {
         return $this->course->id == SITEID;
     }
 }

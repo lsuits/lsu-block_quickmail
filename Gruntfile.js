@@ -1,11 +1,11 @@
 "use strict";
- 
+
 module.exports = function (grunt) {
- 
+
     // We need to include the core Moodle grunt file too, otherwise we can't run tasks like "amd".
     require("grunt-load-gruntfile")(grunt);
     grunt.loadGruntfile("../../Gruntfile.js");
- 
+
     // Load all grunt tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-less');
@@ -13,7 +13,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-eslint');
     grunt.loadNpmTasks('grunt-stylelint');
- 
+
     grunt.initConfig({
         sass: {
             dist: {
@@ -28,6 +28,5 @@ module.exports = function (grunt) {
         }
     });
     // The default task (running "grunt" in console).
-    // grunt.registerTask("default");
     grunt.registerTask("default", ["sass"]);
 };

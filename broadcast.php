@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,9 +22,9 @@
  */
 
 require_once('../../config.php');
-require_once 'lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
-$page_params = [
+$pageparams = [
     'courseid' => SITEID,
     'draftid' => optional_param('draftid', 0, PARAM_INT),
     'page' => optional_param('page', 0, PARAM_INT),
@@ -34,182 +33,159 @@ $page_params = [
     'sort_dir' => optional_param('sort_dir', 'asc', PARAM_ALPHA)
 ];
 
-////////////////////////////////////////
-/// AUTHENTICATION
-////////////////////////////////////////
-
+// Handle authentication.
 require_login();
-$system_context = context_system::instance();
-$PAGE->set_context($system_context);
-$PAGE->set_url(new moodle_url('/blocks/quickmail/broadcast.php', $page_params));
+$systemcontext = context_system::instance();
+$PAGE->set_context($systemcontext);
+$PAGE->set_url(new moodle_url('/blocks/quickmail/broadcast.php', $pageparams));
 
-// throw an exception if user does not have capability to broadcast messages
-block_quickmail_plugin::require_user_can_send('broadcast', $USER, $system_context);
+// Throw an exception if user does not have capability to broadcast messages.
+block_quickmail_plugin::require_user_can_send('broadcast', $USER, $systemcontext);
 
-// get (site) course
-$course = get_course($page_params['courseid']);
+// Get (site) course.
+$course = get_course($pageparams['courseid']);
 
-////////////////////////////////////////
-/// CONSTRUCT PAGE
-////////////////////////////////////////
-
+// Construct the page.
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('broadcast'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'),
+    new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
 $PAGE->navbar->add(block_quickmail_string::get('broadcast'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('broadcast'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 
 $renderer = $PAGE->get_renderer('block_quickmail');
 
-// if a draft id was passed
-if ($page_params['draftid']) {
-    // attempt to fetch the draft which must belong to this course and user
-    $draft_message = block_quickmail\repos\draft_repo::find_for_user_course_or_null($page_params['draftid'], $USER->id, $course->id);
+// If a draft id was passed.
+if ($pageparams['draftid']) {
+    // Attempt to fetch the draft which must belong to this course and user.
+    $draftmessage = block_quickmail\repos\draft_repo::find_for_user_course_or_null($pageparams['draftid'], $USER->id, $course->id);
 
-    // if no valid draft message was found, reset param
-    if (empty($draft_message)) {
-        $page_params['draftid'] = 0;
+    // If no valid draft message was found, reset param.
+    if (empty($draftmessage)) {
+        $pageparams['draftid'] = 0;
     } else {
-        // make sure this draft message has not already been sent
-        if ($draft_message->is_sent_message()) {
-            // reset the passed param to 0
-            // @TODO - notify user that message was already sent??
-            $draft_message = null;
-            $page_params['draftid'] = 0;
+        // Make sure this draft message has not already been sent.
+        if ($draftmessage->is_sent_message()) {
+            // Reset the passed param to 0.
+            // @TODO - Notify user that message was already sent??
+            $draftmessage = null;
+            $pageparams['draftid'] = 0;
         }
     }
 } else {
-    $draft_message = null;
+    $draftmessage = null;
 }
 
-////////////////////////////////////////
-/// INSTANTIATE USER FILTER FOR RECIPIENT FILTERING
-////////////////////////////////////////
+// Instantiate user filter for recipient filtering.
+$broadcastrecipientfilter = block_quickmail_broadcast_recipient_filter::make($pageparams, $draftmessage);
 
-$broadcast_recipient_filter = block_quickmail_broadcast_recipient_filter::make($page_params, $draft_message);
-
-////////////////////////////////////////
-/// FILE ATTACHMENT HANDLING
-////////////////////////////////////////
-
-// get the attachments draft area id
-// $attachments_draftitem_id = file_get_submitted_draft_itemid('attachments');
-
-// // prepare the draft area with any existing, relevant files
-// file_prepare_draft_area(
-//     $attachments_draftitem_id, 
-//     $system_context->id, 
-//     'block_quickmail', 
-//     'attachments', 
-//     $page_params['draftid'] ?: null, 
-//     block_quickmail_config::get_filemanager_options()
-// );
-
-////////////////////////////////////////
-/// INSTANTIATE FORM
-////////////////////////////////////////
-
-$broadcast_form = \block_quickmail\forms\broadcast_message_form::make(
-    $system_context, 
-    $USER, 
+// Intantiate the form.
+$broadcastform = \block_quickmail\forms\broadcast_message_form::make(
+    $systemcontext,
+    $USER,
     $course,
-    $draft_message
+    $draftmessage
 );
 
-////////////////////////////////////////
-/// HANDLE REQUEST
-////////////////////////////////////////
+// Handle the request.
+$request = block_quickmail_request::for_route('broadcast')->with_form($broadcastform);
 
-$request = block_quickmail_request::for_route('broadcast')->with_form($broadcast_form);
-
-// if a POST was submitted, attempt to take appropriate actions
+// If a POST was submitted, attempt to take appropriate actions.
 try {
-    // CANCEL
+    // Cancel the request.
     if ($request->is_form_cancellation()) {
-        
-        // clear any recipient user filtering session data
-        $broadcast_recipient_filter->clear_session();
 
-        // redirect back to course page
+        // Clear any recipient user filtering session data.
+        $broadcastrecipientfilter->clear_session();
+
+        // Redirect back to home page.
         $request->redirect_to_url('/my');
 
-    // SEND
+        // Send the message.
     } else if ($request->to_send_message()) {
 
-        $send_as_task = \block_quickmail_config::block('send_as_tasks');
-        
-        $message = \block_quickmail\messenger\messenger::broadcast($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message, $send_as_task);
-        
-        // clear any recipient user filtering session data
-        $broadcast_recipient_filter->clear_session();
-        
-        // resolve redirect message
+        $sendastask = \block_quickmail_config::block('send_as_tasks');
+        $message = \block_quickmail\messenger\messenger::broadcast(
+                       $USER,
+                       $course,
+                       $broadcastform->get_data(),
+                       $broadcastrecipientfilter,
+                       $draftmessage,
+                       $sendastask);
+
+        // Clear any recipient user filtering session data.
+        $broadcastrecipientfilter->clear_session();
+
+        // Resolve redirect message.
         if ($message->is_sent_message()) {
-            $redirect_message = 'message_sent_now';
+            $redirectmessage = 'message_sent_now';
         } else if ($message->is_queued_message()) {
-            $redirect_message = 'message_queued';
+            $redirectmessage = 'message_queued';
         } else {
-            $redirect_message = 'message_sent_asap';
+            $redirectmessage = 'message_sent_asap';
         }
 
-        $request->redirect_as_success(block_quickmail_string::get($redirect_message, $course->fullname), '/my');
+        $request->redirect_as_success(block_quickmail_string::get($redirectmessage, $course->fullname), '/my');
 
-    // SAVE DRAFT
+        // Save the draft.
     } else if ($request->to_save_draft()) {
 
-        // attempt to save draft, handle exceptions
-        $message = \block_quickmail\messenger\messenger::save_broadcast_draft($USER, $course, $broadcast_form->get_data(), $broadcast_recipient_filter, $draft_message);
-        
-        // clear any recipient user filtering session data
-        $broadcast_recipient_filter->clear_session();
+        // Attempt to save draft, handle any exceptions.
+        $message = \block_quickmail\messenger\messenger::save_broadcast_draft(
+                       $USER,
+                       $course,
+                       $broadcastform->get_data(),
+                       $broadcastrecipientfilter,
+                       $draftmessage);
 
-        $request->redirect_as_info(block_quickmail_string::get('redirect_back_to_course_from_message_after_save', $course->fullname), '/my');
+        // Clear any recipient user filtering session data.
+        $broadcastrecipientfilter->clear_session();
+
+        $request->redirect_as_info(block_quickmail_string::get(
+                                                               'redirect_back_to_course_from_message_after_save',
+                                                               $course->fullname), '/my');
     }
 } catch (\block_quickmail\exceptions\validation_exception $e) {
-    $broadcast_form->set_error_exception($e);
+    $broadcastform->set_error_exception($e);
 } catch (\block_quickmail\exceptions\critical_exception $e) {
     print_error('critical_error', 'block_quickmail');
 }
 
-////////////////////////////////////////
-/// RENDER PAGE
-////////////////////////////////////////
-
-$rendered_broadcast_form = $renderer->broadcast_message_component([
-    'context' => $system_context,
+// Render the page.
+$renderedbroadcastform = $renderer->broadcast_message_component([
+    'context' => $systemcontext,
     'user' => $USER,
     'course' => $course,
-    'broadcast_form' => $broadcast_form,
+    'broadcast_form' => $broadcastform,
 ]);
 
-$rendered_broadcast_recipient_filter_results = $renderer->broadcast_recipient_filter_results_component([
-    'broadcast_recipient_filter' => $broadcast_recipient_filter
+$renderedbroadcastrecipientfilterresults = $renderer->broadcast_recipient_filter_results_component([
+    'broadcast_recipient_filter' => $broadcastrecipientfilter
 ]);
 
 echo $OUTPUT->header();
-$broadcast_form->render_error_notification();
+$broadcastform->render_error_notification();
 
-// BEGIN RENDERING USER FILTER/RESULTS
-$broadcast_recipient_filter->render_add();
-$broadcast_recipient_filter->render_active();
+// Begin rendering user filter/results.
+$broadcastrecipientfilter->render_add();
+$broadcastrecipientfilter->render_active();
 
-if ($broadcast_recipient_filter->get_result_user_count()) {
-    // PAGINATION BAR (if appropriate)
-    if ($broadcast_recipient_filter->get_result_user_count() > $page_params['per_page']) {
-        $broadcast_recipient_filter->render_paging_bar();
+if ($broadcastrecipientfilter->get_result_user_count()) {
+    // Pagination bar (if appropriate).
+    if ($broadcastrecipientfilter->get_result_user_count() > $pageparams['per_page']) {
+        $broadcastrecipientfilter->render_paging_bar();
     }
 
-    // TABLE OF DISPLAY USERS
-    echo $rendered_broadcast_recipient_filter_results;
+    // Table of displayed users.
+    echo $renderedbroadcastrecipientfilterresults;
 
-    // PAGINATION BAR (if appropriate)
-    if ($broadcast_recipient_filter->get_result_user_count() > $page_params['per_page']) {
-        $broadcast_recipient_filter->render_paging_bar();
+    // Pagination bar (if appropriate).
+    if ($broadcastrecipientfilter->get_result_user_count() > $pageparams['per_page']) {
+        $broadcastrecipientfilter->render_paging_bar();
     }
 }
-// END RENDERING USER FILTER/RESULTS
 
-echo $rendered_broadcast_form;
+echo $renderedbroadcastform;
 echo $OUTPUT->footer();

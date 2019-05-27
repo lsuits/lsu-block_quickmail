@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\components;
 
 use block_quickmail\components\component;
@@ -34,8 +35,8 @@ class notification_index_component extends component implements \renderable {
     public $pagination;
     public $user;
     public $courseid;
-    public $sort_by;
-    public $sort_dir;
+    public $sortby;
+    public $sortdir;
 
     public function __construct($params = []) {
         parent::__construct($params);
@@ -63,26 +64,28 @@ class notification_index_component extends component implements \renderable {
         $data->enabledIsSorted = $this->is_attr_sorted('enabled');
 
         $data = $this->include_pagination($data, $this->pagination);
-        
-        $data->tableRows = [];
-        
-        foreach ($this->notifications as $notification) {
-            // get the notification type interface for each notification
-            // @TODO - cache some of this data for better performance?
-            $notification_interface = $notification->get_notification_type_interface();
 
-            $edit_url = new moodle_url('/blocks/quickmail/edit_notification.php', ['courseid' => $this->courseid, 'id' => $notification->get('id')]);
+        $data->tableRows = [];
+
+        foreach ($this->notifications as $notification) {
+            // Get the notification type interface for each notification.
+            // @TODO - Possibly cache some of this data for better performance?
+            $notificationinterface = $notification->get_notification_type_interface();
+
+            $editurl = new moodle_url('/blocks/quickmail/edit_notification.php',
+                                         ['courseid' => $this->courseid, 'id' => $notification->get('id')]);
 
             $data->tableRows[] = [
                 'notificationId' => $notification->get('id'),
-                'modelDescription' => $notification_interface->get_title(),
+                'modelDescription' => $notificationinterface->get_title(),
                 'name' => $notification->get('name'),
                 'isEnabled' => $notification->is_notification_enabled(),
-                'lastRunAt' => $notification->get('type') == 'reminder' 
-                    ? $notification_interface->get_readable_date('last_run_at') 
-                    : $notification_interface->cached_last_fired_at(true),
-                'nextRunAt' => $notification->get('type') == 'reminder' ? $notification_interface->get_readable_date('next_run_at') : '',
-                'editUrl' => $edit_url->out(false),
+                'lastRunAt' => $notification->get('type') == 'reminder'
+                    ? $notificationinterface->get_readable_date('last_run_at')
+                    : $notificationinterface->cached_last_fired_at(true),
+                'nextRunAt' => $notification->get('type') == 'reminder'
+                               ? $notificationinterface->get_readable_date('next_run_at') : '',
+                'editUrl' => $editurl->out(false),
             ];
         }
 

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,14 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\components;
 
 use block_quickmail\components\component;
 
 class compose_message_component extends component implements \renderable {
 
-    public $compose_form;
-    
+    public $composeform;
+
     public function __construct($params = []) {
         parent::__construct($params);
 

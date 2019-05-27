@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\components;
 
 use block_quickmail\components\component;
@@ -33,10 +34,10 @@ class sent_message_index_component extends component implements \renderable {
     public $messages;
     public $pagination;
     public $user;
-    public $course_id;
-    public $sort_by;
-    public $sort_dir;
-    public $user_course_array;
+    public $courseid;
+    public $sortby;
+    public $sortdir;
+    public $usercoursearray;
 
     public function __construct($params = []) {
         parent::__construct($params);
@@ -66,9 +67,9 @@ class sent_message_index_component extends component implements \renderable {
         $data->sentAtIsSorted = $this->is_attr_sorted('sent');
 
         $data = $this->include_pagination($data, $this->pagination);
-        
+
         $data->tableRows = [];
-        
+
         foreach ($this->messages as $message) {
             $data->tableRows[] = [
                 'id' => $message->get('id'),
@@ -85,11 +86,11 @@ class sent_message_index_component extends component implements \renderable {
             ];
         }
 
-        $data->urlBack = $this->course_id 
+        $data->urlBack = $this->course_id
             ? new moodle_url('/course/view.php', ['id' => $this->course_id])
             : new moodle_url('/my');
 
-        $data->urlBackLabel = $this->course_id 
+        $data->urlBackLabel = $this->course_id
             ? block_quickmail_string::get('back_to_course')
             : block_quickmail_string::get('back_to_mypage');
 
