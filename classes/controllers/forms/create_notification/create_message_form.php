@@ -40,24 +40,17 @@ class create_message_form extends controller_form {
 
         $mform =& $this->_form;
 
-        ////////////////////////////////////////////////////////////
-        // View_form_name directive: TO BE INCLUDED ON ALL FORMS :/
-        ////////////////////////////////////////////////////////////
+        // View_form_name directive: TO BE INCLUDED ON ALL FORMS.
         $mform->addElement('hidden', 'view_form_name');
         $mform->setType('view_form_name', PARAM_TEXT);
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
-        ////////////////////////////////////////////////////////////
-        // Descriptive text
-        ////////////////////////////////////////////////////////////
+        // Descriptive text.
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">'
+            . block_quickmail_string::get('create_notification_message_description') . '</div>');
 
-        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('create_notification_message_description') . '</div>');
-
-        // @TODO: condition summary ???
-
-        ////////////////////////////////////////////////////////////
-        // Message_alternate_email_id (select)
-        ////////////////////////////////////////////////////////////
+        // TODO: condition summary?
+        // Message_alternate_email_id (select).
         $mform->addElement(
             'select',
             'message_alternate_email_id',
@@ -70,9 +63,7 @@ class create_message_form extends controller_form {
             $this->has_session_stored('message_alternate_email_id') ? $this->get_session_stored('message_alternate_email_id') : ''
         );
 
-        ////////////////////////////////////////////////////////////
-        // Message_subject (text)
-        ////////////////////////////////////////////////////////////
+        // Message_subject (text).
         $mform->addElement(
             'text',
             'message_subject',
@@ -91,10 +82,7 @@ class create_message_form extends controller_form {
 
         $mform->addRule('message_subject', block_quickmail_string::get('missing_subject'), 'required', '', 'server');
 
-        ////////////////////////////////////////////////////////////
-        // Message_body (textarea)
-        ////////////////////////////////////////////////////////////
-
+        // Message_body (textarea).
         $mform->addElement(
             'editor',
             'message_body',
@@ -114,9 +102,7 @@ class create_message_form extends controller_form {
         $mform->addElement('html', '<div class="col-md-3"></div>');
         $mform->addElement('html', '<div class="col-md-9">' . $this->get_user_fields_html() . '</div>');
 
-        ////////////////////////////////////////////////////////////
-        // Message_type (select)
-        ////////////////////////////////////////////////////////////
+        // Message_type (select).
         if ($this->should_show_message_type_selection()) {
             $mform->addElement(
                 'select',
@@ -125,10 +111,12 @@ class create_message_form extends controller_form {
                 $this->get_message_type_options()
             );
 
-            // Inject default if draft mesage
+            // Inject default if draft mesage.
             $mform->setDefault(
                 'message_type',
-                $this->has_session_stored('message_type') ? $this->get_session_stored('message_type') : $this->get_custom_data('course_config_array')['default_message_type']
+                $this->has_session_stored('message_type')
+                    ? $this->get_session_stored('message_type')
+                    : $this->get_custom_data('course_config_array')['default_message_type']
             );
         } else {
             $mform->addElement(
@@ -145,9 +133,7 @@ class create_message_form extends controller_form {
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        // Message_signature_id (select)
-        ////////////////////////////////////////////////////////////
+        // Message_signature_id (select).
         if ($this->should_show_signature_selection()) {
             $mform->addElement(
                 'select',
@@ -158,7 +144,9 @@ class create_message_form extends controller_form {
 
             $mform->setDefault(
                 'message_signature_id',
-                $this->has_session_stored('message_signature_id') ? $this->get_session_stored('message_signature_id') : $this->get_custom_data('user_default_signature_id')
+                $this->has_session_stored('message_signature_id')
+                    ? $this->get_session_stored('message_signature_id')
+                    : $this->get_custom_data('user_default_signature_id')
             );
         } else {
             $mform->addElement(
@@ -172,17 +160,15 @@ class create_message_form extends controller_form {
             );
         }
 
-        ////////////////////////////////////////////////////////////
         // Message_send_to_mentors (radio) - copy mentors of recipients or not?
-        ////////////////////////////////////////////////////////////
         if ($this->should_show_copy_mentor()) {
-            $mentor_copy_options = [
+            $mentorcopyoptions = [
                 $mform->createElement('radio', 'message_send_to_mentors', '', get_string('yes'), 1),
                 $mform->createElement('radio', 'message_send_to_mentors', '', get_string('no'), 0)
             ];
 
             $mform->addGroup(
-                $mentor_copy_options,
+                $mentorcopyoptions,
                 'mentor_copy_action',
                 block_quickmail_string::get('mentor_copy'),
                 [' '],
@@ -210,11 +196,8 @@ class create_message_form extends controller_form {
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        // Buttons
-        ////////////////////////////////////////////////////////////
+        // Buttons!
         $buttons = [
-            // $mform->createElement('cancel', 'cancel', get_string('cancel')),
             $mform->createElement('submit', 'back', get_string('back')),
             $mform->createElement('submit', 'next', get_string('next')),
         ];
@@ -284,7 +267,8 @@ class create_message_form extends controller_form {
      * @return bool
      */
     private function should_show_copy_mentor() {
-        return (bool) ($this->get_custom_data('allow_mentor_copy') && $this->get_custom_data('course_config_array')['allow_mentor_copy']);
+        return (bool) ($this->get_custom_data('allow_mentor_copy')
+            && $this->get_custom_data('course_config_array')['allow_mentor_copy']);
     }
 
     /**
