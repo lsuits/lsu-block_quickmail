@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\messenger\factories\course_recipient_send;
 
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
@@ -31,15 +32,13 @@ use block_quickmail_string;
 
 class email_recipient_send_factory extends recipient_send_factory implements recipient_send_factory_interface {
 
-    public function set_factory_params()
-    {
+    public function set_factory_params() {
         $this->message_params->attachment = '';
         $this->message_params->attachname = '';
         $this->message_params->wordwrapwidth = 79;
     }
 
-    public function set_factory_computed_params()
-    {
+    public function set_factory_computed_params() {
         $this->message_params->usetrueaddress = $this->should_use_true_address();
         $this->message_params->replyto = $this->get_replyto_email();
         $this->message_params->replytoname = $this->get_replyto_name();
@@ -50,18 +49,17 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
      * Executes the sending of this message to this recipient
      *
      * Additionally, if successful, handle any post send actions (marking as sent, sending to mentors if appropriate)
-     * 
+     *
      * @return bool
      */
-    public function send()
-    {
+    public function send() {
         $success = $this->send_email_to_user();
 
-        // if the message was sent successfully, handle post send tasks
+        // If the message was sent successfully, handle post send tasks.
         if ($success) {
             $this->handle_recipient_post_send();
         }
-        
+
         return $success;
     }
 
@@ -69,14 +67,13 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
      * Sends this formatted message content to the given user
      *
      * If no user is given, sends to this recipient user
-     * 
+     *
      * @param  object  $user
      * @param  array   $options
      * @return bool
      */
-    private function send_email_to_user($user = null, $options = [])
-    {
-        // if no user was specified, use the recipient user
+    private function send_email_to_user($user = null, $options = []) {
+        // If no user was specified, use the recipient user.
         if (is_null($user)) {
             $user = $this->message_params->userto;
         }
@@ -101,73 +98,68 @@ class email_recipient_send_factory extends recipient_send_factory implements rec
     /**
      * Sends a "mentor-formatted" email to the given mentor user
      *
-     * @param  object  $mentor_user
-     * @param  object  $mentee_user
+     * @param  object  $mentoruser
+     * @param  object  $menteeuser
      * @return bool
      */
-    private function send_email_to_mentor_user($mentor_user, $mentee_user)
-    {
-        return $this->send_email_to_user($mentor_user, [
+    private function send_email_to_mentor_user($mentoruser, $menteeuser) {
+        return $this->send_email_to_user($mentoruser, [
             'subject_prefix' => block_quickmail_string::get('mentor_copy_subject_prefix'),
-            'message_prefix' => block_quickmail_string::get('mentor_copy_message_prefix', fullname($mentee_user))
+            'message_prefix' => block_quickmail_string::get('mentor_copy_message_prefix', fullname($menteeuser))
         ]);
     }
 
     /**
      * Sends this formatted message to any existing mentor users of this recipient user
      * which are configured by context in moodle (see: docs.moodle.org/35/en/Parent_role)
-     * 
+     *
      * @return void
      */
-    public function send_to_mentor_users()
-    {
-        $mentor_users = $this->get_recipient_mentors();
+    public function send_to_mentor_users() {
+        $mentorusers = $this->get_recipient_mentors();
 
-        foreach ($mentor_users as $mentor_user) {
-            $this->send_email_to_mentor_user($mentor_user, $this->message_params->userto);
+        foreach ($mentorusers as $mentoruser) {
+            $this->send_email_to_mentor_user($mentoruser, $this->message_params->userto);
         }
     }
 
-    private function should_use_true_address()
-    {
+    private function should_use_true_address() {
         return $this->message->get('no_reply') || $this->message->get('alternate_email_id')
             ? false
             : true;
     }
 
-    private function get_replyto_email()
-    {
-        // message is marked as "no reply"
+    private function get_replyto_email() {
+        // Message is marked as "no reply".
         if ((bool) $this->message->get('no_reply')) {
-            // return the default no reply address
+            // Return the default no reply address.
             return get_config('moodle', 'noreplyaddress');
         }
 
-        // if this message has an alternate email assigned
+        // If this message has an alternate email assigned.
         if ($this->alternate_email) {
-            // return the alternate's email address
+            // Return the alternate's email address.
             return $this->alternate_email->get('email');
         }
 
-        // otherwise, return the moodle user's email
+        // Otherwise, return the moodle user's email.
         return $this->message_params->userfrom->email;
     }
 
-    private function get_replyto_name()
-    {
-        // message is marked as "no reply"
+    private function get_replyto_name() {
+        // Message is marked as "no reply".
         if ((bool) $this->message->get('no_reply')) {
-            // return the default no reply address
+            // Return the default no reply address.
             return get_config('moodle', 'noreplyaddress');
         }
 
-        // if this message has an alternate email assigned
+        // If this message has an alternate email assigned.
         if ($this->alternate_email) {
-            // return the alternate's full name
+            // Return the alternate's full name.
             return $this->alternate_email->get_fullname();
         }
 
-        // otherwise, return the moodle user's full name
+        // Otherwise, return the moodle user's full name.
         return fullname($this->message_params->userfrom);
     }
 

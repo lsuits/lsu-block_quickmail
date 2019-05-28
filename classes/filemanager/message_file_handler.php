@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\filemanager;
 
 use block_quickmail_config;
@@ -32,13 +33,13 @@ use context_course;
 
 class message_file_handler {
 
-    public static $plugin_name = 'block_quickmail';
+    public static $pluginname = 'block_quickmail';
 
     public $message;
     public $course;
     public $context;
-    public $file_storage;
-    public $uploaded_files;
+    public $filestorage;
+    public $uploadedfiles;
 
     public function __construct(message $message) {
         $this->message = $message;
@@ -50,27 +51,26 @@ class message_file_handler {
 
     /**
      * Executes posted file attachments for the given message
-     * 
+     *
      * @param  message  $message
-     * @param  object   $form_data   mform post data
+     * @param  object   $formdata   mform post data
      * @param  string   $filearea    "attachments"
      * @return void
      */
-    public static function handle_posted_attachments($message, $form_data, $filearea)
-    {
-        $file_handler = new self($message);
+    public static function handle_posted_attachments($message, $formdata, $filearea) {
+        $filehandler = new self($message);
 
-        // store the filearea's files within moodle
-        $file_handler->store_posted_filearea($form_data, $filearea);
+        // Store the filearea's files within moodle.
+        $filehandler->store_posted_filearea($formdata, $filearea);
 
-        // update this message's list of file attachments
-        $file_handler->sync_attachments();
+        // Update this message's list of file attachments.
+        $filehandler->sync_attachments();
     }
 
     /**
      * Zips all of the file attachments for the given message and makes available for the given user,
      * Returns the path in which the temp files are stored
-     * 
+     *
      * @param  message  $message
      * @param  object  $user      moodle user
      * @param  string  $filename   file name to name the temp zip file
@@ -79,13 +79,13 @@ class message_file_handler {
     public static function zip_attachments_for_user($message, $user, $filename = 'attachments.zip') {
         global $CFG;
 
-        $path = $CFG->tempdir . '/' . self::$plugin_name . '/' . $user->id;
+        $path = $CFG->tempdir . '/' . self::$pluginname . '/' . $user->id;
 
         if ( ! file_exists($path)) {
             mkdir($path, $CFG->directorypermissions, true);
         }
 
-        $zip_filename = $path . '/' . $filename;
+        $zipfilename = $path . '/' . $filename;
 
         $course = $message->get_course();
 
@@ -96,80 +96,78 @@ class message_file_handler {
 
         $files = $fs->get_area_files(
             $context->id,
-            self::$plugin_name,
+            self::$pluginname,
             'attachments',
             $message->get('id'),
             true
         );
 
-        $stored_files = [];
-        
-        // iterate through each of the file records
+        $storedfiles = [];
+
+        // Iterate through each of the file records.
         foreach ($files as $file) {
-            // if the record is a directory, skip
+            // If the record is a directory, skip.
             if ($file->is_directory() and $file->get_filename() == '.') {
                 continue;
             }
 
-            // add the file references to the stack
-            $stored_files[$file->get_filepath() . $file->get_filename()] = $file;
+            // Add the file references to the stack.
+            $storedfiles[$file->get_filepath() . $file->get_filename()] = $file;
         }
 
-        // zip the files
-        $packer->archive_to_pathname($stored_files, $zip_filename);
+        // Zip the files.
+        $packer->archive_to_pathname($storedfiles, $zipfilename);
 
-        return $zip_filename;
+        return $zipfilename;
     }
 
     /**
      * Stores and renames the given filearea's files from the given posted data
-     * 
-     * @param  object  $form_data  mform post data
+     *
+     * @param  object  $formdata  mform post data
      * @param  string  $filearea  "attachments"
      * @return void
      */
-    private function store_posted_filearea($form_data, $filearea)
-    {
-        if (empty($form_data->attachments)) {
+    private function store_posted_filearea($formdata, $filearea) {
+        if (empty($formdata->attachments)) {
             return;
         }
 
-        // move the files from "user draft" to this filearea
+        // Move the files from "user draft" to this filearea.
         file_save_draft_area_files(
-            $form_data->$filearea, 
-            $this->context->id, 
-            self::$plugin_name,
+            $formdata->$filearea,
+            $this->context->id,
+            self::$pluginname,
             $filearea,
-            $this->message->get('id'), 
+            $this->message->get('id'),
             block_quickmail_config::get_filemanager_options()
         );
 
-        // iterate through each uploaded file
+        // Iterate through each uploaded file.
         foreach ($this->fetch_uploaded_file_data($filearea) as $file) {
-            // add its data to the stack
+            // Add its data to the stack.
             $this->add_to_uploaded_files($filearea, $file->filepath, $file->filename);
         }
     }
 
     /**
      * Replaces all existing message_attachment records for this message with the given uploaded file data
-     * 
-     * @param  array  $uploaded_files
+     *
+     * @param  array  $uploadedfiles
      * @return void
      */
-    private function sync_attachments($uploaded_files = [])
-    {
-        // clear all current attachment records
+    private function sync_attachments($uploadedfiles = []) {
+        // Clear all current attachment records.
         message_attachment::clear_all_for_message($this->message);
 
-        // get uploaded attachment files from the stack, if any
-        $uploaded_files = $this->get_uploaded_files('attachments');
+        // Get uploaded attachment files from the stack, if any.
+        $uploadedfiles = $this->get_uploaded_files('attachments');
 
         $count = 0;
 
-        // iterate through each file
-        foreach ($uploaded_files as $file) {
-            // if any exceptions, proceed gracefully to the next
+        // Iterate through each file.
+        foreach ($uploadedfiles as $file) {
+            // If any exceptions, proceed gracefully to the next.
             try {
                 message_attachment::create_for_message($this->message, [
                     'path' => $file['path'],
@@ -178,30 +176,29 @@ class message_file_handler {
 
                 $count++;
             } catch (\Exception $e) {
-                // most likely invalid user, exception thrown due to validation error
-                // log this?
+                // Most likely invalid user, exception thrown due to validation error.
+                // Log this?
                 continue;
             }
         }
 
-        // cache the count for external use
+        // Cache the count for external use.
         block_quickmail_cache::store('qm_msg_attach_count')->put($this->message->get('id'), $count);
     }
 
     /**
      * Returns all of the uploaded file records of the given filearea for this message
-     * 
+     *
      * @param  string  $filearea  "attachments"
      * @return array
      */
-    private function fetch_uploaded_file_data($filearea)
-    {
+    private function fetch_uploaded_file_data($filearea) {
         global $DB;
-
-        $files = $DB->get_records_sql('SELECT * FROM {files} WHERE component = ? AND filearea = ? AND itemid = ? AND filename <> ?', [
-            self::$plugin_name, 
-            $filearea, 
-            $this->message->get('id'), 
+        $sql = 'SELECT * FROM {files} WHERE component = ? AND filearea = ? AND itemid = ? AND filename <> ?';
+        $files = $DB->get_records_sql($sql, [
+            self::$pluginname,
+            $filearea,
+            $this->message->get('id'),
             '.'
         ]);
 
@@ -210,14 +207,13 @@ class message_file_handler {
 
     /**
      * Adds the given path and filename to the given filearea's uploaded file array
-     * 
+     *
      * @param string  $filearea  "attachments"
      * @param string  $path      file path
      * @param string  $filename
      * @return  void
      */
-    private function add_to_uploaded_files($filearea, $path, $filename)
-    {
+    private function add_to_uploaded_files($filearea, $path, $filename) {
         $this->uploaded_files[$filearea][] = [
             'path' => $path,
             'filename' => $filename,
@@ -226,12 +222,11 @@ class message_file_handler {
 
     /**
      * Returns all of the set uploaded file data for the given filearea
-     * 
+     *
      * @param string  $filearea  "attachments"
      * @return array
      */
-    private function get_uploaded_files($filearea)
-    {
+    private function get_uploaded_files($filearea) {
         return ! array_key_exists($filearea, $this->uploaded_files)
             ? []
             : $this->uploaded_files[$filearea];
@@ -239,11 +234,10 @@ class message_file_handler {
 
     /**
      * Returns this handler's course context
-     * 
+     *
      * @return object
      */
-    private function get_context()
-    {
+    private function get_context() {
         return context_course::instance($this->course->id);
     }
 
