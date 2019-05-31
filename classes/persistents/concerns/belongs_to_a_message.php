@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,17 +23,13 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\message;
 use block_quickmail_string;
 
 trait belongs_to_a_message {
-
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Relationships.
     /**
      * Returns the parent message object of this message recipient.
      *
@@ -44,12 +39,7 @@ trait belongs_to_a_message {
         return message::find_or_null($this->get('message_id'));
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Validators.
     /**
      * Validate the message ID.
      *
@@ -57,30 +47,24 @@ trait belongs_to_a_message {
      * @return true|string
      */
     protected function validate_message_id($value) {
-        if ( ! $message = message::find_or_null($value)) {
+        if (!$message = message::find_or_null($value)) {
             return block_quickmail_string::get('message_no_record');
         }
 
         return true;
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Static Methods.
     /**
      * Creates a new persistent record for the given message with the given array of attributes
-     * 
+     *
      * @param  block_quickmail\persistents\message  $message
      * @param  array  $params  [attr => value]
      * @return object (persistent)
      * @throws dml_missing_record_exception
      */
-    public static function create_for_message(message $message, $params = [])
-    {
-        // merge the message id into the creation parameters
+    public static function create_for_message(message $message, $params = []) {
+        // Merge the message id into the creation parameters.
         $params = array_merge(['message_id' => $message->get('id')], $params);
 
         return self::create_new($params);

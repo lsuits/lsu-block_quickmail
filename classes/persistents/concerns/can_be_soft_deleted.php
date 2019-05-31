@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,10 +23,11 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use coding_exception;
 
 trait can_be_soft_deleted {
-
     /**
      * Permanently deletes an entry from the database.
      *
@@ -43,7 +43,7 @@ trait can_be_soft_deleted {
      * Updates an entry from the database to appear as if it has been deleted
      *
      * NOTE: this relies on core moodle persistent class functionality!!!
-     * 
+     *
      * @return bool True on success.
      */
     public function soft_delete() {
@@ -66,7 +66,7 @@ trait can_be_soft_deleted {
         // Hook after delete.
         $this->after_delete($result);
 
-        // refresh the model to reflect changes
+        // Refresh the model to reflect changes.
         $this->read();
 
         return $result;

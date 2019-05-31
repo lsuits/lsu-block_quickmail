@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,42 +21,37 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\messenger\message\data_mapper;
 
 trait maps_user_data {
 
-    public function get_data_firstname()
-    {
+    public function get_data_firstname() {
         return $this->get_user_prop('firstname');
     }
 
-    public function get_data_lastname()
-    {
+    public function get_data_lastname() {
         return $this->get_user_prop('lastname');
     }
 
-    public function get_data_fullname()
-    {
+    public function get_data_fullname() {
         return fullname($this->user);
     }
 
-    public function get_data_middlename()
-    {
+    public function get_data_middlename() {
         return $this->get_user_prop('middlename');
     }
 
-    public function get_data_email()
-    {
+    public function get_data_email() {
         return $this->get_user_prop('email');
     }
 
-    public function get_data_alternatename()
-    {
+    public function get_data_alternatename() {
         return $this->get_user_prop('alternatename');
     }
 
-    private function get_user_prop($prop)
-    {
+    private function get_user_prop($prop) {
         return $this->user->$prop;
     }
 

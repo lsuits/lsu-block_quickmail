@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,7 +23,8 @@
 
 namespace block_quickmail\persistents;
 
-// use \core\persistent;
+defined('MOODLE_INTERNAL') || die();
+
 use core_user;
 use core\ip_utils;
 use block_quickmail_string;
@@ -33,19 +33,15 @@ use block_quickmail\persistents\concerns\can_be_soft_deleted;
 use block_quickmail\persistents\concerns\belongs_to_a_course;
 use block_quickmail\repos\role_repo;
 
-// if ( ! class_exists('\core\persistent')) {
-//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-// }
- 
 class alternate_email extends \block_quickmail\persistents\persistent {
- 
+
     use enhanced_persistent,
         belongs_to_a_course,
         can_be_soft_deleted;
 
     /** Table name for the persistent. */
     const TABLE = 'block_quickmail_alt_emails';
- 
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -87,13 +83,8 @@ class alternate_email extends \block_quickmail\persistents\persistent {
             ],
         ];
     }
- 
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
 
+    // Relationships.
     /**
      * Returns the user object for the user who created this alternate email
      *
@@ -109,9 +100,9 @@ class alternate_email extends \block_quickmail\persistents\persistent {
      * @return stdClass|false
      */
     public function get_course() {
-        $courseId = $this->get('course_id');
+        $courseid = $this->get('course_id');
 
-        return $courseId ? get_course($this->get('course_id')) : false;
+        return $courseid ? get_course($this->get('course_id')) : false;
     }
 
     /**
@@ -120,20 +111,15 @@ class alternate_email extends \block_quickmail\persistents\persistent {
      * @return stdClass|false
      */
     public function get_user() {
-        $userId = $this->get('user_id');
+        $userid = $this->get('user_id');
 
-        return $userId ? core_user::get_user($this->get('user_id')) : false;
+        return $userid ? core_user::get_user($this->get('user_id')) : false;
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  GETTERS
-    /// 
-    ///////////////////////////////////////////////
-    
+    // Getters.
     /**
      * Returns the status of this alternates approval (confirmed or waiting)
-     * 
+     *
      * @return string
      */
     public function get_status() {
@@ -144,7 +130,7 @@ class alternate_email extends \block_quickmail\persistents\persistent {
 
     /**
      * Returns the full name assigned to this alternate
-     * 
+     *
      * @return string
      */
     public function get_fullname() {
@@ -153,13 +139,13 @@ class alternate_email extends \block_quickmail\persistents\persistent {
 
     /**
      * Returns the "scope" (availability) of the usage of the alternate email
-     * 
+     *
      * @return string
      */
     public function get_scope() {
-        // first, get course if assigned to one
-        if ( ! empty($this->get('course_id'))) {
-            // get course short name, defaulting to a generic name if necessary
+        // First, get course if assigned to one.
+        if (!empty($this->get('course_id'))) {
+            // Get course short name, defaulting to a generic name if necessary.
             if ($course = $this->get_course()) {
                 $courseshortname = $course->shortname;
             } else {
@@ -167,9 +153,9 @@ class alternate_email extends \block_quickmail\persistents\persistent {
             }
         }
 
-        if ( ! empty($this->get('course_id')) && ! empty($this->get('user_id'))) {
+        if (!empty($this->get('course_id')) && ! empty($this->get('user_id'))) {
             return block_quickmail_string::get('alternate_availability_only', (object) ['courseshortname' => $courseshortname]);
-        } else if ( ! empty($this->get('course_id'))) {
+        } else if (!empty($this->get('course_id'))) {
             return block_quickmail_string::get('alternate_availability_course', (object) ['courseshortname' => $courseshortname]);
         } else {
             return block_quickmail_string::get('alternate_availability_user');
@@ -178,7 +164,7 @@ class alternate_email extends \block_quickmail\persistents\persistent {
 
     /**
      * Returns the domain of this email
-     * 
+     *
      * @return string
      */
     public function get_domain() {
@@ -189,36 +175,31 @@ class alternate_email extends \block_quickmail\persistents\persistent {
 
     /**
      * Returns any specified allowed_role_ids as an array
-     * 
+     *
      * @return array
      */
     public function get_allowed_roles() {
-        if ( ! $allowed_role_ids = $this->get('allowed_role_ids')) {
+        if (!$allowedroleids = $this->get('allowed_role_ids')) {
             return [];
         }
 
-        return explode(',', $allowed_role_ids);
+        return explode(',', $allowedroleids);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  SETTERS
-    /// 
-    ///////////////////////////////////////////////
-    
+    // Setters.
     /**
      * Convenience method to set the "setup" user ID.
      *
      * @param object|int $idorobject The user ID, or a user object.
      */
     protected function set_setup_user_id($idorobject) {
-        $user_id = $idorobject;
-        
+        $usersid = $idorobject;
+
         if (is_object($idorobject)) {
-            $user_id = $idorobject->id;
+            $usersid = $idorobject->id;
         }
-        
-        $this->raw_set('setup_user_id', $user_id);
+
+        $this->raw_set('setup_user_id', $usersid);
     }
 
     /**
@@ -227,13 +208,13 @@ class alternate_email extends \block_quickmail\persistents\persistent {
      * @param object|int $idorobject The course ID, or a course object.
      */
     protected function set_course_id($idorobject) {
-        $course_id = $idorobject;
-        
+        $coursesid = $idorobject;
+
         if (is_object($idorobject)) {
-            $course_id = $idorobject->id;
+            $coursesid = $idorobject->id;
         }
-        
-        $this->raw_set('course_id', $course_id);
+
+        $this->raw_set('course_id', $coursesid);
     }
 
     /**
@@ -242,13 +223,13 @@ class alternate_email extends \block_quickmail\persistents\persistent {
      * @param object|int $idorobject The user ID, or a user object.
      */
     protected function set_user_id($idorobject) {
-        $user_id = $idorobject;
-        
+        $usersid = $idorobject;
+
         if (is_object($idorobject)) {
-            $user_id = $idorobject->id;
+            $usersid = $idorobject->id;
         }
-        
-        $this->raw_set('user_id', $user_id);
+
+        $this->raw_set('user_id', $usersid);
     }
 
     /**
@@ -284,105 +265,87 @@ class alternate_email extends \block_quickmail\persistents\persistent {
         $this->raw_set('email', $email);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
-    //
-
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Validators.
+    // Custom Methods.
     /**
      * Reports whether or not this alternate email is in the "allowed email domain" list
-     * 
+     *
      * @return bool
      */
-    public function is_in_allowed_sending_domains()
-    {
+    public function is_in_allowed_sending_domains() {
         global $CFG;
-        
-        // if no config set, not allowed!!
-        if ( ! isset($CFG->allowedemaildomains) || empty(trim($CFG->allowedemaildomains))) {
+
+        // If no config set, not allowed!!
+        if (!isset($CFG->allowedemaildomains) || empty(trim($CFG->allowedemaildomains))) {
             return false;
         }
 
-        // get the allowed domain array
+        // Get the allowed domain array.
         $alloweddomains = array_map('trim', explode("\n", $CFG->allowedemaildomains));
-        
-        // get this alternate email
+
+        // Get this alternate email.
         $email = $this->get('email');
 
         return ip_utils::is_domain_in_allowed_list(substr($email, strpos($email, '@') + 1), $alloweddomains);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Static Methods.
     /**
      * Returns all alternate emails belonging to the given user id
-     * 
-     * @param  int     $user_id
+     *
+     * @param  int     $usersid
      * @return array
      */
-    public static function get_all_for_user($user_id)
-    {
-        // get all alternate emails set up by this user, if any
-        return self::get_records(['setup_user_id' => $user_id, 'timedeleted' => 0]);
+    public static function get_all_for_user($usersid) {
+        // Get all alternate emails set up by this user, if any.
+        return self::get_records(['setup_user_id' => $usersid, 'timedeleted' => 0]);
     }
 
     /**
      * Returns an array of alternate emails available to the given course/user combination
      *
-     * @param  int        $course_id
+     * @param  int        $coursesid
      * @param  mdl_user   $user
-     * @param  bool       $include_user_email    whether or not to include this user's email in the results
+     * @param  bool       $includeuseremail    whether or not to include this user's email in the results
      * @return array   (alternate_email id => alternate_email title)
      */
-    public static function get_flat_array_for_course_user($course_id, $user, $include_user_email = true)
-    {
-        // get all validated alternates available to this user
-        $user_alternate_emails = self::get_records(['user_id' => $user->id, 'is_validated' => 1, 'timedeleted' => 0]);
+    public static function get_flat_array_for_course_user($coursesid, $user, $includeuseremail = true) {
+        // Get all validated alternates available to this user.
+        $useralternateemails = self::get_records(['user_id' => $user->id, 'is_validated' => 1, 'timedeleted' => 0]);
 
-        // include user's email in results if necessary
-        $initial = $include_user_email
+        // Include user's email in results if necessary.
+        $initial = $includeuseremail
             ? [0 => $user->email]
             : [];
 
-        $results = array_reduce($user_alternate_emails, function ($carry, $alternate_email) {
-            $carry[$alternate_email->get('id')] = $alternate_email->get('email');
-            
+        $results = array_reduce($useralternateemails, function ($carry, $alternateemail) {
+            $carry[$alternateemail->get('id')] = $alternateemail->get('email');
+
             return $carry;
         }, $initial);
 
-        // get all validated alternates available to this course
-        $course_alternate_emails = self::get_records(['course_id' => $course_id, 'user_id' => 0, 'is_validated' => 1, 'timedeleted' => 0]);
+        // Get all validated alternates available to this course.
+        $coursealternateemails = self::get_records(
+            ['course_id' => $coursesid, 'user_id' => 0, 'is_validated' => 1, 'timedeleted' => 0]
+        );
 
-        $user_role_ids = role_repo::get_user_roles_in_course($user->id, $course_id);
+        $userroleids = role_repo::get_user_roles_in_course($user->id, $coursesid);
 
-        // iterate through all course-scoped alternates
-        foreach ($course_alternate_emails as $alternate) {
-            $allowed_role_ids = $alternate->get_allowed_roles();
+        // Iterate through all course-scoped alternates.
+        foreach ($coursealternateemails as $alternate) {
+            $allowedroleids = $alternate->get_allowed_roles();
 
-            // if no roles required for this alternate, add to results
-            if (empty($allowed_role_ids)) {
+            // If no roles required for this alternate, add to results.
+            if (empty($allowedroleids)) {
                 $results[$alternate->get('id')] = $alternate->get('email');
-            
-            // otherwise, if this user has a role within the allowed roles, add to results
-            } else if ( ! empty(array_intersect($user_role_ids, $allowed_role_ids))) {
+
+                // Otherwise, if this user has a role within the allowed roles, add to results.
+            } else if (!empty(array_intersect($userroleids, $allowedroleids))) {
                 $results[$alternate->get('id')] = $alternate->get('email');
             }
         }
 
         return $results;
     }
- 
+
 }

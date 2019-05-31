@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\notification;
 
 trait can_have_a_notification {
@@ -33,8 +34,7 @@ trait can_have_a_notification {
      *
      * @return notification|null
      */
-    public function get_notification()
-    {
+    public function get_notification() {
         return notification::find_or_null($this->get('notification_id'));
     }
 
@@ -43,9 +43,8 @@ trait can_have_a_notification {
      *
      * @return notification_type_interface|null
      */
-    public function get_notification_type_interface()
-    {
-        if ( ! $notification = $this->get_notification()) {
+    public function get_notification_type_interface() {
+        if (!$notification = $this->get_notification()) {
             return null;
         }
 
