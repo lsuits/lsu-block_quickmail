@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\validators;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\validators\validator;
 use block_quickmail_string;
 use block_quickmail_config;
@@ -32,41 +33,31 @@ use block_quickmail\exceptions\body_parser_exception;
 
 class edit_notification_form_validator extends validator {
 
-    // extra_params => notification_type          required
-    // extra_params => substitution_code_classes  default: (['user'])
-    // extra_params => required_condition_keys    default: ([])
+    /**
+     * Extra_params => notification_type          required
+     * Extra_params => substitution_code_classes  default: (['user'])
+     * Extra_params => required_condition_keys    default: ([])
+     */
 
     /**
      * Defines this specific validator's validation rules
-     * 
+     *
      * @return void
      */
-    public function validator_rules()
-    {
+    public function validator_rules() {
         $this->validate_notification_name();
-
         $this->validate_message_subject();
-
         $this->validate_message_body();
-
         $this->validate_message_body_codes();
-
         $this->validate_message_type();
-
-        // commenting out as this should now be handled by front-end validation rules
-        // $this->validate_schedule_params();
-
-        // commenting out as this should now be handled by front-end validation rules
-        // $this->validate_condition_params();
     }
 
     /**
      * Checks that the notification has a valid name, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_notification_name()
-    {
+    private function validate_notification_name() {
         if ($this->is_missing('notification_name')) {
             $this->add_error(block_quickmail_string::get('missing_notification_name'));
         }
@@ -78,11 +69,10 @@ class edit_notification_form_validator extends validator {
 
     /**
      * Checks that the notification has a valid subject line, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_message_subject()
-    {
+    private function validate_message_subject() {
         if ($this->is_missing('message_subject')) {
             $this->add_error(block_quickmail_string::get('missing_subject'));
         }
@@ -90,16 +80,15 @@ class edit_notification_form_validator extends validator {
 
     /**
      * Checks that the message body exists, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_message_body()
-    {
+    private function validate_message_body() {
         if ($this->is_missing('message_body')) {
             $this->add_error(block_quickmail_string::get('missing_body'));
         }
 
-        if ( ! array_key_exists('text', $this->form_data->message_body)) {
+        if (!array_key_exists('text', $this->form_data->message_body)) {
             $this->add_error(block_quickmail_string::get('missing_body'));
         }
 
@@ -110,39 +99,39 @@ class edit_notification_form_validator extends validator {
 
     /**
      * Checks that the selected "message type" is allowed per site config, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_message_type()
-    {
-        if ( ! in_array($this->form_data->message_type, block_quickmail_config::get_supported_message_types())) {
+    private function validate_message_type() {
+        if (!in_array($this->form_data->message_type, block_quickmail_config::get_supported_message_types())) {
             $this->add_error(block_quickmail_string::get('invalid_send_method'));
         }
 
-        $supported_option = $this->get_config('message_types_available');
+        $supportedoption = $this->get_config('message_types_available');
 
-        if ($supported_option == 'all') {
+        if ($supportedoption == 'all') {
             return;
         }
 
-        if ($supported_option !== $this->form_data->message_type) {
+        if ($supportedoption !== $this->form_data->message_type) {
             $this->add_error(block_quickmail_string::get('invalid_send_method'));
         }
     }
 
     /**
      * Checks that the message body does not contain any unsupported custom user data keys, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_message_body_codes()
-    {
-        // attempt to validate the message body to make sure any substitution codes are
-        // formatted properly and are all allowed
+    private function validate_message_body_codes() {
+        // Attempt to validate the message body to make sure any substitution codes are
+        // formatted properly and are all allowed.
         try {
-            $errors = body_substitution_code_parser::validate_body($this->form_data->message_body['text'], $this->get_allowed_substitution_codes());
-            
-            foreach($errors as $error) {
+            $errors = body_substitution_code_parser::validate_body(
+                          $this->form_data->message_body['text'],
+                          $this->get_allowed_substitution_codes());
+
+            foreach ($errors as $error) {
                 $this->add_error($error);
             }
         } catch (body_parser_exception $e) {
@@ -152,19 +141,18 @@ class edit_notification_form_validator extends validator {
 
     /**
      * Checks that the schedule time unit is given and valid for schedulable notifications
-     * 
+     *
      * @return void
      */
-    public function validate_schedule_params()
-    {
+    public function validate_schedule_params() {
         if ($this->is_schedulable_notification()) {
-            // if the submitted time unit is not supported
-            if ( ! in_array($this->form_data->schedule_time_unit, ['day', 'week', 'month'])) {
+            // If the submitted time unit is not supported.
+            if (!in_array($this->form_data->schedule_time_unit, ['day', 'week', 'month'])) {
                 $this->add_error(block_quickmail_string::get('invalid_schedule_time_unit'));
             }
 
-            // if the submitted time amount is not supported
-            if ( ! is_numeric($this->form_data->schedule_time_amount)) {
+            // If the submitted time amount is not supported.
+            if (!is_numeric($this->form_data->schedule_time_amount)) {
                 $this->add_error(block_quickmail_string::get('invalid_schedule_time_amount'));
             }
         }
@@ -172,19 +160,18 @@ class edit_notification_form_validator extends validator {
 
     /**
      * Checks that the given condition params are valid for notification
-     * 
+     *
      * @return void
      */
-    public function validate_condition_params()
-    {
-        if ( ! empty($this->get_required_condition_keys())) {
-            // if the submitted time unit is not supported
-            if ( ! in_array($this->form_data->condition_time_unit, ['day', 'week', 'month'])) {
+    public function validate_condition_params() {
+        if (!empty($this->get_required_condition_keys())) {
+            // If the submitted time unit is not supported.
+            if (!in_array($this->form_data->condition_time_unit, ['day', 'week', 'month'])) {
                 $this->add_error(block_quickmail_string::get('invalid_condition_time_unit'));
             }
 
-            // if the submitted time amount is not supported
-            if ( ! is_numeric($this->form_data->condition_time_amount)) {
+            // If the submitted time amount is not supported.
+            if (!is_numeric($this->form_data->condition_time_amount)) {
                 $this->add_error(block_quickmail_string::get('invalid_condition_time_amount'));
             }
         }
@@ -192,31 +179,28 @@ class edit_notification_form_validator extends validator {
 
     /**
      * Returns an array of the substitution codes that are allowed for this notification
-     * 
+     *
      * @return array
      */
-    private function get_allowed_substitution_codes()
-    {
+    private function get_allowed_substitution_codes() {
         return $this->get_extra_param_value('substitution_code_classes', ['user']);
     }
 
     /**
      * Returns an array of the condition keys that are required for this notification
-     * 
+     *
      * @return array
      */
-    private function get_required_condition_keys()
-    {
+    private function get_required_condition_keys() {
         return $this->get_extra_param_value('required_condition_keys', []);
     }
 
     /**
      * Reports whether or not this is a schedulable notification
-     * 
+     *
      * @return bool
      */
-    private function is_schedulable_notification()
-    {
+    private function is_schedulable_notification() {
         return $this->check_extra_params_value('notification_type', 'reminder');
     }
 
