@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,22 +23,24 @@
 
 namespace block_quickmail\repos\pagination;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\pagination\paginated;
 
 class paginator {
 
-    public $total_count;
+    public $totalcount;
     public $page;
-    public $per_page;
-    public $page_uri;
-    public $total_pages;
+    public $perpage;
+    public $pageuri;
+    public $totalpages;
     public $offset;
 
-    public function __construct($total_count, $page = 1, $per_page = 10, $page_uri = '') {
-        $this->total_count = $total_count;
+    public function __construct($totalcount, $page = 1, $perpage = 10, $pageuri = '') {
+        $this->total_count = $totalcount;
         $this->page = $page;
-        $this->per_page = $per_page;
-        $this->page_uri = $page_uri;
+        $this->per_page = $perpage;
+        $this->page_uri = $pageuri;
         $this->set_page_lower();
         $this->set_total_pages();
         $this->set_page_upper();
@@ -51,55 +52,47 @@ class paginator {
      *
      * @return object
      */
-    public function paginated()
-    {
+    public function paginated() {
         return new paginated($this);
     }
 
     /**
      * Sets page number to "1" if input index is less than 1
-     * 
+     *
      * @return void
      */
-    private function set_page_lower()
-    {
-        $this->page = $this->page <= 0 
-            ? 1 
+    private function set_page_lower() {
+        $this->page = $this->page <= 0
+            ? 1
             : $this->page;
     }
 
     /**
      * Sets calculated count of total pages based on set results and parameters
-     * 
+     *
      * @return void
      */
-    private function set_total_pages()
-    {
+    private function set_total_pages() {
         $this->total_pages = (int) ceil($this->total_count / $this->per_page);
     }
 
     /**
      * Sets page number to maximum possible page if set page exceeds total pages
-     * 
+     *
      * @return void
      */
-    private function set_page_upper()
-    {
+    private function set_page_upper() {
         $this->page = min($this->page, $this->total_pages);
     }
 
     /**
      * Sets a calculated offset used to slice the results
-     * 
+     *
      * @return int
      */
-    private function set_offset()
-    {
+    private function set_offset() {
         $offset = ($this->page - 1) * $this->per_page;
-        
-        $this->offset = $offset < 0 
-            ? 0 
-            : $offset;
+        $this->offset = $offset < 0 ? 0 : $offset;
     }
 
 }

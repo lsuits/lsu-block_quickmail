@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,9 +23,11 @@
 
 namespace block_quickmail\repos\interfaces;
 
+defined('MOODLE_INTERNAL') || die();
+
 interface notification_repo_interface {
-	
-    public static function get_all_for_course($course_id, $user_id = null, $params = []);
-    public static function get_notification_for_course_user_or_null($notification_id, $course_id, $user_id);
+
+    public static function get_all_for_course($courseid, $userid = null, $params = []);
+    public static function get_notification_for_course_user_or_null($notificationid, $courseid, $userid);
 
 }

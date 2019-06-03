@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,16 +23,18 @@
 
 namespace block_quickmail\repos;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\repo;
 use block_quickmail\repos\interfaces\role_repo_interface;
 
 class role_repo extends repo implements role_repo_interface {
 
-    public $default_sort = 'id';
+    public $defaultsort = 'id';
 
-    public $default_dir = 'asc';
-    
-    public $sortable_attrs = [
+    public $defaultdir = 'asc';
+
+    public $sortableattrs = [
         'id' => 'id',
     ];
 
@@ -41,27 +42,26 @@ class role_repo extends repo implements role_repo_interface {
      * Returns an array of all roles that are allowed to be selected to message in the given course
      *
      * @param  object  $course
-     * @param  object  $course_context  optional, if not given, will be resolved
+     * @param  object  $coursecontext  optional, if not given, will be resolved
      * @return array   keyed by role id
      */
-    public static function get_course_selectable_roles($course, $course_context = null)
-    {
-        // if a context was not passed, pull one now
-        $course_context = $course_context ?: \context_course::instance($course->id);
+    public static function get_course_selectable_roles($course, $coursecontext = null) {
+        // If a context was not passed, pull one now.
+        $coursecontext = $coursecontext ?: \context_course::instance($course->id);
 
-        // get configured, selectable role ids
-        $allowed_role_ids = \block_quickmail_config::get_role_selection_array($course);
+        // Get configured, selectable role ids.
+        $allowedroleids = \block_quickmail_config::get_role_selection_array($course);
 
-        // if no roles configured, return no results
-        if ( ! $allowed_role_ids) {
+        // If no roles configured, return no results.
+        if (!$allowedroleids) {
             return [];
         }
-        
-        // get all roles for context, keyed by id
-        $all_course_roles = get_roles_used_in_context($course_context);
-        
-        // return an intesection of all roles, and those allowed by config
-        $roles = array_intersect_key($all_course_roles, array_flip($allowed_role_ids));
+
+        // Get all roles for context, keyed by id.
+        $allcourseroles = get_roles_used_in_context($coursecontext);
+
+        // Return an intesection of all roles, and those allowed by config.
+        $roles = array_intersect_key($allcourseroles, array_flip($allowedroleids));
 
         return $roles;
     }
@@ -71,13 +71,12 @@ class role_repo extends repo implements role_repo_interface {
      *
      * Note: if a course or course id is given, the returned array will limit to course-level configuration,
      * otherwise, defaults to block-level configuration.
-     * 
+     *
      * @param  mixed $courseorid
      * @return array  [role id => role name]
      */
-    public static function get_alternate_email_role_selection_array($courseorid = null)
-    {
-        if ( ! $allowed_role_ids = \block_quickmail_config::get_role_selection_array($courseorid)) {
+    public static function get_alternate_email_role_selection_array($courseorid = null) {
+        if (!$allowedroleids = \block_quickmail_config::get_role_selection_array($courseorid)) {
             return [];
         }
 
@@ -85,8 +84,8 @@ class role_repo extends repo implements role_repo_interface {
 
         $roles = $DB->get_records('role', null, 'sortorder ASC');
 
-        return array_reduce($roles, function ($carry, $role) use ($allowed_role_ids) {
-            if (in_array($role->id, $allowed_role_ids)) {
+        return array_reduce($roles, function ($carry, $role) use ($allowedroleids) {
+            if (in_array($role->id, $allowedroleids)) {
                 $carry[$role->id] = $role->name;
             }
 
@@ -96,21 +95,20 @@ class role_repo extends repo implements role_repo_interface {
 
     /**
      * Returns an array of role ids that are assigned to a given user id in a given course id
-     * 
-     * @param  int             $user_id
-     * @param  int             $course_id
-     * @param  context_course  $course_context   optional, will be fetched if not given
+     *
+     * @param  int             $userid
+     * @param  int             $courseid
+     * @param  context_course  $coursecontext   optional, will be fetched if not given
      * @return array
      */
-    public static function get_user_roles_in_course($user_id, $course_id, $course_context = null)
-    {
-        // if a context was not passed, pull one now
-        $course_context = $course_context ?: \context_course::instance($course_id);
+    public static function get_user_roles_in_course($userid, $courseid, $coursecontext = null) {
+        // If a context was not passed, pull one now.
+        $coursecontext = $coursecontext ?: \context_course::instance($courseid);
 
-        // get the user's roles in the course context (no parents)
-        $roles = get_user_roles($course_context, $user_id, false);
+        // Get the user's roles in the course context (no parents).
+        $roles = get_user_roles($coursecontext, $userid, false);
 
-        // return as a simple array of role ids
+        // Return as a simple array of role ids.
         return array_values(array_map(function($role) {
             return (int) $role->roleid;
         }, $roles));

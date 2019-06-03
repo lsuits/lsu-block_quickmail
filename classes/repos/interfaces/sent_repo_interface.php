@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,8 +23,10 @@
 
 namespace block_quickmail\repos\interfaces;
 
+defined('MOODLE_INTERNAL') || die();
+
 interface sent_repo_interface {
 
-    public static function get_for_user($user_id, $course_id = 0, $params = []);
+    public static function get_for_user($userid, $courseid = 0, $params = []);
 
 }
