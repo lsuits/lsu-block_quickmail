@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,22 +21,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\persistents\interfaces;
 
 interface schedulable_interface {
 
-    // PROPS
-    // last_run_at
-    // next_run_at
-    // is_running
-    
+    /*
+     * PROPS
+     * last_run_at
+     * next_run_at
+     * is_running
+     */
+
     public function get_schedule();
-    // protected function after_create();
     public function get_last_run_time();
     public function get_next_run_time();
     public function set_next_run_time();
     public function is_running();
-    public function toggle_running_status($is_running);
+    public function toggle_running_status($isrunning);
     public function run_scheduled();
     public function handle_schedule_pre_run_actions();
     public function handle_schedule_post_run_actions();

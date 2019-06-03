@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,27 +21,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\persistents;
 
-// use \core\persistent;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
 use block_quickmail\persistents\concerns\belongs_to_a_user;
 use block_quickmail\persistents\message;
- 
-// if ( ! class_exists('\core\persistent')) {
-//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-// }
 
 class message_recipient extends \block_quickmail\persistents\persistent {
- 
-    use enhanced_persistent, 
+
+    use enhanced_persistent,
         belongs_to_a_message,
         belongs_to_a_user;
 
     /** Table name for the persistent. */
     const TABLE = 'block_quickmail_msg_recips';
- 
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -66,105 +62,80 @@ class message_recipient extends \block_quickmail\persistents\persistent {
             ],
         ];
     }
- 
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
 
+    // Relationships.
     /**
      * Returns this message recipient's parent message
-     * 
+     *
      * @return message
      */
-    public function get_message()
-    {
-        $message_id = $this->get('message_id');
+    public function get_message() {
+        $messageid = $this->get('message_id');
 
-        return new message($message_id);
+        return new message($messageid);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  GETTERS
-    /// 
-    ///////////////////////////////////////////////
-    
+    // Getters.
     /**
      * Reports whether or not this recipient has been messaged
-     * 
+     *
      * @return bool
      */
-    public function has_been_sent_to()
-    {
+    public function has_been_sent_to() {
         return (bool) $this->get('sent_at');
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  SETTERS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Setters.
     /**
      * Update the recipient as having been sent to right now
      *
      * Optionally, save the moodle message id on the recipient
-     * 
-     * @param  int        $moodle_message_id
+     *
+     * @param  int        $moodlemessageid
      * @return void
      */
-    public function mark_as_sent_to($moodle_message_id = 0)
-    {
+    public function mark_as_sent_to($moodlemessageid = 0) {
         $this->set('sent_at', time());
 
-        if ($moodle_message_id) {
-            $this->set('moodle_message_id', (int) $moodle_message_id);
+        if ($moodlemessageid) {
+            $this->set('moodle_message_id', (int) $moodlemessageid);
         }
-        
+
         $this->update();
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Static Methods.
     /**
      * Deletes all recipients for this message
-     * 
+     *
      * @param  message $message
      * @return void
      */
-    public static function clear_all_for_message(message $message)
-    {
+    public static function clear_all_for_message(message $message) {
         global $DB;
 
-        // delete all recipients belonging to this message
+        // Delete all recipients belonging to this message.
         $DB->delete_records('block_quickmail_msg_recips', ['message_id' => $message->get('id')]);
     }
 
     /**
      * Update the recipient belonging to the given message and user as have been sent to right now
-     * 
+     *
      * @param  message    $message
      * @param  core_user  $user
-     * @param  int        $moodle_message_id
+     * @param  int        $moodlemessageid
      * @return void
      */
-    public static function mark_as_sent(message $message, $user, $moodle_message_id = 0)
-    {
+    public static function mark_as_sent(message $message, $user, $moodlemessageid = 0) {
         $recipient = self::get_record([
-            'message_id' => $message->get('id'), 
+            'message_id' => $message->get('id'),
             'user_id' => $user->id
         ]);
 
         $recipient->set('sent_at', time());
-        $recipient->set('moodle_message_id', (int) $moodle_message_id);
-        
+        $recipient->set('moodle_message_id', (int) $moodlemessageid);
+
         $recipient->update();
     }
- 
+
 }
