@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\services;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\alternate_email;
 use block_quickmail\validators\create_alternate_form_validator;
 use block_quickmail\exceptions\validation_exception;
@@ -38,72 +39,76 @@ class alternate_manager {
 
     /**
      * Creates an alternate email for the given user with the given data
-     * 
+     *
      * @param  object  $user  the creating user
-     * @param  int     $course_id  (optional) a course id to scope this alternate to if desired
+     * @param  int     $courseid  (optional) a course id to scope this alternate to if desired
      * @param  array  $params [availability,email,firstname,lastname,allowed_role_ids]
      * @return alternate_email
      */
-    public static function create_alternate_for_user($user, $course_id = 0, $params)
-    {
-        // validate form data
+    public static function create_alternate_for_user($user, $courseid = 0, $params) {
+        // Validate form data.
         $validator = new create_alternate_form_validator((object) $params);
         $validator->validate();
 
-        // if errors, throw exception
+        // If errors, throw exception.
         if ($validator->has_errors()) {
             throw new validation_exception(
-                block_quickmail_string::get('validation_exception_message'), 
+                block_quickmail_string::get('validation_exception_message'),
                 $validator->errors
             );
         }
 
-        // alternate_availability_only (user + course)
-        // alternate_availability_user (user)
-        // alternate_availability_course (course)
+        /*
+         * Alternate_availability_only (user + course)
+         * Alternate_availability_user (user)
+         * Alternate_availability_course (course)
+         */
 
-        // if an availability requiring a scoped course is selected
+        // If an availability requiring a scoped course is selected.
         if ($params['availability'] !== 'user') {
-            // if no course was given, throw an error
-            if ( ! $course_id) {
+            // If no course was given, throw an error.
+            if (!$courseid) {
                 throw new validation_exception(
                     block_quickmail_string::get('validation_exception_message'), [
                     block_quickmail_string::get('course_required')
-                ]);
+                    ]);
             }
         }
 
-        // if this is an availability which does not allow for role ids, clear the param
+        // If this is an availability which does not allow for role ids, clear the param.
         if (in_array($params['availability'], ['user', 'only'])) {
             $params['allowed_role_ids'] = '';
         }
 
-        // if we still have allowed_role_ids, make sure this user is allowed to assign them
-        if ( ! empty($params['allowed_role_ids'])) {
-            // pull the course context to determine capability of this user
-            $course_context = context_course::instance($course_id);
-            
-            // determine if this user is able to assign shared role ids in this course
-            if ( ! $allow_course_alternates = block_quickmail_plugin::user_has_capability('allowcoursealternate', $user, $course_context)) {
+        // If we still have allowed_role_ids, make sure this user is allowed to assign them.
+        if (!empty($params['allowed_role_ids'])) {
+            // Pull the course context to determine capability of this user.
+            $coursecontext = context_course::instance($courseid);
+
+            // Determine if this user is able to assign shared role ids in this course.
+            if (!$allowcoursealternates = block_quickmail_plugin::user_has_capability(
+                                              'allowcoursealternate',
+                                              $user,
+                                              $coursecontext)) {
                 throw new validation_exception(
                     block_quickmail_string::get('validation_exception_message'), [
                     block_quickmail_string::get('coursealternate_not_allowed')
-                ]);
+                    ]);
             }
         }
 
-        // create the new alternate email
+        // Create the new alternate email.
         $alternate = alternate_email::create_new([
             'setup_user_id' => $user->id,
             'email' => $params['email'],
             'firstname' => $params['firstname'],
             'lastname' => $params['lastname'],
             'allowed_role_ids' => $params['allowed_role_ids'] ? implode(',', $params['allowed_role_ids']) : '',
-            'course_id' => $course_id,
+            'course_id' => $courseid,
             'user_id' => $params['availability'] !== 'course' ? $user->id : 0,
         ]);
 
-        // send the set up user a confirmation email
+        // Send the set up user a confirmation email.
         self::send_confirmation_email($alternate);
 
         return $alternate;
@@ -111,22 +116,21 @@ class alternate_manager {
 
     /**
      * Resends a confirmation email to the alternate email's set up user (if the given user is the set up user)
-     * 
-     * @param  int     $alternate_email_id
+     *
+     * @param  int     $alternateemailid
      * @param  object  $user
      * @return void
      */
-    public static function resend_confirmation_email_for_user($alternate_email_id, $user)
-    {
-        // attempt to fetch the alternate
-        if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
+    public static function resend_confirmation_email_for_user($alternateemailid, $user) {
+        // Attempt to fetch the alternate.
+        if (!$alternate = alternate_email::find_or_null($alternateemailid)) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
                     block_quickmail_string::get('alternate_email_not_found')
                 ]);
         }
 
-        // make sure the requesting user is this alternate's setup user
+        // Make sure the requesting user is this alternate's setup user.
         if ($user->id !== $alternate->get('setup_user_id')) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
@@ -134,7 +138,7 @@ class alternate_manager {
                 ]);
         }
 
-        // make sure the alternate is not already confirmed (validated)
+        // Make sure the alternate is not already confirmed (validated).
         if ($alternate->get('is_validated')) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
@@ -147,23 +151,22 @@ class alternate_manager {
 
     /**
      * Updates an alternate email to confirmed status given the correct token and user
-     * 
-     * @param  int     $alternate_email_id
+     *
+     * @param  int     $alternateemailid
      * @param  string  $token               generated by moodle, comes from the confirmation email's URL
      * @param  object  $user                the requesting user
      * @return alternate_email
      */
-    public static function confirm_alternate_for_user($alternate_email_id, $token, $user)
-    {
-        // attempt to fetch the alternate
-        if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
+    public static function confirm_alternate_for_user($alternateemailid, $token, $user) {
+        // Attempt to fetch the alternate.
+        if (!$alternate = alternate_email::find_or_null($alternateemailid)) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
                     block_quickmail_string::get('alternate_email_not_found')
                 ]);
         }
 
-        // make sure the alternate is not already confirmed (validated)
+        // Make sure the alternate is not already confirmed (validated).
         if ($alternate->get('is_validated')) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
@@ -173,8 +176,8 @@ class alternate_manager {
 
         global $DB;
 
-        // fetch the user key from the token
-        if ( ! $key = $DB->get_record('user_private_key', [
+        // Fetch the user key from the token.
+        if (!$key = $DB->get_record('user_private_key', [
             'instance' => $alternate->get('id'),
             'value' => $token,
             'userid' => $user->id,
@@ -186,11 +189,11 @@ class alternate_manager {
                 ]);
         }
 
-        // mark this alternate email as validated
+        // Mark this alternate email as validated.
         $alternate->set('is_validated', 1);
         $alternate->update();
 
-        // delete the key
+        // Delete the key.
         $DB->delete_records('user_private_key', ['id' => $key->id]);
 
         return $alternate;
@@ -198,22 +201,21 @@ class alternate_manager {
 
     /**
      * Attempts to soft delete the alternate email address for a given user
-     * 
-     * @param  int  $alternate_email_id
+     *
+     * @param  int  $alternateemailid
      * @param  object  $user        the user attempting to delete the alternate
      * @return bool
      */
-    public static function delete_alternate_email_for_user($alternate_email_id, $user)
-    {
-        // attempt to fetch the alternate
-        if ( ! $alternate = alternate_email::find_or_null($alternate_email_id)) {
+    public static function delete_alternate_email_for_user($alternateemailid, $user) {
+        // Attempt to fetch the alternate.
+        if (!$alternate = alternate_email::find_or_null($alternateemailid)) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
                     block_quickmail_string::get('alternate_email_not_found')
                 ]);
         }
 
-        // make sure the given user is the owner of this alternate
+        // Make sure the given user is the owner of this alternate.
         if ($alternate->get('setup_user_id') !== $user->id) {
             throw new validation_exception(
                 block_quickmail_string::get('validation_exception_message'), [
@@ -221,7 +223,7 @@ class alternate_manager {
                 ]);
         }
 
-        // attempt to soft delete alternate
+        // Attempt to soft delete alternate.
         $alternate->soft_delete();
 
         return true;
@@ -230,43 +232,43 @@ class alternate_manager {
     /**
      * Sends a confirmation email to the given alternate's email
      *
-     * This email will contain a confirmation URL with generated token that will need to be hit by the user for confirmation of the alternate
-     * 
-     * @param  alternate_email  $alternate_email
+     * This email will contain a confirmation URL with a generated token
+     * that will need to be hit by the user for confirmation of the alternate
+     *
+     * @param  alternate_email  $alternateemail
      * @return void
      */
-    private static function send_confirmation_email($alternate_email)
-    {
-        // get the user who created this alternate
-        $user = $alternate_email->get_setup_user();
+    private static function send_confirmation_email($alternateemail) {
+        // Get the user who created this alternate.
+        $user = $alternateemail->get_setup_user();
 
-        // generate, or fetch existing, token for this user and alternate instance
-        // note: this does not expire!
-        $token = get_user_key('blocks/quickmail', $user->id, $alternate_email->get('id'));
+        // Generate, or fetch existing, token for this user and alternate instance.
+        // Note: this does not expire!
+        $token = get_user_key('blocks/quickmail', $user->id, $alternateemail->get('id'));
 
-        // build the confirmation "landing" url
-        $approval_url = new moodle_url('/blocks/quickmail/alternate.php', [
+        // Build the confirmation "landing" url.
+        $approvalurl = new moodle_url('/blocks/quickmail/alternate.php', [
             'action' => 'confirm',
-            'id' => $alternate_email->get('id'), 
+            'id' => $alternateemail->get('id'),
             'token' => $token
         ]);
 
-        // construct the confirmation email content
+        // Construct the confirmation email content.
         $a = (object)[];
-        $a->email = $alternate_email->get('email');
-        $a->url = html_writer::link($approval_url, $approval_url->out());
+        $a->email = $alternateemail->get('email');
+        $a->url = html_writer::link($approvalurl, $approvalurl->out());
         $a->plugin_name = block_quickmail_string::get('pluginname');
         $a->fullname = fullname($user);
-        $html_body = block_quickmail_string::get('alternate_body', $a);
-        $body = strip_tags($html_body);
+        $htmlbody = block_quickmail_string::get('alternate_body', $a);
+        $body = strip_tags($htmlbody);
 
-        // send the email
+        // Send the email.
         $emailer = new block_quickmail_emailer(
-            $alternate_email->get_setup_user(), 
-            block_quickmail_string::get('alternate_subject'), 
+            $alternateemail->get_setup_user(),
+            block_quickmail_string::get('alternate_subject'),
             $body
         );
-        $emailer->to_email($alternate_email->get('email'));
+        $emailer->to_email($alternateemail->get('email'));
         $emailer->send();
     }
 

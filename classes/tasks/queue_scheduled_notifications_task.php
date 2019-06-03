@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\tasks;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\task\scheduled_task;
 use block_quickmail_string;
 use block_quickmail_config;
@@ -32,9 +33,8 @@ use block_quickmail\tasks\run_schedulable_notification_adhoc_task;
 use core\task\manager as task_manager;
 
 class queue_scheduled_notifications_task extends scheduled_task {
-    
-    public function get_name()
-    {
+
+    public function get_name() {
         return block_quickmail_string::get('queue_scheduled_notifications_task');
     }
 
@@ -44,28 +44,27 @@ class queue_scheduled_notifications_task extends scheduled_task {
      *
      * Required custom data: none
      */
-    public function execute()
-    {
-        // if notifications are turned on
+    public function execute() {
+        // If notifications are turned on.
         if (block_quickmail_config::get('notifications_enabled')) {
-            // fetch all schedulables that should be fired right now
+            // Fetch all schedulables that should be fired right now.
             foreach (notification::get_all_ready_schedulables() as $notification) {
-                // only send to a course that is active and visible
+                // Only send to a course that is active and visible.
                 if ($notification->should_send_to_course()) {
-                    // get the schedulable notification
+                    // Get the schedulable notification.
                     $schedulable = $notification->get_notification_type_interface();
 
-                    // prevent the schedulable from being duplicated preemptively
+                    // Prevent the schedulable from being duplicated preemptively.
                     $schedulable->toggle_running_status(true);
-                    
-                    // fire a task for each
+
+                    // Fire a task for each.
                     $task = new run_schedulable_notification_adhoc_task();
 
                     $task->set_custom_data([
                         'notification_id' => $notification->get('id')
                     ]);
 
-                    // queue job
+                    // Queue job.
                     task_manager::queue_adhoc_task($task);
                 }
             }

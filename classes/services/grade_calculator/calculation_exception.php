@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,16 +23,18 @@
 
 namespace block_quickmail\services\grade_calculator;
 
-class calculation_exception extends \Exception {
-    
-    public $message;
-    public $course_id;
-    public $user_id;
+defined('MOODLE_INTERNAL') || die();
 
-    public function __construct($message, $course_id, $user_id = null) {
+class calculation_exception extends \Exception {
+
+    public $message;
+    public $courseid;
+    public $userid;
+
+    public function __construct($message, $courseid, $userid = null) {
         $this->message = $message;
-        $this->course_id = $course_id;
-        $this->user_id = $user_id;
+        $this->course_id = $courseid;
+        $this->user_id = $userid;
     }
 
 }

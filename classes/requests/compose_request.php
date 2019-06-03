@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,13 +23,15 @@
 
 namespace block_quickmail\requests;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\requests\transformers\compose_transformer;
 
 class compose_request extends \block_quickmail_request {
-    
+
     /**
      * Reports whether or not this request was submitted with intent to send
-     * 
+     *
      * @return bool
      */
     public function to_send_message() {
@@ -39,18 +40,17 @@ class compose_request extends \block_quickmail_request {
 
     /**
      * Reports whether or not this request was submitted with intent to save
-     * 
+     *
      * @return bool
      */
     public function to_save_draft() {
         return $this->was_submitted('save');
     }
 
-    public static function get_transformed($form_data)
-    {
-        $transformer = new compose_transformer($form_data);
+    public static function get_transformed($formdata) {
+        $transformer = new compose_transformer($formdata);
 
         return $transformer->transform();
     }
-    
+
 }

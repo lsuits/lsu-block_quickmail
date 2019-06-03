@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,11 +23,13 @@
 
 namespace block_quickmail\tasks;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\task\adhoc_task;
 use block_quickmail\persistents\message;
 
 class send_message_adhoc_task extends adhoc_task {
-    
+
     /*
      * This tasks kicks off the sending of a specific message to all of it's recipients
      * Note: this will in turn kick off subsequent scheduled tasks for each individual recipient delivery
@@ -38,9 +39,9 @@ class send_message_adhoc_task extends adhoc_task {
     public function execute() {
         $data = $this->get_custom_data();
 
-        // attempt to fetch the message
+        // Attempt to fetch the message.
         if ($message = message::find_or_null($data->message_id)) {
-            // send the message
+            // Send the message.
             $message->send();
         }
     }
