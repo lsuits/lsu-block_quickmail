@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,16 +23,18 @@
 
 namespace block_quickmail\repos;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\repo;
 use block_quickmail\repos\interfaces\group_repo_interface;
 
 class group_repo extends repo implements group_repo_interface {
 
-    public $default_sort = 'id';
+    public $defaultsort = 'id';
 
-    public $default_dir = 'asc';
-    
-    public $sortable_attrs = [
+    public $defaultdir = 'asc';
+
+    public $sortableattrs = [
         'id' => 'id',
     ];
 
@@ -42,33 +43,33 @@ class group_repo extends repo implements group_repo_interface {
      *
      * @param  object  $course
      * @param  object  $user
-     * @param  bool    $include_group_users    if true, group users will be return in the results
-     * @param  object  $course_context  optional, if not given, will be resolved
+     * @param  bool    $includegroupusers    if true, group users will be return in the results
+     * @param  object  $coursecontext  optional, if not given, will be resolved
      * @return array   keyed by group id
      */
-    public static function get_course_user_selectable_groups($course, $user, $include_group_users = false, $course_context = null)
-    {
-        // if a context was not passed, pull one now
-        $course_context = $course_context ?: \context_course::instance($course->id);
+    public static function get_course_user_selectable_groups($course, $user, $includegroupusers = false, $coursecontext = null) {
+        // If a context was not passed, pull one now.
+        $coursecontext = $coursecontext ?: \context_course::instance($course->id);
 
-        // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! \block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
-            // get this user's group associations, by groupings
-            $grouping_array = groups_get_user_groups($course->id, $user->id);
-            
-            // transform this array to an array of groups
-            $groups = self::transform_grouping_array_to_groups($grouping_array);
+        // If user cannot access all groups in the course, and the course is set to be strict.
+        if (!\block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $coursecontext)
+            && \block_quickmail_config::be_ferpa_strict_for_course($course)) {
+            // Get this user's group associations, by groupings.
+            $groupingarray = groups_get_user_groups($course->id, $user->id);
 
-            // add a "members" property to the result objects to be consistent
+            // Transform this array to an array of groups.
+            $groups = self::transform_grouping_array_to_groups($groupingarray);
+
+            // Add a "members" property to the result objects to be consistent.
             $groups = array_map(function($group) {
                 $g = $group;
                 $g->members = [];
                 return $g;
             }, $groups);
         } else {
-            $groups = array_map(function($group) use ($include_group_users) {
+            $groups = array_map(function($group) use ($includegroupusers) {
                 $g = $group;
-                $g->members = $include_group_users
+                $g->members = $includegroupusers
                     ? array_keys(groups_get_members($group->id, 'u.id'))
                     : [];
                 return $g;
@@ -83,51 +84,49 @@ class group_repo extends repo implements group_repo_interface {
      *
      * @param  object  $course
      * @param  object  $user
-     * @param  object  $course_context  optional, if not given, will be resolved
+     * @param  object  $coursecontext  optional, if not given, will be resolved
      * @return array   keyed by group id
      */
-    public static function get_course_user_groups($course, $user, $course_context = null)
-    {
-        // get this user's group associations, by groupings
-        $grouping_array = groups_get_user_groups($course->id, $user->id);
-        
-        // transform this array to an array of groups
-        $groups = self::transform_grouping_array_to_groups($grouping_array);
+    public static function get_course_user_groups($course, $user, $coursecontext = null) {
+        // Get this user's group associations, by groupings.
+        $groupingarray = groups_get_user_groups($course->id, $user->id);
+
+        // Transform this array to an array of groups.
+        $groups = self::transform_grouping_array_to_groups($groupingarray);
 
         return $groups;
     }
 
     /**
      * Returns an array of groups given an array of groupings with nested groups
-     * 
-     * @param  array  $grouping_array
+     *
+     * @param  array  $groupingarray
      * @return array  keyed by group id
      */
-    private static function transform_grouping_array_to_groups($grouping_array)
-    {
-        if ( ! $grouping_array) {
+    private static function transform_grouping_array_to_groups($groupingarray) {
+        if (!$groupingarray) {
             return [];
         }
 
-        $group_ids = [];
+        $groupids = [];
 
-        // iterate through each grouping
-        foreach ($grouping_array as $grouping_group_array) {
-            // extract only group ids
-            $group_ids = array_map(function($group_id) {
-                return $group_id;
-            }, $grouping_group_array);
+        // Iterate through each grouping.
+        foreach ($groupingarray as $groupinggrouparray) {
+            // Extract only group ids.
+            $groupids = array_map(function($groupid) {
+                return $groupid;
+            }, $groupinggrouparray);
         }
 
-        // reduce list down to unique group ids
-        $group_ids = array_unique($group_ids);
+        // Reduce list down to unique group ids.
+        $groupids = array_unique($groupids);
 
         $groups = [];
 
-        // iterate through each group id
-        foreach ($group_ids as $group_id) {
-            // pull the group object, adding it to the container
-            $groups[$group_id] = groups_get_group($group_id);
+        // Iterate through each group id.
+        foreach ($groupids as $groupid) {
+            // Pull the group object, adding it to the container.
+            $groups[$groupid] = groups_get_group($groupid);
         }
 
         return $groups;

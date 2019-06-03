@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,17 +23,19 @@
 
 namespace block_quickmail\repos;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\repo;
 use block_quickmail\repos\interfaces\draft_repo_interface;
 use block_quickmail\persistents\message;
 
 class draft_repo extends repo implements draft_repo_interface {
 
-    public $default_sort = 'created';
+    public $defaultsort = 'created';
 
-    public $default_dir = 'desc';
-    
-    public $sortable_attrs = [
+    public $defaultdir = 'desc';
+
+    public $sortableattrs = [
         'id' => 'id',
         'course' => 'course_id',
         'subject' => 'subject',
@@ -44,19 +45,18 @@ class draft_repo extends repo implements draft_repo_interface {
 
     /**
      * Fetches a draft message by id, or returns null
-     * 
-     * @param  int  $message_id
+     *
+     * @param  int  $messageid
      * @return message|null
      */
-    public static function find_or_null($message_id)
-    {
-        // first, try to find the message by id, returning null by default
-        if ( ! $message = message::find_or_null($message_id)) {
+    public static function find_or_null($messageid) {
+        // First, try to find the message by id, returning null by default.
+        if (!$message = message::find_or_null($messageid)) {
             return null;
         }
 
-        // if this message is NOT a draft, return null
-        if ( ! $message->is_message_draft()) {
+        // If this message is NOT a draft, return null.
+        if (!$message->is_message_draft()) {
             return null;
         }
 
@@ -65,20 +65,19 @@ class draft_repo extends repo implements draft_repo_interface {
 
     /**
      * Fetches a message by id which must belong to the given user id, or returns null
-     * 
-     * @param  integer $message_id
-     * @param  integer $user_id
+     *
+     * @param  integer $messageid
+     * @param  integer $userid
      * @return message|null
      */
-    public static function find_for_user_or_null($message_id = 0, $user_id = 0)
-    {
-        // first, try to find the message by id, returning null by default
-        if ( ! $message = self::find_or_null($message_id)) {
+    public static function find_for_user_or_null($messageid = 0, $userid = 0) {
+        // First, try to find the message by id, returning null by default.
+        if (!$message = self::find_or_null($messageid)) {
             return null;
         }
 
-        // if this message does not belong to this user, return null
-        if ( ! $message->is_owned_by_user($user_id)) {
+        // If this message does not belong to this user, return null.
+        if (!$message->is_owned_by_user($userid)) {
             return null;
         }
 
@@ -87,21 +86,20 @@ class draft_repo extends repo implements draft_repo_interface {
 
     /**
      * Fetches a message by id which must belong to the given user id, or returns null
-     * 
-     * @param  integer $message_id
-     * @param  integer $user_id
-     * @param  integer $course_id
+     *
+     * @param  integer $messageid
+     * @param  integer $userid
+     * @param  integer $courseid
      * @return message|null
      */
-    public static function find_for_user_course_or_null($message_id = 0, $user_id = 0, $course_id = 0)
-    {
-        // first, try to find the message by id, returning null by default
-        if ( ! $message = self::find_for_user_or_null($message_id, $user_id)) {
+    public static function find_for_user_course_or_null($messageid = 0, $userid = 0, $courseid = 0) {
+        // First, try to find the message by id, returning null by default.
+        if (!$message = self::find_for_user_or_null($messageid, $userid)) {
             return null;
         }
 
-        // if this message does not belong to this course, return null
-        if ( ! $message->is_owned_by_course($course_id)) {
+        // If this message does not belong to this course, return null.
+        if (!$message->is_owned_by_course($courseid)) {
             return null;
         }
 
@@ -112,54 +110,53 @@ class draft_repo extends repo implements draft_repo_interface {
      * Returns all unsent, non-deleted, draft messages belonging to the given user id
      *
      * Optionally, can be scoped to a specific course if given a course_id
-     * 
-     * @param  int     $user_id
-     * @param  int     $course_id   optional, defaults to 0 (all)
+     *
+     * @param  int     $userid
+     * @param  int     $courseid   optional, defaults to 0 (all)
      * @param  array   $params  sort|dir|paginate|page|per_page|uri
      * @return mixed
      */
-    public static function get_for_user($user_id, $course_id = 0, $params = [])
-    {
-        // instantiate repo
+    public static function get_for_user($userid, $courseid = 0, $params = []) {
+        // Instantiate repo.
         $repo = new self($params);
 
-        // set params for db query
-        $query_params = [
-            'user_id' => $user_id, 
-            'is_draft' => 1, 
-            'sent_at' => 0, 
+        // Set params for db query.
+        $queryparams = [
+            'user_id' => $userid,
+            'is_draft' => 1,
+            'sent_at' => 0,
             'timedeleted' => 0
         ];
 
-        // conditionally add course id to db query params if appropriate
-        if ($course_id) {
-            $query_params['course_id'] = $course_id;
+        // Conditionally add course id to db query params if appropriate.
+        if ($courseid) {
+            $queryparams['course_id'] = $courseid;
         }
 
-        // if not paginating, return all sorted results
-        if ( ! $repo->paginate) {
+        // If not paginating, return all sorted results.
+        if (!$repo->paginate) {
             $data = message::get_records(
-                $query_params,
+                $queryparams,
                 $repo->get_sort_column_name($repo->sort),
                 strtoupper($repo->dir)
             );
-        
-        // otherwise, paginate and set the sorted results
+
+            // Otherwise, paginate and set the sorted results.
         } else {
-            // get total count of records (necessary for pagination)
+            // Get total count of records (necessary for pagination).
             $count = message::count_records(
-                $query_params
+                $queryparams
             );
 
-            // get the calculated pagination parameters object
+            // Get the calculated pagination parameters object.
             $paginated = $repo->get_paginated($count);
 
-            // set the pagination object on the result
+            // Set the pagination object on the result.
             $repo->set_result_pagination($paginated);
 
-            // pull the data with the validated pagination offset
+            // Pull the data with the validated pagination offset.
             $data = message::get_records(
-                $query_params,
+                $queryparams,
                 $repo->get_sort_column_name($repo->sort),
                 strtoupper($repo->dir),
                 $paginated->offset,

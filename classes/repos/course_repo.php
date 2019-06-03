@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,16 +23,18 @@
 
 namespace block_quickmail\repos;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\repo;
 use block_quickmail\repos\interfaces\course_repo_interface;
 
 class course_repo extends repo implements course_repo_interface {
 
-    public $default_sort = 'id';
+    public $defaultsort = 'id';
 
-    public $default_dir = 'asc';
-    
-    public $sortable_attrs = [
+    public $defaultdir = 'asc';
+
+    public $sortableattrs = [
         'id' => 'id',
     ];
 
@@ -41,12 +42,11 @@ class course_repo extends repo implements course_repo_interface {
      * Returns an array of all courses that the given user is enrolled in
      *
      * @param  object  $user
-     * @param  bool    $active_only
+     * @param  bool    $activeonly
      * @return array   [course id => course shortname]
      */
-    public static function get_user_course_array($user, $active_only = false)
-    {
-        if ( ! $courses = enrol_get_all_users_courses($user->id, $active_only)) {
+    public static function get_user_course_array($user, $activeonly = false) {
+        if (!$courses = enrol_get_all_users_courses($user->id, $activeonly)) {
             return [];
         }
 
