@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace block_quickmail\messenger\message\data_mapper;
+
+defined('MOODLE_INTERNAL') || die();
 
 use block_quickmail\messenger\message\data_mapper\maps_user_data;
 use block_quickmail\messenger\message\data_mapper\maps_course_data;

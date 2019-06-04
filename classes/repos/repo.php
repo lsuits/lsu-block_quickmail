@@ -54,7 +54,7 @@ abstract class repo {
      * @param array $params
      */
     private function set_sort($params) {
-        $this->sort = array_key_exists('sort', $params) && in_array($params['sort'], array_keys($this->sortable_attrs))
+        $this->sort = array_key_exists('sort', $params) && in_array($params['sort'], array_keys($this->sortableattrs))
             ? $params['sort']
             : 'id';
     }
@@ -121,7 +121,7 @@ abstract class repo {
      * @return string
      */
     public function get_sort_column_name($key) {
-        return $this->sortable_attrs[$key];
+        return $this->sortableattrs[$key];
     }
 
     /**

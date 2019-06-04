@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,47 +22,42 @@
  */
 
 require_once('../../config.php');
-require_once 'lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
-$page_params = [
-    'id' => optional_param('id', 0, PARAM_INT), // signature id, if any
-    'courseid' => optional_param('courseid', 0, PARAM_INT), // course id, if any, for redirection
+$pageparams = [
+    'id' => optional_param('id', 0, PARAM_INT), // Signature id, if any.
+    'courseid' => optional_param('courseid', 0, PARAM_INT), // Course id, if any, for redirection.
 ];
 
-////////////////////////////////////////
-/// AUTHENTICATION
-////////////////////////////////////////
-
+// Authentication.
 require_login();
 
-// if we're scoping to a specific course
-if ($page_params['courseid']) {
-    // check that the user can message in this course
-    block_quickmail_plugin::require_user_has_course_message_access($USER, $page_params['courseid']);
+// If we're scoping to a specific course.
+if ($pageparams['courseid']) {
+    // Check that the user can message in this course.
+    block_quickmail_plugin::require_user_has_course_message_access($USER, $pageparams['courseid']);
 }
 
-$system_context = context_system::instance();
-$PAGE->set_context($system_context);
-$PAGE->set_url(new moodle_url('/blocks/quickmail/signatures.php', $page_params));
+$systemcontext = context_system::instance();
+$PAGE->set_context($systemcontext);
+$PAGE->set_url(new moodle_url('/blocks/quickmail/signatures.php', $pageparams));
 
-////////////////////////////////////////
-/// CONSTRUCT PAGE
-////////////////////////////////////////
-
+// Construct the page.
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $page_params['courseid'])));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'),
+    new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $pageparams['courseid'])));
 $PAGE->navbar->add(block_quickmail_string::get('signatures'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('manage_signatures'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 $PAGE->requires->jquery();
 $PAGE->requires->js(new moodle_url('/blocks/quickmail/js/signature-form.js'));
-$PAGE->requires->data_for_js('signaturedata', ['courseid' => $page_params['courseid']]);
+$PAGE->requires->data_for_js('signaturedata', ['courseid' => $pageparams['courseid']]);
 
 block_quickmail\controllers\signature_index_controller::handle($PAGE, [
-    'context' => $system_context,
+    'context' => $systemcontext,
     'user' => $USER,
-    'course_id' => $page_params['courseid'],
-    'signature_id' => $page_params['id'],
+    'course_id' => $pageparams['courseid'],
+    'signature_id' => $pageparams['id'],
 ]);

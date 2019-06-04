@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace block_quickmail\messenger\message;
+
+defined('MOODLE_INTERNAL') || die();
 
 use block_quickmail\persistents\message;
 use block_quickmail\messenger\message\body_substitution_code_parser;

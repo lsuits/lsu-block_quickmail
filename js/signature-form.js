@@ -1,17 +1,15 @@
 $(function() {
-
-    //  ¯\_(ツ)_/¯
     $('#id_delete').removeClass('btn-primary');
     $('#id_delete').addClass('btn-danger');
 
-    // handle change of "select signature to edit"
+    // Handle change of "select signature to edit".
     var selectedSignatureId = $('#id_select_signature_id').val();
 
-    // when select signature id changes
+    // When select signature id changes.
     $('#id_select_signature_id').change(function(e) {
         e.preventDefault();
 
-        // if the value actually changed, redirect to edit the selected signature id
+        // If the value actually changed, redirect to edit the selected signature id.
         if (selectedSignatureId != this.value) {
             let qs = {
                 id: this.value,

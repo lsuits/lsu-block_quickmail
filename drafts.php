@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,44 +22,40 @@
  */
 
 require_once('../../config.php');
-require_once 'lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
-$page_params = [
+$pageparams = [
     'courseid' => optional_param('courseid', 0, PARAM_INT),
-    'sort' => optional_param('sort', 'created', PARAM_TEXT), // (field name)
-    'dir' => optional_param('dir', 'asc', PARAM_TEXT), // asc|desc
+    'sort' => optional_param('sort', 'created', PARAM_TEXT), // Field name.
+    'dir' => optional_param('dir', 'asc', PARAM_TEXT), // Asc|desc.
     'page' => optional_param('page', 1, PARAM_INT),
-    'per_page' => 10, // adjust as necessary, maybe turn into real param?
-    'action' => optional_param('action', '', PARAM_TEXT), // duplicate|delete
+    'per_page' => 10, // Adjust as necessary, maybe turn into real param?
+    'action' => optional_param('action', '', PARAM_TEXT), // Duplicate or delete.
     'message_id' => optional_param('id', 0, PARAM_INT),
 ];
 
-////////////////////////////////////////
-/// AUTHENTICATION
-////////////////////////////////////////
-
+// Authentication.
 require_login();
 
-// if we're scoping to a specific course
-if ($page_params['courseid']) {
-    // check that the user can message in this course
-    block_quickmail_plugin::require_user_has_course_message_access($USER, $page_params['courseid']);
+// If we're scoping to a specific course.
+if ($pageparams['courseid']) {
+    // Check that the user can message in this course.
+    block_quickmail_plugin::require_user_has_course_message_access($USER, $pageparams['courseid']);
 }
 
-$user_context = context_user::instance($USER->id);
-$PAGE->set_context($user_context);
-$PAGE->set_url(new moodle_url('/blocks/quickmail/drafts.php', $page_params));
+$usercontext = context_user::instance($USER->id);
+$PAGE->set_context($usercontext);
+$PAGE->set_url(new moodle_url('/blocks/quickmail/drafts.php', $pageparams));
 
-////////////////////////////////////////
-/// CONSTRUCT PAGE
-////////////////////////////////////////
-
+// Construct the page.
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('drafts'));
 
-if ($page_params['courseid']) {
-    $PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $page_params['courseid'])));
+if ($pageparams['courseid']) {
+    $PAGE->navbar->add(block_quickmail_string::get('pluginname'),
+        new moodle_url('/blocks/quickmail/qm.php',
+        array('courseid' => $pageparams['courseid'])));
 }
 
 $PAGE->navbar->add(block_quickmail_string::get('drafts'));
@@ -70,8 +65,8 @@ $PAGE->requires->jquery();
 $PAGE->requires->js(new moodle_url('/blocks/quickmail/js/draft-index.js'));
 
 block_quickmail\controllers\draft_message_index_controller::handle($PAGE, [
-    'context' => $user_context,
+    'context' => $usercontext,
     'user' => $USER,
-    'course_id' => $page_params['courseid'],
-    'page_params' => $page_params
-], $page_params['action']);
+    'course_id' => $pageparams['courseid'],
+    'page_params' => $pageparams
+], $pageparams['action']);

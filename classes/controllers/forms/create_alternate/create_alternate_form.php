@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace block_quickmail\controllers\forms\create_alternate;
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
@@ -129,7 +129,7 @@ class create_alternate_form extends controller_form {
      * @return bool
      */
     private function should_show_role_selection() {
-        return ! empty($this->get_custom_data('role_selection')) && ! empty($this->get_custom_data('course_id'));
+        return !empty($this->get_custom_data('role_selection')) && !empty($this->get_custom_data('course_id'));
     }
 
 }

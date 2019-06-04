@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,7 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// block
+defined('MOODLE_INTERNAL') || die();
+
+// Block.
 $string['pluginname'] = 'Quickmail';
 $string['open_broadcast'] = 'Compose Message';
 $string['open_compose'] = 'Compose Message';
@@ -37,12 +38,12 @@ $string['create_notification'] = 'Create Notification';
 $string['notifications'] = 'Notifications';
 $string['messageprovider:quickmessage'] = 'Quickmail message';
 
-// tasks
+// Tasks.
 $string['send_all_ready_messages_task'] = 'Send all scheduled Quickmail messages';
 $string['queue_scheduled_notifications_task'] = 'Queue any scheduled Quickmail notifications to be sent';
 $string['migrate_legacy_data_task'] = 'Migrate historical data from Quickmail v1 to v2';
 
-// capabilities
+// Capabilities.
 $string['quickmail:cansend'] = 'Send Quickmail messages in a course';
 $string['quickmail:canconfig'] = 'Configure Quickmail settings in a course';
 $string['quickmail:allowalternate'] = 'Create alternate email addresses to send from';
@@ -52,7 +53,7 @@ $string['quickmail:myaddinstance'] = 'Add a new Quickmail block to the /my page'
 $string['quickmail:viewgroupusers'] = 'View all users in every group';
 $string['quickmail:createnotifications'] = 'Create auto notifications in Quickmail';
 
-// general terms
+// General terms.
 $string['duplicate'] = 'Duplicate';
 $string['open'] = 'Open';
 $string['create_new'] = 'Create New';
@@ -64,14 +65,14 @@ $string['view'] = 'View';
 $string['back_to_course'] = 'Back to course';
 $string['back_to_mypage'] = 'Back to My page';
 
-// message status
+// Message status.
 $string['drafted'] = 'Drafted';
 $string['queued'] = 'Scheduled';
 $string['sending'] = 'Sending';
 $string['sent'] = 'Sent';
 $string['deleted'] = 'Deleted';
 
-// messaging terms
+// Messaging terms.
 $string['included_ids_label'] = 'To';
 $string['excluded_ids_label'] = 'Exclude';
 $string['all_in_course'] = 'All In Course';
@@ -137,7 +138,7 @@ $string['message_unqueued'] = 'Message unscheduled';
 $string['message_not_found'] = 'Could not find that message';
 $string['message_deleted'] = 'Message deleted';
 
-// notifications
+// Notifications.
 $string['notification_name'] = 'Title';
 $string['notification_name_help'] = 'A short description of this notification to help you easily identify this from other notifications you may have set up.';
 $string['notification_review'] = 'Review Your Notification';
@@ -166,7 +167,7 @@ $string['edit_schedule'] = 'Edit Schedule';
 $string['edit_event_details'] = 'Edit Event Details';
 $string['edit_message'] = 'Edit Message';
 
-// notification types
+// Notification types.
 $string['notification_type'] = 'Notification Type';
 $string['notification_type_reminder'] = 'Reminder';
 $string['notification_type_event'] = 'Event';
@@ -174,29 +175,27 @@ $string['invalid_notification_type'] = 'Notification type must be "Reminder" or 
 $string['notification_type_reminder_description'] = 'A recurring message that will automatically be sent on a scheduled basis. Reminders can be used to alert recipients of upcoming activities, due dates, class participation, and more.';
 $string['notification_type_event_description'] = 'An automated message that is sent as a reaction to a specific event. Events can be used to alert recipients that activities have been completed, assignments have been submitted or graded, and more.';
 
-// notification models
+// Notification models.
 
-// reminder: course_non_participation
+// Reminder: course_non_participation.
 $string['notification_model_reminder_course_non_participation'] = 'Course Non-Participation';
 $string['notification_model_reminder_course_non_participation_description'] = 'Notify course participants that have not accessed the course in a given amount of time.';
 $string['notification_model_reminder_course_non_participation_condition_description'] = 'Specify the amount of time since last course access. If a course participant has not accessed the course in this amount of time, they will be notified.';
 $string['condition_summary_reminder_course_non_participation'] = 'All who have not accessed the course in {$a->time_amount} {$a->time_unit}';
 
-// reminder: course_grade_range
+// Reminder: course_grade_range.
 $string['notification_model_reminder_course_grade_range'] = 'Course Grade Range';
 $string['notification_model_reminder_course_grade_range_description'] = 'Notify course participants which currently have a grade within the given range.';
 $string['notification_model_reminder_course_grade_range_condition_description'] = 'Specify the grade range. If a course participant currently has within this range, they will be notified.';
 $string['condition_summary_reminder_course_grade_range'] = 'All who have a grade between {$a->grade_greater_than} and {$a->grade_less_than}';
 
-// event: course_entered
+// Event: course_entered.
 $string['notification_model_event_course_entered'] = 'Course Entered';
 $string['notification_model_event_course_entered_description'] = 'Notify a course participant when they access the course for the first time.';
 
-// event: assignment_submitted
-// $string['notification_model_event_assignment_submitted'] = 'Assignment Submitted';
-// $string['notification_model_event_assignment_submitted_description'] = 'Notify a course participant when a specific assignment has been submitted.';
+// Event: assignment_submitted.
 
-// notification conditions
+// Notification conditions.
 $string['set_notification_conditions'] = 'Set {$a->model} {$a->type} Notification Conditions';
 $string['time_unit'] = 'Unit of time';
 $string['invalid_time_unit'] = 'Invalid unit of time.';
@@ -213,7 +212,7 @@ $string['invalid_condition_grade_greater_than'] = 'Invalid grade greater than va
 $string['condition_grade_less_than'] = 'Grade less than';
 $string['invalid_condition_grade_less_than'] = 'Invalid grade less than value.';
 
-// reminder notification schedules
+// Reminder notification schedules.
 $string['notification_schedule'] = 'Schedule';
 $string['set_notification_schedule'] = 'Set {$a->model} {$a->type} Notification Schedule';
 $string['set_notification_schedule_description'] = 'Specify how often this notification should be sent, when it should start, and when it should end. If no end date is specified, this notification will continue to be sent until it is disabled or deleted.';
@@ -232,22 +231,22 @@ $string['time_every'] = 'Every';
 $string['time_beginning'] = 'Beginning';
 $string['time_ending'] = 'Ending';
 
-// event notification details
+// Event notification details.
 $string['set_event_details'] = 'Set {$a->model} Event Notification Details';
 $string['set_event_details_description'] = 'Specify additional options about the event.';
 
-// create notification message
+// Create notification message.
 $string['create_notification_message'] = 'Create {$a->model} {$a->type} Notification Message';
 $string['create_notification_message_description'] = 'Now create the message that you\'d like to be sent when this notification goes out.';
 $string['is_enabled'] = 'Enabled';
 $string['notification_is_enabled'] = 'Notification Enabled';
 $string['notification_is_enabled_help'] = 'If enabled, this notification will be active, otherwise, the notification will be disabled until you enable it.';
 
-// history
+// History.
 $string['no_sents'] = 'You have no sent message history.';
 $string['sent_messages'] = 'Sent Message History';
 
-// drafts
+// Drafts.
 $string['drafts'] = 'Drafts';
 $string['no_drafts'] = 'You have no message drafts.';
 $string['save_draft'] = 'Save Draft';
@@ -260,7 +259,7 @@ $string['delete_draft_confirm_message'] = 'This will permanently delete your dra
 $string['duplicate_draft_modal_title'] = 'Duplicate Message Draft';
 $string['duplicate_draft_confirm_message'] = 'This will make a copy of the draft, are you sure?';
 
-// alternates
+// Alternates.
 $string['alternate'] = 'Alternate Email';
 $string['no_alternates'] = 'You have no alternate emails. Create a new one now!';
 $string['alternate_new'] = 'Add Alternate Address';
@@ -287,13 +286,13 @@ $string['eventalternateemailadded_desc'] = 'The user with id {$a->user_id} has a
 $string['alternate_subject'] = 'Alternate email address verification';
 $string['coursealternate_not_allowed'] = 'You are not able to share this alternate email is this course.';
 
-// signatures
+// Signatures.
 $string['signature'] = 'Signature';
 $string['signatures'] = 'Signatures';
 $string['signature_title_required'] = 'A signature title is required.';
 $string['signature_title_must_be_unique'] = 'The signature title must be unique.';
 $string['signature_signature_required'] = 'A signature is required.';
-$string['select_signature_for_edit'] ='Select Signature To Edit';
+$string['select_signature_for_edit'] = 'Select Signature To Edit';
 $string['save_signature'] = 'Save Signature';
 $string['delete_signature'] = 'Delete Signature';
 $string['user_signature_deleted'] = 'Your signature has been deleted.';
@@ -301,7 +300,7 @@ $string['no_signatures_create'] = 'You have no signatures. {$a}.';
 $string['delete_signature_modal_title'] = 'Delete Signature';
 $string['delete_signature_confirm_message'] = 'This will permanently delete your signature, are you sure?';
 
-// help buttons
+// Help buttons.
 $string['additional_emails'] = 'Additional emails';
 $string['additional_emails_help'] = 'Other email addresses you would like the message sent to, in a comma or semicolon separated list. Example:
 
@@ -317,12 +316,12 @@ $string['allow_mentor_copy'] = 'Allow senders to automatically message a recipie
 $string['allow_mentor_copy_help'] = 'If no, this option will not be visible to senders and mentors will never be copied. If yes, the sender will have the option to choose per message. If forced, this option will be forced with no option for de-selecting.';
 $string['send_as_tasks_help'] = 'If selected, will send all messages asynchronously as cron tasks. Otherwise, will send immediately.';
 
-// settings management
+// Settings management.
 $string['restore_default_modal_title'] = 'Restore Default Configuration';
 $string['restore_default_confirm_message'] = 'This will restore this course\'s Quickmail settings to default, are you sure?';
 $string['reset_success_message'] = 'Quickmail default settings have been restored!';
 
-// configuration
+// Configuration.
 $string['allowstudents'] = 'Allow students to use Quickmail';
 $string['allowstudents_desc'] = 'Allow students to use Quickmail. If you choose "Never", the block cannot be configured to allow students access at the course level.';
 $string['selectable_roles'] = 'Selectable roles';
@@ -368,14 +367,14 @@ $string['picker_style_option_title_help'] = 'Your personally preferred interface
 $string['picker_style_autocomplete'] = 'Autocomplete';
 $string['picker_style_multiselect'] = 'Multiselect';
 
-// redirect messages
+// Redirect messages.
 $string['redirect_back_to_course_from_message_after_duplicate'] = 'Your message has been successfully duplicated.';
 $string['redirect_back_to_course_from_message_after_save'] = 'Your draft has been saved.';
 $string['redirect_back_to_course_from_notifications_not_enabled'] = 'Quickmail notifications are disabled for your site.';
 $string['redirect_back_from_message_detail_message_deleted'] = 'The message you are attempting to view has been deleted.';
 $string['redirect_back_from_message_detail_no_access'] = 'You are not able to view this message.';
 
-// validation
+// Validation.
 $string['missing_subject'] = 'Missing subject line.';
 $string['missing_body'] = 'Missing message body.';
 $string['missing_email'] = 'Missing email address.';
@@ -393,25 +392,26 @@ $string['invalid_custom_data_delimiters'] = 'Message body substitution codes not
 $string['invalid_additional_email'] = 'The additional email "{$a}" you entered is invalid';
 $string['invalid_send_method'] = 'That send method is not allowed.';
 
-// errors
+// Errors.
 $string['critical_error'] = 'Critical error';
 $string['validation_exception_message'] = 'Validation exception!';
 $string['course_required'] = 'A course is required.';
 
-// caches
+// Caches.
 $string['cachedef_qm_msg_recip_count'] = 'Cached message recipient counts.';
 $string['cachedef_qm_msg_deliv_count'] = 'Cached message delievered counts.';
 $string['cachedef_qm_msg_attach_count'] = 'Cached message attachment counts.';
 $string['cachedef_qm_msg_addl_email_count'] = 'Cached message additional email counts.';
 $string['cachedef_qm_controller_store'] = 'Cache store for controller instances.';
+$string['cachedef_qm_event_notif_last_fired_at'] = 'Last notification cache.';
 
-// backup/restore
+// Backup/restore.
 $string['backup_history'] = 'Include Quickmail History';
 $string['backup_block_configuration'] = 'Backup Quickmail Block Level Configuration Settings (Such as [Allow Students to use Quickmail])';
 $string['restore_history'] = 'Restore Quickmail History';
 $string['overwrite_history'] = 'Overwrite Quickmail History';
 
-// email templates
+// Email templates.
 $string['alternate_body'] = '
 <p>
 {$a->fullname} added {$a->email} as an alternate sending address for {$a->plugin_name}.
@@ -451,7 +451,7 @@ $string['receipt_email_body'] = '
 
 {$a->message_body}';
 
-// qm_page
+// Qm_page.
 $string['ms_compose'] = 'Compose';
 $string['ms_drafts'] = 'Drafts';
 $string['ms_queued'] = 'Scheduled';

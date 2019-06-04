@@ -174,7 +174,6 @@ class block_quickmail_config {
         $roleselectionvalue = $course
             ? self::course($course, 'roleselection')
             : self::block('roleselection');
-
         return explode(',', $roleselectionvalue);
     }
 

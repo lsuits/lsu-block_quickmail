@@ -247,7 +247,7 @@ class user_repo extends repo implements user_repo_interface {
 
             // Iterate through each entity name within this type (role, group).
             foreach ($entity as $name => $keys) {
-                $typekey = $type . '_entity_ids';
+                $typekey = $type . 'entityids';
 
                 // Get entity keys for this included/excluded role/group.
                 $entitykeys = array_filter($$typekey, function($key) use ($name) {
@@ -321,7 +321,7 @@ class user_repo extends repo implements user_repo_interface {
                         : self::get_course_group_users($coursecontext, $nameid);
 
                     // Get appropriate name for the container to place these user ids within.
-                    $typecontainer = $type . '_user_ids';
+                    $typecontainer = $type . 'userids';
 
                     // Push these new user ids into the appropriate container.
                     $$typecontainer = array_merge($$typecontainer, array_map(function($user) {
@@ -353,7 +353,7 @@ class user_repo extends repo implements user_repo_interface {
             }
 
             // Get name of appropriate (initial) container.
-            $typekey = $type . '_entity_ids';
+            $typekey = $type . 'entityids';
 
             // Extract only the user ids from the container..
             $users = array_filter($$typekey, function($key) {
@@ -368,7 +368,7 @@ class user_repo extends repo implements user_repo_interface {
             }
 
             // Get name of appropriate output container.
-            $typecontainer = $type . '_user_ids';
+            $typecontainer = $type . 'userids';
 
             // Push these user ids into the appropriate container.
             $$typecontainer = array_merge($$typecontainer, array_map(function($user) {

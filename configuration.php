@@ -21,10 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 require_once('../../config.php');
-require_once($CFG->dirroot . '/blocks/quickmail/lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
 $pageparams = [
     'courseid' => required_param('courseid', PARAM_INT),

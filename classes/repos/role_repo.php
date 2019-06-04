@@ -47,7 +47,7 @@ class role_repo extends repo implements role_repo_interface {
      */
     public static function get_course_selectable_roles($course, $coursecontext = null) {
         // If a context was not passed, pull one now.
-        $coursecontext = $coursecontext ?: \context_course::instance($course->id);
+        $coursecontext = $coursecontext ? $coursecontext : \context_course::instance($course->id);
 
         // Get configured, selectable role ids.
         $allowedroleids = \block_quickmail_config::get_role_selection_array($course);
@@ -62,7 +62,6 @@ class role_repo extends repo implements role_repo_interface {
 
         // Return an intesection of all roles, and those allowed by config.
         $roles = array_intersect_key($allcourseroles, array_flip($allowedroleids));
-
         return $roles;
     }
 
@@ -103,7 +102,7 @@ class role_repo extends repo implements role_repo_interface {
      */
     public static function get_user_roles_in_course($userid, $courseid, $coursecontext = null) {
         // If a context was not passed, pull one now.
-        $coursecontext = $coursecontext ?: \context_course::instance($courseid);
+        $coursecontext = $coursecontext ? $coursecontext : \context_course::instance($courseid);
 
         // Get the user's roles in the course context (no parents).
         $roles = get_user_roles($coursecontext, $userid, false);

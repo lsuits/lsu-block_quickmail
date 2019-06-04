@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,48 +22,49 @@
  */
 
 require_once('../../config.php');
-require_once 'lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
-$page_params = [
+$pageparams = [
     'message_id' => required_param('id', PARAM_INT),
 ];
 
-////////////////////////////////////////
-/// AUTHENTICATION
-////////////////////////////////////////
-
+// Authentication.
 require_login();
 
-// check that the message has not been deleted
-if ( ! $message = \block_quickmail\persistents\message::find_or_null($page_params['message_id'])) {
-    redirect(new \moodle_url('/my'), block_quickmail_string::get('redirect_back_from_message_detail_message_deleted'), 2, \core\output\notification::NOTIFY_ERROR);
+// Check that the message has not been deleted.
+if (!$message = \block_quickmail\persistents\message::find_or_null($pageparams['message_id'])) {
+    redirect(new \moodle_url('/my'),
+        block_quickmail_string::get('redirect_back_from_message_detail_message_deleted'),
+        2,
+        \core\output\notification::NOTIFY_ERROR);
 }
 
-// check that the user can view this message
+// Check that the user can view this message.
 if ($message->get('user_id') !== $USER->id) {
-    redirect(new \moodle_url('/my'), block_quickmail_string::get('redirect_back_from_message_detail_no_access'), 2, \core\output\notification::NOTIFY_ERROR);
+    redirect(new \moodle_url('/my'),
+        block_quickmail_string::get('redirect_back_from_message_detail_no_access'),
+        2,
+        \core\output\notification::NOTIFY_ERROR);
 }
 
-$user_context = context_user::instance($USER->id);
-$PAGE->set_context($user_context);
-$PAGE->set_url(new moodle_url('/blocks/quickmail/message.php', $page_params));
+$usercontext = context_user::instance($USER->id);
+$PAGE->set_context($usercontext);
+$PAGE->set_url(new moodle_url('/blocks/quickmail/message.php', $pageparams));
 
-////////////////////////////////////////
-/// CONSTRUCT PAGE
-////////////////////////////////////////
-
+// Construct the page.
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('view_message_detail'));
 
-$course_id = $message->get('course_id');
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course_id)));
+$courseid = $message->get('course_id');
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'),
+    new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $courseid)));
 $PAGE->navbar->add(block_quickmail_string::get('view_message_detail'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . block_quickmail_string::get('view_message_detail'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 
 block_quickmail\controllers\view_message_controller::handle($PAGE, [
-    'context' => $user_context,
+    'context' => $usercontext,
     'user' => $USER,
     'message' => $message,
 ]);
