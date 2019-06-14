@@ -648,10 +648,9 @@ class message extends \block_quickmail\persistents\persistent {
 
         // Iterate through allowed "inclusion types".
         foreach (['include', 'exclude'] as $type) {
-            $keycontainer = $type . '_key_container';
-
+            $keycontainer = $type . 'keycontainer';
             // Iterate through the given named key container.
-            foreach ($keycontainer as $key) {
+            foreach ($$keycontainer as $key) {
                 $exploded = explode('_', $key);
 
                 // If the key was a valid value.
