@@ -131,8 +131,8 @@ function migrate_quickmail_v1_to_v2() {
         // Insert a new temp record for each log/draft.
         foreach ($olds as $old) {
             $temprecord = (object) [
-                'old_id'  = > $old->id,
-                'type'  = > $old->courseid == SITEID ? 'admin' : 'standard' // This is an assumption!
+                'old_id' => $old->id,
+                'type' => $old->courseid == SITEID ? 'admin' : 'standard' // This is an assumption!
             ];
 
             $DB->insert_record(get_temp_table_name($tabletype), $temprecord);
@@ -163,27 +163,27 @@ function migrate_quickmail_v1_to_v2() {
             // While we can fetch a temp message record for this specific type..
             while ($temp = $DB->get_record_select(get_temp_table_name($tabletype),
                 "type = :type AND message_created = 0",
-                ['type'  = > $type],
+                ['type' => $type],
                 '*',
                 IGNORE_MULTIPLE)) {
                 // Fetch the corresponding old record.
-                $old = $DB->get_record(get_old_table_name($tabletype), ['id'  = > $temp->old_id], '*', IGNORE_MULTIPLE);
+                $old = $DB->get_record(get_old_table_name($tabletype), ['id' => $temp->old_id], '*', IGNORE_MULTIPLE);
 
                 // Create a new record.
                 $message = (object) [
-                    'course_id'  = > $old->courseid,
-                    'user_id'  = > $old->userid,
-                    'message_type'  = > 'email',
-                    'subject'  = > $old->subject,
-                    'body'  = > $old->message,
-                    'editor_format'  = > $old->format,
-                    'sent_at'  = > $tabletype == 'draft' ? 0 : $old->time,
-                    'to_send_at'  = > 0,
-                    'is_draft'  = > $tabletype == 'draft' ? 1 : 0,
-                    'usermodified'  = > $old->userid,
-                    'timecreated'  = > $old->time,
-                    'timemodified'  = > $old->time,
-                    'timedeleted'  = > 0
+                    'course_id' => $old->courseid,
+                    'user_id' => $old->userid,
+                    'message_type' => 'email',
+                    'subject' => $old->subject,
+                    'body' => $old->message,
+                    'editor_format' => $old->format,
+                    'sent_at' => $tabletype == 'draft' ? 0 : $old->time,
+                    'to_send_at' => 0,
+                    'is_draft' => $tabletype == 'draft' ? 1 : 0,
+                    'usermodified' => $old->userid,
+                    'timecreated' => $old->time,
+                    'timemodified' => $old->time,
+                    'timedeleted' => 0
                 ];
 
                 // Insert record, grabbing new id.
@@ -202,26 +202,26 @@ function migrate_quickmail_v1_to_v2() {
     // While we can fetch a temp "standard message" record for this specific type that has not had recipients created.
     while ($temp = $DB->get_record_select(get_temp_table_name('log'),
         "type = :type AND message_created = 1 AND recips_created = 0",
-        ['type'  = > 'standard'],
+        ['type' => 'standard'],
         '*',
         IGNORE_MULTIPLE)) {
         // Fetch the corresponding log record.
-        $log = $DB->get_record(get_old_table_name('log'), ['id'  = > $temp->old_id], '*', IGNORE_MULTIPLE);
+        $log = $DB->get_record(get_old_table_name('log'), ['id' => $temp->old_id], '*', IGNORE_MULTIPLE);
 
         // Fetch the new message record.
-        $message = $DB->get_record(get_message_table_name(), ['id'  = > $temp->new_id], '*', IGNORE_MULTIPLE);
+        $message = $DB->get_record(get_message_table_name(), ['id' => $temp->new_id], '*', IGNORE_MULTIPLE);
 
         // Iterate over all "mailtos" (user ids).
         foreach (explode(', ', $log->mailto) as $userid) {
             // Create a new record.
             $recipient = (object) [
-                'message_id'  = > $message->id,
-                'user_id'  = > $userid,
-                'sent_at'  = > $message->sent_at,
-                'moodle_message_id'  = > 0,
-                'usermodified'  = > $message->user_id,
-                'timecreated'  = > $message->sent_at,
-                'timemodified'  = > $message->sent_at
+                'message_id' => $message->id,
+                'user_id' => $userid,
+                'sent_at' => $message->sent_at,
+                'moodle_message_id' => 0,
+                'usermodified' => $message->user_id,
+                'timecreated' => $message->sent_at,
+                'timemodified' => $message->sent_at
             ];
 
             // Insert record.
@@ -238,25 +238,25 @@ function migrate_quickmail_v1_to_v2() {
     // While we can fetch a temp "standard message" record for this specific type that has not had recipients created.
     while ($temp = $DB->get_record_select(get_temp_table_name('draft'),
         "type = :type AND message_created = 1 AND recips_created = 0",
-        ['type'  = > 'standard'],
+        ['type' => 'standard'],
         '*',
         IGNORE_MULTIPLE)) {
         // Fetch the corresponding draft record.
-        $draft = $DB->get_record(get_old_table_name('draft'), ['id'  = > $temp->old_id], '*', IGNORE_MULTIPLE);
+        $draft = $DB->get_record(get_old_table_name('draft'), ['id' => $temp->old_id], '*', IGNORE_MULTIPLE);
 
         // Fetch the new message record.
-        $message = $DB->get_record(get_message_table_name(), ['id'  = > $temp->new_id], '*', IGNORE_MULTIPLE);
+        $message = $DB->get_record(get_message_table_name(), ['id' => $temp->new_id], '*', IGNORE_MULTIPLE);
 
         // Iterate over all "mailtos" (user ids).
         foreach (explode(', ', $draft->mailto) as $userid) {
             // Create a new record.
             $recipient = (object) [
-                'message_id'  = > $message->id,
-                'type'  = > 'include',
-                'recipient_type'  = > 'user',
-                'recipient_id'  = > $userid,
-                'timecreated'  = > $message->timecreated,
-                'timemodified'  = > $message->timemodified
+                'message_id' => $message->id,
+                'type' => 'include',
+                'recipient_type' => 'user',
+                'recipient_id' => $userid,
+                'timecreated' => $message->timecreated,
+                'timemodified' => $message->timemodified
             ];
 
             // Insert record.
@@ -273,23 +273,23 @@ function migrate_quickmail_v1_to_v2() {
     // While we can fetch a temp "admin message" record for this specific type that has not had recipients created.
     while ($temp = $DB->get_record_select(get_temp_table_name('draft'),
         "type = :type AND message_created = 1 AND recips_created = 0",
-        ['type'  = > 'admin'],
+        ['type' => 'admin'],
         '*',
         IGNORE_MULTIPLE)) {
         // Fetch the corresponding draft record.
-        $draft = $DB->get_record(get_old_table_name('draft'), ['id'  = > $temp->old_id], '*', IGNORE_MULTIPLE);
+        $draft = $DB->get_record(get_old_table_name('draft'), ['id' => $temp->old_id], '*', IGNORE_MULTIPLE);
 
         // Fetch the new message record.
-        $message = $DB->get_record(get_message_table_name(), ['id'  = > $temp->new_id], '*', IGNORE_MULTIPLE);
+        $message = $DB->get_record(get_message_table_name(), ['id' => $temp->new_id], '*', IGNORE_MULTIPLE);
 
         // Create a new record using the serialized "mailto".
         $recipient = (object) [
-            'message_id'  = > $message->id,
-            'type'  = > 'include',
-            'recipient_type'  = > 'filter',
-            'recipient_filter'  = > $draft->mailto,
-            'timecreated'  = > $message->timecreated,
-            'timemodified'  = > $message->timemodified
+            'message_id' => $message->id,
+            'type' => 'include',
+            'recipient_type' => 'filter',
+            'recipient_filter' => $draft->mailto,
+            'timecreated' => $message->timecreated,
+            'timemodified' => $message->timemodified
         ];
 
         // Insert record.
@@ -308,14 +308,14 @@ function migrate_quickmail_v1_to_v2() {
             // While we can fetch a temp "standard message" record for this specific type.
             while ($temp = $DB->get_record_select(get_temp_table_name($tabletype),
                 "type = :type AND message_created = 1 AND recips_created = 1 AND add_emails_created = 0",
-                ['type'  = > $type],
+                ['type' => $type],
                 '*',
                 IGNORE_MULTIPLE)) {
                 // Fetch the corresponding old record.
-                $old = $DB->get_record(get_old_table_name($tabletype), ['id'  = > $temp->old_id], '*', IGNORE_MULTIPLE);
+                $old = $DB->get_record(get_old_table_name($tabletype), ['id' => $temp->old_id], '*', IGNORE_MULTIPLE);
 
                 // Fetch the new message record.
-                $message = $DB->get_record(get_message_table_name(), ['id'  = > $temp->new_id], '*', IGNORE_MULTIPLE);
+                $message = $DB->get_record(get_message_table_name(), ['id' => $temp->new_id], '*', IGNORE_MULTIPLE);
 
                 // If the old record had additional emails.
                 if (!empty($old->additional_emails)) {
@@ -323,12 +323,12 @@ function migrate_quickmail_v1_to_v2() {
                     foreach (explode(', ', $old->additional_emails) as $email) {
                         // Create a new record.
                         $addemail = (object) [
-                            'message_id'  = > $message->id,
-                            'email'  = > trim($email),
-                            'sent_at'  = > $message->sent_at,
-                            'usermodified'  = > $message->user_id,
-                            'timecreated'  = > $message->timecreated,
-                            'timemodified'  = > $message->timemodified
+                            'message_id' => $message->id,
+                            'email' => trim($email),
+                            'sent_at' => $message->sent_at,
+                            'usermodified' => $message->user_id,
+                            'timecreated' => $message->timecreated,
+                            'timemodified' => $message->timemodified
                         ];
 
                         // Insert record.
