@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,22 +20,23 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\role_repo;
 
 class block_quickmail_role_repo_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses;
 
-    public function test_get_course_selectable_roles()
-    {
+    public function test_get_course_selectable_roles() {
         $this->resetAfterTest(true);
 
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users([
+        // Create course with enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users([
             'editingteacher' => 1,
             'teacher' => 3,
             'student' => 40,
@@ -52,8 +52,8 @@ class block_quickmail_role_repo_testcase extends advanced_testcase {
         $this->assertObjectHasAttribute('name', $roles[3]);
         $this->assertObjectHasAttribute('shortname', $roles[3]);
 
-        // update the course's settings to exclude editingteacher
-        $new_params = [
+        // Update the course's settings to exclude editingteacher.
+        $newparams = [
             'allowstudents' => '1',
             'roleselection' => '4,5',
             'receipt' => '1',
@@ -65,8 +65,8 @@ class block_quickmail_role_repo_testcase extends advanced_testcase {
             'message_types_available' => 'email',
         ];
 
-        // update the courses config
-        block_quickmail_config::update_course_config($course, $new_params);
+        // Update the courses config.
+        block_quickmail_config::update_course_config($course, $newparams);
 
         $roles = role_repo::get_course_selectable_roles($course);
 
@@ -79,87 +79,85 @@ class block_quickmail_role_repo_testcase extends advanced_testcase {
         $this->assertObjectHasAttribute('shortname', $roles[4]);
     }
 
-    public function test_get_alternate_email_role_selection_array()
-    {
+    public function test_get_alternate_email_role_selection_array() {
         $this->resetAfterTest(true);
 
-        $role_selection_array = role_repo::get_alternate_email_role_selection_array();
+        $roleselectionarray = role_repo::get_alternate_email_role_selection_array();
 
-        $this->assertCount(3, $role_selection_array);
-        $this->assertInternalType('array', $role_selection_array);
-        $this->assertArrayHasKey(3, $role_selection_array);
-        $this->assertInternalType('string', $role_selection_array[3]);
+        $this->assertCount(3, $roleselectionarray);
+        $this->assertInternalType('array', $roleselectionarray);
+        $this->assertArrayHasKey(3, $roleselectionarray);
+        $this->assertInternalType('string', $roleselectionarray[3]);
 
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users([
+        // Create course with enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users([
             'editingteacher' => 1,
             'teacher' => 3,
             'student' => 40,
         ]);
 
-        // update the course's settings to exclude editingteacher
-        $new_params = [
+        // Update the course's settings to exclude editingteacher.
+        $newparams = [
             'roleselection' => '4,5',
         ];
 
-        // update the courses config
-        block_quickmail_config::update_course_config($course, $new_params);
+        // Update the courses config.
+        block_quickmail_config::update_course_config($course, $newparams);
 
-        $role_selection_array = role_repo::get_alternate_email_role_selection_array($course);
+        $roleselectionarray = role_repo::get_alternate_email_role_selection_array($course);
 
-        $this->assertCount(2, $role_selection_array);
+        $this->assertCount(2, $roleselectionarray);
     }
 
-    public function test_get_user_role_id_array_in_course()
-    {
+    public function test_get_user_role_id_array_in_course() {
         $this->resetAfterTest(true);
 
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users([
-            'editingteacher' => 1, // role id: 3
-            'teacher' => 1, // role id: 4
-            'student' => 1, // role id: 5
+        // Create course with enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users([
+            'editingteacher' => 1, // Role id: 3.
+            'teacher' => 1, // Role id: 4.
+            'student' => 1, // Role id: 5.
         ]);
 
         $editingteacher = $users['editingteacher'][0];
         $teacher = $users['teacher'][0];
         $student = $users['student'][0];
 
-        // editingteacher
-        $role_ids = role_repo::get_user_roles_in_course($editingteacher->id, $course->id);
+        // Editingteacher.
+        $roleids = role_repo::get_user_roles_in_course($editingteacher->id, $course->id);
 
-        $this->assertInternalType('array', $role_ids);
-        $this->assertCount(1, $role_ids);
-        $this->assertContains(3, $role_ids);
+        $this->assertInternalType('array', $roleids);
+        $this->assertCount(1, $roleids);
+        $this->assertContains(3, $roleids);
 
-        // teacher
-        $role_ids = role_repo::get_user_roles_in_course($teacher->id, $course->id);
+        // Teacher.
+        $roleids = role_repo::get_user_roles_in_course($teacher->id, $course->id);
 
-        $this->assertCount(1, $role_ids);
-        $this->assertContains(4, $role_ids);
+        $this->assertCount(1, $roleids);
+        $this->assertContains(4, $roleids);
 
-        // student
-        $role_ids = role_repo::get_user_roles_in_course($student->id, $course->id);
+        // Student.
+        $roleids = role_repo::get_user_roles_in_course($student->id, $course->id);
 
-        $this->assertCount(1, $role_ids);
-        $this->assertContains(5, $role_ids);
+        $this->assertCount(1, $roleids);
+        $this->assertContains(5, $roleids);
 
-        // a nobody
+        // A nobody.
         $nobody = $this->getDataGenerator()->create_user();
 
-        $role_ids = role_repo::get_user_roles_in_course($nobody->id, $course->id);
+        $roleids = role_repo::get_user_roles_in_course($nobody->id, $course->id);
 
-        $this->assertCount(0, $role_ids);
+        $this->assertCount(0, $roleids);
 
-        // add editingteacher role to teacher
+        // Add editingteacher role to teacher.
         $this->assign_role_id_to_user_in_course(3, $teacher, $course);
 
-        $role_ids = role_repo::get_user_roles_in_course($teacher->id, $course->id);
+        $roleids = role_repo::get_user_roles_in_course($teacher->id, $course->id);
 
-        // should have both roles now
-        $this->assertCount(2, $role_ids);
-        $this->assertContains(4, $role_ids);
-        $this->assertContains(3, $role_ids);
+        // Should have both roles now.
+        $this->assertCount(2, $roleids);
+        $this->assertContains(4, $roleids);
+        $this->assertContains(3, $roleids);
     }
 
 }

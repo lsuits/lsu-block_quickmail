@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,18 +20,19 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\pagination\paginator;
 use block_quickmail\repos\pagination\paginated;
 
 class block_quickmail_paginator_testcase extends advanced_testcase {
-    
+
     use has_general_helpers;
 
-    public function test_sets_paginator_properties_scenario_one()
-    {
+    public function test_sets_paginator_properties_scenario_one() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc';
@@ -47,8 +47,7 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals(0, $paginator->offset);
     }
 
-    public function test_sets_paginator_properties_scenario_two()
-    {
+    public function test_sets_paginator_properties_scenario_two() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc';
@@ -63,8 +62,7 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals(21, $paginator->offset);
     }
 
-    public function test_sets_paginator_properties_scenario_three()
-    {
+    public function test_sets_paginator_properties_scenario_three() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc';
@@ -79,8 +77,7 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals(0, $paginator->offset);
     }
 
-    public function test_sets_paginator_page_when_less_than_one()
-    {
+    public function test_sets_paginator_page_when_less_than_one() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc';
@@ -90,8 +87,7 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals(1, $paginator->page);
     }
 
-    public function test_sets_paginator_page_when_higher_than_appropriate()
-    {
+    public function test_sets_paginator_page_when_higher_than_appropriate() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc';
@@ -101,8 +97,7 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals(2, $paginator->page);
     }
 
-    public function test_paginator_returns_paginated_object_scenario_one()
-    {
+    public function test_paginator_returns_paginated_object_scenario_one() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc';
@@ -126,9 +121,8 @@ class block_quickmail_paginator_testcase extends advanced_testcase {
         $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=1', $paginated->previous_page_uri);
         $this->assertEquals('/blocks/quickmail/sent.php?courseid=7&sort=subject&dir=asc&page=', $paginated->empty_uri);
     }
-    
-    public function test_paginator_returns_paginated_object_scenario_two()
-    {
+
+    public function test_paginator_returns_paginated_object_scenario_two() {
         $this->resetAfterTest(true);
 
         $uri = '/blocks/quickmail/sent.php?courseid=7&page=3&sort=subject&dir=asc';

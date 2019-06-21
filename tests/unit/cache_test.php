@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,17 +20,18 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 class block_quickmail_cache_testcase extends advanced_testcase {
-    
+
     use has_general_helpers;
 
-    public function test_gets_values()
-    {
+    public function test_gets_values() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->get('foo');
@@ -46,10 +46,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         ], $value);
     }
 
-    public function test_returns_missing_values_as_null()
-    {
+    public function test_returns_missing_values_as_null() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->get('missing');
@@ -57,10 +56,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertNull($value);
     }
 
-    public function test_gets_values_with_default()
-    {
+    public function test_gets_values_with_default() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->get('missing');
@@ -72,10 +70,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertEquals('this!', $value);
     }
 
-    public function test_gets_values_with_closure_default()
-    {
+    public function test_gets_values_with_closure_default() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->get('missing', function() {
@@ -89,10 +86,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertEquals(6, $value);
     }
 
-    public function test_checks_whether_exists_in_cache()
-    {
+    public function test_checks_whether_exists_in_cache() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->check('missing');
@@ -104,10 +100,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertTrue($value);
     }
 
-    public function test_puts_values_in_cache()
-    {
+    public function test_puts_values_in_cache() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $result = block_quickmail_cache::store('qm_msg_recip_count')->check('missing');
@@ -120,10 +115,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertTrue($result);
     }
 
-    public function test_puts_closure_result_values_in_cache()
-    {
+    public function test_puts_closure_result_values_in_cache() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $result = block_quickmail_cache::store('qm_msg_recip_count')->check('missing');
@@ -131,8 +125,8 @@ class block_quickmail_cache_testcase extends advanced_testcase {
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->put('missing', function() {
             $n = 0;
-            
-            foreach(range(1,4) as $i) {
+
+            foreach (range(1, 4) as $i) {
                 $n += $i;
             }
 
@@ -144,10 +138,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertTrue($result);
     }
 
-    public function test_adds_values_only_if_not_exist()
-    {
+    public function test_adds_values_only_if_not_exist() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->get('foo');
@@ -157,10 +150,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertEquals('bar', $value);
     }
 
-    public function test_remembers_if_doesnt_have()
-    {
+    public function test_remembers_if_doesnt_have() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->remember('foo', 'this');
@@ -178,10 +170,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertEquals('this!', $value);
     }
 
-    public function test_remembers_closure_values_if_doesnt_have()
-    {
+    public function test_remembers_closure_values_if_doesnt_have() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->remember('foo', 'this');
@@ -193,8 +184,8 @@ class block_quickmail_cache_testcase extends advanced_testcase {
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->remember('missing', function() {
             $n = 0;
-            
-            foreach(range(1,4) as $i) {
+
+            foreach (range(1, 4) as $i) {
                 $n += $i;
             }
 
@@ -207,10 +198,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertEquals(10, $value);
     }
 
-    public function test_removes_value_from_cache()
-    {
+    public function test_removes_value_from_cache() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->get('foo');
@@ -222,10 +212,9 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertFalse($value);
     }
 
-    public function test_pulls_from_cache_and_returns()
-    {
+    public function test_pulls_from_cache_and_returns() {
         $this->resetAfterTest(true);
- 
+
         $this->build_test_caches();
 
         $value = block_quickmail_cache::store('qm_msg_recip_count')->pull('foo');
@@ -235,16 +224,13 @@ class block_quickmail_cache_testcase extends advanced_testcase {
         $this->assertFalse($value);
     }
 
-    /////////////////////////////////////
-    
-    private function build_test_caches()
-    {
-        // build 'qm_msg_recip_count' store
+    private function build_test_caches() {
+        // Build 'qm_msg_recip_count' store.
         $cache = cache::make('block_quickmail', 'qm_msg_recip_count');
         $cache->set('foo', 'bar');
         $cache->set('baz', 'other');
 
-        // build 'qm_msg_deliv_count' store
+        // Build 'qm_msg_deliv_count' store.
         $cache = cache::make('block_quickmail', 'qm_msg_deliv_count');
         $cache->set('red', 'fish');
         $cache->set('fish', 'blue');

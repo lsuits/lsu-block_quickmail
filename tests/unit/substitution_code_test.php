@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,19 +20,20 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\message\substitution_code;
 
 class block_quickmail_substitution_code_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses,
         creates_message_records;
 
-    public function test_gets_user_substitution_codes()
-    {
+    public function test_gets_user_substitution_codes() {
         $codes = substitution_code::get('user');
 
         $this->assertCount(6, $codes);
@@ -45,8 +45,7 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
         $this->assertContains('alternatename', $codes);
     }
 
-    public function test_gets_course_substitution_codes()
-    {
+    public function test_gets_course_substitution_codes() {
         $codes = substitution_code::get('course');
 
         $this->assertCount(10, $codes);
@@ -62,8 +61,7 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
         $this->assertContains('studentenddate', $codes);
     }
 
-    public function test_gets_activity_substitution_codes()
-    {
+    public function test_gets_activity_substitution_codes() {
         $codes = substitution_code::get('activity');
 
         $this->assertCount(4, $codes);
@@ -73,46 +71,35 @@ class block_quickmail_substitution_code_testcase extends advanced_testcase {
         $this->assertContains('activitygradelink', $codes);
     }
 
-    public function test_gets_codes_for_multiple_classes()
-    {
+    public function test_gets_codes_for_multiple_classes() {
         $codes = substitution_code::get(['user', 'course', 'user']);
 
         $this->assertCount(16, $codes);
     }
 
-    public function test_gets_all_codes()
-    {
+    public function test_gets_all_codes() {
         $codes = substitution_code::get();
 
         $this->assertCount(20, $codes);
     }
 
-    public function test_gets_substitution_code_classes_from_composed_message_with_no_notification()
-    {
-        // reset all changes automatically after this test
+    public function test_gets_substitution_code_classes_from_composed_message_with_no_notification() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
 
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
-        $message = $this->create_compose_message($course, $user_teacher, [], [
+        $message = $this->create_compose_message($course, $userteacher, [], [
             'message_type' => 'email',
             'body' => 'This is a message with no substitution codes! Should be easy enough, right?',
         ]);
 
-        $code_classes = substitution_code::get_code_classes_from_message($message);
+        $codeclasses = substitution_code::get_code_classes_from_message($message);
 
-        $this->assertCount(2, $code_classes);
-        $this->assertContains('user', $code_classes);
-        $this->assertContains('course', $code_classes);
+        $this->assertCount(2, $codeclasses);
+        $this->assertContains('user', $codeclasses);
+        $this->assertContains('course', $codeclasses);
     }
-
-    ///////////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    //////////////////////////////////////////////
-    
-    // 
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,39 +21,31 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-////////////////////////////////////////////////////
-///
-///  CREATE ALTERNATE FORM SUBMISSION HELPERS
-///  
-///  needs:
-///   # has_general_helpers
-/// 
-////////////////////////////////////////////////////
+defined('MOODLE_INTERNAL') || die();
 
+// Create alternate form submission helpers.
 trait submits_create_alternate_form {
 
-    public function get_create_alternate_form_submission(array $override_params = [])
-    {
-        $params = $this->get_create_alternate_form_submission_params($override_params);
+    public function get_create_alternate_form_submission(array $overrideparams = []) {
+        $params = $this->get_create_alternate_form_submission_params($overrideparams);
 
-        $form_data = (object)[];
+        $formdata = (object)[];
 
-        $form_data->email = $params['email']; // default: different@email.com
-        $form_data->firstname = $params['firstname']; // default: Firsty
-        $form_data->lastname = $params['lastname']; // default: Lasty
-        $form_data->availability = $params['availability']; // default: only
+        $formdata->email = $params['email']; // Default: different@email.com.
+        $formdata->firstname = $params['firstname']; // Default: Firsty.
+        $formdata->lastname = $params['lastname']; // Default: Lasty.
+        $formdata->availability = $params['availability']; // Default: only.
 
-        return $form_data;
+        return $formdata;
     }
 
-    public function get_create_alternate_form_submission_params(array $override_params)
-    {
+    public function get_create_alternate_form_submission_params(array $overrideparams) {
         $params = [];
 
-        $params['email'] = array_key_exists('email', $override_params) ? $override_params['email'] : 'different@email.com';
-        $params['firstname'] = array_key_exists('firstname', $override_params) ? $override_params['firstname'] : 'Firsty';
-        $params['lastname'] = array_key_exists('lastname', $override_params) ? $override_params['lastname'] : 'Lasty';
-        $params['availability'] = array_key_exists('availability', $override_params) ? $override_params['availability'] : 'only';
+        $params['email'] = array_key_exists('email', $overrideparams) ? $overrideparams['email'] : 'different@email.com';
+        $params['firstname'] = array_key_exists('firstname', $overrideparams) ? $overrideparams['firstname'] : 'Firsty';
+        $params['lastname'] = array_key_exists('lastname', $overrideparams) ? $overrideparams['lastname'] : 'Lasty';
+        $params['availability'] = array_key_exists('availability', $overrideparams) ? $overrideparams['availability'] : 'only';
 
         return $params;
     }

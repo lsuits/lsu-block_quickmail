@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,22 +20,23 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\validators\edit_notification_form_validator;
 
 class block_quickmail_edit_reminder_notification_form_validator_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_validate_schedule_time_unit_is_valid_for_reminder_notifications()
-    {
-        // reset all changes automatically after this test
+    public function test_validate_schedule_time_unit_is_valid_for_reminder_notifications() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
- 
+
         $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
 
         $validator = new edit_notification_form_validator($input, [
@@ -47,9 +47,9 @@ class block_quickmail_edit_reminder_notification_form_validator_testcase extends
         $this->assertTrue($validator->has_errors());
         $this->assertEquals('Invalid unit of time for schedule.', $validator->errors[0]);
 
-        // reset all changes automatically after this test
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
- 
+
         $input = $this->get_notification_input(['schedule_time_unit' => 'day']);
 
         $validator = new edit_notification_form_validator($input, [
@@ -60,11 +60,10 @@ class block_quickmail_edit_reminder_notification_form_validator_testcase extends
         $this->assertFalse($validator->has_errors());
     }
 
-    public function test_validate_schedule_time_amount_is_valid_for_reminder_notifications()
-    {
-        // reset all changes automatically after this test
+    public function test_validate_schedule_time_amount_is_valid_for_reminder_notifications() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
- 
+
         $input = $this->get_notification_input(['schedule_time_amount' => '']);
 
         $validator = new edit_notification_form_validator($input, [

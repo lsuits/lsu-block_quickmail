@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,35 +20,36 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\messenger;
 use block_quickmail\tasks\send_all_ready_messages_task;
 
 class block_quickmail_send_all_ready_messages_task_testcase extends advanced_testcase {
-    
-    use has_general_helpers, 
-        sets_up_courses, 
-        submits_compose_message_form, 
-        sends_emails, 
-        sends_messages;
-    
-    public function test_send_all_ready_messages_task_sends_messages()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
-        
-        $sink = $this->open_email_sink();
- 
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $messages = $this->create_messages($course, $user_teacher, $user_students);
+    use has_general_helpers,
+        sets_up_courses,
+        submits_compose_message_form,
+        sends_emails,
+        sends_messages;
+
+    public function test_send_all_ready_messages_task_sends_messages() {
+        // Reset all changes automatically after this test.
+        $this->resetAfterTest(true);
+
+        $sink = $this->open_email_sink();
+
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
+
+        $messages = $this->create_messages($course, $userteacher, $userstudents);
 
         \phpunit_util::run_all_adhoc_tasks();
 
-        // should be no tasks fire yet, so no emails
+        // Should be no tasks fire yet, so no emails.
         $this->assertEquals(0, $this->email_sink_email_count($sink));
 
         $task = new send_all_ready_messages_task();
@@ -58,43 +58,37 @@ class block_quickmail_send_all_ready_messages_task_testcase extends advanced_tes
 
         \phpunit_util::run_all_adhoc_tasks();
 
-        // should have executed the task, so 4 * 4 emails = 16
+        // Should have executed the task, so 4 * 4 emails = 16.
         $this->assertEquals(16, $this->email_sink_email_count($sink));
 
         $this->close_email_sink($sink);
     }
 
-    /////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    /////////////////////////////////
-    
+    // Helpers.
     /*
      * Returns an array of 8 messages each with 4 recipients, 4 should be sent now, 4 should be sent in the future
      */
-    private function create_messages($course, $user_teacher, $user_students)
-    {
+    private function create_messages($course, $userteacher, $userstudents) {
         $messages = [];
 
         foreach (range(1, 8) as $i) {
-            // specify recipients
-            $recipients['included']['user'] = $this->get_user_ids_from_user_array($user_students);
+            // Specify recipients.
+            $recipients['included']['user'] = $this->get_user_ids_from_user_array($userstudents);
 
-            // every other message to be sent later
-            if ( ! in_array($i, [2, 4, 6, 8])) {
-                $time_to_send = time() + 100000;
+            // Every other message to be sent later.
+            if (!in_array($i, [2, 4, 6, 8])) {
+                $timetosend = time() + 100000;
             } else {
-                $time_to_send = time();
+                $timetosend = time();
             }
 
-            // get a compose form submission
-            $compose_form_data = $this->get_compose_message_form_submission($recipients, 'email', [
-                'to_send_at' => $time_to_send
+            // Get a compose form submission.
+            $composeformdata = $this->get_compose_message_form_submission($recipients, 'email', [
+                'to_send_at' => $timetosend
             ]);
 
-            // schedule an email from the teacher to the students (as queued adhoc tasks)
-            $message = messenger::compose($user_teacher, $course, $compose_form_data, null, true);
+            // Schedule an email from the teacher to the students (as queued adhoc tasks).
+            $message = messenger::compose($userteacher, $course, $composeformdata, null, true);
 
             $messages[] = $message;
         }

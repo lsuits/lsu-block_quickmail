@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,21 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-////////////////////////////////////////////////////
-///
-///  MENTOR ASSIGNMENT HELPERS
-/// 
-////////////////////////////////////////////////////
+defined('MOODLE_INTERNAL') || die();
 
+// Mentor assignment helpers.
 trait assigns_mentors {
 
-    public function create_mentor_role()
-    {
-        $mentor_role_id = $this->getDataGenerator()->create_role([
-            'shortname' => 'mentor', 
-            'name' => 'Mentor', 
-            'description' => 'you shall pass', 
-            // 'archetype' => ''
+    public function create_mentor_role() {
+        $mentorroleid = $this->getDataGenerator()->create_role([
+            'shortname' => 'mentor',
+            'name' => 'Mentor',
+            'description' => 'you shall pass',
         ]);
 
         global $DB;
@@ -53,7 +47,7 @@ trait assigns_mentors {
         foreach ($capabilities as $capability) {
             $record = (object)[];
             $record->contextid = 1;
-            $record->roleid = $mentor_role_id;
+            $record->roleid = $mentorroleid;
             $record->capability = $capability;
             $record->permission = 1;
             $record->timemodified = time();
@@ -62,34 +56,31 @@ trait assigns_mentors {
             $DB->insert_record('role_capabilities', $record, false, false);
         }
 
-        return $mentor_role_id;
+        return $mentorroleid;
     }
 
-    public function create_mentor()
-    {
-        $mentor_role_id = $this->create_mentor_role();
+    public function create_mentor() {
+        $mentorroleid = $this->create_mentor_role();
 
-        $mentor_user = $this->getDataGenerator()->create_user();
+        $mentoruser = $this->getDataGenerator()->create_user();
 
-        $assignment_id = $this->getDataGenerator()->role_assign($mentor_role_id, $mentor_user->id);
+        $assignmentid = $this->getDataGenerator()->role_assign($mentorroleid, $mentoruser->id);
 
-        return [$mentor_user, $mentor_role_id];
+        return [$mentoruser, $mentorroleid];
     }
 
-    public function create_mentor_for_user($user)
-    {
-        list($mentor, $mentor_role_id) = $this->create_mentor();
+    public function create_mentor_for_user($user) {
+        list($mentor, $mentorroleid) = $this->create_mentor();
 
-        $this->assign_mentor_to_mentee($mentor_role_id, $mentor, $user);
+        $this->assign_mentor_to_mentee($mentorroleid, $mentor, $user);
 
         return $mentor;
     }
 
-    public function assign_mentor_to_mentee($mentor_role_id, $mentor, $mentee)
-    {
-        $assignment_id = $this->getDataGenerator()->role_assign($mentor_role_id, $mentor->id, context_user::instance($mentee->id)->id);
+    public function assign_mentor_to_mentee($mentorroleid, $mentor, $mentee) {
+        $assignmentid = $this->getDataGenerator()->role_assign($mentorroleid, $mentor->id, context_user::instance($mentee->id)->id);
 
-        return $assignment_id;
+        return $assignmentid;
     }
 
 }

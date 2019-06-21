@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,31 +21,31 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-////////////////////////////////////////////////////
-///
-///  NOTIFICATION MODEL TEST HELPERS
-/// 
-////////////////////////////////////////////////////
+defined('MOODLE_INTERNAL') || die();
 
+// Notification model test helpers.
 use block_quickmail\persistents\reminder_notification;
 
 trait sets_up_notification_models {
 
-    public function create_reminder_notification_model($model_key, $course, $creating_user, $object, $override_params = [])
-    {
-        $model_class_name = str_replace('-', '_', $model_key) . '_model';
+    public function create_reminder_notification_model($modelkey, $course, $creatinguser, $object, $overrideparams = []) {
+        $modelclassname = str_replace('-', '_', $modelkey) . '_model';
 
-        // create test reminder notification
-        $reminder_notification = reminder_notification::create_type($model_key, $course, $object, $creating_user, $this->get_reminder_notification_params([], $override_params));
+        // Create test reminder notification.
+        $remindernotification = reminder_notification::create_type($modelkey,
+                                                                   $course,
+                                                                   $object,
+                                                                   $creatinguser,
+                                                                   $this->get_reminder_notification_params([],
+                                                                   $overrideparams));
 
-        return $this->create_notification_model('reminder', $model_class_name, $reminder_notification);
+        return $this->create_notification_model('reminder', $modelclassname, $remindernotification);
     }
 
-    public function create_notification_model($type, $model_class_name, $notification_type_interface)
-    {
-        $class = 'block_quickmail\notifier\models\\' . $type . '\\' . $model_class_name;
+    public function create_notification_model($type, $modelclassname, $notificationtypeinterface) {
+        $class = 'block_quickmail\notifier\models\\' . $type . '\\' . $modelclassname;
 
-        return new $class($notification_type_interface, $notification_type_interface->get_notification());
+        return new $class($notificationtypeinterface, $notificationtypeinterface->get_notification());
     }
 
 }

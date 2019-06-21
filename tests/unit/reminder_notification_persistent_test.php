@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,7 +20,9 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\persistents\reminder_notification;
@@ -31,49 +32,55 @@ use block_quickmail\persistents\interfaces\notification_type_interface;
 use block_quickmail\notifier\models\reminder_notification_model;
 
 class block_quickmail_reminder_notification_persistent_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_has_a_notification_type_key()
-    {
-        $this->assertEquals('reminder', reminder_notification::$notification_type_key);
+    public function test_has_a_notification_type_key() {
+        $this->assertEquals('reminder', reminder_notification::$notificationtypekey);
     }
 
-    public function test_creates_a_reminder_notification()
-    {
-        // reset all changes automatically after this test
+    public function test_creates_a_reminder_notification() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
-        
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        // create
-        $reminder_notification = reminder_notification::create_type('course-non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params());
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
-        $this->assertInstanceOf(reminder_notification::class, $reminder_notification);
-        $this->assertEquals('course-non-participation', $reminder_notification->get('model'));
-        $this->assertEquals($course->id, $reminder_notification->get('object_id'));
-        $this->assertEquals($this->get_reminder_notification_params('max_per_interval'), $reminder_notification->get('max_per_interval'));
-        $this->assertEquals($this->get_reminder_notification_params('max_per_interval'), $reminder_notification->max_per_interval());
-        $this->assertEquals(null, $reminder_notification->get('last_run_at'));
-        $this->assertTrue($reminder_notification->is_schedulable());
-        $this->assertEquals('Course Non-Participation', $reminder_notification->get_title());
+        // Create.
+        $remindernotification = reminder_notification::create_type('course-non-participation',
+                                                                   $course,
+                                                                   $course,
+                                                                   $userteacher,
+                                                                   $this->get_reminder_notification_params());
 
-        // get notification from reminder_notification
-        $notification = $reminder_notification->get_notification();
+        $this->assertInstanceOf(reminder_notification::class, $remindernotification);
+        $this->assertEquals('course-non-participation', $remindernotification->get('model'));
+        $this->assertEquals($course->id, $remindernotification->get('object_id'));
+        $this->assertEquals($this->get_reminder_notification_params('max_per_interval'),
+                            $remindernotification->get('max_per_interval'));
+        $this->assertEquals($this->get_reminder_notification_params('max_per_interval'),
+                            $remindernotification->max_per_interval());
+        $this->assertEquals(null, $remindernotification->get('last_run_at'));
+        $this->assertTrue($remindernotification->is_schedulable());
+        $this->assertEquals('Course Non-Participation', $remindernotification->get_title());
+
+        // Get notification from reminder_notification.
+        $notification = $remindernotification->get_notification();
 
         $this->assertInstanceOf(notification::class, $notification);
         $this->assertEquals($course->id, $notification->get('course_id'));
-        $this->assertEquals($user_teacher->id, $notification->get('user_id'));
+        $this->assertEquals($userteacher->id, $notification->get('user_id'));
         $this->assertEquals('reminder', $notification->get('type'));
         $this->assertEquals($this->get_reminder_notification_params('name'), $notification->get('name'));
         $this->assertEquals($this->get_reminder_notification_params('is_enabled'), $notification->get('is_enabled'));
         $this->assertEquals('time_amount:4,time_unit:day', $notification->get('conditions'));
         $this->assertEquals($this->get_reminder_notification_params('message_type'), $notification->get('message_type'));
-        $this->assertEquals($this->get_reminder_notification_params('alternate_email_id'), $notification->get('alternate_email_id'));
-        $this->assertEquals($this->get_reminder_notification_params('signature_id'), $notification->get('signature_id'));
+        $this->assertEquals($this->get_reminder_notification_params('alternate_email_id'),
+                            $notification->get('alternate_email_id'));
+        $this->assertEquals($this->get_reminder_notification_params('signature_id'),
+                            $notification->get('signature_id'));
         $this->assertEquals($this->get_reminder_notification_params('subject'), $notification->get('subject'));
         $this->assertEquals($this->get_reminder_notification_params('body'), $notification->get('body'));
         $this->assertEquals($this->get_reminder_notification_params('editor_format'), $notification->get('editor_format'));
@@ -82,37 +89,40 @@ class block_quickmail_reminder_notification_persistent_testcase extends advanced
         $this->assertEquals($this->get_reminder_notification_params('no_reply'), $notification->get('no_reply'));
         $this->assertEquals(reminder_notification::class, $notification->get_notification_type_interface_persistent_class_name());
 
-        // get notification interface (reminder) from notification
-        $notification_type_interface = $notification->get_notification_type_interface();
+        // Get notification interface (reminder) from notification.
+        $notificationtypeinterface = $notification->get_notification_type_interface();
 
-        $this->assertInstanceOf(notification_type_interface::class, $notification_type_interface);
-        $this->assertEquals($notification_type_interface->get('notification_id'), $notification->get('id'));
+        $this->assertInstanceOf(notification_type_interface::class, $notificationtypeinterface);
+        $this->assertEquals($notificationtypeinterface->get('notification_id'), $notification->get('id'));
 
-        // get schedule from reminder_notification
-        $schedule = $reminder_notification->get_schedule();
+        // Get schedule from reminder_notification.
+        $schedule = $remindernotification->get_schedule();
 
         $this->assertInstanceOf(schedule::class, $schedule);
-        $this->assertEquals($schedule->get('id'), $reminder_notification->get('schedule_id'));
+        $this->assertEquals($schedule->get('id'), $remindernotification->get('schedule_id'));
     }
 
-    public function test_gets_a_reminder_notification_model_from_reminder_notification()
-    {
-        // reset all changes automatically after this test
+    public function test_gets_a_reminder_notification_model_from_reminder_notification() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
 
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
-        // create a reminder notification to run soon
-        $reminder_notification = reminder_notification::create_type('course-non-participation', $course, $course, $user_teacher, $this->get_reminder_notification_params([], [
-            'schedule_unit' => 'week',
-            'schedule_amount' => 2,
-            'schedule_begin_at' => $this->get_soon_time()
-        ]));
+        // Create a reminder notification to run soon.
+        $remindernotification = reminder_notification::create_type('course-non-participation',
+                                $course,
+                                $course,
+                                $userteacher,
+                                $this->get_reminder_notification_params([], [
+                                    'schedule_unit' => 'week',
+                                    'schedule_amount' => 2,
+                                    'schedule_begin_at' => $this->get_soon_time()
+                                ]));
 
-        $reminder_notification_model = $reminder_notification->get_notification_model();
+        $remindernotificationmodel = $remindernotification->get_notification_model();
 
-        $this->assertInstanceOf(reminder_notification_model::class, $reminder_notification_model);
+        $this->assertInstanceOf(reminder_notification_model::class, $remindernotificationmodel);
     }
 
 }
