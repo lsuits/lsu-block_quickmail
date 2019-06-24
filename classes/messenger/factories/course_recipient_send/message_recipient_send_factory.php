@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace block_quickmail\messenger\factories\course_recipient_send;
+
+defined('MOODLE_INTERNAL') || die();
 
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory;
 use block_quickmail\messenger\factories\course_recipient_send\recipient_send_factory_interface;
@@ -33,8 +33,8 @@ use block_quickmail_string;
 class message_recipient_send_factory extends recipient_send_factory implements recipient_send_factory_interface {
 
     public function set_factory_params() {
-        $this->message_params->component = 'block_quickmail'; // Must exist in the table message_providers.
-        $this->message_params->name = 'quickmessage'; // Type of message from that module (as module defines it).
+        $this->message_params->component = 'moodle'; // Must exist in the table message_providers.
+        $this->message_params->name = 'instantmessage'; // Type of message from that module (as module defines it).
         $this->message_params->fullmessageformat = FORMAT_HTML;  // <------- check on this, should be hard-coded? FORMAT_PLAIN?
         $this->message_params->notification = false; // Just in case.
     }

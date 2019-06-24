@@ -136,7 +136,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
         $factory = recipient_send_factory::make($message, $recipient);
 
         $this->assertEquals('block_quickmail', $factory->message_params->component);
-        $this->assertEquals('quickmessage', $factory->message_params->name);
+        $this->assertEquals('instantmessage', $factory->message_params->name);
         $this->assertEquals(FORMAT_HTML, $factory->message_params->fullmessageformat);
         $this->assertEquals(false, $factory->message_params->notification);
     }

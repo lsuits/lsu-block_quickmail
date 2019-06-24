@@ -83,7 +83,7 @@ trait submits_compose_message_form {
                     if (array_key_exists($recipienttype, $recipients[$inclusiontype])) {
                         foreach ($recipients[$inclusiontype][$recipienttype] as $id) {
                             $containername = $inclusiontype . '_entity_ids';
-                            ${$containername[]} = $recipienttype . '_' . $id;
+                            $$containername[] = $recipienttype . '_' . $id;
                         }
                     }
                 }

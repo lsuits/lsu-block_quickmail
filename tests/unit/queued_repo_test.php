@@ -147,7 +147,7 @@ class block_quickmail_queued_repo_testcase extends advanced_testcase {
         // Get all queueds for user: 1, course: 2.
         $queueds = queued_repo::get_for_user(1, 2);
 
-        $this->assertCount(1, $queueds->data);.
+        $this->assertCount(1, $queueds->data);
     }
 
     public function test_sorts_get_for_user() {

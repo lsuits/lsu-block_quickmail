@@ -29,8 +29,7 @@ use block_quickmail\persistents\event_notification;
 
 trait sets_up_notifications {
 
-     NOTIFICATION CREATION
-
+    // Notification creation.
     public function create_reminder_notification_for_course_user($modelkey, $course, $user, $object = null, $overrides = []) {
         $params = $this->get_reminder_notification_params([], $overrides);
 
@@ -47,8 +46,7 @@ trait sets_up_notifications {
         return $notification;
     }
 
-     NOTIFICATION SCAFFOLDING
-
+    // Notification Scaffolding.
     public function get_event_notification_params($attr = [], $overrides = []) {
         return $this->get_notification_params($attr, $overrides, $this->get_default_event_notification_params());
     }
