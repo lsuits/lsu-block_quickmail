@@ -180,25 +180,31 @@ class queued_repo extends repo implements queued_repo_interface {
 		return $repo->result;
 	}
 
-	private static function get_for_user_sql($course_id, $sort_by, $sort_dir, $as_count = false)
-	{
-		$sql = $as_count
-			? 'SELECT COUNT(DISTINCT m.id) '
-			: 'SELECT DISTINCT m.* ';
+    private static function get_for_user_sql($course_id, $sort_by = null, $sort_dir, $as_count = false)
+    {
 
-		$sql .= 'FROM {block_quickmail_messages} m
+
+        $sql = $as_count
+            ? 'SELECT COUNT(res.id) FROM (select DISTINCT id' . ($sort_by? ','.$sort_by:'')
+            : 'SELECT DISTINCT m.* ';
+
+        $sql .= ' FROM {block_quickmail_messages} m
 				 WHERE m.user_id = :user_id';
 
-		if ($course_id) {
-			$sql .= ' AND m.course_id = :course_id';
-		}
-							
-		$sql .= ' AND m.to_send_at <> 0 AND m.timedeleted = 0 AND m.sent_at = 0 AND m.is_draft = 0 ORDER BY ' . $sort_by . ' ' . $sort_dir;
+        if ($course_id) {
+            $sql .= ' AND m.course_id = :course_id';
+        }
 
-		return $sql;
-	}
+        $sql .= ' AND m.to_send_at <> 0 AND m.timedeleted = 0 AND m.sent_at = 0 AND m.is_draft = 0 ORDER BY ' . $sort_by . ' ' . $sort_dir;
 
-	/**
+        $sql .= $as_count
+            ? ') as res '
+            : '';
+
+        return $sql;
+    }
+
+    /**
 	 * Returns an array of all messages that should be sent by the system right now
 	 * 
 	 * @return array

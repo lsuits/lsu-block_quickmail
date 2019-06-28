@@ -114,20 +114,24 @@ class sent_repo extends repo implements sent_repo_interface {
         return $repo->result;
     }
 
-    private static function get_for_user_sql($course_id, $sort_by, $sort_dir, $as_count = false)
+    private static function get_for_user_sql($course_id, $sort_by = null, $sort_dir, $as_count = false)
     {
         $sql = $as_count
-            ? 'SELECT COUNT(DISTINCT m.id) '
+            ? 'SELECT COUNT(res.id) FROM (select DISTINCT id' . ($sort_by? ','.$sort_by:'')
             : 'SELECT DISTINCT m.* ';
 
-        $sql .= 'FROM {block_quickmail_messages} m
+        $sql .= ' FROM {block_quickmail_messages} m
                   WHERE m.user_id = :user_id';
 
         if ($course_id) {
             $sql .= ' AND m.course_id = :course_id';
         }
-                  
+
         $sql .= ' AND m.is_draft = 0 AND m.timedeleted = 0 AND m.sent_at > 0 ORDER BY ' . $sort_by . ' ' . $sort_dir;
+
+        $sql .= $as_count
+            ? ') as res '
+            : '';
 
         return $sql;
     }

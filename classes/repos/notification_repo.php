@@ -130,10 +130,10 @@ class notification_repo extends repo implements notification_repo_interface {
         return $notification;
     }
 
-    private static function get_all_for_course_sql($course_id, $user_id = null, $sort_by, $sort_dir, $as_count = false)
+    private static function get_all_for_course_sql($course_id, $user_id = null, $sort_by = null, $sort_dir, $as_count = false)
     {
         $sql = $as_count
-            ? 'SELECT COUNT(DISTINCT n.id) '
+            ? 'SELECT COUNT(res.id) FROM (select DISTINCT id' . ($sort_by? ','.$sort_by:'')
             : 'SELECT DISTINCT n.* ';
 
         $sql .= 'FROM {block_quickmail_notifs} n
@@ -143,8 +143,11 @@ class notification_repo extends repo implements notification_repo_interface {
             $sql .= ' AND n.user_id = :user_id';
         }
 
-        $sql .= ' AND n.timedeleted = 0 
-                 ORDER BY ' . $sort_by . ' ' . $sort_dir;
+        $sql .= ' AND n.timedeleted = 0 ORDER BY ' . $sort_by . ' ' . $sort_dir;
+
+        $sql .= $as_count
+            ? ') as res '
+            : '';
 
         return $sql;
     }
