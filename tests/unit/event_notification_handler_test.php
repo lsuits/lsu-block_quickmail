@@ -46,7 +46,7 @@ class block_quickmail_event_notification_handler_testcase extends advanced_testc
 
         event_notification_handler::course_entered($userstudents[0]->id, $course->id);
 
-        var_dump('woohoo!');die;
+     //   var_dump('woohoo!');die;
     }
 
 }

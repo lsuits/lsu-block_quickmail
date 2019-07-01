@@ -89,6 +89,7 @@ class notification_index_component extends component implements \renderable {
             ];
         }
 
+
         $data->urlBack = new moodle_url('/course/view.php', ['id' => $this->courseid]);
         $data->urlBackLabel = block_quickmail_string::get('back_to_course');
         $data->urlCreateNew = new moodle_url('/blocks/quickmail/create_notification.php', ['courseid' => $this->courseid]);

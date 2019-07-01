@@ -22,15 +22,13 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/blocks/quickmail/lib.php';
-
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 $pageparams = [
     'id' => required_param('id', PARAM_INT),
     'courseid' => required_param('courseid', PARAM_INT),
 ];
 
 $course = get_course($pageparams['courseid']);
-
 // Authentication.
 require_login();
 $coursecontext = context_course::instance($course->id);

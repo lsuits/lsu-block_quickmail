@@ -86,7 +86,7 @@ class course_grade_calculator {
 
         $report = $this->get_course_grade_report_for_user($userid);
 
-        if (!has_capability('moodle/grade:viewhidden', $this->course_context, $userid) and ! is_null($finalgrade)) {
+        if (!has_capability('moodle/grade:viewhidden', $this->course_context, $userid) and !is_null($finalgrade)) {
             $adjustedgrade = $report->get_blank_hidden_total_and_adjust_bounds(
                 $this->course_id,
                 $this->course_grade_item,

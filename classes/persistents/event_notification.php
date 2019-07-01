@@ -307,7 +307,7 @@ class event_notification extends \block_quickmail\persistents\persistent impleme
                 // Note that this event has been sent to this user at this time.
                 $this->note_sent_to_user($userid, $sendat);
             } catch (\Exception $e) {
-                echo \Exception $e;
+                echo $e;
                 // Message not created, fail gracefully.
             }
         }

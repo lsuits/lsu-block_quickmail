@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace block_quickmail\persistents;
+
+defined('MOODLE_INTERNAL') || die();
 
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\sanitizes_input;
@@ -305,7 +305,7 @@ class reminder_notification extends \block_quickmail\persistents\persistent
             }
         } catch (\Exception $e) {
             // Message not created, fail gracefully.
-            echo(\Exception $e);
+            echo($e->getMessage());
         }
     }
 

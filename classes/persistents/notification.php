@@ -173,15 +173,15 @@ class notification extends \block_quickmail\persistents\persistent {
     public function should_send_to_course() {
         $course = $this->get_course();
 
-        if ( ! $course) {
+        if (!$course) {
             return false;
         }
 
-        if ( ! $course->visible) {
+        if (!$course->visible) {
             return false;
         }
 
-        if ( ! property_exists($course, 'enddate')) {
+        if (!property_exists($course, 'enddate')) {
             return true;
         }
 

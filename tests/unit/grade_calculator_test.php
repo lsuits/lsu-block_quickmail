@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail\services\grade_calculator\grade_calculator;
+use block_quickmail\services\grade_calculator\course_grade_calculator;
 
 global $CFG;
 require_once($CFG->libdir . '/gradelib.php');
@@ -40,6 +40,7 @@ class block_quickmail_grade_calculator_testcase extends advanced_testcase {
 
         // Set up a course with a teacher and 4 students.
         list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
+        $cgc = course_grade_calculator::for_course($course->id);
 
         $student = $userstudents[0];
 
@@ -53,7 +54,7 @@ class block_quickmail_grade_calculator_testcase extends advanced_testcase {
         $gi2->update_final_grade($student->id, 40, 'test');
 
         // This does not work, need to recalculate grades here?
-        $grade = grade_calculator::get_user_grade_in_course($course->id, $student->id, 'round');
+        $grade = $cgc->get_user_course_grade($student->id, 'round');
 
         $this->dd($grade);
     }

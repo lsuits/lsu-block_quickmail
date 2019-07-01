@@ -50,7 +50,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertInstanceOf(email_recipient_send_factory::class, $factory);
     }
@@ -70,7 +70,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertInstanceOf(message_recipient_send_factory::class, $factory);
     }
@@ -90,7 +90,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertInternalType('object', $factory->message_params->userto);
         $this->assertEquals($firststudent->id, $factory->message_params->userto->id);
@@ -113,7 +113,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertEquals(79, $factory->message_params->wordwrapwidth);
     }
@@ -133,9 +133,9 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
-        $this->assertEquals('block_quickmail', $factory->message_params->component);
+        $this->assertEquals('moodle', $factory->message_params->component);
         $this->assertEquals('instantmessage', $factory->message_params->name);
         $this->assertEquals(FORMAT_HTML, $factory->message_params->fullmessageformat);
         $this->assertEquals(false, $factory->message_params->notification);
@@ -157,7 +157,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertEquals('This is the subject', $factory->message_params->subject);
     }
@@ -180,7 +180,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertEquals('[' . $course->shortname . '] This is the subject', $factory->message_params->subject);
     }
@@ -200,7 +200,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $expectedbody = 'Hey there '
                         . $firststudent->firstname
@@ -230,7 +230,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $expectedbody = 'Hey there '
                         . $firststudent->firstname
@@ -264,7 +264,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertFalse($factory->message_params->usetrueaddress);
         $this->assertEquals('no@reply.com', $factory->message_params->replyto);
@@ -290,7 +290,7 @@ class block_quickmail_course_recipient_send_factory_testcase extends advanced_te
 
         $recipient = $this->create_message_recipient_from_user($message, $firststudent);
 
-        $factory = recipient_send_factory::make($message, $recipient);
+        $factory = recipient_send_factory::make($message, $recipient, null, null);
 
         $this->assertTrue($factory->message_params->usetrueaddress);
         $this->assertEquals($userteacher->email, $factory->message_params->replyto);

@@ -92,7 +92,7 @@ class course_grade_range_model extends reminder_notification_model implements re
                 }
             } catch (\Exception $e) {
                 // Maybe we couldn't instantiate the calcuator?
-                $results[] = \Exception $e;
+                $results[] = $e->getMessage;
             }
         }
 
