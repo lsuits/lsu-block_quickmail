@@ -403,7 +403,7 @@ $string['cachedef_qm_msg_deliv_count'] = 'Cached message delievered counts.';
 $string['cachedef_qm_msg_attach_count'] = 'Cached message attachment counts.';
 $string['cachedef_qm_msg_addl_email_count'] = 'Cached message additional email counts.';
 $string['cachedef_qm_controller_store'] = 'Cache store for controller instances.';
-$string['cachedef_qm_event_notif_last_fired_at'] = 'Last notification cache.';
+$string['cachedef_qm_event_notif_last_fired_at'] = 'Cache store for timestamps when event notification was last fired.';
 
 // Backup/restore.
 $string['backup_history'] = 'Include Quickmail History';
