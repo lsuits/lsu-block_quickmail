@@ -44,6 +44,7 @@ class course_grade_calculator {
      */
     public function __construct($courseid) {
         $this->course_id = $courseid;
+        $this->courseid = $courseid;
         $this->set_context();
         $this->set_grade_item();
     }
@@ -134,6 +135,7 @@ class course_grade_calculator {
      */
     private function set_context() {
         $this->course_context = \context_course::instance($this->course_id);
+        $this->coursecontext = \context_course::instance($this->course_id);
     }
 
     /**
@@ -148,6 +150,7 @@ class course_grade_calculator {
             }
 
             $this->course_grade_item = $coursegradeitem;
+            $this->coursegradeitem = $coursegradeitem;
         } catch (\Exception $e) {
             $this->throw_calculation_exception(null, 'Could not fetch the grade item for the course.');
         }
