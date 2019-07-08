@@ -181,6 +181,7 @@ trait sets_up_courses {
         foreach (['red', 'yellow', 'blue'] as $color) {
             // Create a group .
             $groups[$color] = $this->getDataGenerator()->create_group([
+                'course_id' => $course->id,
                 'courseid' => $course->id,
                 'name' => $color
             ]);
@@ -251,6 +252,7 @@ trait sets_up_courses {
 
         $record = new stdClass();
         $record->userid = $user->id;
+        $record->course_id = $course->id;
         $record->courseid = $course->id;
         $record->timeaccess = $time;
 

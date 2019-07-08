@@ -272,6 +272,8 @@ class block_quickmail_messenger_compose_testcase extends advanced_testcase {
 
         $sink = $this->open_email_sink();
 
+var_dump($sink);
+
         // Set up a course with a teacher and students.
         list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
@@ -295,7 +297,7 @@ class block_quickmail_messenger_compose_testcase extends advanced_testcase {
         // Send an email from the teacher to the students now (not as queued adhoc tasks).
         messenger::compose($userteacher, $course, $composeformdata, null, false);
 
-        $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is one fine body.'));
+        $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is the body.'));
         $this->assertTrue($this->email_in_sink_body_contains($sink, 1, 'This is my signature! Signed, The Teacher!'));
 
         $this->close_email_sink($sink);

@@ -32,6 +32,7 @@ use block_quickmail_string;
 
 class message_recipient_send_factory extends recipient_send_factory implements recipient_send_factory_interface {
 
+    // TODO: Either use message_post_message directly or use the send_instant_message external function.
     public function set_factory_params() {
         $this->message_params->component = 'moodle'; // Must exist in the table message_providers.
         $this->message_params->name = 'instantmessage'; // Type of message from that module (as module defines it).
