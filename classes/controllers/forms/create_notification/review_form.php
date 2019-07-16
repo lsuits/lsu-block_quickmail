@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,7 +23,9 @@
 
 namespace block_quickmail\controllers\forms\create_notification;
 
-require_once $CFG->libdir . '/formslib.php';
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
 
 use block_quickmail\controllers\support\controller_form;
 use block_quickmail_string;
@@ -38,27 +39,26 @@ class review_form extends controller_form {
 
         $mform =& $this->_form;
 
-        ////////////////////////////////////////////////////////////
-        ///  view_form_name directive: TO BE INCLUDED ON ALL FORMS :/
-        ////////////////////////////////////////////////////////////
+        // View_form_name directive: TO BE INCLUDED ON ALL FORMS.
         $mform->addElement('hidden', 'view_form_name');
         $mform->setType('view_form_name', PARAM_TEXT);
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
-        ////////////////////////////////////////////////////////////
-        ///  edit select type
-        ////////////////////////////////////////////////////////////
-        
+        // Edit select type.
         $mform->addElement(
-            'static', 
-            'type_description', 
+            'static',
+            'type_description',
             block_quickmail_string::get('notification_type'),
-            block_quickmail_string::get('notification_model_' . $this->get_session_stored('notification_type') . '_' . $this->get_session_stored('notification_model')) . ' ' . block_quickmail_string::get('notification_type_' . $this->get_session_stored('notification_type'))
+            block_quickmail_string::get('notification_model_'
+                . $this->get_session_stored('notification_type') . '_'
+                . $this->get_session_stored('notification_model')) . ' '
+                . block_quickmail_string::get('notification_type_'
+                . $this->get_session_stored('notification_type'))
         );
-        
+
         $mform->addElement(
-            'static', 
-            'title', 
+            'static',
+            'title',
             block_quickmail_string::get('notification_name'),
             $this->get_session_stored('notification_name')
         );
@@ -69,22 +69,18 @@ class review_form extends controller_form {
 
         $mform->addElement('html', '<hr>');
 
-        ////////////////////////////////////////////////////////////
-        ///  edit select object
-        ////////////////////////////////////////////////////////////
+        /*
+         * Edit select object.
+         * if ($this->get_session_stored('notification_object_id')) {
+         *  Show object details here….
+         * }
+         */
 
-        if ($this->get_session_stored('notification_object_id')) {
-            // show object details here...
-        }
-
-        ////////////////////////////////////////////////////////////
-        ///  edit conditions (if has conditions)
-        ////////////////////////////////////////////////////////////
-
+        // Edit conditions (if has conditions).
         if ($this->get_custom_data('condition_summary')) {
             $mform->addElement(
-                'static', 
-                'condition_summary', 
+                'static',
+                'condition_summary',
                 block_quickmail_string::get('notification_conditions'),
                 $this->get_custom_data('condition_summary')
             );
@@ -96,14 +92,11 @@ class review_form extends controller_form {
             $mform->addElement('html', '<hr>');
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  edit schedule (if reminder notification)
-        ////////////////////////////////////////////////////////////
-
+        // Edit schedule (if reminder notification).
         if ($this->is_notification_type('reminder')) {
             $mform->addElement(
-                'static', 
-                'schedule_summary', 
+                'static',
+                'schedule_summary',
                 block_quickmail_string::get('notification_schedule'),
                 $this->get_custom_data('schedule_summary')
             );
@@ -115,22 +108,19 @@ class review_form extends controller_form {
             $mform->addElement('html', '<hr>');
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  event details (if event notification)
-        ////////////////////////////////////////////////////////////
-
+        // Event details (if event notification).
         if ($this->is_notification_type('event')) {
             $mform->addElement(
-                'static', 
-                'time_delay_summary', 
+                'static',
+                'time_delay_summary',
                 block_quickmail_string::get('time_delay_summary'),
                 $this->get_time_summary('time_delay')
             );
 
-            if ( ! $this->get_custom_data('is_one_time_event')) {
+            if (!$this->get_custom_data('is_one_time_event')) {
                 $mform->addElement(
-                    'static', 
-                    'mute_time_summary', 
+                    'static',
+                    'mute_time_summary',
                     block_quickmail_string::get('mute_time_summary'),
                     $this->get_time_summary('mute_time')
                 );
@@ -143,38 +133,36 @@ class review_form extends controller_form {
             $mform->addElement('html', '<hr>');
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  edit create message
-        ////////////////////////////////////////////////////////////
-        
-        // 'message_alternate_email_id',
-        // 'message_signature_id',
-
+        /*
+         * Edit create message
+         * 'message_alternate_email_id',
+         * 'message_signature_id',
+         */
         $mform->addElement(
-            'static', 
-            'message_type_description', 
+            'static',
+            'message_type_description',
             block_quickmail_string::get('notified_by'),
             block_quickmail_string::get('message_type_' . $this->get_session_stored('message_type'))
         );
-        
+
         $mform->addElement(
-            'static', 
-            'message_subject', 
+            'static',
+            'message_subject',
             block_quickmail_string::get('subject'),
             $this->get_session_stored('message_subject')
         );
 
         $mform->addElement(
-            'static', 
-            'message_body', 
+            'static',
+            'message_body',
             block_quickmail_string::get('body'),
             $this->get_session_stored('message_body')
         );
 
         if ($this->get_session_stored('message_send_to_mentors')) {
             $mform->addElement(
-                'static', 
-                'message_mentors', 
+                'static',
+                'message_mentors',
                 block_quickmail_string::get('mentors_copied'),
                 get_string('yes')
             );
@@ -186,33 +174,29 @@ class review_form extends controller_form {
 
         $mform->addElement('html', '<hr>');
 
-        ////////////////////////////////////////////////////////////
-        ///  submit notification
-        ////////////////////////////////////////////////////////////
-        
-        // notification_is_enabled
-
-        $enabled_options = [
+        // Submit notification.
+        // Notification_is_enabled.
+        $enabledoptions = [
             $mform->createElement('radio', 'notification_is_enabled', '', get_string('yes'), 1),
             $mform->createElement('radio', 'notification_is_enabled', '', get_string('no'), 0)
         ];
 
         $mform->addGroup(
-            $enabled_options, 
-            'notification_is_enabled_action', 
+            $enabledoptions,
+            'notification_is_enabled_action',
             block_quickmail_string::get('enable_notification'),
-            [' '], 
+            [' '],
             false
         );
         $mform->addHelpButton(
-            'notification_is_enabled_action', 
-            'notification_is_enabled', 
+            'notification_is_enabled_action',
+            'notification_is_enabled',
             'block_quickmail'
         );
 
         $mform->setDefault(
-            'notification_is_enabled', 
-            1 // default to enabled
+            'notification_is_enabled',
+            1 // Default to enabled.
         );
 
         $mform->addGroup([
@@ -224,12 +208,11 @@ class review_form extends controller_form {
 
     /**
      * Reports whether or not the notification being created is of the given type
-     * 
+     *
      * @param  string  $type
      * @return bool
      */
-    private function is_notification_type($type)
-    {
+    private function is_notification_type($type) {
         return $this->get_session_stored('notification_type') == $type;
     }
 
@@ -239,15 +222,14 @@ class review_form extends controller_form {
      * @param  string  $type  time_delay|mute_time
      * @return string
      */
-    private function get_time_summary($type)
-    {
+    private function get_time_summary($type) {
         if ($unit = $this->get_session_stored($type . '_unit')) {
             if ($amount = $this->get_session_stored($type . '_amount')) {
-                $string_key = (int) $amount > 1
+                $stringkey = (int) $amount > 1
                     ? $unit . 's'
                     : $unit;
 
-                return $amount . ' ' . ucfirst(get_string($string_key));
+                return $amount . ' ' . ucfirst(get_string($stringkey));
             }
         }
 

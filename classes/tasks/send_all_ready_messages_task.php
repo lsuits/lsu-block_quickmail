@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\tasks;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\task\scheduled_task;
 use block_quickmail_string;
 use block_quickmail\repos\queued_repo;
@@ -31,9 +32,8 @@ use block_quickmail\tasks\send_message_adhoc_task;
 use core\task\manager as task_manager;
 
 class send_all_ready_messages_task extends scheduled_task {
-    
-    public function get_name()
-    {
+
+    public function get_name() {
         return block_quickmail_string::get('send_all_ready_messages_task');
     }
 
@@ -44,23 +44,22 @@ class send_all_ready_messages_task extends scheduled_task {
      *
      * Required custom data: none
      */
-    public function execute()
-    {
-        // get all messages that are queued and ready to send
+    public function execute() {
+        // Get all messages that are queued and ready to send.
         $messages = queued_repo::get_all_messages_to_send();
 
-        // iterate through each message
+        // Iterate through each message.
         foreach ($messages as $message) {
             $message->mark_as_sending();
 
-            // create a job
+            // Create a job.
             $task = new send_message_adhoc_task();
 
             $task->set_custom_data([
                 'message_id' => $message->get('id')
             ]);
 
-            // queue job
+            // Queue job.
             task_manager::queue_adhoc_task($task);
         }
     }

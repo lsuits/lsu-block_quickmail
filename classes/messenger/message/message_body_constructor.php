@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\messenger\message;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\message;
 use block_quickmail\messenger\message\body_substitution_code_parser;
 use block_quickmail\messenger\message\data_mapper\substitution_code_data_mapper;
@@ -34,7 +35,7 @@ class message_body_constructor {
     public $message;
     public $user;
     public $course;
-    public $allowed_substitution_code_classes;
+    public $allowedsubstitutioncodeclasses;
 
     public function __construct(message $message, $user, $course = null) {
         $this->message = $message;
@@ -42,26 +43,26 @@ class message_body_constructor {
         $this->course = $course;
         $this->set_allowed_substitution_code_classes();
     }
-    
+
     /**
      * Returns a message body which has the given message's recipient user and course data injected into any substitution codes
-     * 
+     *
      * @param  message  $message
      * @return string
      */
-    public static function get_formatted_body(message $message, $user, $course = null)
-    {
+    public static function get_formatted_body(message $message, $user, $course = null) {
         $constructor = new self($message, $user, $course);
 
-        // get all codes that appear in the message
+        // Get all codes that appear in the message.
         $codes = body_substitution_code_parser::get_codes($constructor->get_raw_body());
 
-        // get an associative array of code => value
-        $mapped = substitution_code_data_mapper::map_codes($codes, $user, $constructor->get_course()); // TODO: need to figure out how to inject "object" here
+        // Get an associative array of code => value.
+        // TODO: Need to figure out how to inject "object" here.
+        $mapped = substitution_code_data_mapper::map_codes($codes, $user, $constructor->get_course());
 
         $body = $constructor->get_raw_body();
 
-        // iterate through each code, replacing the value with a mapped value
+        // Iterate through each code, replacing the value with a mapped value.
         foreach ($codes as $code) {
             $body = str_replace($constructor->delimit_code($code), $mapped[$code], $body);
         }
@@ -71,30 +72,27 @@ class message_body_constructor {
 
     /**
      * Returns the given code delimited with delimiters
-     * 
+     *
      * @param  string  $code
      * @return string
      */
-    private function delimit_code($code)
-    {
+    private function delimit_code($code) {
         return implode('', [substitution_code::first_delimiter(), $code, substitution_code::last_delimiter()]);
     }
 
     /**
      * Sets an array of "allowed substitution codes" for this message body constructor instance
      */
-    private function set_allowed_substitution_code_classes()
-    {
+    private function set_allowed_substitution_code_classes() {
         $this->allowed_substitution_code_classes = $this->message->get_substitution_code_classes();
     }
 
     /**
      * Helper function that returns the message course
-     * 
+     *
      * @return object
      */
-    private function get_course()
-    {
+    private function get_course() {
         return $this->message->get_message_scope() == 'compose'
             ? $this->course
             : null;
@@ -102,11 +100,10 @@ class message_body_constructor {
 
     /**
      * Helper for returning this constructor's original message body
-     * 
+     *
      * @return string
      */
-    private function get_raw_body()
-    {
+    private function get_raw_body() {
         return $this->message->get('body');
     }
 

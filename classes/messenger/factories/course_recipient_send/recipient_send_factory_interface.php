@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,6 +22,8 @@
  */
 
 namespace block_quickmail\messenger\factories\course_recipient_send;
+
+defined('MOODLE_INTERNAL') || die();
 
 interface recipient_send_factory_interface {
 

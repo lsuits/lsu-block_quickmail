@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,19 +20,20 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_recipient;
 
 class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses;
 
-    private function create_message()
-    {
+    private function create_message() {
         return message::create_new([
             'course_id' => 1,
             'user_id' => 1,
@@ -41,8 +41,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         ]);
     }
 
-    private function create_message_and_recipient()
-    {
+    private function create_message_and_recipient() {
         $message = $this->create_message();
 
         $recipient = message_recipient::create_new([
@@ -53,12 +52,9 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         return [$message, $recipient];
     }
 
-    /////////////////////////////////////////////////////////////////////////////////
-
-    public function test_create_new()
-    {
+    public function test_create_new() {
         $this->resetAfterTest(true);
- 
+
         $message = $this->create_message();
 
         $this->assertInstanceOf(message::class, $message);
@@ -67,10 +63,9 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertEquals('email', $message->get('message_type'));
     }
 
-    public function test_find_or_null()
-    {
+    public function test_find_or_null() {
         $this->resetAfterTest(true);
- 
+
         $fetched = message::find_or_null(1);
 
         $this->assertNull($fetched);
@@ -83,8 +78,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertInstanceOf(message::class, $fetched);
     }
 
-    public function test_get_readable_date()
-    {
+    public function test_get_readable_date() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
@@ -94,8 +88,7 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertEquals(date('Y-m-d g:i a', $timestamp), $message->get_readable_date('timecreated'));
     }
 
-    public function test_supports_soft_deletes()
-    {
+    public function test_supports_soft_deletes() {
         $this->resetAfterTest(true);
 
         list($message, $recipient) = $this->create_message_and_recipient();
@@ -104,32 +97,30 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertFalse($recipient::supports_soft_deletes());
     }
 
-    public function test_hard_and_soft_delete()
-    {
+    public function test_hard_and_soft_delete() {
         $this->resetAfterTest(true);
 
         $message1 = $this->create_message();
         $message2 = $this->create_message();
 
-        $message1_id = $message1->get('id');
-        $message2_id = $message2->get('id');
+        $message1id = $message1->get('id');
+        $message2id = $message2->get('id');
 
         $message1->hard_delete();
         $message2->soft_delete();
 
         global $DB;
 
-        $deleted_message1 = $DB->get_record('block_quickmail_messages', ['id' => $message1_id]);
-        $deleted_message2 = $DB->get_record('block_quickmail_messages', ['id' => $message2_id]);
+        $deletedmessage1 = $DB->get_record('block_quickmail_messages', ['id' => $message1id]);
+        $deletedmessage2 = $DB->get_record('block_quickmail_messages', ['id' => $message2id]);
 
-        $this->assertFalse($deleted_message1);
-        $this->assertInternalType('object', $deleted_message2);
+        $this->assertFalse($deletedmessage1);
+        $this->assertInternalType('object', $deletedmessage2);
         $this->assertGreaterThan(0, $message2->get('timedeleted'));
         $this->assertTrue($message2->is_soft_deleted());
     }
 
-    public function test_belongs_to_a_course()
-    {
+    public function test_belongs_to_a_course() {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();
@@ -140,10 +131,10 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
             'message_type' => 'email',
         ]);
 
-        $message_course = $message->get_course();
+        $messagecourse = $message->get_course();
 
-        $this->assertInternalType('object', $message_course);
-        $this->assertEquals($course->id, $message_course->id);
+        $this->assertInternalType('object', $messagecourse);
+        $this->assertEquals($course->id, $messagecourse->id);
         $this->assertTrue($message->is_owned_by_course($course));
         $this->assertTrue($message->is_owned_by_course($course->id));
 
@@ -153,13 +144,12 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
             'message_type' => 'email',
         ]);
 
-        $non_existent_course = $message->get_course();
+        $nonexistentcourse = $message->get_course();
 
-        $this->assertNull($non_existent_course);
+        $this->assertNull($nonexistentcourse);
     }
 
-    public function test_gets_a_course_property()
-    {
+    public function test_gets_a_course_property() {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();
@@ -179,27 +169,25 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
         $this->assertEquals('this instead', $shortname);
     }
 
-    public function test_belongs_to_a_message()
-    {
+    public function test_belongs_to_a_message() {
         $this->resetAfterTest(true);
 
         list($message, $recipient) = $this->create_message_and_recipient();
 
-        $recipient_message = $recipient->get_message();
+        $recipientmessage = $recipient->get_message();
 
-        $this->assertInstanceOf(message::class, $recipient_message);
-        $this->assertEquals($message->get('id'), $recipient_message->get('id'));
+        $this->assertInstanceOf(message::class, $recipientmessage);
+        $this->assertEquals($message->get('id'), $recipientmessage->get('id'));
 
-        $second_recipient = message_recipient::create_for_message($message, [
+        $secondrecipient = message_recipient::create_for_message($message, [
             'user_id' => 1
         ]);
 
-        $this->assertInstanceOf(message_recipient::class, $second_recipient);
-        $this->assertEquals(1, $second_recipient->get('user_id'));
+        $this->assertInstanceOf(message_recipient::class, $secondrecipient);
+        $this->assertEquals(1, $secondrecipient->get('user_id'));
     }
 
-    public function test_belongs_to_a_user()
-    {
+    public function test_belongs_to_a_user() {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -210,20 +198,20 @@ class block_quickmail_persistent_concerns_testcase extends advanced_testcase {
             'message_type' => 'email',
         ]);
 
-        $message_user = $message->get_user();
+        $messageuser = $message->get_user();
 
-        $this->assertInternalType('object', $message_user);
-        $this->assertEquals($user->id, $message_user->id);
+        $this->assertInternalType('object', $messageuser);
+        $this->assertEquals($user->id, $messageuser->id);
         $this->assertTrue($message->is_owned_by_user($user));
         $this->assertTrue($message->is_owned_by_user($user->id));
 
         global $DB;
 
-        $DB->delete_records('user', ['id' => $message_user->id]);
+        $DB->delete_records('user', ['id' => $messageuser->id]);
 
-        $non_existent_user = $message->get_user();
+        $nonexistentuser = $message->get_user();
 
-        $this->assertNull($non_existent_user);
+        $this->assertNull($nonexistentuser);
     }
 
 }

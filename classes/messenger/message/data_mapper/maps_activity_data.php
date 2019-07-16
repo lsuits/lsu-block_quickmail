@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,17 +23,15 @@
 
 namespace block_quickmail\messenger\message\data_mapper;
 
+defined('MOODLE_INTERNAL') || die();
+
 trait maps_activity_data {
-
-    ///////////////////////////////////////
-    ///
-    ///   ACTIVITY DATA
-    /// 
-    ///////////////////////////////////////
-
-    // 'activityname',
-    // 'activityduedate',
-    // 'activitylink',
-    // 'activitygradelink',
-
+    /*
+     * ACTIVITY DATA
+     *
+     * 'activityname',
+     * 'activityduedate',
+     * 'activitylink',
+     * 'activitygradelink',
+     */
 }

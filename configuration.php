@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,40 +22,35 @@
  */
 
 require_once('../../config.php');
-require_once 'lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
-$page_params = [
+$pageparams = [
     'courseid' => required_param('courseid', PARAM_INT),
 ];
 
-$course = get_course($page_params['courseid']);
+$course = get_course($pageparams['courseid']);
 
-////////////////////////////////////////
-/// AUTHENTICATION
-////////////////////////////////////////
-
+// Authentication.
 require_login();
-$course_context = context_course::instance($course->id);
-$PAGE->set_context($course_context);
-$PAGE->set_url(new moodle_url('/blocks/quickmail/configuration.php', $page_params));
+$coursecontext = context_course::instance($course->id);
+$PAGE->set_context($coursecontext);
+$PAGE->set_url(new moodle_url('/blocks/quickmail/configuration.php', $pageparams));
 
-// throw an exception if user does not have capability to configure a course
-block_quickmail_plugin::require_user_capability('canconfig', $USER, $course_context);
+// Throw an exception if user does not have capability to configure a course.
+block_quickmail_plugin::require_user_capability('canconfig', $USER, $coursecontext);
 
-////////////////////////////////////////
-/// CONSTRUCT PAGE
-////////////////////////////////////////
-
+// Construct the page.
 $PAGE->set_pagetype('block-quickmail');
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
-$PAGE->navbar->add(block_quickmail_string::get('pluginname'), new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
+$PAGE->navbar->add(block_quickmail_string::get('pluginname'),
+    new moodle_url('/blocks/quickmail/qm.php', array('courseid' => $course->id)));
 $PAGE->navbar->add(get_string('configuration'));
 $PAGE->set_heading(block_quickmail_string::get('pluginname') . ': ' . get_string('configuration'));
 $PAGE->requires->css(new moodle_url('/blocks/quickmail/style.css'));
 
 block_quickmail\controllers\course_config_controller::handle($PAGE, [
-    'context' => $course_context,
+    'context' => $coursecontext,
     'user' => $USER,
     'course' => $course
 ]);

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\components;
 
+defined('MOODLE_INTERNAL') || die();
+
 class component {
 
     protected $params;
@@ -35,52 +36,49 @@ class component {
     /**
      * Returns the given key from within the set params array, if any
      * Accepts optional second parameter, default value
-     * 
+     *
      * @param  string $key
-     * @param  mixed $default_value  an optional value to use if no results found
+     * @param  mixed $defaultvalue  an optional value to use if no results found
      * @return mixed
      */
-    public function get_param($key, $default_value = null)
-    {
-        return isset($this->params[$key]) ? $this->params[$key] : $default_value;
+    public function get_param($key, $defaultvalue = null) {
+        return isset($this->params[$key]) ? $this->params[$key] : $defaultvalue;
     }
 
     /**
      * Returns a transformed array for template given a flat array of course id => course name
-     * 
-     * @param  array  $course_array
-     * @param  int    $selected_course_id
+     *
+     * @param  array  $coursearray
+     * @param  int    $selectedcourseid
      * @return array
      */
-    public function transform_course_array($course_array, $selected_course_id = 0) {
+    public function transform_course_array($coursearray, $selectedcourseid = 0) {
         $results = [];
 
-        foreach ($course_array as $id => $shortname) {
+        foreach ($coursearray as $id => $shortname) {
             $results[] = [
-                'userCourseId' => (string) $id, 
+                'userCourseId' => (string) $id,
                 'userCourseName' => $shortname,
-                'selectedAttr' => $selected_course_id == $id ? 'selected' : ''
+                'selectedAttr' => $selectedcourseid == $id ? 'selected' : ''
             ];
         }
 
         return $results;
     }
 
-    public function is_attr_sorted($attr)
-    {
+    public function is_attr_sorted($attr) {
         return $this->sort_by == $attr;
     }
 
     /**
      * Includes the given pagination attributes (and all template helper booleans) in the given data object
-     * 
+     *
      * @param  object  $data
      * @param  paginated  $pagination
      * @return object
      */
-    public function include_pagination($data, $pagination)
-    {
-        // build pagination attributes
+    public function include_pagination($data, $pagination) {
+        // Build pagination attributes.
         $data->paginationPageCount = $pagination->page_count;
         $data->paginationOffset = $pagination->offset;
         $data->paginationPerPage = $pagination->per_page;

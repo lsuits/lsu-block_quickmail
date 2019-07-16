@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,22 +20,23 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\validators\edit_notification_form_validator;
 
 class block_quickmail_edit_event_notification_form_validator_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_validate_schedule_time_unit_is_not_required_for_event_notifications()
-    {
-        // reset all changes automatically after this test
+    public function test_validate_schedule_time_unit_is_not_required_for_event_notifications() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
- 
+
         $input = $this->get_notification_input(['schedule_time_unit' => 'decade']);
 
         $validator = new edit_notification_form_validator($input, [

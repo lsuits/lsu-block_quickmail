@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\repos\pagination;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\pagination\paginator;
 
 /*
@@ -35,19 +36,19 @@ use block_quickmail\repos\pagination\paginator;
 class paginated {
 
     public $paginator;
-    public $page_count;
+    public $pagecount;
     public $offset;
-    public $per_page;
-    public $current_page;
-    public $next_page;
-    public $previous_page;
-    public $total_count;
-    public $empty_uri;
-    public $uri_for_page;
-    public $first_page_uri;
-    public $last_page_uri;
-    public $next_page_uri;
-    public $previous_page_uri;
+    public $perpage;
+    public $currentpage;
+    public $nextpage;
+    public $previouspage;
+    public $totalcount;
+    public $emptyuri;
+    public $uriforpage;
+    public $firstpageuri;
+    public $lastpageuri;
+    public $nextpageuri;
+    public $previouspageuri;
 
     public function __construct(paginator $paginator) {
         $this->paginator = $paginator;
@@ -64,56 +65,51 @@ class paginated {
         $this->last_page_uri = $this->last_page_uri();
         $this->next_page_uri = $this->next_page_uri();
         $this->previous_page_uri = $this->previous_page_uri();
-        unset($this->paginator); // dont need this anymore
+        unset($this->paginator); // Dont need this anymore?
     }
 
     /**
      * Returns the total page count
-     * 
+     *
      * @return int
      */
-    private function page_count()
-    {
+    private function page_count() {
         return (int) $this->paginator->total_pages;
     }
 
     /**
      * Returns the calculated offset
-     * 
+     *
      * @return int
      */
-    private function offset()
-    {
+    private function offset() {
         return (int) $this->paginator->offset;
     }
 
     /**
      * Returns the "results per page" setting
-     * 
+     *
      * @return int
      */
-    private function per_page()
-    {
+    private function per_page() {
         return (int) $this->paginator->per_page;
     }
-    
+
     /**
      * Returns the current page number
-     * 
+     *
      * @return int
      */
-    private function current_page()
-    {
+    private function current_page() {
         return (int) $this->paginator->page;
     }
 
     /**
      * Returns the next page number
-     * 
+     *
      * @return int
      */
-    private function next_page()
-    {
+    private function next_page() {
         return ! $this->has_more_pages()
             ? $this->current_page()
             : $this->current_page() + 1;
@@ -121,38 +117,35 @@ class paginated {
 
     /**
      * Returns the previous page number
-     * 
+     *
      * @return int
      */
-    private function previous_page()
-    {
+    private function previous_page() {
         return $this->current_page() == 1
             ? 1
             : $this->current_page() - 1;
     }
-    
+
     /**
      * Returns the total number of results in the original data collection
-     * 
+     *
      * @return int
      */
-    private function total_count()
-    {
+    private function total_count() {
         return (int) $this->paginator->total_count;
     }
 
     /**
      * Returns the uri for the current page
-     * 
+     *
      * @param  int  $page  optional
      * @return string
      */
-    private function uri_for_page($page = null)
-    {
-        // if no page was given, set at current page
+    private function uri_for_page($page = null) {
+        // If no page was given, set at current page.
         $page = is_null($page) ? $this->current_page() : $page;
 
-        // normalize page number
+        // Normalize page number.
         $page = $page < 1 ? 1 : $page;
         $page = $page > $this->page_count() ? $this->page_count() : $page;
 
@@ -161,100 +154,93 @@ class paginated {
 
     /**
      * Returns a complete uri with page key but no page number
-     * 
+     *
      * @return string
      */
-    private function empty_uri()
-    {
-        $current_uri = $this->paginator->page_uri;
+    private function empty_uri() {
+        $currenturi = $this->paginator->page_uri;
 
-        $url = strstr($current_uri, '?', true);
+        $url = strstr($currenturi, '?', true);
 
-        // get pure query string from uri
-        $query_string = substr(strstr($current_uri, '?'), 1);
+        // Get pure query string from uri.
+        $querystring = substr(strstr($currenturi, '?'), 1);
 
-        // explode query string into associative array
-        parse_str($query_string, $exploded_query_string);
+        // Explode query string into associative array.
+        parse_str($querystring, $explodedquerystring);
 
-        // make sure the page number is at the end of the array
-        unset($exploded_query_string['page']);
-        $exploded_query_string['page'] = '';
+        // Make sure the page number is at the end of the array.
+        unset($explodedquerystring['page']);
+        $explodedquerystring['page'] = '';
 
-        return $url . '?' . http_build_query($exploded_query_string, '', '&');
+        return $url . '?' . http_build_query($explodedquerystring, '', '&');
     }
-    
+
     /**
      * Returns the uri for the first page
-     * 
+     *
      * @return string
      */
-    private function first_page_uri()
-    {
+    private function first_page_uri() {
         return $this->inject_page_in_uri(1);
     }
 
     /**
      * Returns the uri for the last page
-     * 
+     *
      * @return string
      */
-    private function last_page_uri()
-    {
+    private function last_page_uri() {
         return $this->inject_page_in_uri($this->page_count());
     }
 
     /**
      * Returns the uri for the next page
-     * 
+     *
      * @return string
      */
-    private function next_page_uri()
-    {
+    private function next_page_uri() {
         return $this->inject_page_in_uri($this->next_page());
     }
 
     /**
      * Returns the uri for the previous page
-     * 
+     *
      * @return string
      */
-    private function previous_page_uri()
-    {
+    private function previous_page_uri() {
         return $this->inject_page_in_uri($this->previous_page());
     }
 
     /**
      * Returns a preserved uri containing the given page number
-     * 
+     *
      * @param  int  $page
      * @return string
      */
-    private function inject_page_in_uri($page)
-    {
-        $current_uri = $this->paginator->page_uri;
+    private function inject_page_in_uri($page) {
+        $currenturi = $this->paginator->page_uri;
 
-        $url = strstr($current_uri, '?', true);
+        $url = strstr($currenturi, '?', true);
 
-        // get pure query string from uri
-        $query_string = substr(strstr($current_uri, '?'), 1);
+        // Get pure query string from uri.
+        $querystring = substr(strstr($currenturi, '?'), 1);
 
-        // explode query string into associative array
-        parse_str($query_string, $exploded_query_string);
+        // Explode query string into associative array.
+        parse_str($querystring, $explodedquerystring);
 
-        // make sure the page number is at the end of the array
-        unset($exploded_query_string['page']);
-        $exploded_query_string['page'] = $page;
+        // Make sure the page number is at the end of the array.
+        unset($explodedquerystring['page']);
+        $explodedquerystring['page'] = $page;
 
-        return $url . '?' . http_build_query($exploded_query_string, '', '&');
+        return $url . '?' . http_build_query($explodedquerystring, '', '&');
     }
 
     /**
      * Reports whether or not this is the last page
-     * 
+     *
      * @return bool
      */
-    private function has_more_pages()
-    {
+    private function has_more_pages() {
         return $this->current_page() < $this->page_count();
     }
 

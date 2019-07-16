@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,9 +23,11 @@
 
 namespace block_quickmail\repos\interfaces;
 
+defined('MOODLE_INTERNAL') || die();
+
 interface group_repo_interface {
 
-    public static function get_course_user_selectable_groups($course, $user, $include_group_users = false, $course_context = null);
-    public static function get_course_user_groups($course, $user, $course_context = null);
+    public static function get_course_user_selectable_groups($course, $user, $includegroupusers = false, $coursecontext = null);
+    public static function get_course_user_groups($course, $user, $coursecontext = null);
 
 }

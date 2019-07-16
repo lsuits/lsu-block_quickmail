@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,12 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-////////////////////////////////////////
-///
-/// REGISTER ALL TRAITS HERE
-/// 
-///////////////////////////////////////
+defined('MOODLE_INTERNAL') || die();
 
+// Register all traits here.
 require_once(dirname(__FILE__) . '/creates_message_records.php');
 require_once(dirname(__FILE__) . '/fires_events.php');
 require_once(dirname(__FILE__) . '/has_general_helpers.php');

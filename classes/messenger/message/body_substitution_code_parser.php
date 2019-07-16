@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\messenger\message;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\messenger\message\substitution_code;
 use block_quickmail_string;
 use block_quickmail\exceptions\body_parser_exception;
@@ -39,11 +40,10 @@ class body_substitution_code_parser {
 
     /**
      * Returns an array of substiution codes from the given body
-     * 
+     *
      * @return array
      */
-    public static function get_codes($body)
-    {
+    public static function get_codes($body) {
         $parser = new self($body);
 
         $parser->parse_codes();
@@ -55,55 +55,53 @@ class body_substitution_code_parser {
      * Validate the message body to make sure:
      *  - any substitution codes are formatted properly
      *  - any substitution codes are within the given code classes
-     *  
+     *
      * @param  string  $body         the message body to be validated
-     * @param  array   $code_classes  substitition code classes that are allowed to be used
+     * @param  array   $codeclasses  substitition code classes that are allowed to be used
      * @return array   any invalid code messages
      */
-    public static function validate_body($body, $code_classes = [])
-    {
+    public static function validate_body($body, $codeclasses = []) {
         $parser = new self($body);
 
-        $allowed_codes = substitution_code::get($code_classes);
+        $allowedcodes = substitution_code::get($codeclasses);
 
-        $unallowed_codes = $parser->validate_codes($allowed_codes);
+        $unallowedcodes = $parser->validate_codes($allowedcodes);
 
-        if (empty($unallowed_codes)) {
+        if (empty($unallowedcodes)) {
             return [];
         }
 
-        $invalid_messages = array_map(function($code) {
+        $invalidmessages = array_map(function($code) {
             return block_quickmail_string::get('invalid_custom_data_key', $code);
-        }, $unallowed_codes);
+        }, $unallowedcodes);
 
-        return $invalid_messages;
+        return $invalidmessages;
     }
 
     /**
      * Parses through the body, returning an array of any found codes to the stack
-     * 
+     *
      * @return array
      */
-    public function parse_codes()
-    {
-        // make a copy of the message body for manipulation
+    public function parse_codes() {
+        // Make a copy of the message body for manipulation.
         $message = '_' . $this->body;
 
-        // while there still exists a substitution code in the message body
-        while ($next_first_delimiter = strpos($message, substitution_code::first_delimiter())) {
-            // trim up until the delimiter
-            $message = substr($message, $next_first_delimiter + strlen(substitution_code::first_delimiter()));
+        // While there still exists a substitution code in the message body.
+        while ($nextfirstdelimiter = strpos($message, substitution_code::first_delimiter())) {
+            // Trim up until the delimiter.
+            $message = substr($message, $nextfirstdelimiter + strlen(substitution_code::first_delimiter()));
 
-            $next_last_delimiter = strpos($message, substitution_code::last_delimiter());
+            $nextlastdelimiter = strpos($message, substitution_code::last_delimiter());
 
-            // get the substitution code
-            $code = substr($message, 0, $next_last_delimiter);
+            // Get the substitution code.
+            $code = substr($message, 0, $nextlastdelimiter);
 
-            // add to the stack
+            // Add to the stack.
             $this->add_code($code);
 
-            // trim the value and ending delimiter out of the remaining message and continue
-            $message = '_' . substr($message, $next_last_delimiter + strlen(substitution_code::last_delimiter()));
+            // Trim the value and ending delimiter out of the remaining message and continue.
+            $message = '_' . substr($message, $nextlastdelimiter + strlen(substitution_code::last_delimiter()));
         }
 
         return $this->codes;
@@ -112,82 +110,79 @@ class body_substitution_code_parser {
     /**
      * Parses through the body and throws an exception if an error was found
      *
-     * @param  array  $allowed_codes  substitution codes that are allowed to be present in body
+     * @param  array  $allowedcodes  substitution codes that are allowed to be present in body
      * @return array
      * @throws body_parser_exception(message) if codes formatted improperly
      * @throws body_parser_invalid_codes_exception(message, [codes]) if unsupported codes are found
      */
-    public function validate_codes($allowed_codes = [])
-    {
-        if (empty($allowed_codes)) {
+    public function validate_codes($allowedcodes = []) {
+        if (empty($allowedcodes)) {
             $this->throw_parser_exception(block_quickmail_string::get('invalid_custom_data_not_allowed'));
         }
 
-        // make a copy of the message body for manipulation
+        // Make a copy of the message body for manipulation.
         $message = '_' . $this->body;
 
-        // first, get the position of first delimiters
-        $first_first_delimiter_pos = strpos($message, substitution_code::first_delimiter());
-        $first_last_delimiter_pos = strpos($message, substitution_code::last_delimiter());
+        // First, get the position of first delimiters.
+        $firstfirstdelimiterpos = strpos($message, substitution_code::first_delimiter());
+        $firstlastdelimiterpos = strpos($message, substitution_code::last_delimiter());
 
-        // if a "last delimiter" was found
-        if ($first_last_delimiter_pos !== false) {
-            // and a "first delimiter" was not found
-            if ($first_first_delimiter_pos == false) {
+        // If a "last delimiter" was found.
+        if ($firstlastdelimiterpos !== false) {
+            // And a "first delimiter" was not found.
+            if ($firstfirstdelimiterpos == false) {
                 $this->throw_parser_exception(block_quickmail_string::get('invalid_custom_data_delimiters'));
-            // or the first "first delimiter" appears after the first "last delimiter"
-            } else if ($first_first_delimiter_pos > $first_last_delimiter_pos) {
+                // Or the first "first delimiter" appears after the first "last delimiter".
+            } else if ($firstfirstdelimiterpos > $firstlastdelimiterpos) {
                 $this->throw_parser_exception(block_quickmail_string::get('invalid_custom_data_delimiters'));
             }
         }
 
-        // while there still exists a substitution code in the message body
-        while ($next_first_delimiter = strpos($message, substitution_code::first_delimiter())) {
-            // trim up until the delimiter
-            $message = substr($message, $next_first_delimiter + strlen(substitution_code::first_delimiter()));
+        // While there still exists a substitution code in the message body.
+        while ($nextfirstdelimiter = strpos($message, substitution_code::first_delimiter())) {
+            // Trim up until the delimiter.
+            $message = substr($message, $nextfirstdelimiter + strlen(substitution_code::first_delimiter()));
 
-            // if no ending delimiter, no bueno
-            if ( ! $next_last_delimiter = strpos($message, substitution_code::last_delimiter())) {
+            // If no ending delimiter, no bueno.
+            if (!$nextlastdelimiter = strpos($message, substitution_code::last_delimiter())) {
                 $this->throw_parser_exception(block_quickmail_string::get('invalid_custom_data_delimiters'));
             }
 
-            // get the substitution code
-            $code = substr($message, 0, $next_last_delimiter);
+            // Get the substitution code.
+            $code = substr($message, 0, $nextlastdelimiter);
 
             if (strpos($code, ' ') !== false) {
                 $this->throw_parser_exception(block_quickmail_string::get('invalid_custom_data_delimiters'));
             }
 
-            // add to the stack
+            // Add to the stack.
             $this->add_code($code);
 
-            // trim the value and ending delimiter out of the remaining message and continue
-            $message = '_' . substr($message, $next_last_delimiter + strlen(substitution_code::last_delimiter()));
+            // Trim the value and ending delimiter out of the remaining message and continue.
+            $message = '_' . substr($message, $nextlastdelimiter + strlen(substitution_code::last_delimiter()));
         }
 
-        $unallowed_codes = [];
+        $unallowedcodes = [];
 
         foreach ($this->codes as $found) {
-            if ( ! in_array($found, $allowed_codes)) {
-                array_push($unallowed_codes, $found);
+            if (!in_array($found, $allowedcodes)) {
+                array_push($unallowedcodes, $found);
             }
         }
 
-        return $unallowed_codes;
+        return $unallowedcodes;
     }
 
     /**
      * Adds delimiters to the given code and adds to the code stack
-     * 
+     *
      * @param string $code
      */
-    private function add_code($code)
-    {
+    private function add_code($code) {
         $this->codes[] = $code;
     }
 
-    private function throw_parser_exception($message)
-    {
+    private function throw_parser_exception($message) {
         throw new body_parser_exception($message);
     }
 

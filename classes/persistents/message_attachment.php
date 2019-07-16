@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,23 +23,20 @@
 
 namespace block_quickmail\persistents;
 
-// use \core\persistent;
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
 
-// if ( ! class_exists('\core\persistent')) {
-//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-// }
- 
 class message_attachment extends \block_quickmail\persistents\persistent {
- 
-    use enhanced_persistent, 
+
+    use enhanced_persistent,
         belongs_to_a_message;
 
     /** Table name for the persistent. */
     const TABLE = 'block_quickmail_msg_attach';
- 
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -59,61 +55,31 @@ class message_attachment extends \block_quickmail\persistents\persistent {
             ],
         ];
     }
- 
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
 
-    //
-
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
-    //
-
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Methods.
     /**
      * Returns this attachment's full file path (path + filename)
-     * 
-     * @param  bool  $leading_slash  whether or not to include a leading slash
+     *
+     * @param  bool  $leadingslash  whether or not to include a leading slash
      * @return string
      */
-    public function get_full_filepath($leading_slash = false)
-    {
+    public function get_full_filepath($leadingslash = false) {
         $path = $this->get('path') . $this->get('filename');
 
-        return ! $leading_slash
-            ? ltrim($path, '/')
-            : $path;
+        return !$leadingslash ? ltrim($path, '/') : $path;
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Static Methods.
     /**
      * Deletes all attachment records for this message
-     * 
+     *
      * @param  message $message
      * @return void
      */
-    public static function clear_all_for_message(message $message)
-    {
+    public static function clear_all_for_message(message $message) {
         global $DB;
 
         $DB->delete_records('block_quickmail_msg_attach', ['message_id' => $message->get('id')]);
     }
- 
+
 }

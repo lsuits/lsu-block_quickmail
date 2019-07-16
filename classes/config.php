@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,9 +21,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_quickmail_config {
 
-    public static $course_configurable_fields = [
+    public static $courseconfigurablefields = [
         'allowstudents',
         'roleselection',
         'receipt',
@@ -34,31 +35,29 @@ class block_quickmail_config {
 
     /**
      * Returns a transformed config array, or specific value, for the given key (block or course relative)
-     * 
+     *
      * @param  string  $key
      * @param  mixed  $courseorid  optional, if set, gets specific course configuration
      * @param  bool  $transformed  whether or not to transform the output values
      * @return mixed
      */
-    public static function get($key = '', $courseorid = 0, $transformed = true)
-    {
-        return $courseorid ? 
+    public static function get($key = '', $courseorid = 0, $transformed = true) {
+        return $courseorid ?
             self::course($courseorid, $key, $transformed) :
             self::block($key, $transformed);
     }
 
     /**
      * Returns a config array for the block, and specific key if given
-     * 
+     *
      * @param  string  $key  optional, config key to return
      * @param  bool  $transformed  whether or not to transform the output values
      * @return array|mixed
      */
-    public static function block($key = '', $transformed = true)
-    {
-        $default_message_type = get_config('moodle', 'block_quickmail_message_types_available');
+    public static function block($key = '', $transformed = true) {
+        $defaultmessagetype = get_config('moodle', 'block_quickmail_message_types_available');
 
-        $block_config_array = [
+        $blockconfigarray = [
             'allowstudents'             => get_config('moodle', 'block_quickmail_allowstudents'),
             'roleselection'             => get_config('moodle', 'block_quickmail_roleselection'),
             'send_as_tasks'             => get_config('moodle', 'block_quickmail_send_as_tasks'),
@@ -71,97 +70,95 @@ class block_quickmail_config {
             'additionalemail'           => get_config('moodle', 'block_quickmail_additionalemail'),
             'notifications_enabled'     => get_config('moodle', 'block_quickmail_notifications_enabled'),
             'send_now_threshold'        => get_config('moodle', 'block_quickmail_send_now_threshold'),
-            'message_types_available'   => $default_message_type,
-            'default_message_type'      => $default_message_type == 'all' 
-                ? 'email' 
-                : $default_message_type,
+            'message_types_available'   => $defaultmessagetype,
+            'default_message_type'      => $defaultmessagetype == 'all'
+                ? 'email'
+                : $defaultmessagetype,
         ];
 
         if ($transformed) {
-            return self::get_transformed($block_config_array, $key);
+            return self::get_transformed($blockconfigarray, $key);
         }
 
-        return $key ? $block_config_array[$key] : $block_config_array;
+        return $key ? $blockconfigarray[$key] : $blockconfigarray;
     }
 
     /**
      * Returns a config array for the given course, and specific key if given
-     * 
+     *
      * @param  mixed  $courseorid
      * @param  string  $key  optional, config key to return
      * @param  bool  $transformed  whether or not to transform the output values
      * @return array|mixed
      */
-    public static function course($courseorid, $key = '', $transformed = true)
-    {
+    public static function course($courseorid, $key = '', $transformed = true) {
         global $DB;
 
-        $course_id = is_object($courseorid) ? $courseorid->id : $courseorid;
+        $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
 
-        // get this course's config, if any
-        $course_config = $DB->get_records_menu('block_quickmail_config', ['coursesid' => $course_id], '', 'name,value');
+        // Get this course's config, if any.
+        $courseconfig = $DB->get_records_menu('block_quickmail_config', ['coursesid' => $courseid], '', 'name,value');
 
-        // get the master block config
-        $block_config = self::block('', false);
-        
-        // determine allowstudents for this course
-        if ((int) $block_config['allowstudents'] < 0) {
-            $course_allow_students = 0;
+        // Get the master block config.
+        $blockconfig = self::block('', false);
+
+        // Determine allowstudents for this course.
+        if ((int) $blockconfig['allowstudents'] < 0) {
+            $courseallowstudents = 0;
         } else {
-            $course_allow_students = array_key_exists('allowstudents', $course_config) ? 
-                $course_config['allowstudents'] : 
-                $block_config['allowstudents'];
+            $courseallowstudents = array_key_exists('allowstudents', $courseconfig) ?
+                $courseconfig['allowstudents'] :
+                $blockconfig['allowstudents'];
         }
 
-        // determine default message_type, if any, for this course
-        // NOTE: block-level "all" will default to course-level "email"
-        if ($block_config['message_types_available'] == 'all') {
-            $course_default_message_type = array_key_exists('default_message_type', $course_config) 
-                ? $course_config['default_message_type'] 
+        // Determine default message_type, if any, for this course.
+        // NOTE: block-level "all" will default to course-level "email".
+        if ($blockconfig['message_types_available'] == 'all') {
+            $coursedefaultmessagetype = array_key_exists('default_message_type', $courseconfig)
+                ? $courseconfig['default_message_type']
                 : 'email';
         } else {
-            $course_default_message_type = $block_config['message_types_available'];
+            $coursedefaultmessagetype = $blockconfig['message_types_available'];
         }
 
-        $course_config_array = [
-            'allowstudents'             => $course_allow_students,
-            'roleselection'             => array_key_exists('roleselection', $course_config) 
-                ? $course_config['roleselection'] 
-                : $block_config['roleselection'],
-            'receipt'                   => array_key_exists('receipt', $course_config) 
-                ? $course_config['receipt'] 
-                : $block_config['receipt'],
-            'prepend_class'             => array_key_exists('prepend_class', $course_config) 
-                ? $course_config['prepend_class'] 
-                : $block_config['prepend_class'],
-            'ferpa'                     => $block_config['ferpa'],
-            'downloads'                 => $block_config['downloads'],
-            'send_as_tasks'             => $block_config['send_as_tasks'],
-            'allow_mentor_copy'         => $block_config['allow_mentor_copy'],
-            'email_profile_fields'      => $block_config['email_profile_fields'],
-            'additionalemail'           => $block_config['additionalemail'],
-            'message_types_available'   => $block_config['message_types_available'],
-            'default_message_type'      => $course_default_message_type,
-            'notifications_enabled'     => $block_config['notifications_enabled'],
-            'send_now_threshold'        => $block_config['send_now_threshold'],
+        $courseconfigarray = [
+            'allowstudents'             => $courseallowstudents,
+            'roleselection'             => array_key_exists('roleselection', $courseconfig)
+                ? $courseconfig['roleselection']
+                : $blockconfig['roleselection'],
+            'receipt'                   => array_key_exists('receipt', $courseconfig)
+                ? $courseconfig['receipt']
+                : $blockconfig['receipt'],
+            'prepend_class'             => array_key_exists('prepend_class', $courseconfig)
+                ? $courseconfig['prepend_class']
+                : $blockconfig['prepend_class'],
+            'ferpa'                     => $blockconfig['ferpa'],
+            'downloads'                 => $blockconfig['downloads'],
+            'send_as_tasks'             => $blockconfig['send_as_tasks'],
+            'allow_mentor_copy'         => $blockconfig['allow_mentor_copy'],
+            'email_profile_fields'      => $blockconfig['email_profile_fields'],
+            'additionalemail'           => $blockconfig['additionalemail'],
+            'message_types_available'   => $blockconfig['message_types_available'],
+            'default_message_type'      => $coursedefaultmessagetype,
+            'notifications_enabled'     => $blockconfig['notifications_enabled'],
+            'send_now_threshold'        => $blockconfig['send_now_threshold'],
         ];
 
         if ($transformed) {
-            return self::get_transformed($course_config_array, $key);
+            return self::get_transformed($courseconfigarray, $key);
         }
 
-        return $key ? $course_config_array[$key] : $course_config_array;
+        return $key ? $courseconfigarray[$key] : $courseconfigarray;
     }
 
     /**
      * Returns an array of role ids configured to be selectable when composing message
-     * 
+     *
      * @param  object  $courseorid  optional, if not given will default to the block-level setting
      * @return array
      */
-    public static function get_role_selection_array($courseorid = null)
-    {
-        // get course if possible
+    public static function get_role_selection_array($courseorid = null) {
+        // Get course if possible.
         if (empty($courseorid)) {
             $course = null;
         } else if (is_object($courseorid)) {
@@ -174,22 +171,20 @@ class block_quickmail_config {
             }
         }
 
-        $roleselection_value = $course
+        $roleselectionvalue = $course
             ? self::course($course, 'roleselection')
             : self::block('roleselection');
-
-        return explode(',', $roleselection_value);
+        return explode(',', $roleselectionvalue);
     }
 
     /**
      * Returns a transformed array from the given array
-     * 
+     *
      * @param  array  $params
      * @param  string $key  optional, config key to return
      * @return array|mixed
      */
-    public static function get_transformed($params, $key = '')
-    {
+    public static function get_transformed($params, $key = '') {
         $transformed = [
             'allowstudents'             => (int) $params['allowstudents'],
             'roleselection'             => (string) $params['roleselection'],
@@ -212,7 +207,7 @@ class block_quickmail_config {
 
     /**
      * Returns the supported message types
-     * 
+     *
      * @return array
      */
     public static function get_supported_message_types() {
@@ -232,64 +227,60 @@ class block_quickmail_config {
 
     /**
      * Returns an array of editor options with a given context
-     * 
+     *
      * @param  object $context
      * @return array
      */
-    public static function get_editor_options($context)
-    {
+    public static function get_editor_options($context) {
         return [
             'trusttext' => true,
             'subdirs' => true,
             'maxfiles' => -1,
-            // 'accepted_types' => '*',
             'context' => $context
         ];
     }
 
     /**
      * Returns an array of filemanager options
-     * 
+     *
      * @return array
      */
-    public static function get_filemanager_options()
-    {
+    public static function get_filemanager_options() {
         return [
-            'subdirs' => 1, 
+            'subdirs' => 1,
             'accepted_types' => '*'
         ];
     }
 
     /**
      * Updates a given course's settings to match the given params
-     * 
+     *
      * @param  object  $course
      * @param  array $params
      * @return void
      */
-    public static function update_course_config($course, $params = [])
-    {
+    public static function update_course_config($course, $params = []) {
         global $DB;
 
-        // first, clear out old settings
+        // First, clear out old settings.
         self::delete_course_config($course);
 
-        $course_configurable_fields = self::$course_configurable_fields;
+        $courseconfigurablefields = self::$courseconfigurablefields;
 
-        // get rid of non-course-configurable fields
-        $params = \block_quickmail_plugin::array_filter_key($params, function ($key) use ($course_configurable_fields) {
-            return in_array($key, $course_configurable_fields);
+        // Get rid of non-course-configurable fields.
+        $params = \block_quickmail_plugin::array_filter_key($params, function ($key) use ($courseconfigurablefields) {
+            return in_array($key, $courseconfigurablefields);
         });
 
-        // handle conversion of special cases...
+        // Handle conversion of special cases….
         if (array_key_exists('roleselection', $params)) {
             if (is_array($params['roleselection'])) {
-                // convert array to comma-delimited string for single field storage
+                // Convert array to comma-delimited string for single field storage.
                 $params['roleselection'] = implode(',', $params['roleselection']);
             }
         }
 
-        // next, iterate over each given param, inserting each record for this course
+        // Next, iterate over each given param, inserting each record for this course.
         foreach ($params as $name => $value) {
             $config = new \stdClass;
             $config->coursesid = $course->id;
@@ -302,12 +293,11 @@ class block_quickmail_config {
 
     /**
      * Deletes a given course's settings
-     * 
+     *
      * @param  object  $course
      * @return void
      */
-    public static function delete_course_config($course)
-    {
+    public static function delete_course_config($course) {
         global $DB;
 
         $DB->delete_records('block_quickmail_config', ['coursesid' => $course->id]);
@@ -319,26 +309,25 @@ class block_quickmail_config {
      * FERPA restrictions = if true, any user that cannot access all groups in the course
      * will have limited results when pulling groups or users. These results are limited
      * to whichever groups the user is in, or the users within those groups.
-     * 
+     *
      * @param  object  $course
      * @return bool
      */
-    public static function be_ferpa_strict_for_course($course)
-    {
-        // get this block's ferpa setting
+    public static function be_ferpa_strict_for_course($course) {
+        // Get this block's ferpa setting.
         $setting = self::block('ferpa', false);
-        
-        // if strict, the be strict
+
+        // If strict, be strict.
         if ($setting == 'strictferpa') {
             return true;
         }
 
-        // if deferred to course, return what is configured by the course
+        // If deferred to course, return what is configured by the course.
         if ($setting == 'courseferpa') {
             return (bool) $course->groupmode;
         }
 
-        // otherwise, do not be strict
+        // Otherwise, do not be strict.
         return false;
     }
 

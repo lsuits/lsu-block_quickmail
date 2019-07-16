@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,11 +21,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_quickmail_string {
 
     /**
      * Shortcut for get_string() for this plugin's lang strings
-     * 
+     *
      * @param  string $key
      * @param  mixed $a  optional attributes
      * @return string
@@ -37,7 +38,7 @@ class block_quickmail_string {
 
     /**
      * Returns a lang string for this plugin
-     * 
+     *
      * @param  string $key
      * @param  mixed $a  optional attributes
      * @return string

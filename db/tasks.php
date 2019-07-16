@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $tasks = [
     [
         'classname' => 'block_quickmail\tasks\send_all_ready_messages_task',
@@ -31,7 +32,7 @@ $tasks = [
         'dayofweek' => '*',
         'hour' => '*',
         'minute' => '*/1',
-    ],[
+    ], [
         'classname' => 'block_quickmail\tasks\queue_scheduled_notifications_task',
         'blocking' => 0,
         'month' => '*',
@@ -39,7 +40,7 @@ $tasks = [
         'dayofweek' => '*',
         'hour' => '*',
         'minute' => '*/1',
-    ],[
+    ], [
         'classname' => 'block_quickmail\tasks\migrate_legacy_data_task',
         'disabled' => true,
         'blocking' => 0,

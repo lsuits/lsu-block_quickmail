@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,7 +23,9 @@
 
 namespace block_quickmail\controllers\forms\create_notification;
 
-require_once $CFG->libdir . '/formslib.php';
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
 
 use block_quickmail\controllers\support\controller_form;
 use block_quickmail_plugin;
@@ -39,53 +40,45 @@ class create_schedule_form extends controller_form {
 
         $mform =& $this->_form;
 
-        ////////////////////////////////////////////////////////////
-        ///  view_form_name directive: TO BE INCLUDED ON ALL FORMS :/
-        ////////////////////////////////////////////////////////////
+        // View_form_name directive: TO BE INCLUDED ON ALL FORMS.
         $mform->addElement('hidden', 'view_form_name');
         $mform->setType('view_form_name', PARAM_TEXT);
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
-        ////////////////////////////////////////////////////////////
-        ///  descriptive text
-        ////////////////////////////////////////////////////////////
-        
-        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
+        // Descriptive text.
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">'
+            . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
 
-        ////////////////////////////////////////////////////////////
-        ///  schedule_time_unit (select)
-        ////////////////////////////////////////////////////////////
+        // Schedule_time_unit (select).
         $mform->addElement(
-            'select', 
-            'schedule_time_unit', 
-            block_quickmail_string::get('time_unit'), 
+            'select',
+            'schedule_time_unit',
+            block_quickmail_string::get('time_unit'),
             $this->get_time_unit_options()
         );
 
         $mform->setDefault(
-            'schedule_time_unit', 
+            'schedule_time_unit',
             $this->has_session_stored('schedule_time_unit') ? $this->get_session_stored('schedule_time_unit') : ''
         );
 
         $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
 
-        ////////////////////////////////////////////////////////////
-        ///  schedule_time_amount (text)
-        ////////////////////////////////////////////////////////////
+        // Schedule_time_amount (text).
         $mform->addElement(
-            'text', 
-            'schedule_time_amount', 
-            block_quickmail_string::get('time_amount'), 
+            'text',
+            'schedule_time_amount',
+            block_quickmail_string::get('time_amount'),
             ['size' => 4]
         );
-        
+
         $mform->setType(
-            'schedule_time_amount', 
+            'schedule_time_amount',
             PARAM_TEXT
         );
 
         $mform->setDefault(
-            'schedule_time_amount', 
+            'schedule_time_amount',
             $this->has_session_stored('schedule_time_amount') ? $this->get_session_stored('schedule_time_amount') : ''
         );
 
@@ -93,12 +86,10 @@ class create_schedule_form extends controller_form {
         $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
         $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nonzero', '', 'server');
 
-        ////////////////////////////////////////////////////////////
-        ///  schedule_begin_at (date/time)
-        ////////////////////////////////////////////////////////////
+        // Schedule_begin_at (date/time).
         $mform->addElement(
-            'date_time_selector', 
-            'schedule_begin_at', 
+            'date_time_selector',
+            'schedule_begin_at',
             block_quickmail_string::get('schedule_begin_at'),
             $this->get_schedule_time_options(false)
         );
@@ -109,13 +100,11 @@ class create_schedule_form extends controller_form {
                 $this->get_session_stored('schedule_begin_at')
             );
         }
-        
-        ////////////////////////////////////////////////////////////
-        ///  schedule_end_at (date/time)
-        ////////////////////////////////////////////////////////////
+
+        // Schedule_end_at (date/time).
         $mform->addElement(
-            'date_time_selector', 
-            'schedule_end_at', 
+            'date_time_selector',
+            'schedule_end_at',
             block_quickmail_string::get('schedule_end_at'),
             $this->get_schedule_time_options(false)
         );
@@ -127,40 +116,36 @@ class create_schedule_form extends controller_form {
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  buttons
-        ////////////////////////////////////////////////////////////
+        // Buttons!
         $buttons = [
-            // $mform->createElement('cancel', 'cancel', get_string('cancel')),
             $mform->createElement('submit', 'back', get_string('back')),
             $mform->createElement('submit', 'next', get_string('next')),
         ];
-        
+
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
     }
 
     /**
      * Returns the options schedule_time_unit selection
-     * 
+     *
      * @return array
      */
-    private function get_time_unit_options()
-    {
+    private function get_time_unit_options() {
         return block_quickmail_plugin::get_time_unit_selection_array(['day', 'week', 'month']);
     }
 
     /**
      * Returns the options for schedule time selection
-     * 
+     *
      * @param  bool  $optional  whether or not this field is optional
      * @return array
      */
     private function get_schedule_time_options($optional = true) {
-        $current_year = date("Y");
+        $currentyear = date("Y");
 
         return [
-            'startyear' => $current_year,
-            'stopyear' => $current_year + 1,
+            'startyear' => $currentyear,
+            'stopyear' => $currentyear + 1,
             'timezone' => 99,
             'step' => 15,
             'optional' => $optional

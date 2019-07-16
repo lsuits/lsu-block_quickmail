@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\validators;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\validators\validator;
 use block_quickmail\requests\compose_request;
 use block_quickmail\requests\broadcast_request;
@@ -34,15 +35,14 @@ use block_quickmail\exceptions\body_parser_exception;
 
 class save_draft_message_form_validator extends validator {
 
-    public $transformed_data;
-    
+    public $transformeddata;
+
     /**
      * Defines this specific validator's validation rules
-     * 
+     *
      * @return void
      */
-    public function validator_rules()
-    {
+    public function validator_rules() {
         $this->transformed_data = $this->check_extra_params_value('is_broadcast_message', true)
             ? broadcast_request::get_transformed_post_data($this->form_data)
             : compose_request::get_transformed_post_data($this->form_data);
@@ -58,25 +58,24 @@ class save_draft_message_form_validator extends validator {
 
     /**
      * Checks that the message body does not contain any unsupported custom user data keys, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_message_body_codes()
-    {
-        // always allow user code class
-        $substitution_code_classes = ['user'];
+    private function validate_message_body_codes() {
+        // Always allow user code class.
+        $substitutioncodeclasses = ['user'];
 
-        // if this is NOT a broadcase message, assume it is a compose message and allow course code class
-        if ( ! $this->check_extra_params_value('is_broadcast_message', true)) {
-            array_push($substitution_code_classes, 'course');
+        // If this is NOT a broadcase message, assume it is a compose message and allow course code class.
+        if (!$this->check_extra_params_value('is_broadcast_message', true)) {
+            array_push($substitutioncodeclasses, 'course');
         }
 
-        // attempt to validate the message body to make sure any substitution codes are
-        // formatted properly and are all allowed
+        // Attempt to validate the message body to make sure any substitution codes are
+        // formatted properly and are all allowed.
         try {
-            $errors = body_substitution_code_parser::validate_body($this->transformed_data->message, $substitution_code_classes);
-            
-            foreach($errors as $error) {
+            $errors = body_substitution_code_parser::validate_body($this->transformed_data->message, $substitutioncodeclasses);
+
+            foreach ($errors as $error) {
                 $this->add_error($error);
             }
         } catch (body_parser_exception $e) {
@@ -86,12 +85,11 @@ class save_draft_message_form_validator extends validator {
 
     /**
      * Checks that any and all additional emails requested are valid emails, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_additional_emails()
-    {
-        //  validate each email value
+    private function validate_additional_emails() {
+        // Validate each email value.
         foreach ($this->transformed_data->additional_emails as $email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
                 $this->errors[] = block_quickmail_string::get('invalid_additional_email', $email);
@@ -101,29 +99,26 @@ class save_draft_message_form_validator extends validator {
 
     /**
      * Checks that the selected "message type" is allowed per site config, adding any errors to the stack
-     * 
+     *
      * @return void
      */
-    private function validate_message_type()
-    {
-        if ( ! in_array($this->form_data->message_type, \block_quickmail_config::get_supported_message_types())) {
+    private function validate_message_type() {
+        if (!in_array($this->form_data->message_type, \block_quickmail_config::get_supported_message_types())) {
             $this->errors[] = block_quickmail_string::get('invalid_send_method');
         }
 
-        $supported_option = $this->get_config('message_types_available');
+        $supportedoption = $this->get_config('message_types_available');
 
-        if ($supported_option == 'all') {
+        if ($supportedoption == 'all') {
             return;
         }
 
-        if ($supported_option !== $this->form_data->message_type) {
+        if ($supportedoption !== $this->form_data->message_type) {
             $this->errors[] = block_quickmail_string::get('invalid_send_method');
         }
     }
 
-    private function validate_to_send_at()
-    {
-        //
+    private function validate_to_send_at() {
     }
 
 }

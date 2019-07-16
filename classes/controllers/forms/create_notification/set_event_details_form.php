@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,7 +23,9 @@
 
 namespace block_quickmail\controllers\forms\create_notification;
 
-require_once $CFG->libdir . '/formslib.php';
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
 
 use block_quickmail\controllers\support\controller_form;
 use block_quickmail_plugin;
@@ -39,135 +40,118 @@ class set_event_details_form extends controller_form {
 
         $mform =& $this->_form;
 
-        ////////////////////////////////////////////////////////////
-        ///  view_form_name directive: TO BE INCLUDED ON ALL FORMS :/
-        ////////////////////////////////////////////////////////////
+        // View_form_name directive: TO BE INCLUDED ON ALL FORMS.
         $mform->addElement('hidden', 'view_form_name');
         $mform->setType('view_form_name', PARAM_TEXT);
         $mform->setDefault('view_form_name', $this->get_view_form_name());
 
-        ////////////////////////////////////////////////////////////
-        ///  descriptive text
-        ////////////////////////////////////////////////////////////
-        
-        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_event_details_description') . '</div>');
+        // Descriptive text.
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">'
+            . block_quickmail_string::get('set_event_details_description') . '</div>');
 
-        ////////////////////////////////////////////////////////////
-        ///  time_delay_unit (select)
-        ////////////////////////////////////////////////////////////
+        // Time_delay_unit (select).
         $mform->addElement(
-            'select', 
-            'time_delay_unit', 
-            block_quickmail_string::get('time_delay_unit'), 
+            'select',
+            'time_delay_unit',
+            block_quickmail_string::get('time_delay_unit'),
             $this->get_time_unit_options()
         );
 
         $mform->setDefault(
-            'time_delay_unit', 
+            'time_delay_unit',
             $this->has_session_stored('time_delay_unit') ? $this->get_session_stored('time_delay_unit') : ''
         );
 
         $mform->addHelpButton(
-            'time_delay_unit', 
-            'time_delay_unit', 
+            'time_delay_unit',
+            'time_delay_unit',
             'block_quickmail'
         );
 
-        ////////////////////////////////////////////////////////////
-        ///  time_delay_amount (text)
-        ////////////////////////////////////////////////////////////
+        // Time_delay_amount (text).
         $mform->addElement(
-            'text', 
-            'time_delay_amount', 
-            block_quickmail_string::get('time_amount'), 
+            'text',
+            'time_delay_amount',
+            block_quickmail_string::get('time_amount'),
             ['size' => 4]
         );
-        
+
         $mform->setType(
-            'time_delay_amount', 
+            'time_delay_amount',
             PARAM_TEXT
         );
 
         $mform->setDefault(
-            'time_delay_amount', 
+            'time_delay_amount',
             $this->has_session_stored('time_delay_amount') ? $this->get_session_stored('time_delay_amount') : '0'
         );
 
-        $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+        $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) {
             return empty($value)
                 ? true
                 : is_numeric($value);
         }, 'server');
 
-        ////////////////////////////////////////////////////////////
-        ///  mute_time_unit (select)
-        ////////////////////////////////////////////////////////////
-        
-        if ( ! $this->get_custom_data('is_one_time_event')) {
+        // Mute_time_unit (select).
+        if (!$this->get_custom_data('is_one_time_event')) {
             $mform->addElement(
-                'select', 
-                'mute_time_unit', 
-                block_quickmail_string::get('mute_time_unit'), 
+                'select',
+                'mute_time_unit',
+                block_quickmail_string::get('mute_time_unit'),
                 $this->get_time_unit_options()
             );
 
             $mform->setDefault(
-                'mute_time_unit', 
+                'mute_time_unit',
                 $this->has_session_stored('mute_time_unit') ? $this->get_session_stored('mute_time_unit') : ''
             );
 
             $mform->addHelpButton(
-                'mute_time_unit', 
-                'mute_time_unit', 
+                'mute_time_unit',
+                'mute_time_unit',
                 'block_quickmail'
             );
 
-            ////////////////////////////////////////////////////////////
-            ///  mute_time_amount (text)
-            ////////////////////////////////////////////////////////////
+            // Mute_time_amount (text).
             $mform->addElement(
-                'text', 
-                'mute_time_amount', 
-                block_quickmail_string::get('time_amount'), 
+                'text',
+                'mute_time_amount',
+                block_quickmail_string::get('time_amount'),
                 ['size' => 4]
             );
-            
+
             $mform->setType(
-                'mute_time_amount', 
+                'mute_time_amount',
                 PARAM_TEXT
             );
 
             $mform->setDefault(
-                'mute_time_amount', 
+                'mute_time_amount',
                 $this->has_session_stored('mute_time_amount') ? $this->get_session_stored('mute_time_amount') : '0'
             );
 
-            $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+            $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) {
                 return empty($value)
                     ? true
                     : is_numeric($value);
             }, 'server');
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  buttons
-        ////////////////////////////////////////////////////////////
+        // Buttons!
         $buttons = [
-            // $mform->createElement('cancel', 'cancel', get_string('cancel')),
             $mform->createElement('submit', 'back', get_string('back')),
             $mform->createElement('submit', 'next', get_string('next')),
         ];
-        
+
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
     }
 
     /**
      * Returns the options time_delay_unit selection
-     * 
+     *
      * @return array
      */
-    private function get_time_unit_options()
-    {
+    private function get_time_unit_options() {
         return block_quickmail_plugin::get_time_unit_selection_array(['minute', 'hour', 'day'], 'none');
     }
 

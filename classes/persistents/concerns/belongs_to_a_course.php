@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,16 +23,13 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use lang_string;
 
 trait belongs_to_a_course {
 
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Relationships.
     /**
      * Returns the course object of the persistent, defaulting to null if no course
      *
@@ -47,15 +43,10 @@ trait belongs_to_a_course {
         }
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  GETTERS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Getters.
     /**
      * Returns a given property value of the this persistent's course object, defaulting to a given default value
-     * 
+     *
      * @param  string  $property  name of a course property
      * @param  mixed   $default   default value to return if cannot be retrieved
      * @return mixed
@@ -67,61 +58,27 @@ trait belongs_to_a_course {
                 return $course->$property;
             }
         }
-        
+
         return $default;
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  SETTERS
-    /// 
-    ///////////////////////////////////////////////
-    
+    // Setters.
     /**
      * Convenience method to set the course ID.
      *
      * @param object|int $idorobject The course ID, or a course object.
      */
     protected function set_course_id($idorobject) {
-        $course_id = $idorobject;
-        
+        $courseid = $idorobject;
+
         if (is_object($idorobject)) {
-            $course_id = $idorobject->id;
+            $courseid = $idorobject->id;
         }
-        
-        $this->raw_set('course_id', $course_id);
+
+        $this->raw_set('course_id', $courseid);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
-    /**
-     * Validate the course ID.
-     *
-     * NOTE: turning this off for now as validation should happen externally before this method is ever called!!!
-     *
-     * @param int $value The value.
-     * @return true|lang_string
-     */
-    // protected function validate_course_id($value) {
-    //     try {
-    //         $course = get_course($value);
-    //     } catch (dml_exception $e) {
-    //         return new lang_string('invalidcourseid', 'error');
-    //     }
-
-    //     return true;
-    // }
-
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Methods.
     /**
      * Convenience method to determine if this persistent is owned by the given course (or course id)
      *
@@ -129,13 +86,13 @@ trait belongs_to_a_course {
      * @return bool
      */
     public function is_owned_by_course($idorobject) {
-        $course_id = $idorobject;
-        
+        $courseid = $idorobject;
+
         if (is_object($idorobject)) {
-            $course_id = $idorobject->id;
+            $courseid = $idorobject->id;
         }
-        
-        return $this->get('course_id') == $course_id;
+
+        return $this->get('course_id') == $courseid;
     }
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,28 +20,29 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-use block_quickmail_string;
+//use block_quickmail_string;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_recipient;
 use block_quickmail\persistents\message_additional_email;
 
 class block_quickmail_message_persistent_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses,
         sets_up_notifications;
 
-    public function test_create_composed_with_recipients_as_draft()
-    {
-        // reset all changes automatically after this test
+    public function test_create_composed_with_recipients_as_draft() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
-        
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
         $params = [
             'message_type' => 'message',
@@ -56,11 +56,11 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'mentor_copy' => 1,
         ];
 
-        $message = message::create_type('compose', $user_teacher, $course, (object) $params, true);
+        $message = message::create_type('compose', $userteacher, $course, (object) $params, true);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals($course->id, $message->get('course_id'));
-        $this->assertEquals($user_teacher->id, $message->get('user_id'));
+        $this->assertEquals($userteacher->id, $message->get('user_id'));
         $this->assertEquals($params['message_type'], $message->get('message_type'));
         $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
         $this->assertEquals($params['signature_id'], $message->get('signature_id'));
@@ -74,8 +74,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertCount(2, $message->get_substitution_code_classes());
     }
 
-    public function test_getters()
-    {
+    public function test_getters() {
         $this->resetAfterTest(true);
 
         $message = message::create_new([
@@ -83,7 +82,9 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'user_id' => 1,
             'message_type' => 'email',
             'subject' => 'Id dolore irure nostrud dolor eu elit et laborum',
-            'body' => 'Id dolore irure nostrud dolor eu elit et laborum sit ullamco laboris cillum consectetur irure quis esse occaecat in amet culpa nulla duis id velit in ut officia.',
+            'body' => 'Id dolore irure nostrud dolor eu elit et laborum sit
+                      ullamco laboris cillum consectetur irure quis esse occaecat
+                      in amet culpa nulla duis id velit in ut officia.',
         ]);
 
         $this->assertEquals('Id dolore irure...', $message->get_subject_preview(20));
@@ -94,140 +95,135 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('never'), $message->get_readable_to_send_at());
     }
 
-    public function test_find_owned_by_user_or_null()
-    {
+    public function test_find_owned_by_user_or_null() {
         $this->resetAfterTest(true);
 
-        $user_one = $this->getDataGenerator()->create_user();
-        $user_two = $this->getDataGenerator()->create_user();
-        
-        $user_one_draft = $this->create_message(true, 1, $user_one->id);
-        $user_one_sent = $this->create_message(false, 2, $user_one->id);
-        $user_two_draft = $this->create_message(true, 3, $user_two->id);
-        $user_two_sent = $this->create_message(false, 2, $user_two->id);
+        $userone = $this->getDataGenerator()->create_user();
+        $usertwo = $this->getDataGenerator()->create_user();
 
-        $my_message = message::find_owned_by_user_or_null($user_one_draft->get('id'), $user_one->id);
+        $useronedraft = $this->create_message(true, 1, $userone->id);
+        $useronesent = $this->create_message(false, 2, $userone->id);
+        $usertwodraft = $this->create_message(true, 3, $usertwo->id);
+        $usertwosent = $this->create_message(false, 2, $usertwo->id);
 
-        $this->assertInstanceOf(message::class, $my_message);
-        $this->assertEquals($user_one_draft->get('id'), $my_message->get('id'));
+        $mymessage = message::find_owned_by_user_or_null($useronedraft->get('id'), $userone->id);
 
-        $not_my_message = message::find_owned_by_user_or_null($user_one_sent->get('id'), $user_two->id);
+        $this->assertInstanceOf(message::class, $mymessage);
+        $this->assertEquals($useronedraft->get('id'), $mymessage->get('id'));
 
-        $this->assertNull($not_my_message);
+        $notmymessage = message::find_owned_by_user_or_null($useronesent->get('id'), $usertwo->id);
+
+        $this->assertNull($notmymessage);
     }
 
-    public function test_get_all_message_recipients()
-    {
+    public function test_get_all_message_recipients() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        $user_one = $this->getDataGenerator()->create_user();
+        $userone = $this->getDataGenerator()->create_user();
         $one = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_one->id,
+            'user_id' => $userone->id,
         ]);
 
-        $user_two = $this->getDataGenerator()->create_user();
+        $usertwo = $this->getDataGenerator()->create_user();
         $two = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_two->id,
+            'user_id' => $usertwo->id,
         ]);
 
-        $user_three = $this->getDataGenerator()->create_user();
+        $userthree = $this->getDataGenerator()->create_user();
         $three = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_three->id,
+            'user_id' => $userthree->id,
         ]);
 
-        $message_recipients = $message->get_message_recipients();
-        $message_recipient_array = $message->get_message_recipients('all', true);
+        $messagerecipients = $message->get_message_recipients();
+        $messagerecipientarray = $message->get_message_recipients('all', true);
 
-        $this->assertCount(3, $message_recipients);
-        $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
-        $this->assertCount(3, $message_recipient_array);
-        $this->assertEquals($user_two->id, $message_recipient_array[1]);
+        $this->assertCount(3, $messagerecipients);
+        $this->assertInstanceOf(message_recipient::class, $messagerecipients[0]);
+        $this->assertCount(3, $messagerecipientarray);
+        $this->assertEquals($usertwo->id, $messagerecipientarray[1]);
     }
 
-    public function test_get_message_recipients_by_status()
-    {
+    public function test_get_message_recipients_by_status() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        // create an unsent-to recip
-        $user_one = $this->getDataGenerator()->create_user();
+        // Create an unsent-to recip.
+        $userone = $this->getDataGenerator()->create_user();
         $one = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_one->id,
+            'user_id' => $userone->id,
         ]);
 
-        // create an sent-to recip
-        $user_two = $this->getDataGenerator()->create_user();
+        // Create an sent-to recip.
+        $usertwo = $this->getDataGenerator()->create_user();
         $two = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_two->id,
+            'user_id' => $usertwo->id,
             'sent_at' => time()
         ]);
 
-        // create an unsent-to recip
-        $user_three = $this->getDataGenerator()->create_user();
+        // Create an unsent-to recip.
+        $userthree = $this->getDataGenerator()->create_user();
         $three = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_three->id,
+            'user_id' => $userthree->id,
         ]);
 
-        $message_recipients = $message->get_message_recipients('unsent');
-        $message_recipient_array = $message->get_message_recipients('unsent', true);
+        $messagerecipients = $message->get_message_recipients('unsent');
+        $messagerecipientarray = $message->get_message_recipients('unsent', true);
 
-        $this->assertCount(2, $message_recipients);
-        $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
-        $this->assertCount(2, $message_recipient_array);
-        $this->assertEquals($user_three->id, $message_recipient_array[1]);
+        $this->assertCount(2, $messagerecipients);
+        $this->assertInstanceOf(message_recipient::class, $messagerecipients[0]);
+        $this->assertCount(2, $messagerecipientarray);
+        $this->assertEquals($userthree->id, $messagerecipientarray[1]);
 
-        $message_recipients = $message->get_message_recipients('sent');
-        $message_recipient_array = $message->get_message_recipients('sent', true);
+        $messagerecipients = $message->get_message_recipients('sent');
+        $messagerecipientarray = $message->get_message_recipients('sent', true);
 
-        $this->assertCount(1, $message_recipients);
-        $this->assertInstanceOf(message_recipient::class, $message_recipients[0]);
-        $this->assertCount(1, $message_recipient_array);
-        $this->assertEquals($user_two->id, $message_recipient_array[0]);
+        $this->assertCount(1, $messagerecipients);
+        $this->assertInstanceOf(message_recipient::class, $messagerecipients[0]);
+        $this->assertCount(1, $messagerecipientarray);
+        $this->assertEquals($usertwo->id, $messagerecipientarray[0]);
     }
 
-    public function test_get_message_recipient_users()
-    {
+    public function test_get_message_recipient_users() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        $user_one = $this->getDataGenerator()->create_user();
+        $userone = $this->getDataGenerator()->create_user();
         $one = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_one->id,
+            'user_id' => $userone->id,
         ]);
 
-        $user_two = $this->getDataGenerator()->create_user();
+        $usertwo = $this->getDataGenerator()->create_user();
         $two = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_two->id,
+            'user_id' => $usertwo->id,
         ]);
 
-        $user_three = $this->getDataGenerator()->create_user();
+        $userthree = $this->getDataGenerator()->create_user();
         $three = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_three->id,
+            'user_id' => $userthree->id,
         ]);
 
-        $message_recipient_users = $message->get_message_recipient_users('all', 'id,email');
+        $messagerecipientusers = $message->get_message_recipient_users('all', 'id,email');
 
-        $this->assertInternalType('array', $message_recipient_users);
-        $this->assertCount(3, $message_recipient_users);
-        $this->assertEquals($user_one->id, $message_recipient_users[$user_one->id]->id);
-        $this->assertEquals($user_one->email, $message_recipient_users[$user_one->id]->email);
+        $this->assertInternalType('array', $messagerecipientusers);
+        $this->assertCount(3, $messagerecipientusers);
+        $this->assertEquals($userone->id, $messagerecipientusers[$userone->id]->id);
+        $this->assertEquals($userone->email, $messagerecipientusers[$userone->id]->email);
     }
 
-    public function test_get_additional_emails()
-    {
+    public function test_get_additional_emails() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
@@ -247,94 +243,85 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'email' => 'email@three.com',
         ]);
 
-        $additional_emails = $message->get_additional_emails();
-        $additional_email_array = $message->get_additional_emails(true);
+        $additionalemails = $message->get_additional_emails();
+        $additionalemailarray = $message->get_additional_emails(true);
 
-        $this->assertCount(3, $additional_emails);
-        $this->assertInstanceOf(message_additional_email::class, $additional_emails[0]);
-        $this->assertCount(3, $additional_email_array);
-        $this->assertEquals('email@two.com', $additional_email_array[1]);
+        $this->assertCount(3, $additionalemails);
+        $this->assertInstanceOf(message_additional_email::class, $additionalemails[0]);
+        $this->assertCount(3, $additionalemailarray);
+        $this->assertEquals('email@two.com', $additionalemailarray[1]);
     }
 
-    public function test_sync_recipients()
-    {
+    public function test_sync_recipients() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        // create 2 original recipients
-        
-        $user_one = $this->getDataGenerator()->create_user();
+        // Create 2 original recipients.
+        $userone = $this->getDataGenerator()->create_user();
         $one = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_one->id,
+            'user_id' => $userone->id,
         ]);
 
-        $user_two = $this->getDataGenerator()->create_user();
+        $usertwo = $this->getDataGenerator()->create_user();
         $two = message_recipient::create_new([
             'message_id' => $message->get('id'),
-            'user_id' => $user_two->id,
+            'user_id' => $usertwo->id,
         ]);
 
-        $original_recipient_array = $message->get_message_recipients('all', true);
-        $this->assertCount(2, $original_recipient_array);
+        $originalrecipientarray = $message->get_message_recipients('all', true);
+        $this->assertCount(2, $originalrecipientarray);
 
-        // create new users to become recipients
+        // Create new users to become recipients.
+        $userthree = $this->getDataGenerator()->create_user();
+        $userfour = $this->getDataGenerator()->create_user();
+        $userfive = $this->getDataGenerator()->create_user();
 
-        $user_three = $this->getDataGenerator()->create_user();
-        $user_four = $this->getDataGenerator()->create_user();
-        $user_five = $this->getDataGenerator()->create_user();
-
-        // sync the recipients
-
+        // Sync the recipients.
         $message->sync_recipients([
-            $user_three->id,
-            $user_four->id,
-            $user_five->id
+            $userthree->id,
+            $userfour->id,
+            $userfive->id
         ]);
 
-        $new_recipient_array = $message->get_message_recipients('all', true);
-        $this->assertCount(3, $new_recipient_array);
+        $newrecipientarray = $message->get_message_recipients('all', true);
+        $this->assertCount(3, $newrecipientarray);
 
-        $this->assertCount(0, array_intersect($original_recipient_array, $new_recipient_array));
+        $this->assertCount(0, array_intersect($originalrecipientarray, $newrecipientarray));
     }
 
-    public function test_sync_recipients_caches_count()
-    {
+    public function test_sync_recipients_caches_count() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        // create new users to become recipients
+        // Create new users to become recipients.
+        $userthree = $this->getDataGenerator()->create_user();
+        $userfour = $this->getDataGenerator()->create_user();
+        $userfive = $this->getDataGenerator()->create_user();
 
-        $user_three = $this->getDataGenerator()->create_user();
-        $user_four = $this->getDataGenerator()->create_user();
-        $user_five = $this->getDataGenerator()->create_user();
-
-        // sync the recipients
-
+        // Sync the recipients.
         $message->sync_recipients([
-            $user_three->id,
-            $user_four->id,
-            $user_five->id
+            $userthree->id,
+            $userfour->id,
+            $userfive->id
         ]);
 
         $cache = \cache::make('block_quickmail', 'qm_msg_recip_count');
-        $cached_count = $cache->get($message->get('id'));
-        $this->assertEquals(3, $cached_count);
+        $cachedcount = $cache->get($message->get('id'));
+        $this->assertEquals(3, $cachedcount);
 
         $value = $message->cached_recipient_count();
         $this->assertEquals(3, $value);
     }
 
-    public function test_sync_additional_emails()
-    {
+    public function test_sync_additional_emails() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        // create 2 original additional emails
-        
+        // Create 2 original additional emails.
         $one = message_additional_email::create_new([
             'message_id' => $message->get('id'),
             'email' => 'email@one.com',
@@ -345,43 +332,41 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'email' => 'email@two.com',
         ]);
 
-        $original_email_array = $message->get_additional_emails(true);
-        $this->assertCount(2, $original_email_array);
+        $originalemailarray = $message->get_additional_emails(true);
+        $this->assertCount(2, $originalemailarray);
 
-        $new_email_array = ['email@three.com', 'email@four.com', 'email@five.com'];
+        $newemailarray = ['email@three.com', 'email@four.com', 'email@five.com'];
 
-        $message->sync_additional_emails($new_email_array);
+        $message->sync_additional_emails($newemailarray);
 
         $this->assertCount(3, $message->get_additional_emails(true));
 
-        $this->assertCount(0, array_intersect($original_email_array, $new_email_array));
+        $this->assertCount(0, array_intersect($originalemailarray, $newemailarray));
     }
 
-    public function test_sync_additional_emails_caches_count()
-    {
+    public function test_sync_additional_emails_caches_count() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        $new_email_array = ['email@three.com', 'email@four.com', 'email@five.com'];
+        $newemailarray = ['email@three.com', 'email@four.com', 'email@five.com'];
 
-        $message->sync_additional_emails($new_email_array);
+        $message->sync_additional_emails($newemailarray);
 
         $cache = \cache::make('block_quickmail', 'qm_msg_addl_email_count');
-        $cached_count = $cache->get($message->get('id'));
-        $this->assertEquals(3, $cached_count);
+        $cachedcount = $cache->get($message->get('id'));
+        $this->assertEquals(3, $cachedcount);
 
         $value = $message->cached_additional_email_count();
         $this->assertEquals(3, $value);
     }
 
-    public function test_sync_compose_draft_recipients()
-    {
+    public function test_sync_compose_draft_recipients() {
         $this->resetAfterTest(true);
 
         $message = $this->create_message();
 
-        // create some includes and excludes (with some invalid)
+        // Create some includes and excludes (with some invalid).
         $includes = [
             'not_good',
             'role_1',
@@ -405,16 +390,16 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ];
 
         $message->sync_compose_draft_recipients($includes, $excludes);
-        
+
         $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
-        
+
         $this->assertCount(12, $count);
 
-        $draft_recipients = $message->get_message_draft_recipients();
+        $draftrecipients = $message->get_message_draft_recipients();
 
-        $this->assertCount(12, $draft_recipients);
+        $this->assertCount(12, $draftrecipients);
 
-        $first = $draft_recipients[0];
+        $first = $draftrecipients[0];
 
         $this->assertInstanceOf(message_draft_recipient::class, $first);
         $this->assertEquals('include', $first->get('type'));
@@ -426,12 +411,12 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         message_draft_recipient::clear_all_for_message($message);
 
         $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
-        
+
         $this->assertCount(0, $count);
 
         $message = $this->create_message();
 
-        // create some includes and excludes for this new message
+        // Create some includes and excludes for this new message.
         $includes = [
             'role_1',
             'role_3',
@@ -452,12 +437,12 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         ];
 
         $message->sync_compose_draft_recipients($includes, $excludes);
-        
+
         $count = message_draft_recipient::get_records(['message_id' => $message->get('id')]);
 
         $this->assertCount(12, $count);
 
-        // create some different includes and excludes for this same message
+        // Create some different includes and excludes for this same message.
         $includes = [
             'role_2',
             'role_3',
@@ -480,9 +465,8 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
 
         $this->assertCount(8, $count);
     }
-    
-    public function test_message_draft_status()
-    {
+
+    public function test_message_draft_status() {
         $this->resetAfterTest(true);
 
         $message = message::create_new([
@@ -496,8 +480,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('drafted'), $message->get_status());
     }
 
-    public function test_message_queued_status()
-    {
+    public function test_message_queued_status() {
         $this->resetAfterTest(true);
 
         $message = message::create_new([
@@ -511,8 +494,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('queued'), $message->get_status());
     }
 
-    public function test_message_sending_status()
-    {
+    public function test_message_sending_status() {
         $this->resetAfterTest(true);
 
         $message = message::create_new([
@@ -526,8 +508,7 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('sending'), $message->get_status());
     }
 
-    public function test_message_sent_status()
-    {
+    public function test_message_sent_status() {
         $this->resetAfterTest(true);
 
         $message = message::create_new([
@@ -541,38 +522,36 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(block_quickmail_string::get('sent'), $message->get_status());
     }
 
-    public function test_message_get_to_send_in_future()
-    {
+    public function test_message_get_to_send_in_future() {
         $this->resetAfterTest(true);
 
         $now = time();
-        $nextWeek = $now + (7 * 24 * 60 * 60);
+        $nextweek = $now + (7 * 24 * 60 * 60);
 
-        $message_now = message::create_new([
+        $messagenow = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
             'message_type' => 'email',
             'to_send_at' => $now
         ]);
 
-        $message_future = message::create_new([
+        $messagefuture = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
             'message_type' => 'email',
-            'to_send_at' => $nextWeek
+            'to_send_at' => $nextweek
         ]);
 
-        $this->assertFalse($message_now->get_to_send_in_future());
-        $this->assertTrue($message_future->get_to_send_in_future());
+        $this->assertFalse($messagenow->get_to_send_in_future());
+        $this->assertTrue($messagefuture->get_to_send_in_future());
     }
 
-    public function test_create_composed_with_no_recipients_as_draft()
-    {
-        // reset all changes automatically after this test
+    public function test_create_composed_with_no_recipients_as_draft() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
-        
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
         $params = [
             'message_type' => 'message',
@@ -586,11 +565,11 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'mentor_copy' => 1,
         ];
 
-        $message = message::create_type('compose', $user_teacher, $course, (object) $params, true);
+        $message = message::create_type('compose', $userteacher, $course, (object) $params, true);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals($course->id, $message->get('course_id'));
-        $this->assertEquals($user_teacher->id, $message->get('user_id'));
+        $this->assertEquals($userteacher->id, $message->get('user_id'));
         $this->assertEquals($params['message_type'], $message->get('message_type'));
         $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
         $this->assertEquals($params['signature_id'], $message->get('signature_id'));
@@ -603,13 +582,12 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
         $this->assertEquals(1, $message->get('is_draft'));
     }
 
-    public function test_create_composed_not_as_draft()
-    {
-        // reset all changes automatically after this test
+    public function test_create_composed_not_as_draft() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
-        
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
         $params = [
             'message_type' => 'message',
@@ -623,21 +601,20 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'mentor_copy' => 1,
         ];
 
-        $message = message::create_type('compose', $user_teacher, $course, (object) $params, false);
+        $message = message::create_type('compose', $userteacher, $course, (object) $params, false);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals(0, $message->get('is_draft'));
     }
-    
-    public function test_update_draft_as_draft()
-    {
-        // reset all changes automatically after this test
-        $this->resetAfterTest(true);
-        
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
 
-        $creation_params = [
+    public function test_update_draft_as_draft() {
+        // Reset all changes automatically after this test.
+        $this->resetAfterTest(true);
+
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
+
+        $creationparams = [
             'message_type' => 'message',
             'alternate_email_id' => 4,
             'signature_id' => 6,
@@ -649,9 +626,9 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'mentor_copy' => 1,
         ];
 
-        $message = message::create_type('compose', $user_teacher, $course, (object) $creation_params, true);
+        $message = message::create_type('compose', $userteacher, $course, (object) $creationparams, true);
 
-        $update_params = [
+        $updateparams = [
             'message_type' => 'email',
             'alternate_email_id' => 5,
             'signature_id' => 7,
@@ -663,23 +640,23 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'mentor_copy' => 0,
         ];
 
-        $updated_message = $message->update_draft((object) $update_params);
+        $updatedmessage = $message->update_draft((object) $updateparams);
 
-        $this->assertInstanceOf(message::class, $updated_message);
-        $this->assertEquals($course->id, $updated_message->get('course_id'));
-        $this->assertEquals($user_teacher->id, $updated_message->get('user_id'));
-        $this->assertEquals($update_params['message_type'], $updated_message->get('message_type'));
-        $this->assertEquals($update_params['alternate_email_id'], $updated_message->get('alternate_email_id'));
-        $this->assertEquals($update_params['signature_id'], $updated_message->get('signature_id'));
-        $this->assertEquals($update_params['subject'], $updated_message->get('subject'));
-        $this->assertEquals($update_params['message'], $updated_message->get('body'));
-        $this->assertEquals($update_params['receipt'], $updated_message->get('send_receipt'));
-        $this->assertEquals($update_params['to_send_at'], $updated_message->get('to_send_at'));
-        $this->assertEquals($update_params['no_reply'], $updated_message->get('no_reply'));
-        $this->assertEquals($update_params['mentor_copy'], $updated_message->get('send_to_mentors'));
-        $this->assertEquals(1, $updated_message->get('is_draft'));
+        $this->assertInstanceOf(message::class, $updatedmessage);
+        $this->assertEquals($course->id, $updatedmessage->get('course_id'));
+        $this->assertEquals($userteacher->id, $updatedmessage->get('user_id'));
+        $this->assertEquals($updateparams['message_type'], $updatedmessage->get('message_type'));
+        $this->assertEquals($updateparams['alternate_email_id'], $updatedmessage->get('alternate_email_id'));
+        $this->assertEquals($updateparams['signature_id'], $updatedmessage->get('signature_id'));
+        $this->assertEquals($updateparams['subject'], $updatedmessage->get('subject'));
+        $this->assertEquals($updateparams['message'], $updatedmessage->get('body'));
+        $this->assertEquals($updateparams['receipt'], $updatedmessage->get('send_receipt'));
+        $this->assertEquals($updateparams['to_send_at'], $updatedmessage->get('to_send_at'));
+        $this->assertEquals($updateparams['no_reply'], $updatedmessage->get('no_reply'));
+        $this->assertEquals($updateparams['mentor_copy'], $updatedmessage->get('send_to_mentors'));
+        $this->assertEquals(1, $updatedmessage->get('is_draft'));
 
-        $second_update_params = [
+        $secondupdateparams = [
             'message_type' => 'email',
             'alternate_email_id' => 5,
             'signature_id' => 7,
@@ -691,13 +668,12 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'mentor_copy' => 0,
         ];
 
-        $second_updated_message = $message->update_draft((object) $second_update_params, false);
+        $secondupdatedmessage = $message->update_draft((object) $secondupdateparams, false);
 
-        $this->assertEquals(0, $second_updated_message->get('is_draft'));
+        $this->assertEquals(0, $secondupdatedmessage->get('is_draft'));
     }
 
-    public function test_filter_messages_by_course_from_array()
-    {
+    public function test_filter_messages_by_course_from_array() {
         $this->resetAfterTest(true);
 
         $messages = [];
@@ -712,38 +688,36 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
 
         $filtered = message::filter_messages_by_course($messages, 1);
         $this->assertCount(2, $filtered);
-        
+
         $filtered = message::filter_messages_by_course($messages, 4);
         $this->assertCount(1, $filtered);
     }
 
-    public function test_unqueue_message()
-    {
+    public function test_unqueue_message() {
         $this->resetAfterTest(true);
 
-        $queued_message = message::create_new([
+        $queuedmessage = message::create_new([
             'course_id' => 1,
             'user_id' => 1,
             'message_type' => 'email',
             'to_send_at' => time()
         ]);
 
-        $this->assertTrue($queued_message->is_queued_message());
-        $this->assertEquals(block_quickmail_string::get('queued'), $queued_message->get_status());
+        $this->assertTrue($queuedmessage->is_queued_message());
+        $this->assertEquals(block_quickmail_string::get('queued'), $queuedmessage->get_status());
 
-        $queued_message->unqueue();
+        $queuedmessage->unqueue();
 
-        $this->assertFalse($queued_message->is_queued_message());
-        $this->assertEquals(block_quickmail_string::get('drafted'), $queued_message->get_status());
+        $this->assertFalse($queuedmessage->is_queued_message());
+        $this->assertEquals(block_quickmail_string::get('drafted'), $queuedmessage->get_status());
     }
 
-    public function test_creates_message_from_reminder_notification()
-    {
-        // reset all changes automatically after this test
+    public function test_creates_message_from_reminder_notification() {
+        // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
-        
-        // set up a course with a teacher and students
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
+
+        // Set up a course with a teacher and students.
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
 
         $params = [
             'name' => 'My Reminder Notification',
@@ -767,46 +741,41 @@ class block_quickmail_message_persistent_testcase extends advanced_testcase {
             'condition_time_unit' => 'day',
         ];
 
-        $reminder_notification = $this->create_reminder_notification_for_course_user('course-non-participation', $course, $user_teacher, null, $params);
+        $remindernotification = $this->create_reminder_notification_for_course_user('course-non-participation',
+                                                                                    $course,
+                                                                                    $userteacher,
+                                                                                    null,
+                                                                                    $params);
 
-        $notification = $reminder_notification->get_notification();
+        $notification = $remindernotification->get_notification();
 
         $message = message::create_from_notification($notification, []);
 
         $this->assertInstanceOf(message::class, $message);
         $this->assertEquals($course->id, $message->get('course_id'));
-        $this->assertEquals($user_teacher->id, $message->get('user_id'));
+        $this->assertEquals($userteacher->id, $message->get('user_id'));
         $this->assertEquals($params['message_type'], $message->get('message_type'));
         $this->assertEquals($params['alternate_email_id'], $message->get('alternate_email_id'));
         $this->assertEquals($params['signature_id'], $message->get('signature_id'));
         $this->assertEquals($params['subject'], $message->get('subject'));
         $this->assertEquals($params['body'], $message->get('body'));
         $this->assertEquals($params['send_receipt'], $message->get('send_receipt'));
-        // $this->assertEquals($params['to_send_at'], $message->get('to_send_at'));
         $this->assertEquals($params['no_reply'], $message->get('no_reply'));
         $this->assertEquals($params['send_to_mentors'], $message->get('send_to_mentors'));
         $this->assertEquals(0, $message->get('is_draft'));
-        // $this->assertCount(2, $message->get_substitution_code_classes());
     }
 
-    ///////////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    //////////////////////////////////////////////
-    
-    private function create_message($is_draft = false, $course_id = 1, $user_id = 1)
-    {
+    // Helpers.
+    private function create_message($isdraft = false, $courseid = 1, $userid = 1) {
         return message::create_new([
-            'course_id' => $course_id,
-            'user_id' => $user_id,
+            'course_id' => $courseid,
+            'user_id' => $userid,
             'message_type' => 'email',
-            'is_draft' => $is_draft
+            'is_draft' => $isdraft
         ]);
     }
 
-    private function create_message_and_recipient()
-    {
+    private function create_message_and_recipient() {
         $message = $this->create_message();
 
         $recipient = message_recipient::create_new([

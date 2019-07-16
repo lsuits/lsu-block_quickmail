@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,72 +23,58 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\schedule;
 
 trait is_schedulable {
 
-    // last_run_at
-        // timestamp of last time this schedulable was run
-        // defaults to NULL
-        // gets set/updated after schedulable is run
-    // next_run_at
-        // timestamp of next time this schedulable should run
-        // defaults to NULL
-        // gets set after persistent is created
-        // if null, schedulable will not run
-    // is_running
-        // boolean that indicates whether or not this schedulable is running
-        // defaults to false,
-        // gets set to true when schedulable fires according to schedule
-        // gets set to false after schedulable has fired
+    /*
+     * Last_run_at
+     *     Timestamp of last time this schedulable was run
+     *     Defaults to NULL
+     *     Gets set/updated after schedulable is run
+     * Next_run_at
+     *     Timestamp of next time this schedulable should run
+     *     Defaults to NULL
+     *     Gets set after persistent is created
+     *     If null, schedulable will not run
+     * Is_running
+     *     Boolean that indicates whether or not this schedulable is running
+     *     Defaults to false,
+     *     Gets set to true when schedulable fires according to schedule
+     *     Gets set to false after schedulable has fired
+     */
 
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Relationships.
     /**
      * Returns the schedule object for this schedulable persistent, if any
      *
      * @return stdClass
      */
-    public function get_schedule() 
-    {
+    public function get_schedule() {
         return schedule::find_or_null($this->get('schedule_id'));
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  PERSISTENT HOOKS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Persistent Hooks.
     /**
      * Take appropriate actions after creating a new schedulable, including:
-     *   
+     *
      *   - calculate and set next run time
-     * 
+     *
      * @return void
      */
-    protected function after_create()
-    {
+    protected function after_create() {
         $this->set_next_run_time();
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  GETTERS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Getters.
     /**
      * Returns the last_run_at time as an int
-     * 
+     *
      * @return mixed  (returns int, or null if not set)
      */
-    public function get_last_run_time()
-    {
+    public function get_last_run_time() {
         return empty($this->get('last_run_at'))
             ? null
             : (int) $this->get('last_run_at');
@@ -97,11 +82,10 @@ trait is_schedulable {
 
     /**
      * Returns the next_run_at time as an int
-     * 
+     *
      * @return mixed  (returns int, or null if not set)
      */
-    public function get_next_run_time()
-    {
+    public function get_next_run_time() {
         return empty($this->get('next_run_at'))
             ? null
             : (int) $this->get('next_run_at');
@@ -109,20 +93,14 @@ trait is_schedulable {
 
     /**
      * Reports whether or not this schedulable is being run
-     * 
+     *
      * @return bool
      */
-    public function is_running()
-    {
+    public function is_running() {
         return (bool) $this->get('is_running');
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Methods.
     /**
      * Sets the next_run_at for this schedulable
      *
@@ -131,15 +109,14 @@ trait is_schedulable {
      *
      * @return void
      */
-    public function set_next_run_time()
-    {
+    public function set_next_run_time() {
         $schedule = $this->get_schedule();
 
-        $next_run_time = empty($this->get_last_run_time())
+        $nextruntime = empty($this->get_last_run_time())
             ? $schedule->get_begin_time()
             : $schedule->calculate_next_time_from($this->get_last_run_time());
 
-        $this->set('next_run_at', $next_run_time);
+        $this->set('next_run_at', $nextruntime);
         $this->update();
     }
 
@@ -148,43 +125,39 @@ trait is_schedulable {
      *
      * @return void
      */
-    public function set_last_run_time()
-    {
+    public function set_last_run_time() {
         $this->set('last_run_at', time());
         $this->update();
     }
 
     /**
      * Updates the sending status of this schedulable
-     * 
-     * @param  bool  $is_running  running status
+     *
+     * @param  bool  $isrunning  running status
      * @return void
      */
-    public function toggle_running_status($is_running)
-    {
-        $this->set('is_running', (int) $is_running);
+    public function toggle_running_status($isrunning) {
+        $this->set('is_running', (int) $isrunning);
         $this->update();
     }
 
     /**
      * Executes standard "pre-run" actions for a schedulable
-     * 
+     *
      * @return void
      */
-    public function handle_schedule_pre_run_actions()
-    {
+    public function handle_schedule_pre_run_actions() {
         $this->toggle_running_status(true);
     }
 
     /**
      * Executes standard "post-run" actions for a schedulable
-     * 
+     *
      * @return void
      */
-    public function handle_schedule_post_run_actions()
-    {
+    public function handle_schedule_post_run_actions() {
         $this->set_last_run_time();
-        
+
         $this->set_next_run_time();
 
         $this->toggle_running_status(false);

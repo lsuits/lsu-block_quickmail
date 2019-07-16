@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,17 +23,13 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core_user;
 use lang_string;
 
 trait belongs_to_a_user {
-
-    ///////////////////////////////////////////////
-    ///
-    ///  RELATIONSHIPS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Relationships.
     /**
      * Returns the user object for this message recipient.
      *
@@ -48,33 +43,23 @@ trait belongs_to_a_user {
         }
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  SETTERS
-    /// 
-    ///////////////////////////////////////////////
-    
+    // Setters.
     /**
      * Convenience method to set the user ID.
      *
      * @param object|int $idorobject The user ID, or a user object.
      */
     protected function set_user_id($idorobject) {
-        $user_id = $idorobject;
-        
+        $userid = $idorobject;
+
         if (is_object($idorobject)) {
-            $user_id = $idorobject->id;
+            $userid = $idorobject->id;
         }
-        
-        $this->raw_set('user_id', $user_id);
+
+        $this->raw_set('user_id', $userid);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  VALIDATORS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Validators.
     /**
      * Validate the user ID.
      *
@@ -82,19 +67,14 @@ trait belongs_to_a_user {
      * @return true|lang_string
      */
     protected function validate_user_id($value) {
-        if ( ! core_user::is_real_user($value, true)) {
+        if (!core_user::is_real_user($value, true)) {
             return new lang_string('invaliduserid', 'error');
         }
- 
+
         return true;
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Methods.
     /**
      * Convenience method to determine if this persistent is owned by the given user (or user id)
      *
@@ -102,13 +82,13 @@ trait belongs_to_a_user {
      * @return bool
      */
     public function is_owned_by_user($idorobject) {
-        $user_id = $idorobject;
-        
+        $userid = $idorobject;
+
         if (is_object($idorobject)) {
-            $user_id = $idorobject->id;
+            $userid = $idorobject->id;
         }
-        
-        return $this->get('user_id') == $user_id;
+
+        return $this->get('user_id') == $userid;
     }
 
 }

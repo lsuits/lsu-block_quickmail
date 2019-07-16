@@ -1,6 +1,29 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    block_quickmail
+ * @copyright  2008 onwards Louisiana State University
+ * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace block_quickmail\controllers\support;
+
+defined('MOODLE_INTERNAL') || die();
 
 use block_quickmail\controllers\support\controller_request;
 use block_quickmail\controllers\support\controller_form;
@@ -10,106 +33,92 @@ use moodle_url;
 
 class base_controller {
 
-    public static $forms_path = 'block_quickmail\controllers\forms';
+    public static $formspath = 'block_quickmail\controllers\forms';
     public static $views = [];
     public static $actions = [];
 
     public $context;
     public $props;
     public $session;
-    public $form_errors;
+    public $formerrors;
 
     public function __construct(&$page, $data = []) {
         $this->set_props($data);
         $this->session = new controller_session($this->get_store_key());
         $this->form_errors = [];
-        // $page->navbar->add('add a nav node here...');
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  CONTROLLER INSTANTIATION
-    /// 
-    ////////////////////////////////////////////
-
+    // Controller Instantiation.
     /**
      * Handles a request to the static controller implementation
-     * 
+     *
      * @param  object  &$page   the PAGE global, for manipulation of nav, etc.
      * @param  array   $data    optional, additional data to be included in controller
      * @param  string  $action  optional, explicit controller action
      * @return mixed
      */
-    public static function handle(&$page, $data = [], $action = '')
-    {
+    public static function handle(&$page, $data = [], $action = '') {
         $controller = new static($page, $data);
-        
-        // persist any session data to the next request
+
+        // Persist any session data to the next request.
         $controller->session->reflash();
 
         $request = controller_request::make();
 
-        // if no view name is present in the request, we can assume that this is a fresh entrance to the controller
-        if ( ! $request->view_name) {
-            // clear any session data for this controller
+        // If no view name is present in the request, we can assume that this is a fresh entrance to the controller.
+        if (!$request->view_name) {
+            // Clear any session data for this controller.
             $controller->session->clear();
 
-            // set the view to the controller's default
-            $view_name = self::get_default_view();
-        
-        // otherwise, use the requested view
-        } else {
+            // Set the view to the controller's default.
+            $viewname = self::get_default_view();
 
-            $view_name = $request->view_name;
+            // Otherwise, use the requested view.
+        } else {
+            $viewname = $request->view_name;
         }
 
-        // if action is relevant to controller
+        // If action is relevant to controller.
         if (in_array($action, static::$actions)) {
             return $controller->call_action($action, $request);
         }
 
-        // determine which view we are calling
-        // if view name is empty, set to first view
-        $view_name = $request->view_name ?: self::get_default_view();
+        // Determine which view we are calling.
+        // If view name is empty, set to first view.
+        $viewname = $request->view_name ?: self::get_default_view();
 
-        // call the view
-        return $controller->call_view($view_name, $request);
+        // Call the view.
+        return $controller->call_view($viewname, $request);
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  VIEW METHOD DIRECTIVES
-    /// 
-    ////////////////////////////////////////////
-
+    // View Method Directives.
     /**
      * Calls the given "view_name" which should be a controller method
-     * 
+     *
      * @param  controller_request  $request
-     * @param  string  $view_name
+     * @param  string  $viewname
      * @return mixed
      */
-    public function view(controller_request $request, $view_name)
-    {
-        return $this->$view_name($request);
+    public function view(controller_request $request, $viewname) {
+        return $this->$viewname($request);
     }
 
     /**
      * Calls the given post_{view_name}_{action} which should be a controller method
-     * 
+     *
      * @param  controller_request  $request
-     * @param  string  $view_name
+     * @param  string  $viewname
      * @param  string  $action   back|next
-     * @param  array   $override_inputs       additional params to be included in the request input (useful for handling moodle-form-specific inputs)
+     * @param  array   $overrideinputs       additional params to be included in the request input
+     *                                        (useful for handling moodle-form-specific inputs)
      * @return mixed
      */
-    public function post(controller_request $request, $view_name, $action, $override_inputs = [])
-    {
-        foreach ($override_inputs as $key => $value) {
+    public function post(controller_request $request, $viewname, $action, $overrideinputs = []) {
+        foreach ($overrideinputs as $key => $value) {
             $request->input->$key = $value;
         }
 
-        return $this->{ 'post_' . $view_name . '_' . $action }($request);
+        return $this->{ 'post_' . $viewname . '_' . $action }($request);
     }
 
     /**
@@ -117,23 +126,22 @@ class base_controller {
      *
      * Additionally renders the page header and footer
      *
-     * @param  string              $action_name
+     * @param  string              $actionname
      * @param  controller_request  $request
      * @return mixed
      */
-    private function call_action($action_name, controller_request $request)
-    {
-        $action_name = 'action_' . $action_name;
+    private function call_action($actionname, controller_request $request) {
+        $actionname = 'action_' . $actionname;
 
-        if ( ! method_exists($this, $action_name)) {
-            throw new \Exception('controller action "' . $action_name . '"does not exist!');
+        if (!method_exists($this, $actionname)) {
+            throw new \Exception('controller action "' . $actionname . '"does not exist!');
         }
 
         global $OUTPUT;
 
         echo $OUTPUT->header();
 
-        call_user_func([$this, $action_name], $request);
+        call_user_func([$this, $actionname], $request);
 
         echo $OUTPUT->footer();
     }
@@ -142,22 +150,21 @@ class base_controller {
      * Calls the given "view name" method on the static controller implementation which should subsequently render the view
      *
      * Additionally renders the page header and footer
-     * 
-     * @param  string              $view_name
+     *
+     * @param  string              $viewname
      * @param  controller_request  $request
      * @return string
      */
-    private function call_view($view_name, controller_request $request)
-    {
-        if ( ! method_exists($this, $view_name)) {
-            throw new \Exception('controller view "' . $view_name . '"does not exist!');
+    private function call_view($viewname, controller_request $request) {
+        if (!method_exists($this, $viewname)) {
+            throw new \Exception('controller view "' . $viewname . '"does not exist!');
         }
 
         global $OUTPUT;
 
         echo $OUTPUT->header();
-        
-        call_user_func([$this, $view_name], $request);
+
+        call_user_func([$this, $viewname], $request);
 
         echo $OUTPUT->footer();
     }
@@ -166,172 +173,142 @@ class base_controller {
      * Returns the default view name of the static controller implementation
      *
      * Note: this is the first view name in the controller implementation's list array
-     * 
+     *
      * @return string
      */
-    public static function get_default_view()
-    {
+    public static function get_default_view() {
         return key(static::$views);
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  CANCEL METHOD DIRECTIVE
-    /// 
-    ////////////////////////////////////////////
-
+    // Cancel Method Directive.
     /**
      * Calls the given "view_name" which should be a controller method
-     * 
+     *
      * @return mixed
      */
-    public function cancel()
-    {
+    public function cancel() {
         $this->session->clear();
 
-        // set the view to the controller's default
-        $view_name = self::get_default_view();
+        // Set the view to the controller's default.
+        $viewname = self::get_default_view();
 
         $request = controller_request::make();
-        
-        return $this->$view_name($request);
+
+        return $this->$viewname($request);
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  VIEW DATA
-    /// 
-    ////////////////////////////////////////////
-
-    public function view_keys()
-    {
+    // View Data.
+    public function view_keys() {
         return array_keys(static::$views);
     }
 
-    public function view_data_keys($view)
-    {
+    public function view_data_keys($view) {
         return static::$views[$view];
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  RENDERING
-    /// 
-    ////////////////////////////////////////////
-
+    // Rendering.
     /**
      * Returns rendered HTML for the given form as a component
-     * 
+     *
      * @param  controller_form  $form
      * @param  array            $params   optional, any additional data to be passed to the renderer
      * @return string
      */
-    public function render_form(controller_form $form, $params = [])
-    {
+    public function render_form(controller_form $form, $params = []) {
         global $PAGE;
-        
+
         $renderer = $PAGE->get_renderer('block_quickmail');
 
         $rendered = $renderer->controller_form_component(new controller_form_component($form, $params));
 
         $this->render_form_error_notification();
-        
+
         echo $rendered;
     }
 
     /**
      * Returns rendered HTML for the given component
-     * 
-     * @param  string    $component_name
+     *
+     * @param  string    $componentname
      * @param  array     $params             optional, any additional data to be passed to the renderer
      * @return string
      */
-    public function render_component($component_name, $params = [])
-    {
+    public function render_component($componentname, $params = []) {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('block_quickmail');
 
-        $rendered = $renderer->controller_component_template($component_name, $params);
-        
+        $rendered = $renderer->controller_component_template($componentname, $params);
+
         echo $rendered;
     }
 
     /**
      * Renders a moodle error notification for any form errors
-     * 
+     *
      * @return string
      */
-    public function render_form_error_notification()
-    {
+    public function render_form_error_notification() {
         if ($this->form_errors) {
             $html = '<ul style="margin-bottom: 0px;">';
-            
+
             foreach ($this->form_errors as $error) {
                 $html .= '<li>' . $error . '</li>';
             }
 
             $html .= '</ul>';
-            
+
             \core\notification::error($html);
         }
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  FORM INSTANTIATION
-    /// 
-    ////////////////////////////////////////////
-
+    // Form Instantiation.
     /**
      * Instantiates and return a controller_form instance of the given name
      *
      * Note: this will automatically include the current session input data as a "_customdata" prop on the form with key "stored"
-     * 
+     *
      * @param  string  $name            a form class name path (\controllers\forms = base path)
      * @param  array   $data            any additional data to be passed to the form
-     * @param  string  $target_action   optional, action directive to include on form target URL
+     * @param  string  $targetaction   optional, action directive to include on form target URL
      * @return controller_form
      */
-    public function make_form($name, $data = [], $target_action = '')
-    {
-        $class = implode('\\', [self::$forms_path, $name]);
+    public function make_form($name, $data = [], $targetaction = '') {
+        $class = implode('\\', [self::$formspath, $name]);
 
-        $target_params = in_array($target_action, static::$actions)
-            ? array_merge(['action' => $target_action], $this->get_form_url_params())
+        $targetparams = in_array($targetaction, static::$actions)
+            ? array_merge(['action' => $targetaction], $this->get_form_url_params())
             : $this->get_form_url_params();
 
-        $query_string = ! empty($target_params)
-            ? '?' . http_build_query($target_params, '', '&')
+        $querystring = ! empty($targetparams)
+            ? '?' . http_build_query($targetparams, '', '&')
             : '';
 
-        return new $class($query_string, $this->get_form_custom_data($name, $data), 'post', '', null, true, null);
+        return new $class($querystring, $this->get_form_custom_data($name, $data), 'post', '', null, true, null);
     }
 
     /**
      * Returns the target url for controller_form's including any optional parameters set in the static controller implementation
-     * 
+     *
      * @return string
      */
-    private function get_form_url()
-    {
+    private function get_form_url() {
         global $CFG;
 
-        $moodle_url = new moodle_url(static::$base_uri, $this->get_form_url_params());
+        $moodleurl = new moodle_url(static::$baseuri, $this->get_form_url_params());
 
-        return $moodle_url->out();
+        return $moodleurl->out();
     }
 
     /**
      * Returns an array of custom data to be passed to a controller_form, prepending the appropriate "view_form_name"
-     * 
+     *
      * @param  string  $name  a form class name path (\controllers\forms = base path)
      * @param  array   $data  any additional data to be passed to the form
      * @return array
      */
-    private function get_form_custom_data($name, $data = [])
-    {
-        // merge in the current session input data
+    private function get_form_custom_data($name, $data = []) {
+        // Merge in the current session input data.
         return array_merge($data, [
             'view_form_name' => $this->get_form_view_name_from_path($name),
             'stored' => $this->session->get_data()
@@ -340,54 +317,46 @@ class base_controller {
 
     /**
      * Returns the "view_form_name" short name from the given path
-     * 
+     *
      * @param  string  $path
      * @return string
      */
-    private function get_form_view_name_from_path($path)
-    {
+    private function get_form_view_name_from_path($path) {
         $parts = explode('\\', $path);
 
         return end($parts);
     }
-    
+
     /**
      * Returns default form url params
      *
      * This method should be included on the static controller implementation if any custom query strings
      * are necessary (ex: courseid)
-     * 
+     *
      * @return array
      */
-    public function get_form_url_params()
-    {
+    public function get_form_url_params() {
         return [];
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  SESSION INPUT
-    /// 
-    ////////////////////////////////////////////
-
+    // Session Input.
     /**
      * Stores the given input array's specified keys in the session input
-     * 
+     *
      * @param  array  $input
      * @param  array  $keeps       key names to keep, others will be ignored
      * @param  array  $overrides   optional keyed array of params to override any input given
      * @return void
      */
-    public function store($input, $keeps = [], $overrides = [])
-    {
-        // filter out any unwanted params from input
+    public function store($input, $keeps = [], $overrides = []) {
+        // Filter out any unwanted params from input.
         $data = \block_quickmail_plugin::array_filter_key((array) $input, function ($k) use ($keeps) {
             return in_array($k, $keeps);
         });
 
-        // fill any wanted data keys that do not exist in the filtered params with a default
+        // Fill any wanted data keys that do not exist in the filtered params with a default.
         foreach ($keeps as $k) {
-            if ( ! in_array($k, array_keys($data))) {
+            if (!in_array($k, array_keys($data))) {
                 $data[$k] = '';
             }
         }
@@ -399,27 +368,25 @@ class base_controller {
 
     /**
      * Returns this controller's session input for a given key
-     * 
+     *
      * @param  string  $key  optional, if null, will return an array of all data
      * @return mixed
      */
-    public function stored($key = null)
-    {
+    public function stored($key = null) {
         return $this->session->get_data($key);
     }
 
     /**
      * Reports whether or not any of the given request input data is different for the given keys
-     * 
-     * @param  stdClass  $request_input
+     *
+     * @param  stdClass  $requestinput
      * @param  array     $keys             keys to check for change
      * @return bool
      */
-    public function stored_has_changed($request_input, $keys = [])
-    {
+    public function stored_has_changed($requestinput, $keys = []) {
         foreach ($keys as $key) {
             if ($this->session->has_data($key)) {
-                if ($request_input->$key !== $this->stored($key)) {
+                if ($requestinput->$key !== $this->stored($key)) {
                     return true;
                 }
             }
@@ -430,40 +397,34 @@ class base_controller {
 
     /**
      * Removes all data from the current session that is associated with views after the given view
-     * 
+     *
      * @param  string  $view
      * @return void
      */
-    public function clear_store_after_view($view)
-    {
+    public function clear_store_after_view($view) {
         $reset = false;
 
-        // iterate through this controller's view keys
-        foreach ($this->view_keys() as $view_key) {
-            // if this is the key, flag to remove all data from this point on
-            if ($view_key == $view) {
+        // Iterate through this controller's view keys.
+        foreach ($this->view_keys() as $viewkey) {
+            // If this is the key, flag to remove all data from this point on.
+            if ($viewkey == $view) {
                 $reset = true;
                 continue;
             }
 
-            // if resetting, remove all values for each data key
+            // If resetting, remove all values for each data key.
             if ($reset) {
-                foreach ($this->view_data_keys($view_key) as $view_data_key) {
-                    $this->session->forget_data($view_data_key);
+                foreach ($this->view_data_keys($viewkey) as $viewdatakey) {
+                    $this->session->forget_data($viewdatakey);
                 }
             }
         }
     }
 
-    ////////////////////////////////////////////
-    ///
-    ///  HELPERS
-    /// 
-    ////////////////////////////////////////////
-
+    // Helpers.
     /**
      * Sets the controllers properties upon instantiation
-     * 
+     *
      * @param array $payload
      */
     private function set_props($payload = []) {
@@ -475,7 +436,7 @@ class base_controller {
                 case 'context':
                     $this->context = $value;
                     break;
-                
+
                 default:
                     $this->props->$key = $value;
                     break;
@@ -487,11 +448,10 @@ class base_controller {
      * Returns the static controller implementation's "session key"
      *
      * Note: this is the controller's class name
-     * 
+     *
      * @return string
      */
-    private function get_store_key()
-    {
+    private function get_store_key() {
         $parts = explode('\\', get_called_class());
 
         return end($parts);
@@ -499,14 +459,15 @@ class base_controller {
 
     /**
      * Returns the static controller's short name
-     * 
+     *
      * @return string
      */
-    public static function get_controller_short_name()
-    {
+    public static function get_controller_short_name() {
         return str_replace('_controller', '', explode('\\', static::class)[2]);
     }
 
-    public function dd($thing) { var_dump($thing);die; }
+    public function dd($thing) {
+        var_dump($thing);die;
+    }
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,32 +23,32 @@
 
 namespace block_quickmail\requests\transformers;
 
+defined('MOODLE_INTERNAL') || die();
+
 class transformer {
 
-    public $form_data;
-    public $transformed_data;
+    public $formdata;
+    public $transformeddata;
 
     /**
      * Construct the transformer
-     * 
-     * @param object  $form_data  the submitted mform data object
+     *
+     * @param object  $formdata  the submitted mform data object
      */
-    public function __construct($form_data) {
-        $this->form_data = $form_data;
+    public function __construct($formdata) {
+        $this->form_data = $formdata;
         $this->transformed_data = (object)[];
     }
 
-    public function if_exists($prop, $default = 0)
-    {
+    public function if_exists($prop, $default = 0) {
         return property_exists($this->form_data, $prop)
             ? $this->form_data->$prop
             : $default;
     }
-    
-    public function transform()
-    {
+
+    public function transform() {
         $this->transform_form_data();
-        
+
         return $this->transformed_data;
     }
 

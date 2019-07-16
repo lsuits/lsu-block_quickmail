@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,81 +21,75 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-////////////////////////////////////////////////////
-///
-///  COURSE SET UP HELPERS
-/// 
-////////////////////////////////////////////////////
+defined('MOODLE_INTERNAL') || die();
 
+// Course set up helpers.
 trait sets_up_courses {
 
     /**
      * Creates a course within a category with 1 teacher, 4 students
-     * 
+     *
      * @return array  course, user_teacher, students[]
      */
-    public function setup_course_with_teacher_and_students()
-    {
-        // create a course category
+    public function setup_course_with_teacher_and_students() {
+        // Create a course category.
         $category = $this->getDataGenerator()->create_category();
 
-        // create a course
+        // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
-        // create a user (teacher)
-        $user_teacher = $this->getDataGenerator()->create_user([
-            'email' => 'teacher@example.com', 
+        // Create a user (teacher).
+        $userteacher = $this->getDataGenerator()->create_user([
+            'email' => 'teacher@example.com',
             'username' => 'teacher'
         ]);
 
-        // create a user (student1)
-        $user_student1 = $this->getDataGenerator()->create_user([
-            'email' => 'student1@example.com', 
+        // Create a user (student1).
+        $userstudent1 = $this->getDataGenerator()->create_user([
+            'email' => 'student1@example.com',
             'username' => 'student1'
         ]);
 
-        // create a user (student2)
-        $user_student2 = $this->getDataGenerator()->create_user([
-            'email' => 'student2@example.com', 
+        // Create a user (student2).
+        $userstudent2 = $this->getDataGenerator()->create_user([
+            'email' => 'student2@example.com',
             'username' => 'student2'
         ]);
 
-        // create a user (student3)
-        $user_student3 = $this->getDataGenerator()->create_user([
-            'email' => 'student3@example.com', 
+        // Create a user (student3).
+        $userstudent3 = $this->getDataGenerator()->create_user([
+            'email' => 'student3@example.com',
             'username' => 'student3'
         ]);
 
-        // create a user (student4)
-        $user_student4 = $this->getDataGenerator()->create_user([
-            'email' => 'student4@example.com', 
+        // Create a user (student4).
+        $userstudent4 = $this->getDataGenerator()->create_user([
+            'email' => 'student4@example.com',
             'username' => 'student4'
         ]);
 
-        // enrol the teacher in the course
-        $this->getDataGenerator()->enrol_user($user_teacher->id, $course->id, 4, 'manual');
+        // Enrol the teacher in the course.
+        $this->getDataGenerator()->enrol_user($userteacher->id, $course->id, 4, 'manual');
 
-        // enrol the students in the course
-        $this->getDataGenerator()->enrol_user($user_student1->id, $course->id, 5, 'manual');
-        $this->getDataGenerator()->enrol_user($user_student2->id, $course->id, 5, 'manual');
-        $this->getDataGenerator()->enrol_user($user_student3->id, $course->id, 5, 'manual');
-        $this->getDataGenerator()->enrol_user($user_student4->id, $course->id, 5, 'manual');
-
+        // Enrol the students in the course.
+        $this->getDataGenerator()->enrol_user($userstudent1->id, $course->id, 5, 'manual');
+        $this->getDataGenerator()->enrol_user($userstudent2->id, $course->id, 5, 'manual');
+        $this->getDataGenerator()->enrol_user($userstudent3->id, $course->id, 5, 'manual');
+        $this->getDataGenerator()->enrol_user($userstudent4->id, $course->id, 5, 'manual');
 
         return [
             $course,
-            $user_teacher,
+            $userteacher,
             [
-                $user_student1,
-                $user_student2,
-                $user_student3,
-                $user_student4
+                $userstudent1,
+                $userstudent2,
+                $userstudent3,
+                $userstudent4
             ]
         ];
     }
 
-    public function get_role_list()
-    {
+    public function get_role_list() {
         $archetypes = get_role_archetypes();
 
         $results = [];
@@ -110,48 +103,47 @@ trait sets_up_courses {
         return $results;
     }
 
-    // manager
-    // coursecreator
-    // editingteacher
-    // teacher
-    // student
-    // guest
-    // user
-    // frontpage
-    
-    // returns [course, context, enrolled_users]
-    public function setup_course_with_users($params = [])
-    {
-        // create a course category
+    // Manager.
+    // Coursecreator.
+    // Editingteacher.
+    // Teacher.
+    // Student.
+    // Guest.
+    // User.
+    // Frontpage.
+
+    // Returns [course, context, enrolled_users].
+    public function setup_course_with_users($params = []) {
+        // Create a course category.
         $category = $this->getDataGenerator()->create_category();
 
-        // create a course
+        // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
         $roles = $this->get_role_list();
-        
-        // initialize user results container
-        $enrolled_users = [];
 
-        foreach($roles as $role_name) {
-            $enrolled_users[$role_name] = [];
+        // Initialize user results container.
+        $enrolledusers = [];
+
+        foreach ($roles as $rolename) {
+            $enrolledusers[$rolename] = [];
         }
 
-        foreach ($roles as $role_id => $role_name) {
-            if (array_key_exists($role_name, $params)) {
-                foreach (range(1, $params[$role_name]) as $i) {
-                    $handle = $role_name . $i;
+        foreach ($roles as $roleid => $rolename) {
+            if (array_key_exists($rolename, $params)) {
+                foreach (range(1, $params[$rolename]) as $i) {
+                    $handle = $rolename . $i;
 
-                    // create a user
+                    // Create a user.
                     $user = $this->getDataGenerator()->create_user([
-                        'email' => $handle . '@example.com', 
+                        'email' => $handle . '@example.com',
                         'username' => $handle
                     ]);
 
-                    // enroll user in course
-                    $this->getDataGenerator()->enrol_user($user->id, $course->id, $role_id, 'manual');
+                    // Enroll user in course.
+                    $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid, 'manual');
 
-                    $enrolled_users[$role_name][] = $user;
+                    $enrolledusers[$rolename][] = $user;
                 }
             }
         }
@@ -159,7 +151,7 @@ trait sets_up_courses {
         return [
             $course,
             context_course::instance($course->id),
-            $enrolled_users
+            $enrolledusers
         ];
     }
 
@@ -171,13 +163,12 @@ trait sets_up_courses {
      * - "red" group with 11 members (1 teacher, 10 students)
      * - "yellow" group with 15 members (1 teacher, 14 students)
      * - "blue" group with 15 members (1 teacher, 14 students)
-     * 
+     *
      * @return array [course, course_context, users, groups]
      */
-    public function create_course_with_users_and_groups()
-    {
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users([
+    public function create_course_with_users_and_groups() {
+        // Create course with enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users([
             'editingteacher' => 1,
             'teacher' => 3,
             'student' => 40,
@@ -185,65 +176,65 @@ trait sets_up_courses {
 
         $groups = [];
 
-        $student_start = 1;
+        $studentstart = 1;
 
         foreach (['red', 'yellow', 'blue'] as $color) {
-            // create a group 
+            // Create a group .
             $groups[$color] = $this->getDataGenerator()->create_group([
-                'courseid' => $course->id, 
+                'course_id' => $course->id,
+                'courseid' => $course->id,
                 'name' => $color
             ]);
 
-            // assign the first teacher to the group
+            // Assign the first teacher to the group.
             $this->getDataGenerator()->create_group_member([
-                'userid' => $users['teacher'][0]->id, 
+                'userid' => $users['teacher'][0]->id,
                 'groupid' => $groups[$color]->id]
             );
 
-            // assign a chunk of 10 unique users to the group
-            foreach (range($student_start, $student_start + 9) as $i) {
+            // Assign a chunk of 10 unique users to the group.
+            foreach (range($studentstart, $studentstart + 9) as $i) {
                 $this->getDataGenerator()->create_group_member([
-                    'userid' => $users['student'][$i - 1]->id, 
+                    'userid' => $users['student'][$i - 1]->id,
                     'groupid' => $groups[$color]->id]
                 );
             }
 
-            $student_start += 10;
+            $studentstart += 10;
         }
 
-        // assign first 4 students to group yellow
-        // (these users are in group red as well)
+        // Assign first 4 students to group yellow.
+        // (these users are in group red as well).
         foreach (range(1, 4) as $i) {
             $this->getDataGenerator()->create_group_member([
-                'userid' => $users['student'][$i - 1]->id, 
+                'userid' => $users['student'][$i - 1]->id,
                 'groupid' => $groups['yellow']->id]
             );
         }
 
-        // assign first 4 students to group blue
-        // (these users are in group yellow as well)
+        // Assign first 4 students to group blue.
+        // (these users are in group yellow as well).
         foreach (range(11, 14) as $i) {
             $this->getDataGenerator()->create_group_member([
-                'userid' => $users['student'][$i - 1]->id, 
+                'userid' => $users['student'][$i - 1]->id,
                 'groupid' => $groups['blue']->id]
             );
         }
 
-        return [$course, $course_context, $users, $groups];
+        return [$course, $coursecontext, $users, $groups];
     }
 
     /*
      * FOR SOME REASON THIS DOES NOT WORK !! :(
      */
-    public function assign_configuration_to_course($course, $override_params)
-    {
+    public function assign_configuration_to_course($course, $overrideparams) {
         global $DB, $CFG;
 
-        $params = $this->get_course_config_params($override_params);
+        $params = $this->get_course_config_params($overrideparams);
 
         $dataobjects = [];
 
-        // iterate over each given param, inserting each record for this course
+        // Iterate over each given param, inserting each record for this course.
         foreach ($params as $name => $value) {
             $config = new \stdClass;
             $config->coursesid = $course->id;
@@ -256,23 +247,22 @@ trait sets_up_courses {
         $DB->insert_records('block_quickmail_config', $dataobjects);
     }
 
-    public function report_user_access_in_course($user, $course, $time)
-    {
+    public function report_user_access_in_course($user, $course, $time) {
         global $DB;
 
         $record = new stdClass();
         $record->userid = $user->id;
+        $record->course_id = $course->id;
         $record->courseid = $course->id;
         $record->timeaccess = $time;
-        
+
         $DB->insert_record('user_lastaccess', $record);
     }
 
-    public function assign_role_id_to_user_in_course($role_id, $user, $course)
-    {
-        $course_context = \context_course::instance($course->id);
+    public function assign_role_id_to_user_in_course($roleid, $user, $course) {
+        $coursecontext = \context_course::instance($course->id);
 
-        role_assign($role_id, $user->id, $course_context->id);
+        role_assign($roleid, $user->id, $coursecontext->id);
     }
 
 }

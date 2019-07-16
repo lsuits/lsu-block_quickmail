@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,29 +20,28 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\course_repo;
 
 class block_quickmail_course_repo_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses;
 
-    public function test_get_user_course_array()
-    {
+    public function test_get_user_course_array() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        $teacher = $enrolled_users['teacher'][0];
+        $teacher = $enrolledusers['teacher'][0];
 
         $courses = course_repo::get_user_course_array($teacher);
 
         $this->assertCount(1, $courses);
     }
-
-    // more tests...
 
 }

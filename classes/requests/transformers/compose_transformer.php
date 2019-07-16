@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,12 +23,13 @@
 
 namespace block_quickmail\requests\transformers;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail_config;
 
 class compose_transformer extends transformer {
-    
-    public function transform_form_data()
-    {
+
+    public function transform_form_data() {
         $this->transformed_data->subject = (string) $this->form_data->subject;
         $this->transformed_data->message = (string) $this->form_data->message_editor['text'];
         $this->transformed_data->included_entity_ids = $this->get_transformed_included_entity_ids();
@@ -47,11 +47,10 @@ class compose_transformer extends transformer {
 
     /**
      * Returns a sanitized array of included recipient entity ids from the form post data (user_*, role_*, group_*)
-     * 
+     *
      * @return array
      */
-    public function get_transformed_included_entity_ids()
-    {
+    public function get_transformed_included_entity_ids() {
         if (empty($this->form_data->included_entity_ids)) {
             return [];
         } else if (is_string($this->form_data->included_entity_ids)) {
@@ -63,31 +62,29 @@ class compose_transformer extends transformer {
 
     /**
      * Returns a sanitized array of excluded recipient entity ids from the form post data (user_*, role_*, group_*)
-     * 
+     *
      * @return array
      */
-    public function get_transformed_excluded_entity_ids()
-    {
+    public function get_transformed_excluded_entity_ids() {
         return empty($this->form_data->excluded_entity_ids) ? [] : $this->form_data->excluded_entity_ids;
     }
 
     /**
      * Returns a sanitized array of additional emails from the form post data
-     * 
+     *
      * @return array
      */
-    public function get_transformed_additional_emails()
-    {
-        $additional_emails = $this->form_data->additional_emails;
+    public function get_transformed_additional_emails() {
+        $additionalemails = $this->form_data->additional_emails;
 
-        $emails = ! empty($additional_emails) ? array_unique(explode(',', $additional_emails)) : [];
+        $emails = !empty($additionalemails) ? array_unique(explode(',', $additionalemails)) : [];
 
-        // eliminate any white space
+        // Eliminate any white space.
         $emails = array_map(function($email) {
             return trim($email);
         }, $emails);
 
-        // return all valid emails
+        // Return all valid emails.
         return array_filter($emails, function($email) {
             return strlen($email) > 0;
         });
@@ -95,36 +92,33 @@ class compose_transformer extends transformer {
 
     /**
      * Returns a sanitized signature id from the form post data
-     * 
+     *
      * @return int
      */
-    public function get_transformed_signature_id()
-    {
-        return ! $this->form_data->signature_id 
-            ? 0 
+    public function get_transformed_signature_id() {
+        return !$this->form_data->signature_id
+            ? 0
             : (int) $this->form_data->signature_id;
     }
 
     /**
      * Returns a sanitized message type from the form post data
-     * 
+     *
      * @return string
      */
-    public function get_transformed_message_type()
-    {
-        return ! empty($this->form_data->message_type) 
-            ? (string) $this->form_data->message_type 
+    public function get_transformed_message_type() {
+        return !empty($this->form_data->message_type)
+            ? (string) $this->form_data->message_type
             : block_quickmail_config::get('default_message_type');
     }
 
     /**
      * Returns whether or not this composed message should be sent to mentors based on
      * input and system configuration
-     * 
+     *
      * @return bool
      */
-    public function get_transformed_mentor_copy()
-    {
+    public function get_transformed_mentor_copy() {
         return block_quickmail_config::block('allow_mentor_copy') == 2
             ? true
             : (bool) $this->form_data->mentor_copy;
@@ -132,11 +126,10 @@ class compose_transformer extends transformer {
 
     /**
      * Returns a sanitized alternate email id from the form post data
-     * 
+     *
      * @return int
      */
-    public function get_transformed_alternate_email_id()
-    {
+    public function get_transformed_alternate_email_id() {
         return (int) $this->form_data->from_email_id > 0
             ? $this->form_data->from_email_id
             : 0;
@@ -144,33 +137,30 @@ class compose_transformer extends transformer {
 
     /**
      * Returns a sanitized to send at timestamp from the form post data
-     * 
+     *
      * @return int
      */
-    public function get_transformed_to_send_at()
-    {
-        return ! $this->form_data->to_send_at 
-            ? 0 
+    public function get_transformed_to_send_at() {
+        return !$this->form_data->to_send_at
+            ? 0
             : (int) $this->form_data->to_send_at;
     }
 
     /**
      * Returns ...
-     * 
+     *
      * @return int
      */
-    public function get_transformed_attachments_draftitem_id()
-    {
-        return ! $this->form_data->attachments ? 0 : (int) $this->form_data->attachments;
+    public function get_transformed_attachments_draftitem_id() {
+        return !$this->form_data->attachments ? 0 : (int) $this->form_data->attachments;
     }
 
     /**
      * Returns a sanitized no_reply value from the form post data
-     * 
+     *
      * @return bool
      */
-    public function get_transformed_no_reply()
-    {
+    public function get_transformed_no_reply() {
         return $this->form_data->from_email_id == -1
             ? true
             : false;

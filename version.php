@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,8 +21,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2019012400;
+defined('MOODLE_INTERNAL') || die();
+
+$plugin->version = 2019012401;
 $plugin->requires = 2016052300;
 $plugin->release = "v2.2.0";
-$plugin->maturity = MATURITY_STABLE; 
+$plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'block_quickmail';

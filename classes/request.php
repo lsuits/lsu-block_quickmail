@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,44 +21,37 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 class block_quickmail_request {
 
     public $form;
     public $data;
-
-    public function __construct()
-    {
+    public function __construct() {
         $this->form = null;
         $this->data = (object)[];
     }
 
-    ////////////////////////////////////////
-    ///
-    /// INSTANTIATION METHODS
-    /// 
-    ////////////////////////////////////////
-
+    // Instantiation Methods.
     /**
      * Returns an instantiated request for the given "route"
-     * 
-     * @param  string  $route_name
+     *
+     * @param  string  $routename
      * @return object
      */
-    public static function for_route($route_name)
-    {
-        $request = '\block_quickmail\requests\\' . $route_name . '_request';
+    public static function for_route($routename) {
+        $request = '\block_quickmail\requests\\' . $routename . '_request';
 
         return new $request;
     }
 
     /**
      * Sets the given form on the request object
-     * 
+     *
      * @param  object  $form
      * @return object
      */
-    public function with_form($form)
-    {
+    public function with_form($form) {
         $this->form = $form;
 
         if ($this->was_submitted()) {
@@ -69,21 +61,15 @@ class block_quickmail_request {
         return $this;
     }
 
-    ////////////////////////////////////////
-    ///
-    /// FORM SUBMISSION HANDLING
-    /// 
-    ////////////////////////////////////////
-
-    public static function get_transformed_post_data($form_data)
-    {
-        return static::get_transformed($form_data);
+    // Form Submission Handling.
+    public static function get_transformed_post_data($formdata) {
+        return static::get_transformed($formdata);
     }
 
     /**
      * Reports whether or not this request was a submission of data
      * Optionally, whether or not a specific action was submitted
-     * 
+     *
      * @param  string  $action  save|send
      * @return bool
      */
@@ -93,85 +79,84 @@ class block_quickmail_request {
             return false;
         }
 
-        // get raw form data
-        $form_data = $this->form->get_data();
+        // Get raw form data.
+        $formdata = $this->form->get_data();
 
-        // if no post data, return false
-        if (empty($form_data)) {
+        // If no post data, return false.
+        if (empty($formdata)) {
             return false;
         }
 
-        // otherwise, if no explicit action specified, return true
+        // Otherwise, if no explicit action specified, return true.
         if (empty($action)) {
             return true;
         }
 
-        return property_exists($form_data, $action);
+        return property_exists($formdata, $action);
     }
 
     /**
      * Reports whether or not the submitted request has a given input element key
-     * 
-     * @param  string  $input_element_key
+     *
+     * @param  string  $inputelementkey
      * @return bool
      */
-    public function has_form_data_key($input_element_key) {
-        // get raw form data
-        $form_data = $this->form->get_data();
+    public function has_form_data_key($inputelementkey) {
+        // Get raw form data.
+        $formdata = $this->form->get_data();
 
-        // if no post data, return false
-        if (empty($form_data)) {
+        // If no post data, return false.
+        if (empty($formdata)) {
             return false;
         }
 
-        // return whether the given key exists in the posted data
-        return property_exists($form_data, $input_element_key);
+        // Return whether the given key exists in the posted data.
+        return property_exists($formdata, $inputelementkey);
     }
 
     /**
      * Reports whether or not the submitted request has an input element key that matches the given value
-     * 
-     * @param  string  $input_element_key
+     *
+     * @param  string  $inputelementkey
      * @param  string  $value
      * @return bool
      */
-    public function has_form_data_matching($input_element_key, $value) {
-        // if the given element key does not exist in the post, return false
-        if ( ! $this->has_form_data_key($input_element_key)) {
+    public function has_form_data_matching($inputelementkey, $value) {
+        // If the given element key does not exist in the post, return false.
+        if (!$this->has_form_data_key($inputelementkey)) {
             return false;
         }
-        
-        // get raw form data
-        $form_data = $this->form->get_data();
 
-        return $form_data->$input_element_key == $value;
+        // Get raw form data.
+        $formdata = $this->form->get_data();
+
+        return $formdata->$inputelementkey == $value;
     }
 
     /**
      * Reports whether or not the submitted request has an input element key that matches the given value and is not empty
-     * 
-     * @param  string  $input_element_key
+     *
+     * @param  string  $inputelementkey
      * @return bool
      */
-    public function has_non_empty_form_data($input_element_key) {
-        // if the given element key does not exist in the post, return false
-        if ( ! $this->has_form_data_key($input_element_key)) {
+    public function has_non_empty_form_data($inputelementkey) {
+        // If the given element key does not exist in the post, return false.
+        if (!$this->has_form_data_key($inputelementkey)) {
             return false;
         }
-        
-        // get raw form data
-        $form_data = $this->form->get_data();
 
-        return ! empty($form_data->$input_element_key);
+        // Get raw form data.
+        $formdata = $this->form->get_data();
+
+        return ! empty($formdata->$inputelementkey);
     }
 
     /**
      * Reports whether or not this request is a form cancellation
-     * 
+     *
      * @return bool
      */
-    public function is_form_cancellation()
-    {
+    public function is_form_cancellation() {
         if (empty($this->form)) {
             return false;
         }
@@ -181,44 +166,39 @@ class block_quickmail_request {
 
     /**
      * Reports whether or not the request was submitted with intent to save
-     * 
+     *
      * @return bool
      */
     public function to_save() {
         return $this->was_submitted('save');
     }
 
-    ////////////////////////////////////////
-    ///
-    /// REDIRECTS
-    /// 
-    ////////////////////////////////////////
-
+    // Redirects.
     /**
      * Convenience wrapper for redirecting to moodle URLs
-     * 
+     *
      * @param  string  $url
-     * @param  array   $url_params   array of parameters for the given URL
+     * @param  array   $urlparams   array of parameters for the given URL
      * @param  int     $delay        delay, in seconds, before redirecting
      * @return (http redirect header)
      */
-    public function redirect_to_url($url, $url_params = [], $delay = 2) {
-        $moodle_url = new \moodle_url($url, $url_params);
+    public function redirect_to_url($url, $urlparams = [], $delay = 2) {
+        $moodleurl = new \moodle_url($url, $urlparams);
 
-        redirect($moodle_url, '', $delay);
+        redirect($moodleurl, '', $delay);
     }
 
     /**
      * Convenience wrapper for redirecting to moodle URLs while including a status type and message
-     * 
+     *
      * @param  string  $type         success|info|warning|error
      * @param  string  $message      a pre-rendered string message
      * @param  string  $url
-     * @param  array   $url_params   array of parameters for the given URL
+     * @param  array   $urlparams   array of parameters for the given URL
      * @param  int     $delay        delay, in seconds, before redirecting
      * @return (http redirect header)
      */
-    public function redirect_as_type($type, $message, $url, $url_params = [], $delay = 2) {
+    public function redirect_as_type($type, $message, $url, $urlparams = [], $delay = 2) {
         $types = [
             'success' => \core\output\notification::NOTIFY_SUCCESS,
             'info'    => \core\output\notification::NOTIFY_INFO,
@@ -226,37 +206,37 @@ class block_quickmail_request {
             'error'   => \core\output\notification::NOTIFY_ERROR,
         ];
 
-        $moodle_url = new \moodle_url($url, $url_params);
+        $moodleurl = new \moodle_url($url, $urlparams);
 
-        redirect($moodle_url, $message, $delay, $types[$type]);
+        redirect($moodleurl, $message, $delay, $types[$type]);
     }
 
     /**
      * Helper function to redirect as type success
      */
-    public function redirect_as_success($message, $url, $url_params = [], $delay = 2) {
-        $this->redirect_as_type('success', $message, $url, $url_params, $delay);
+    public function redirect_as_success($message, $url, $urlparams = [], $delay = 2) {
+        $this->redirect_as_type('success', $message, $url, $urlparams, $delay);
     }
 
     /**
      * Helper function to redirect as type info
      */
-    public function redirect_as_info($message, $url, $url_params = [], $delay = 2) {
-        $this->redirect_as_type('info', $message, $url, $url_params, $delay);
+    public function redirect_as_info($message, $url, $urlparams = [], $delay = 2) {
+        $this->redirect_as_type('info', $message, $url, $urlparams, $delay);
     }
 
     /**
      * Helper function to redirect as type warning
      */
-    public function redirect_as_warning($message, $url, $url_params = [], $delay = 2) {
-        $this->redirect_as_type('warning', $message, $url, $url_params, $delay);
+    public function redirect_as_warning($message, $url, $urlparams = [], $delay = 2) {
+        $this->redirect_as_type('warning', $message, $url, $urlparams, $delay);
     }
 
     /**
      * Helper function to redirect as type error
      */
-    public function redirect_as_error($message, $url, $url_params = [], $delay = 2) {
-        $this->redirect_as_type('error', $message, $url, $url_params, $delay);
+    public function redirect_as_error($message, $url, $urlparams = [], $delay = 2) {
+        $this->redirect_as_type('error', $message, $url, $urlparams, $delay);
     }
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,79 +23,74 @@
 
 namespace block_quickmail\persistents;
 
-// use \core\persistent;
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\sanitizes_input;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 
-// if ( ! class_exists('\core\persistent')) {
-//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-// }
- 
 class schedule extends \block_quickmail\persistents\persistent {
- 
-	use enhanced_persistent,
-		sanitizes_input,
-		can_be_soft_deleted;
 
-	/** Table name for the persistent. */
-	const TABLE = 'block_quickmail_schedules';
+    use enhanced_persistent,
+        sanitizes_input,
+        can_be_soft_deleted;
 
-	public static $required_creation_keys = [
-		'unit', 
-		'amount',
-		'begin_at',
-	];
+    /** Table name for the persistent. */
+    const TABLE = 'block_quickmail_schedules';
 
-	public static $default_creation_params = [
-		'end_at' => null,
-	];
+    public static $requiredcreationkeys = [
+        'unit',
+        'amount',
+        'begin_at',
+    ];
 
-	/**
-	 * Return the definition of the properties of this model.
-	 *
-	 * @return array
-	 */
-	protected static function define_properties() {
-		return [
-			'unit' => [
-				'type' => PARAM_TEXT,
-			],
-			'amount' => [
-				'type' => PARAM_INT,
-			],
-			'begin_at' => [
-				'type' => PARAM_INT,
-			],
-			'end_at' => [
-				'type' => PARAM_INT,
-				'default' => null,
-				'null' => NULL_ALLOWED,
-			],
-			'timedeleted' => [
-				'type' => PARAM_INT,
-				'default' => 0,
-			],
-		];
-	}
+    public static $defaultcreationparams = [
+        'end_at' => null,
+    ];
 
-	/**
-	 * Returns the begin_at time as an int
-	 * 
-	 * @return int
-	 */
-	public function get_begin_time()
-	{
-		return (int) $this->get('begin_at');
-	}
+    /**
+     * Return the definition of the properties of this model.
+     *
+     * @return array
+     */
+    protected static function define_properties() {
+        return [
+            'unit' => [
+                'type' => PARAM_TEXT,
+            ],
+            'amount' => [
+                'type' => PARAM_INT,
+            ],
+            'begin_at' => [
+                'type' => PARAM_INT,
+            ],
+            'end_at' => [
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ],
+            'timedeleted' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+            ],
+        ];
+    }
 
-	/**
+    /**
+     * Returns the begin_at time as an int
+     *
+     * @return int
+     */
+    public function get_begin_time() {
+        return (int) $this->get('begin_at');
+    }
+
+    /**
      * Returns the end_at time as an int
-     * 
+     *
      * @return mixed  (returns int, or null if not set)
      */
-    public function get_end_time()
-    {
+    public function get_end_time() {
         return empty($this->get('end_at'))
             ? null
             : (int) $this->get('end_at');
@@ -104,54 +98,51 @@ class schedule extends \block_quickmail\persistents\persistent {
 
     /**
      * Returns this schedule's "increment" in a datetime-modify-friendly string format
-     * 
+     *
      * @return string
      */
-    public function get_increment_string()
-    {
-    	return '+' . $this->get('amount') . ' ' . $this->get('unit');
+    public function get_increment_string() {
+        return '+' . $this->get('amount') . ' ' . $this->get('unit');
     }
 
     /**
      * Returns a timestamp representing the next time this schedule should run
      *
      * Note: if the calculated time is after this schedule's end time (if any), then null will be returned
-     * 
-     * @param  int  $last_run_timestamp
+     *
+     * @param  int  $lastruntimestamp
      * @return mixed  int|null
      */
-    public function calculate_next_time_from($last_run_timestamp)
-    {
-        // return next run time according to schedule
-    	$date = \DateTime::createFromFormat('U', $last_run_timestamp, \core_date::get_server_timezone_object());
+    public function calculate_next_time_from($lastruntimestamp) {
+        // Return next run time according to schedule.
+        $date = \DateTime::createFromFormat('U', $lastruntimestamp, \core_date::get_server_timezone_object());
         $date->modify($this->get_increment_string());
 
-        $next_run_time = $date->getTimestamp();
+        $nextruntime = $date->getTimestamp();
 
-    	// if this schedule has no end time
+        // If this schedule has no end time.
         if (empty($this->get_end_time())) {
-        	return $next_run_time;
-        
-        // otherwise, calculate the next run time according to schedule
+            return $nextruntime;
+
+            // Otherwise, calculate the next run time according to schedule.
         } else {
-            if ($next_run_time > $this->get_end_time()) {
-                // schedule has expired, set to null
+            if ($nextruntime > $this->get_end_time()) {
+                // Schedule has expired, set to null.
                 return null;
             } else {
-                return $next_run_time;
+                return $nextruntime;
             }
         }
     }
 
-	/**
-	 * Creates and returns a schedule from the given params
-	 * 
-	 * @param  array   $params
-	 * @return schedule
-	 */
-	public static function create_from_params($params)
-	{
-		$params = self::sanitize_creation_params($params);
+    /**
+     * Creates and returns a schedule from the given params
+     *
+     * @param  array   $params
+     * @return schedule
+     */
+    public static function create_from_params($params) {
+        $params = self::sanitize_creation_params($params);
 
         $schedule = self::create_new([
             'unit' => $params['unit'],
@@ -160,24 +151,23 @@ class schedule extends \block_quickmail\persistents\persistent {
             'end_at' => (int) $params['end_at'],
         ]);
 
-		return $schedule;
-	}
+        return $schedule;
+    }
 
     /**
      * Returns a timestamp from a given moodle date time selector array, defaulting to null
-     * 
+     *
      * @param  array  $input
      * @param  mixed  $default  default value to return, defaults to null
      * @return mixed
      */
-    public static function get_sanitized_date_time_selector_value($input, $default = null)
-    {
-        if ( ! is_array($input)) {
+    public static function get_sanitized_date_time_selector_value($input, $default = null) {
+        if (!is_array($input)) {
             return $default;
         }
 
         if (array_key_exists('enabled', $input)) {
-            if ( ! $input['enabled']) {
+            if (!$input['enabled']) {
                 return $default;
             }
         }
@@ -188,7 +178,10 @@ class schedule extends \block_quickmail\persistents\persistent {
         $hour = $input['hour'];
         $minute = $input['minute'] == '0' ? '00' : $input['minute'];
 
-        $date = \DateTime::createFromFormat('j n Y H i', implode(' ', [$day, $month, $year, $hour, $minute]), \core_date::get_server_timezone_object());
+        $date = \DateTime::createFromFormat('j n Y H i', implode(
+                                                             ' ',
+                                                             [$day, $month, $year, $hour, $minute]),
+                                                             \core_date::get_server_timezone_object());
 
         return $date->getTimestamp();
     }

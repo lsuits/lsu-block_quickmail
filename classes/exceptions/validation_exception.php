@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,8 +23,10 @@
 
 namespace block_quickmail\exceptions;
 
+defined('MOODLE_INTERNAL') || die();
+
 class validation_exception extends \Exception {
-    
+
     public $message;
     public $errors;
 

@@ -3,7 +3,7 @@ define(['jquery'], function($) {
     let removeBtn = $('#id_remove_recip');
     let availablesSelect = $('#id_available_included_entity_ids');
     let selectedsSelect = $('#id_selected_included_entity_ids');
-    
+
     let syncSelected = function() {
         $('[name="included_entity_ids"]').val('');
 

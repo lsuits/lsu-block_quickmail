@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,27 +23,22 @@
 
 namespace block_quickmail\persistents\concerns;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail_string;
 use \dml_missing_record_exception;
 use block_quickmail\persistents\concerns\can_be_soft_deleted;
 
 trait enhanced_persistent {
-
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Static Methods.
     /**
      * Creates a new persistent record with the given array
-     * 
+     *
      * @param  array  $data
      * @return object (persistent)
      * @throws dml_missing_record_exception
      */
-    public static function create_new($data = [])
-    {
+    public static function create_new($data = []) {
         $model = new self(0, (object) $data);
 
         $model->create();
@@ -54,23 +48,22 @@ trait enhanced_persistent {
 
     /**
      * Finds this persistent's record by id number or returns null
-     * 
+     *
      * @param  int  $id
      * @return object (persistent)|null
      * @throws dml_missing_record_exception
      */
-    public static function find_or_null($id = 0)
-    {
-        // if no persistent id was passed, return null
-        if ( ! $id) {
+    public static function find_or_null($id = 0) {
+        // If no persistent id was passed, return null.
+        if (!$id) {
             return null;
         }
 
-        // try to find and return model, otherwise return null
+        // Try to find and return model, otherwise return null.
         try {
             $model = new self($id);
 
-            // make sure this model has not been soft-deleted
+            // Make sure this model has not been soft-deleted.
             if (self::supports_soft_deletes()) {
                 if ($model->get('timedeleted')) {
                     return null;
@@ -85,16 +78,15 @@ trait enhanced_persistent {
 
     /**
      * Returns a human readable date for the given model attribute
-     * 
+     *
      * @param  string  $attr  (must be a date attribute)
      * @return string
      */
-    public function get_readable_date($attr)
-    {
+    public function get_readable_date($attr) {
         $datetime = $this->get($attr);
 
         if ($datetime && is_numeric($datetime)) {
-            return date('Y-m-d g:i a', $datetime);
+            return userdate($datetime, get_string('strftimedatetime'));
         }
 
         return block_quickmail_string::get('never');
@@ -102,7 +94,7 @@ trait enhanced_persistent {
 
     /**
      * Returns a trimmed, shortened, "preview" string with appendage and default if no content
-     * 
+     *
      * @param  string  $attr     the model attribute to be previewed
      * @param  int     $length     number of characters to be displayed
      * @param  string  $appendage  a string to be appended if string is cut off
@@ -112,7 +104,7 @@ trait enhanced_persistent {
     public function render_preview_string($attr, $length, $appendage = '...', $default = '--') {
         $string = trim($this->get($attr));
 
-        if ( ! $string) {
+        if (!$string) {
             return $default;
         }
 
@@ -127,12 +119,11 @@ trait enhanced_persistent {
 
     /**
      * Reports whether or not this persistent can be soft deleted
-     * 
+     *
      * @return bool
      */
-    public static function supports_soft_deletes()
-    {
-        if ( ! $traits = class_uses(static::class)) {
+    public static function supports_soft_deletes() {
+        if (!$traits = class_uses(static::class)) {
             return false;
         }
 
@@ -141,11 +132,10 @@ trait enhanced_persistent {
 
     /**
      * Reports whether or not this persistent has been soft deleted
-     * 
+     *
      * @return bool
      */
-    public function is_soft_deleted()
-    {
+    public function is_soft_deleted() {
         return (bool) $this->get('timedeleted');
     }
 

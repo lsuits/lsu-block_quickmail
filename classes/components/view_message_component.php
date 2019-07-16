@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\components;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\components\component;
 use block_quickmail_string;
 use block_quickmail_config;
@@ -35,9 +36,9 @@ class view_message_component extends component implements \renderable {
 
     public $message;
     public $user;
-    public $sent_recipient_users;
-    public $unsent_recipient_users;
-    public $additional_emails;
+    public $sentrecipientusers;
+    public $unsentrecipientusers;
+    public $additionalemails;
     public $attachments;
 
     public function __construct($params = []) {
@@ -56,20 +57,14 @@ class view_message_component extends component implements \renderable {
      *
      * @return stdClass
      */
-    public function export_for_template($output)
-    {
-        $course_id = $this->message->get('course_id');
+    public function export_for_template($output) {
+        $courseid = $this->message->get('course_id');
 
-        // get message status - queued|sending|sent
+        // Get message status - queued|sending|sent.
         $status = $this->message->get_status();
-        
-        // get message scope - compose|broadcast
-        $scope = $this->message->get_message_scope();
 
-        // get config, depending on scope of message
-        // $config_array = $scope == 'compose'
-        //     ? block_quickmail_config::course($this->message->get('course_id'))
-        //     : block_quickmail_config::block();
+        // Get message scope - compose|broadcast.
+        $scope = $this->message->get_message_scope();
 
         $data = (object) [
             'messageId'              => $this->message->get('id'),
@@ -96,15 +91,18 @@ class view_message_component extends component implements \renderable {
             'unsentRecipientUsers'   => $this->unsent_recipient_users,
             'additionalEmailCount'   => count($this->additional_emails),
             'additionalEmails'       => $this->additional_emails,
-            'urlBack'                => $course_id > 1 
-                ? new moodle_url('/course/view.php', ['id' => $course_id])
+            'urlBack'                => $courseid > 1
+                ? new moodle_url('/course/view.php', ['id' => $courseid])
                 : new moodle_url('/my'),
-            'urlBackLabel'           => $course_id > 1
+            'urlBackLabel'           => $courseid > 1
                 ? block_quickmail_string::get('back_to_course')
                 : block_quickmail_string::get('back_to_mypage'),
-            'urlDuplicate'           => (new moodle_url('/blocks/quickmail/drafts.php', ['action' => 'duplicate', 'id' => $this->message->get('id')]))->out(false),
-            'urlSendNow'             => (new moodle_url('/blocks/quickmail/queued.php', ['action' => 'send', 'id' => $this->message->get('id')]))->out(false),
-            'urlUnqueue'             => (new moodle_url('/blocks/quickmail/queued.php', ['action' => 'unqueue', 'id' => $this->message->get('id')]))->out(false),
+            'urlDuplicate'           => (new moodle_url('/blocks/quickmail/drafts.php',
+                                            ['action' => 'duplicate', 'id' => $this->message->get('id')]))->out(false),
+            'urlSendNow'             => (new moodle_url('/blocks/quickmail/queued.php',
+                                            ['action' => 'send', 'id' => $this->message->get('id')]))->out(false),
+            'urlUnqueue'             => (new moodle_url('/blocks/quickmail/queued.php',
+                                            ['action' => 'unqueue', 'id' => $this->message->get('id')]))->out(false),
         ];
 
         return $data;
@@ -112,15 +110,14 @@ class view_message_component extends component implements \renderable {
 
     /**
      * Returns this message's body with signature appended if necessary
-     * 
+     *
      * @return string
      */
-    private function get_message_body()
-    {
+    private function get_message_body() {
         $body = $this->message->get('body');
 
-        if ($signature_id = $this->message->get('signature_id')) {
-            if ($signature = signature::find_or_null($signature_id)) {
+        if ($signatureid = $this->message->get('signature_id')) {
+            if ($signature = signature::find_or_null($signatureid)) {
                 $body .= $signature->get('signature');
             }
         }
@@ -130,38 +127,35 @@ class view_message_component extends component implements \renderable {
 
     /**
      * Returns this message's "sent from" email address, defaulting to system no reply address
-     * 
+     *
      * @return string
      */
-    private function get_message_from_email()
-    {
-        // get email address sent from
-        $from_email = get_config('moodle', 'noreplyaddress');
+    private function get_message_from_email() {
+        // Get email address sent from.
+        $fromemail = get_config('moodle', 'noreplyaddress');
 
-        // if message was sent using alternate email, and alternate email exists
-        if ( ! empty($this->message->get('alternate_email_id'))) {
-            if ($alternate_email = alternate_email::find_or_null($this->message->get('alternate_email_id'))) {
-                $from_email = $alternate_email->get('email');
+        // If message was sent using alternate email, and alternate email exists.
+        if (!empty($this->message->get('alternate_email_id'))) {
+            if ($alternateemail = alternate_email::find_or_null($this->message->get('alternate_email_id'))) {
+                $fromemail = $alternateemail->get('email');
             }
-
-        // otherwise, if message was not sent as no reply, and original sending user exists
+            // Otherwise, if message was not sent as no reply, and original sending user exists.
         } else if (empty($this->message->get('no_reply'))) {
             if ($user = $this->message->get_user()) {
-                $from_email = $user->email;
+                $fromemail = $user->email;
             }
         }
 
-        return $from_email;
+        return $fromemail;
     }
 
     /**
      * Returns the given users as an array of presentable strings
-     * 
+     *
      * @param  array  $users  an array of user objects which must contain "firstname,lastname,email" properties
      * @return array
      */
-    private function transform_recipient_users($users)
-    {
+    private function transform_recipient_users($users) {
         return array_values(array_map(function($user) {
             return $user->firstname . ' ' . $user->lastname . ' (' . $user->email . ')';
         }, $users));
@@ -169,12 +163,11 @@ class view_message_component extends component implements \renderable {
 
     /**
      * Returns the given attachment persistents as an array of filename strings
-     * 
+     *
      * @param  array  $attachments  an array of message_attachment persistents
      * @return array
      */
-    private function transform_attachments($attachments)
-    {
+    private function transform_attachments($attachments) {
         return array_values(array_map(function($attachment) {
             return $attachment->get('filename');
         }, $attachments));

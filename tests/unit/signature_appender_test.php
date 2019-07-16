@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,25 +20,26 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\messenger\message\signature_appender;
 use block_quickmail\persistents\signature;
 
 class block_quickmail_signature_appender_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses;
 
-    public function test_appends_signature()
-    {
+    public function test_appends_signature() {
         $this->resetAfterTest(true);
 
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-        
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
+
         $signature = signature::create_new([
-            'user_id' => $user_teacher->id,
+            'user_id' => $userteacher->id,
             'title' => 'first',
             'default_flag' => 0,
             'signature' => '<p>This is my signature!</p>',
@@ -47,23 +47,22 @@ class block_quickmail_signature_appender_testcase extends advanced_testcase {
 
         $body = 'This is the message I hope you like it.';
 
-        $formatted_body = signature_appender::append_user_signature_to_body(
-            $body, 
-            $user_teacher->id,
+        $formattedbody = signature_appender::append_user_signature_to_body(
+            $body,
+            $userteacher->id,
             $signature->get('id')
         );
 
-        $this->assertContains('<p>This is my signature!</p>', $formatted_body);
+        $this->assertContains('<p>This is my signature!</p>', $formattedbody);
     }
 
-    public function test_does_not_append_signature_if_requested_signature_does_not_belong_to_sending_user()
-    {
+    public function test_does_not_append_signature_if_requested_signature_does_not_belong_to_sending_user() {
         $this->resetAfterTest(true);
 
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-        
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
+
         $signature = signature::create_new([
-            'user_id' => $user_students[0]->id,
+            'user_id' => $userstudents[0]->id,
             'title' => 'first',
             'default_flag' => 0,
             'signature' => '<p>This is my signature!</p>',
@@ -71,23 +70,22 @@ class block_quickmail_signature_appender_testcase extends advanced_testcase {
 
         $body = 'This is the message I hope you like it.';
 
-        $formatted_body = signature_appender::append_user_signature_to_body(
-            $body, 
-            $user_teacher->id,
+        $formattedbody = signature_appender::append_user_signature_to_body(
+            $body,
+            $userteacher->id,
             $signature->get('id')
         );
 
-        $this->assertNotContains('<p>This is my signature!</p>', $formatted_body);
+        $this->assertNotContains('<p>This is my signature!</p>', $formattedbody);
     }
 
-    public function test_does_not_append_signature_if_no_signature_id_is_given()
-    {
+    public function test_does_not_append_signature_if_no_signature_id_is_given() {
         $this->resetAfterTest(true);
 
-        list($course, $user_teacher, $user_students) = $this->setup_course_with_teacher_and_students();
-        
+        list($course, $userteacher, $userstudents) = $this->setup_course_with_teacher_and_students();
+
         $signature = signature::create_new([
-            'user_id' => $user_teacher->id,
+            'user_id' => $userteacher->id,
             'title' => 'first',
             'default_flag' => 0,
             'signature' => '<p>This is my signature!</p>',
@@ -95,12 +93,12 @@ class block_quickmail_signature_appender_testcase extends advanced_testcase {
 
         $body = 'This is the message I hope you like it.';
 
-        $formatted_body = signature_appender::append_user_signature_to_body(
-            $body, 
-            $user_teacher->id
+        $formattedbody = signature_appender::append_user_signature_to_body(
+            $body,
+            $userteacher->id
         );
 
-        $this->assertNotContains('<p>This is my signature!</p>', $formatted_body);
+        $this->assertNotContains('<p>This is my signature!</p>', $formattedbody);
     }
 
 }

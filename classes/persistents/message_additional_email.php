@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,25 +23,22 @@
 
 namespace block_quickmail\persistents;
 
-// use \core\persistent;
+defined('MOODLE_INTERNAL') || die();
+
 use core_user;
 use lang_string;
 use block_quickmail\persistents\concerns\enhanced_persistent;
 use block_quickmail\persistents\concerns\belongs_to_a_message;
 use block_quickmail\persistents\message;
- 
-// if ( ! class_exists('\core\persistent')) {
-//     class_alias('\block_quickmail\persistents\persistent', '\core\persistent');
-// }
 
 class message_additional_email extends \block_quickmail\persistents\persistent {
- 
-    use enhanced_persistent, 
+
+    use enhanced_persistent,
         belongs_to_a_message;
 
     /** Table name for the persistent. */
     const TABLE = 'block_quickmail_msg_ad_email';
- 
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -62,32 +58,21 @@ class message_additional_email extends \block_quickmail\persistents\persistent {
             ],
         ];
     }
- 
-    ///////////////////////////////////////////////
-    ///
-    ///  GETTERS
-    /// 
-    ///////////////////////////////////////////////
-    
+
+    // Getters.
     /**
      * Reports whether or not this additional email has been messaged
-     * 
+     *
      * @return bool
      */
-    public function has_been_sent_to()
-    {
+    public function has_been_sent_to() {
         return (bool) $this->get('sent_at');
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Methods.
     /**
      * Mark this additional email as have being sent to successfully
-     * 
+     *
      * @return void
      */
     public function mark_as_sent() {
@@ -95,24 +80,18 @@ class message_additional_email extends \block_quickmail\persistents\persistent {
         $this->update();
     }
 
-    ///////////////////////////////////////////////
-    ///
-    ///  CUSTOM STATIC METHODS
-    /// 
-    ///////////////////////////////////////////////
-
+    // Custom Static Methods.
     /**
      * Deletes all additional emails for this message
-     * 
+     *
      * @param  message $message
      * @return void
      */
-    public static function clear_all_for_message(message $message)
-    {
+    public static function clear_all_for_message(message $message) {
         global $DB;
 
-        // delete all recipients belonging to this message
+        // Delete all recipients belonging to this message.
         $DB->delete_records('block_quickmail_msg_ad_email', ['message_id' => $message->get('id')]);
     }
- 
+
 }

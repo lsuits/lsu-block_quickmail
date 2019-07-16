@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,7 +23,9 @@
 
 namespace block_quickmail\controllers\forms\edit_notification;
 
-require_once $CFG->libdir . '/formslib.php';
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
 
 use block_quickmail\controllers\support\controller_form;
 use block_quickmail_plugin;
@@ -41,161 +42,165 @@ class edit_notification_form extends controller_form {
 
         $mform =& $this->_form;
 
-        $mform->addElement('html', '<div style=""><strong>' . $this->get_notification_type_interface()->get_title() . ' (' . ucfirst($this->get_notification('type')) . ')</strong></div>');
-        $mform->addElement('html', '<div style="margin-bottom: 20px;">' . $this->get_notification_type_interface()->get_description() . '</div>');
+        $mform->addElement('html', '<div style=""><strong>'
+            . $this->get_notification_type_interface()->get_title()
+            . ' (' . ucfirst($this->get_notification('type')) . ')</strong></div>');
+        $mform->addElement('html', '<div style="margin-bottom: 20px;">'
+            . $this->get_notification_type_interface()->get_description() . '</div>');
 
-        ////////////////////////////////////////////////////////////
-        ///  notification_name (text)
-        ////////////////////////////////////////////////////////////
+        // Notification_name (text).
         $mform->addElement(
-            'text', 
-            'notification_name', 
+            'text',
+            'notification_name',
             block_quickmail_string::get('notification_name'),
             ['size' => 40, 'placeholder' => 'My Notification Title']
         );
 
         $mform->setType(
-            'notification_name', 
+            'notification_name',
             PARAM_TEXT
         );
 
         $mform->setDefault(
-            'notification_name', 
+            'notification_name',
             $this->get_notification('name')
         );
 
         $mform->addRule('notification_name', get_string('required'), 'required', '', 'server');
-        $mform->addRule('notification_name', get_string('err_maxlength', 'form', (object)['format' => 40]), 'maxlength', 40, 'server');
+        $mform->addRule('notification_name', get_string('err_maxlength',
+            'form', (object)['format' => 40]), 'maxlength', 40, 'server');
 
         $mform->addHelpButton(
-            'notification_name', 
-            'notification_name', 
+            'notification_name',
+            'notification_name',
             'block_quickmail'
         );
 
-        ////////////////////////////////////////////////////////////
-        ///  notification_is_enabled (radio)
-        ////////////////////////////////////////////////////////////
-
-        $enabled_options = [
+        // Notification is enabled (radio).
+        $enabledoptions = [
             $mform->createElement('radio', 'notification_is_enabled', '', get_string('yes'), 1),
             $mform->createElement('radio', 'notification_is_enabled', '', get_string('no'), 0)
         ];
 
         $mform->addGroup(
-            $enabled_options, 
-            'notification_is_enabled_action', 
+            $enabledoptions,
+            'notification_is_enabled_action',
             block_quickmail_string::get('enable_notification'),
-            [' '], 
+            [' '],
             false
         );
         $mform->addHelpButton(
-            'notification_is_enabled_action', 
-            'notification_is_enabled', 
+            'notification_is_enabled_action',
+            'notification_is_enabled',
             'block_quickmail'
         );
 
         $mform->setDefault(
-            'notification_is_enabled', 
+            'notification_is_enabled',
             (int) $this->get_notification('is_enabled')
         );
 
-        // if this notification is schedulable
-        if ( ! empty($this->get_schedule())) {
+        // If this notification is schedulable.
+        if (!empty($this->get_schedule())) {
             $mform->addElement('html', '<hr>');
 
             $mform->addElement('html', '<div style=""><strong>' . block_quickmail_string::get('send_schedule') . '</strong></div>');
 
-            $mform->addElement('html', '<div style="margin-bottom: 20px;">' . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
+            $mform->addElement('html', '<div style="margin-bottom: 20px;">'
+                . block_quickmail_string::get('set_notification_schedule_description') . '</div>');
 
-            ////////////////////////////////////////////////////////////
-            ///  schedule_time_unit (select)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - value must equal: 'day', 'week' or 'month'
-            ////////////////////////////////////////////////////////////
-            $schedule_time_unit_options = $this->get_time_unit_options(['day', 'week', 'month']);
-
+            /*
+             *  schedule_time_unit (select)
+             * validation (if necessary for this model):
+             * - required
+             * - value must equal: 'day', 'week' or 'month'
+             */
+            $scheduletimeunitoptions = $this->get_time_unit_options(['day', 'week', 'month']);
             $mform->addElement(
-                'select', 
-                'schedule_time_unit', 
-                block_quickmail_string::get('time_unit'), 
-                $schedule_time_unit_options
+                'select',
+                'schedule_time_unit',
+                block_quickmail_string::get('time_unit'),
+                $scheduletimeunitoptions
             );
 
             $mform->setDefault(
-                'schedule_time_unit', 
+                'schedule_time_unit',
                 $this->get_schedule('unit')
             );
 
             $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
-            $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($schedule_time_unit_options) { return in_array($value, array_keys($schedule_time_unit_options));}, 'server');
+            $mform->addRule('schedule_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback',
+                function($value) use ($scheduletimeunitoptions) {
+                    return in_array($value, array_keys($scheduletimeunitoptions));
+                }
+                , 'server');
 
-            ////////////////////////////////////////////////////////////
-            ///  schedule_time_amount (text)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - numeric
-            ///  - integer
-            ///  - greater than 0
-            ////////////////////////////////////////////////////////////
+            /*
+             * schedule_time_amount (text)
+             * validation (if necessary for this model):
+             * - required
+             * - numeric
+             * - integer
+             * - greater than 0
+             */
             $mform->addElement(
-                'text', 
-                'schedule_time_amount', 
-                block_quickmail_string::get('time_amount'), 
+                'text',
+                'schedule_time_amount',
+                block_quickmail_string::get('time_amount'),
                 ['size' => 4]
             );
-            
+
             $mform->setType(
-                'schedule_time_amount', 
+                'schedule_time_amount',
                 PARAM_TEXT
             );
 
             $mform->setDefault(
-                'schedule_time_amount', 
+                'schedule_time_amount',
                 $this->get_schedule('amount')
             );
 
-            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
-            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
-            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nopunctuation', '', 'server');
-            $mform->addRule('schedule_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { return $value >= 1;}, 'server');
+            $mform->addRule('schedule_time_amount',
+                block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
+            $mform->addRule('schedule_time_amount',
+                block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
+            $mform->addRule('schedule_time_amount',
+                block_quickmail_string::get('invalid_time_amount'), 'nopunctuation', '', 'server');
+            $mform->addRule('schedule_time_amount',
+                block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) {
+                    return $value >= 1;
+                }, 'server');
 
-            ////////////////////////////////////////////////////////////
-            ///  schedule_begin_at (date/time)
-            ////////////////////////////////////////////////////////////
-            
+            // Schedule_begin_at (date/time).
             if (empty($this->get_notification_type_interface('last_run_at'))) {
                 $mform->addElement(
-                    'date_time_selector', 
-                    'schedule_begin_at', 
+                    'date_time_selector',
+                    'schedule_begin_at',
                     block_quickmail_string::get('schedule_begin_at'),
                     $this->get_schedule_time_options(false)
                 );
 
-                if ( ! empty($this->get_schedule('begin_at'))) {
+                if (!empty($this->get_schedule('begin_at'))) {
                     $mform->setDefault(
                         'schedule_begin_at',
                         $this->get_schedule('begin_at')
                     );
                 }
             } else {
-                $mform->addElement('static', 'notification_already_sent', block_quickmail_string::get('schedule_begin_at'), block_quickmail_string::get('notification_already_sent'));
+                $mform->addElement('static', 'notification_already_sent',
+                    block_quickmail_string::get('schedule_begin_at'),
+                    block_quickmail_string::get('notification_already_sent'));
             }
 
-            ////////////////////////////////////////////////////////////
-            ///  schedule_end_at (date/time)
-            ////////////////////////////////////////////////////////////
+            // Schedule_end_at (date/time).
             $mform->addElement(
-                'date_time_selector', 
-                'schedule_end_at', 
+                'date_time_selector',
+                'schedule_end_at',
                 block_quickmail_string::get('schedule_end_at'),
                 $this->get_schedule_time_options(false)
             );
 
-            if ( ! empty($this->get_schedule('end_at'))) {
+            if (!empty($this->get_schedule('end_at'))) {
                 $mform->setDefault(
                     'schedule_end_at',
                     $this->get_schedule('end_at')
@@ -203,335 +208,373 @@ class edit_notification_form extends controller_form {
             }
         }
 
-        // if this notification requires any conditions
+        // If this notification requires any conditions.
         if ($this->get_custom_data('notification_type') == 'event') {
             $mform->addElement('html', '<hr>');
 
-            $mform->addElement('html', '<div style=""><strong>' . block_quickmail_string::get('edit_event_details') . '</strong></div>');
+            $mform->addElement('html', '<div style=""><strong>'
+                . block_quickmail_string::get('edit_event_details') . '</strong></div>');
 
-            $event_time_unit_options = $this->get_time_unit_options(['minute', 'hour', 'day']);
-            
-            ////////////////////////////////////////////////////////////
-            ///  time_delay_unit (select)
-            ///  
-            ///  validation (if given):
-            ///  - value must equal: 'minute', 'hour', or 'day'
-            ////////////////////////////////////////////////////////////
+            $eventtimeunitoptions = $this->get_time_unit_options(['minute', 'hour', 'day']);
 
+            /*
+             *
+             * time_delay_unit (select)
+             * validation (if given):
+             * - value must equal: 'minute', 'hour', or 'day'
+             *
+             */
             $mform->addElement(
-                'select', 
-                'time_delay_unit', 
-                block_quickmail_string::get('time_delay_unit'), 
-                $event_time_unit_options
+                'select',
+                'time_delay_unit',
+                block_quickmail_string::get('time_delay_unit'),
+                $eventtimeunitoptions
             );
 
             $mform->setDefault(
-                'time_delay_unit', 
+                'time_delay_unit',
                 $this->get_notification_type_interface('time_delay_unit')
             );
 
-            $mform->addRule('time_delay_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($event_time_unit_options) { return in_array($value, array_keys($event_time_unit_options));}, 'server');
+            $mform->addRule('time_delay_unit', block_quickmail_string::get('invalid_time_unit'), 'callback',
+                function($value) use ($eventtimeunitoptions) {
+                    return in_array($value, array_keys($eventtimeunitoptions));
+                }, 'server');
 
-            ////////////////////////////////////////////////////////////
-            ///  time_delay_amount (text)
-            ///  
-            ///  validation (if given):
-            ///  - numeric
-            ///  - greater than 0
-            ////////////////////////////////////////////////////////////
+            /*
+             *
+             * time_delay_amount (text)
+             * validation (if given):
+             * - numeric
+             * - greater than 0
+             *
+             */
             $mform->addElement(
-                'text', 
-                'time_delay_amount', 
-                block_quickmail_string::get('time_amount'), 
+                'text',
+                'time_delay_amount',
+                block_quickmail_string::get('time_amount'),
                 ['size' => 4]
             );
-            
+
             $mform->setType(
-                'time_delay_amount', 
+                'time_delay_amount',
                 PARAM_TEXT
             );
 
             $mform->setDefault(
-                'time_delay_amount', 
+                'time_delay_amount',
                 $this->get_notification_type_interface('time_delay_amount')
             );
 
-            $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
+            $mform->addRule('time_delay_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) {
                 if (empty($value)) {
                     return true;
                 }
 
-                if ( ! is_numeric($value)) {
+                if (!is_numeric($value)) {
                     return false;
                 }
 
-                return $value >=1;
+                return $value >= 1;
             }, 'server');
 
-            if ( ! $this->get_custom_data('is_one_time_event')) {
-                
-                ////////////////////////////////////////////////////////////
-                ///  mute_time_unit (select)
-                ///  
-                ///  validation (if given):
-                ///  - value must equal: 'minute', 'hour', or 'day'
-                ////////////////////////////////////////////////////////////
-
+            if (!$this->get_custom_data('is_one_time_event')) {
+                /*
+                 *  mute_time_unit (select)
+                 * validation (if given):
+                 * - value must equal: 'minute', 'hour', or 'day'
+                 */
                 $mform->addElement(
-                    'select', 
-                    'mute_time_unit', 
-                    block_quickmail_string::get('mute_time_unit'), 
-                    $event_time_unit_options
+                    'select',
+                    'mute_time_unit',
+                    block_quickmail_string::get('mute_time_unit'),
+                    $eventtimeunitoptions
                 );
 
                 $mform->setDefault(
-                    'mute_time_unit', 
+                    'mute_time_unit',
                     $this->get_notification_type_interface('mute_time_unit')
                 );
 
-                $mform->addRule('mute_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($event_time_unit_options) { return in_array($value, array_keys($event_time_unit_options));}, 'server');
+                $mform->addRule('mute_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback',
+                    function($value) use ($eventtimeunitoptions) {
+                        return in_array($value, array_keys($eventtimeunitoptions));
+                    }, 'server');
 
-                ////////////////////////////////////////////////////////////
-                ///  mute_time_amount (text)
-                ///  
-                ///  validation (if necessary for this model):
-                ///  - required
-                ///  - numeric
-                ///  - integer
-                ///  - greater than 0
-                ////////////////////////////////////////////////////////////
+                /*
+                 *
+                 * mute_time_amount (text)
+                 *
+                 * validation (if necessary for this model):
+                 * - required
+                 * - numeric
+                 * - integer
+                 * - greater than 0
+                 *
+                 */
                 $mform->addElement(
-                    'text', 
-                    'mute_time_amount', 
-                    block_quickmail_string::get('time_amount'), 
+                    'text',
+                    'mute_time_amount',
+                    block_quickmail_string::get('time_amount'),
                     ['size' => 4]
                 );
-                
+
                 $mform->setType(
-                    'mute_time_amount', 
+                    'mute_time_amount',
                     PARAM_TEXT
                 );
 
                 $mform->setDefault(
-                    'mute_time_amount', 
+                    'mute_time_amount',
                     $this->get_notification_type_interface('mute_time_amount')
                 );
 
-                $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { 
-                    if (empty($value)) {
-                        return true;
-                    }
+                $mform->addRule('mute_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback',
+                    function($value) {
+                        if (empty($value)) {
+                            return true;
+                        }
 
-                    if ( ! is_numeric($value)) {
-                        return false;
-                    }
+                        if (!is_numeric($value)) {
+                            return false;
+                        }
 
-                    return $value >=1;
-                }, 'server');
-
+                        return $value >= 1;
+                    }, 'server');
             }
         }
 
-        // if this notification requires any conditions
-        if ( ! empty($this->get_custom_data('required_condition_keys'))) {
+        // If this notification requires any conditions.
+        if (!empty($this->get_custom_data('required_condition_keys'))) {
             $mform->addElement('html', '<hr>');
 
-            $mform->addElement('html', '<div style=""><strong>' . block_quickmail_string::get('notification_conditions') . '</strong></div>');
+            $mform->addElement('html', '<div style=""><strong>'
+            . block_quickmail_string::get('notification_conditions') . '</strong></div>');
 
-            $mform->addElement('html', '<div style="margin-bottom: 20px;">' . $this->get_notification_type_interface()->get_condition_description() . '</div>');
+            $mform->addElement('html', '<div style="margin-bottom: 20px;">'
+            . $this->get_notification_type_interface()->get_condition_description() . '</div>');
 
-            ////////////////////////////////////////////////////////////
-            ///  condition_time_unit (select)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - value must equal: 'day', 'week' or 'month'
-            ////////////////////////////////////////////////////////////
+            /*
+             *
+             * condition_time_unit (select)
+             *
+             * validation (if necessary for this model):
+             * - required
+             * - value must equal: 'day', 'week' or 'month'
+             *
+             */
             if ($this->requires_condition('time_unit')) {
-                $condition_time_unit_options = $this->get_time_unit_options(['day', 'week', 'month']);
+                $conditiontimeunitoptions = $this->get_time_unit_options(['day', 'week', 'month']);
 
                 $mform->addElement(
-                    'select', 
-                    'condition_time_unit', 
-                    block_quickmail_string::get('time_unit'), 
-                    $condition_time_unit_options
+                    'select',
+                    'condition_time_unit',
+                    block_quickmail_string::get('time_unit'),
+                    $conditiontimeunitoptions
                 );
 
                 $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'required', '', 'server');
-                $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback', function($value) use ($condition_time_unit_options) { return in_array($value, array_keys($condition_time_unit_options));}, 'server');
+                $mform->addRule('condition_time_unit', block_quickmail_string::get('invalid_time_unit'), 'callback',
+                    function($value) use ($conditiontimeunitoptions) {
+                        return in_array($value, array_keys($conditiontimeunitoptions));
+                    }, 'server');
 
                 $mform->setDefault(
-                    'condition_time_unit', 
+                    'condition_time_unit',
                     $this->get_assigned_condition('time_unit') ?: ''
                 );
             }
 
-            ////////////////////////////////////////////////////////////
-            ///  condition_time_amount (text)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - numeric
-            ///  - integer
-            ///  - greater than 0
-            ////////////////////////////////////////////////////////////
+            /*
+             *
+             * condition_time_amount (text)
+             *
+             * validation (if necessary for this model):
+             * - required
+             * - numeric
+             * - integer
+             * - greater than 0
+             *
+             */
             if ($this->requires_condition('time_amount')) {
                 $mform->addElement(
-                    'text', 
-                    'condition_time_amount', 
-                    block_quickmail_string::get('time_amount'), 
+                    'text',
+                    'condition_time_amount',
+                    block_quickmail_string::get('time_amount'),
                     ['size' => 4]
                 );
-                
+
                 $mform->setType(
-                    'condition_time_amount', 
+                    'condition_time_amount',
                     PARAM_TEXT
                 );
 
                 $mform->setDefault(
-                    'condition_time_amount', 
+                    'condition_time_amount',
                     $this->get_assigned_condition('time_amount') ?: ''
                 );
 
-                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
-                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
-                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'nopunctuation', '', 'server');
-                $mform->addRule('condition_time_amount', block_quickmail_string::get('invalid_time_amount'), 'callback', function($value) { return $value >= 1;}, 'server');
+                $mform->addRule('condition_time_amount',
+                    block_quickmail_string::get('invalid_time_amount'), 'required', '', 'server');
+                $mform->addRule('condition_time_amount',
+                    block_quickmail_string::get('invalid_time_amount'), 'numeric', '', 'server');
+                $mform->addRule('condition_time_amount',
+                    block_quickmail_string::get('invalid_time_amount'), 'nopunctuation', '', 'server');
+                $mform->addRule('condition_time_amount',
+                    block_quickmail_string::get('invalid_time_amount'), 'callback',
+                        function($value) {
+                            return $value >= 1;
+                        }, 'server');
             }
 
-            ////////////////////////////////////////////////////////////
-            ///  condition_time_relation (select)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - value must equal: 'before' or 'after'
-            ////////////////////////////////////////////////////////////
+            /*
+             * condition_time_relation (select)
+             *
+             * validation (if necessary for this model):
+             * - required
+             * - value must equal: 'before' or 'after'
+             */
             if ($this->requires_condition('time_relation')) {
                 $mform->addElement(
-                    'select', 
-                    'condition_time_relation', 
-                    block_quickmail_string::get('time_relation'), 
+                    'select',
+                    'condition_time_relation',
+                    block_quickmail_string::get('time_relation'),
                     $this->get_time_relation_options()
                 );
 
                 $mform->setDefault(
-                    'condition_time_relation', 
+                    'condition_time_relation',
                     $this->get_assigned_condition('time_relation') ?: ''
                 );
 
-                $mform->addRule('condition_time_relation', block_quickmail_string::get('invalid_time_relation'), 'required', '', 'server');
-                $mform->addRule('condition_time_relation', block_quickmail_string::get('invalid_time_relation'), 'callback', function($value) { return in_array($value, ['before', 'after']);}, 'server');
+                $mform->addRule('condition_time_relation',
+                    block_quickmail_string::get('invalid_time_relation'), 'required', '', 'server');
+                $mform->addRule('condition_time_relation',
+                    block_quickmail_string::get('invalid_time_relation'), 'callback',
+                        function($value) {
+                            return in_array($value, ['before', 'after']);
+                        }, 'server');
             }
 
-            ////////////////////////////////////////////////////////////
-            ///  condition_grade_greater_than (text)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - numeric
-            ///  - integer
-            ///  - greater than or equal to 0
-            ///  - less than 100
-            ////////////////////////////////////////////////////////////
+            /*
+             * condition_grade_greater_than (text)
+             *
+             * validation (if necessary for this model):
+             * - required
+             * - numeric
+             * - integer
+             * - greater than or equal to 0
+             * - less than 100
+             */
             if ($this->requires_condition('grade_greater_than')) {
                 $mform->addElement(
-                    'text', 
-                    'condition_grade_greater_than', 
-                    block_quickmail_string::get('condition_grade_greater_than'), 
+                    'text',
+                    'condition_grade_greater_than',
+                    block_quickmail_string::get('condition_grade_greater_than'),
                     ['size' => 4]
                 );
-                
+
                 $mform->setType(
-                    'condition_grade_greater_than', 
+                    'condition_grade_greater_than',
                     PARAM_TEXT
                 );
 
                 $mform->setDefault(
-                    'condition_grade_greater_than', 
+                    'condition_grade_greater_than',
                     $this->get_assigned_condition('grade_greater_than') ?: ''
                 );
 
-                $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'required', '', 'server');
-                $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'numeric', '', 'server');
-                $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'nopunctuation', '', 'server');
-                $mform->addRule('condition_grade_greater_than', block_quickmail_string::get('invalid_condition_grade_greater_than'), 'callback', function($value) { return $value >= 0 && $value < 100;}, 'server');
+                $mform->addRule('condition_grade_greater_than',
+                    block_quickmail_string::get('invalid_condition_grade_greater_than'), 'required', '', 'server');
+                $mform->addRule('condition_grade_greater_than',
+                    block_quickmail_string::get('invalid_condition_grade_greater_than'), 'numeric', '', 'server');
+                $mform->addRule('condition_grade_greater_than',
+                    block_quickmail_string::get('invalid_condition_grade_greater_than'), 'nopunctuation', '', 'server');
+                $mform->addRule('condition_grade_greater_than',
+                    block_quickmail_string::get('invalid_condition_grade_greater_than'), 'callback',
+                        function($value) {
+                            return $value >= 0 && $value < 100;
+                        }, 'server');
             }
 
-            ////////////////////////////////////////////////////////////
-            ///  condition_grade_less_than (text)
-            ///  
-            ///  validation (if necessary for this model):
-            ///  - required
-            ///  - numeric
-            ///  - integer
-            ///  - greater than 0
-            ///  - less than or equal to 100
-            ////////////////////////////////////////////////////////////
+            /*
+             * condition_grade_less_than (text)
+             *
+             * validation (if necessary for this model):
+             * - required
+             * - numeric
+             * - integer
+             * - greater than 0
+             * - less than or equal to 100
+             */
             if ($this->requires_condition('grade_less_than')) {
                 $mform->addElement(
-                    'text', 
-                    'condition_grade_less_than', 
-                    block_quickmail_string::get('condition_grade_less_than'), 
+                    'text',
+                    'condition_grade_less_than',
+                    block_quickmail_string::get('condition_grade_less_than'),
                     ['size' => 4]
                 );
-                
+
                 $mform->setType(
-                    'condition_grade_less_than', 
+                    'condition_grade_less_than',
                     PARAM_TEXT
                 );
 
                 $mform->setDefault(
-                    'condition_grade_less_than', 
+                    'condition_grade_less_than',
                     $this->get_assigned_condition('grade_less_than') ?: ''
                 );
 
-                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'required', '', 'server');
-                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'numeric', '', 'server');
-                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'nopunctuation', '', 'server');
-                $mform->addRule('condition_grade_less_than', block_quickmail_string::get('invalid_condition_grade_less_than'), 'callback', function($value) { return $value > 0 && $value <= 100;}, 'server');
+                $mform->addRule('condition_grade_less_than',
+                    block_quickmail_string::get('invalid_condition_grade_less_than'), 'required', '', 'server');
+                $mform->addRule('condition_grade_less_than',
+                    block_quickmail_string::get('invalid_condition_grade_less_than'), 'numeric', '', 'server');
+                $mform->addRule('condition_grade_less_than',
+                    block_quickmail_string::get('invalid_condition_grade_less_than'), 'nopunctuation', '', 'server');
+                $mform->addRule('condition_grade_less_than',
+                    block_quickmail_string::get('invalid_condition_grade_less_than'), 'callback',
+                        function($value) {
+                            return $value > 0 && $value <= 100;
+                        }, 'server');
             }
         }
 
         $mform->addElement('html', '<hr>');
 
-        $mform->addElement('html', '<div style="margin-bottom: 20px;"><strong>' . block_quickmail_string::get('message_details') . '</strong></div>');
+        $mform->addElement('html', '<div style="margin-bottom: 20px;"><strong>'
+            . block_quickmail_string::get('message_details') . '</strong></div>');
 
-        ////////////////////////////////////////////////////////////
-        ///  message_subject (text)
-        ////////////////////////////////////////////////////////////
+        // Message_subject (text).
         $mform->addElement(
-            'text', 
-            'message_subject', 
+            'text',
+            'message_subject',
             block_quickmail_string::get('subject'),
             ['size' => 50]
         );
         $mform->setType(
-            'message_subject', 
+            'message_subject',
             PARAM_TEXT
         );
-        
+
         $mform->setDefault(
-            'message_subject', 
+            'message_subject',
             $this->get_notification('subject')
         );
 
         $mform->addRule('message_subject', block_quickmail_string::get('missing_subject'), 'required', '', 'server');
 
-        ////////////////////////////////////////////////////////////
-        ///  message_body (textarea)
-        ////////////////////////////////////////////////////////////
-        
+        // Message_body (textarea).
         $mform->addElement(
-            'editor', 
-            'message_body',  
-            block_quickmail_string::get('body'), 
-            '', 
+            'editor',
+            'message_body',
+            block_quickmail_string::get('body'),
+            '',
             $this->get_custom_data('editor_options')
         )->setValue([
             'text' => $this->get_notification('body')
         ]);
         $mform->setType(
-            'message_body', 
+            'message_body',
             PARAM_RAW
         );
 
@@ -539,29 +582,27 @@ class edit_notification_form extends controller_form {
 
         $mform->addElement('static', 'reminder_description', '', $this->get_user_fields_html());
 
-        ////////////////////////////////////////////////////////////
-        ///  message_type (select)
-        ////////////////////////////////////////////////////////////
+        // Message_type (select).
         if ($this->should_show_message_type_selection()) {
             $mform->addElement(
-                'select', 
-                'message_type', 
-                block_quickmail_string::get('select_message_type'), 
+                'select',
+                'message_type',
+                block_quickmail_string::get('select_message_type'),
                 $this->get_message_type_options()
             );
-            
-            // inject default if draft mesage
+
+            // Inject default if draft mesage.
             $mform->setDefault(
-                'message_type', 
+                'message_type',
                 $this->get_notification('message_type')
             );
         } else {
             $mform->addElement(
-                'hidden', 
+                'hidden',
                 'message_type'
             );
             $mform->setDefault(
-                'message_type', 
+                'message_type',
                 $this->get_custom_data('course_config_array')['default_message_type']
             );
             $mform->setType(
@@ -570,63 +611,58 @@ class edit_notification_form extends controller_form {
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  message_send_to_mentors (radio) - copy mentors of recipients or not?
-        ////////////////////////////////////////////////////////////
+        // Message_send_to_mentors (radio) - copy mentors of recipients or not?
         if ($this->should_show_copy_mentor()) {
-            $mentor_copy_options = [
+            $mentorcopyoptions = [
                 $mform->createElement('radio', 'message_send_to_mentors', '', get_string('yes'), 1),
                 $mform->createElement('radio', 'message_send_to_mentors', '', get_string('no'), 0)
             ];
 
             $mform->addGroup(
-                $mentor_copy_options, 
-                'mentor_copy_action', 
-                block_quickmail_string::get('mentor_copy'), 
-                [' '], 
+                $mentorcopyoptions,
+                'mentor_copy_action',
+                block_quickmail_string::get('mentor_copy'),
+                [' '],
                 false
             );
             $mform->addHelpButton(
-                'mentor_copy_action', 
-                'mentor_copy', 
+                'mentor_copy_action',
+                'mentor_copy',
                 'block_quickmail'
             );
 
             $mform->setDefault(
-                'message_send_to_mentors', 
+                'message_send_to_mentors',
                 (int) $this->get_notification('send_to_mentors')
             );
         } else {
             $mform->addElement(
-                'hidden', 
-                'message_send_to_mentors', 
+                'hidden',
+                'message_send_to_mentors',
                 0
             );
             $mform->setType(
-                'message_send_to_mentors', 
+                'message_send_to_mentors',
                 PARAM_INT
             );
         }
 
-        ////////////////////////////////////////////////////////////
-        ///  buttons
-        ////////////////////////////////////////////////////////////
+        // Buttons!
         $buttons = [
             $mform->createElement('cancel', 'cancelbutton', get_string('back')),
             $mform->createElement('submit', 'next', get_string('save', 'block_quickmail')),
         ];
-        
+
         $mform->addGroup($buttons, 'actions', '&nbsp;', array(' '), false);
     }
 
     /**
      * Returns this selected notification, or if given, an attribute of this notification
-     * 
+     *
      * @param  string  $attr    optional
      * @return mixed
      */
-    private function get_notification($attr = null)
-    {
+    private function get_notification($attr = null) {
         $notification = $this->get_custom_data('notification');
 
         return ! empty($attr)
@@ -636,27 +672,25 @@ class edit_notification_form extends controller_form {
 
     /**
      * Returns this selected notification type interface, or if given, an attribute of this notification type interface
-     * 
+     *
      * @param  string  $attr    optional
      * @return mixed
      */
-    private function get_notification_type_interface($attr = null)
-    {
-        $notification_type_interface = $this->get_custom_data('notification_type_interface');
+    private function get_notification_type_interface($attr = null) {
+        $notificationtypeinterface = $this->get_custom_data('notification_type_interface');
 
         return ! empty($attr)
-            ? $notification_type_interface->get($attr)
-            : $notification_type_interface;
+            ? $notificationtypeinterface->get($attr)
+            : $notificationtypeinterface;
     }
 
     /**
      * Returns this selected notification's schedule, or if given, an attribute of this notification
-     * 
+     *
      * @param  string  $attr    optional
      * @return mixed
      */
-    private function get_schedule($attr = null)
-    {
+    private function get_schedule($attr = null) {
         if ( ! $schedule = $this->get_custom_data('schedule')) {
             return null;
         }
@@ -668,7 +702,7 @@ class edit_notification_form extends controller_form {
 
     /**
      * Returns an array of user-relative data fields that may be injected into the message body
-     * 
+     *
      * @return array
      */
     private function get_allowed_user_fields() {
@@ -677,7 +711,7 @@ class edit_notification_form extends controller_form {
 
     /**
      * Returns the HTML that should be displayed as the content of the "user substitution codes" helper display
-     * 
+     *
      * @return string
      */
     private function get_user_fields_html() {
@@ -692,16 +726,17 @@ class edit_notification_form extends controller_form {
 
     /**
      * Reports whether or not this form should display the "copy mentor" input
-     * 
+     *
      * @return bool
      */
     private function should_show_copy_mentor() {
-        return (bool) ($this->get_custom_data('allow_mentor_copy') && $this->get_custom_data('course_config_array')['allow_mentor_copy']);
+        return (bool) (
+            $this->get_custom_data('allow_mentor_copy') && $this->get_custom_data('course_config_array')['allow_mentor_copy']);
     }
 
     /**
      * Reports whether or not this form should display the message type selection input
-     * 
+     *
      * @return bool
      */
     private function should_show_message_type_selection() {
@@ -710,7 +745,7 @@ class edit_notification_form extends controller_form {
 
     /**
      * Returns the options for message type selection
-     * 
+     *
      * @return array
      */
     private function get_message_type_options() {
@@ -722,26 +757,25 @@ class edit_notification_form extends controller_form {
 
     /**
      * Returns an array of time unit options for selection
-     * 
+     *
      * @return array
      */
-    private function get_time_unit_options($units)
-    {
+    private function get_time_unit_options($units) {
         return block_quickmail_plugin::get_time_unit_selection_array($units);
     }
 
     /**
      * Returns the options for schedule time selection
-     * 
+     *
      * @param  bool  $optional  whether or not this field is optional
      * @return array
      */
     private function get_schedule_time_options($optional = true) {
-        $current_year = date("Y");
+        $currentyear = date("Y");
 
         return [
-            'startyear' => $current_year,
-            'stopyear' => $current_year + 1,
+            'startyear' => $currentyear,
+            'stopyear' => $currentyear + 1,
             'timezone' => 99,
             'step' => 15,
             'optional' => $optional
@@ -750,24 +784,22 @@ class edit_notification_form extends controller_form {
 
     /**
      * Reports whether or not the given condition key is required
-     * 
+     *
      * @param  string  $key
      * @return bool
      */
-    private function requires_condition($key)
-    {
+    private function requires_condition($key) {
         return in_array($key, $this->get_custom_data('required_condition_keys'));
     }
 
     /**
      * Returns this notification's value for the given condition key
-     * 
+     *
      * @param  string  $key
      * @return mixed
      */
-    private function get_assigned_condition($key)
-    {
-        if ( ! in_array($key, array_keys($this->get_custom_data('assigned_conditions')))) {
+    private function get_assigned_condition($key) {
+        if (!in_array($key, array_keys($this->get_custom_data('assigned_conditions')))) {
             return null;
         }
 
@@ -776,11 +808,10 @@ class edit_notification_form extends controller_form {
 
     /**
      * Returns the options condition_time_relation selection
-     * 
+     *
      * @return array
      */
-    private function get_time_relation_options()
-    {
+    private function get_time_relation_options() {
         return [
             '' => get_string('select'),
             'before' => ucfirst(get_string('before')),

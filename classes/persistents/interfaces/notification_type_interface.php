@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,13 +23,13 @@
 
 namespace block_quickmail\persistents\interfaces;
 
-interface notification_type_interface {
+defined('MOODLE_INTERNAL') || die();
 
-    // public static $notification_type_key;
+interface notification_type_interface {
 
     public function get_notification();
     public function get_notification_model();
-    public function notify($user_id = null);
+    public function notify($userid = null);
     public function is_schedulable();
     public function get_title();
     public function get_description();

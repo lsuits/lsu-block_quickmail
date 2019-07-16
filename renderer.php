@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\controllers\support\controller_form_component;
 
 use block_quickmail\components\draft_message_index_component;
@@ -37,122 +38,115 @@ use block_quickmail\components\compose_message_component;
 
 class block_quickmail_renderer extends plugin_renderer_base {
 
-    ////////////////////////////////////////
-    /// CONTROLLER FORM COMPONENTS
-    ////////////////////////////////////////
-    
+    // Controller form components.
     public function controller_form_component(controller_form_component $component) {
         return $this->render($component);
     }
 
     protected function render_controller_form_component(controller_form_component $component) {
         $out = '';
-        
-        // render heading, if it exists
+
+        // Render heading, if it exists.
         if (property_exists($component, 'heading')) {
             $out .= $this->output->heading(format_string($component->heading), 2);
         }
 
-        // render any forms
+        // Render any forms.
         $out .= $component->form->render();
 
         return $this->output->container($out, 'controller_form_component');
     }
 
-    ////////////////////////////////////////
-    /// CONTROLLER TEMPLATES
-    ////////////////////////////////////////
+    // Controller templates.
+    public function controller_component_template($componentname, $params = []) {
+        // Get class full component class name.
+        $componentclass = 'block_quickmail\components\\' . $componentname . '_component';
 
-    public function controller_component_template($component_name, $params = []) {
-        // get class full component class name
-        $component_class = 'block_quickmail\components\\' . $component_name . '_component';
-
-        // instantiate component including params
-        $component = new $component_class($params);
+        // Instantiate component including params.
+        $component = new $componentclass($params);
 
         return $this->render($component);
     }
 
-    protected function render_sent_message_index_component(sent_message_index_component $sent_message_index_component) {
-        return $this->render_from_template('block_quickmail/sent_message_index', $sent_message_index_component->export_for_template($this));
+    protected function render_sent_message_index_component(sent_message_index_component $sentmessageindexcomponent) {
+        return $this->render_from_template('block_quickmail/sent_message_index',
+            $sentmessageindexcomponent->export_for_template($this));
     }
 
-    protected function render_queued_message_index_component(queued_message_index_component $queued_message_index_component) {
-        return $this->render_from_template('block_quickmail/queued_message_index', $queued_message_index_component->export_for_template($this));
+    protected function render_queued_message_index_component(queued_message_index_component $queuedmessageindexcomponent) {
+        return $this->render_from_template('block_quickmail/queued_message_index',
+            $queuedmessageindexcomponent->export_for_template($this));
     }
 
-    protected function render_draft_message_index_component(draft_message_index_component $draft_message_index_component) {
-        return $this->render_from_template('block_quickmail/draft_message_index', $draft_message_index_component->export_for_template($this));
+    protected function render_draft_message_index_component(draft_message_index_component $draftmessageindexcomponent) {
+        return $this->render_from_template('block_quickmail/draft_message_index',
+            $draftmessageindexcomponent->export_for_template($this));
     }
 
-    protected function render_alternate_index_component(alternate_index_component $alternate_index_component) {
-        return $this->render_from_template('block_quickmail/alternate_index', $alternate_index_component->export_for_template($this));
+    protected function render_alternate_index_component(alternate_index_component $alternateindexcomponent) {
+        return $this->render_from_template('block_quickmail/alternate_index',
+            $alternateindexcomponent->export_for_template($this));
     }
 
-    protected function render_notification_index_component(notification_index_component $notification_index_component) {
-        return $this->render_from_template('block_quickmail/notification_index', $notification_index_component->export_for_template($this));
+    protected function render_notification_index_component(notification_index_component $notificationindexcomponent) {
+        return $this->render_from_template('block_quickmail/notification_index',
+            $notificationindexcomponent->export_for_template($this));
     }
 
-    protected function render_view_message_component(view_message_component $view_message_component) {
-        return $this->render_from_template('block_quickmail/view_message', $view_message_component->export_for_template($this));
+    protected function render_view_message_component(view_message_component $viewmessagecomponent) {
+        return $this->render_from_template('block_quickmail/view_message',
+            $viewmessagecomponent->export_for_template($this));
     }
 
-    ////////////////////////////////////////
-    /// BROADCAST FORM
-    ////////////////////////////////////////
-    
+    // Broadcast form.
     public function broadcast_message_component($params = []) {
-        $broadcast_message_component = new broadcast_message_component($params);
-        
-        return $this->render($broadcast_message_component);
+        $broadcastmessagecomponent = new broadcast_message_component($params);
+
+        return $this->render($broadcastmessagecomponent);
     }
 
-    protected function render_broadcast_message_component(broadcast_message_component $broadcast_message_component) {
+    protected function render_broadcast_message_component(broadcast_message_component $broadcastmessagecomponent) {
         $out = '';
-        
-        // render heading
-        $out .= $this->output->heading(format_string($broadcast_message_component->heading), 2);
 
-        // render compose form
-        $out .= $broadcast_message_component->broadcast_form->render();
+        // Render heading.
+        $out .= $this->output->heading(format_string($broadcastmessagecomponent->heading), 2);
+
+        // Render compose form.
+        $out .= $broadcastmessagecomponent->broadcast_form->render();
 
         return $this->output->container($out, 'broadcast_message_component');
     }
 
-    ////////////////////////////////////////
-    /// BROADCAST RECIPIENT FILTER RESULTS
-    ////////////////////////////////////////
-    
+    // Broadcast recipient filter results.
     public function broadcast_recipient_filter_results_component($params = []) {
-        $broadcast_recipient_filter_results_component = new broadcast_recipient_filter_results_component($params);
-        
-        return $this->render($broadcast_recipient_filter_results_component);
+        $broadcastrecipientfilterresultscomponent = new broadcast_recipient_filter_results_component($params);
+
+        return $this->render($broadcastrecipientfilterresultscomponent);
     }
 
-    protected function render_broadcast_recipient_filter_results_component(broadcast_recipient_filter_results_component $broadcast_recipient_filter_results_component) {
-        $data = $broadcast_recipient_filter_results_component->export_for_template($this);
+    protected function render_broadcast_recipient_filter_results_component(
+        broadcast_recipient_filter_results_component $broadcastrecipientfilterresultscomponent
+        ) {
+        $data = $broadcastrecipientfilterresultscomponent->export_for_template($this);
 
         return $this->render_from_template('block_quickmail/broadcast_recipient_filter_results', $data);
     }
 
-    ////////////////////////////////////////
-    /// COMPOSE FORM
-    ////////////////////////////////////////
-    
+    // Compose form.
     public function compose_message_component($params = []) {
-        $compose_message_component = new compose_message_component($params);
-        
-        return $this->render($compose_message_component);
+        $composemessagecomponent = new compose_message_component($params);
+
+        return $this->render($composemessagecomponent);
     }
 
-    protected function render_compose_message_component(compose_message_component $compose_message_component) {
+    protected function render_compose_message_component(compose_message_component $composemessagecomponent) {
         $out = '';
-        
-        // render heading
-        $out .= $this->output->heading(format_string($compose_message_component->heading), 2);
 
-        // render compose form
-        $out .= $compose_message_component->compose_form->render();
+        // Render heading.
+        $out .= $this->output->heading(format_string($composemessagecomponent->heading), 2);
+
+        // Render compose form.
+        $out .= $composemessagecomponent->compose_form->render();
 
         return $this->output->container($out, 'compose_message_component');
     }

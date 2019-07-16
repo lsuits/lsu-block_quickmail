@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,11 +23,13 @@
 
 namespace block_quickmail\tasks;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\task\adhoc_task;
 use block_quickmail\persistents\notification;
 
 class run_schedulable_notification_adhoc_task extends adhoc_task {
-    
+
     /*
      * This tasks kicks off the the process of converting a schedulable notification to a message
      *
@@ -37,9 +38,9 @@ class run_schedulable_notification_adhoc_task extends adhoc_task {
     public function execute() {
         $data = $this->get_custom_data();
 
-        // attempt to fetch the message
+        // Attempt to fetch the message.
         if ($notification = notification::find_or_null($data->notification_id)) {
-            // get the schedulable instance from this parent notification
+            // Get the schedulable instance from this parent notification.
             if ($schedulable = $notification->get_notification_type_interface()) {
                 $schedulable->run_scheduled();
             }

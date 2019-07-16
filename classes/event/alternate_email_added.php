@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,35 +27,36 @@ defined('MOODLE_INTERNAL') || die();
 
 class alternate_email_added extends \core\event\base {
     protected function init() {
-        $this->data['crud'] = 'c'; // c(reate), r(ead), u(pdate), d(elete)
+        // Standard CRUD c(reate), r(ead), u(pdate), d(elete).
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
      * Returns name of the event.
-     * 
+     *
      * @return string
      */
     public static function get_name() {
         return \block_quickmail_string::get('eventalternateemailadded');
     }
- 
+
     /**
      * Returns info on when a user with ID has viwed a control panel module (tab).
-     * 
+     *
      * @return string
      */
     public function get_description() {
         $a = (object)[];
         $a->user_id = $this->userid;
         $a->email = $this->other['address'];
-        
+
         return \block_quickmail_string::get('eventalternateemailadded_desc');
     }
- 
+
     /**
      * Returns URL of the event.
-     * 
+     *
      * @return \moodle_url
      */
     public function get_url() {
@@ -64,10 +64,10 @@ class alternate_email_added extends \core\event\base {
                     'courseid' => $this->courseid
                 ));
     }
- 
+
     /**
      * Legacy log.
-     * 
+     *
      * @return array
      */
     public function get_legacy_logdata() {

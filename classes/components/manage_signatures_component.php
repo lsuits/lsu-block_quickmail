@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 namespace block_quickmail\components;
 
 use block_quickmail\components\component;
@@ -32,51 +33,50 @@ class manage_signatures_component extends component implements \renderable {
     public $form;
 
     public $heading;
-    
+
     public function __construct($params = []) {
         parent::__construct($params);
 
-        // get prepared form data, including appropriate handling of signature_editor
-        $prepared_signature_data = $this->get_prepared_editor_signature_data($this->get_param('signature'));
+        // Get prepared form data, including appropriate handling of signature_editor.
+        $preparedsignaturedata = $this->get_prepared_editor_signature_data($this->get_param('signature'));
 
-        // set the form
+        // Set the form.
         $this->form = $this->get_param('manage_signatures_form');
-        
-        // set the form's default, prepared data
-        $this->form->set_data($prepared_signature_data);
+
+        // Set the form's default, prepared data.
+        $this->form->set_data($preparedsignaturedata);
 
         $this->heading = false;
     }
 
     /**
      * Returns prepared form data, including appropriate handling of signature_editor
-     * 
+     *
      * @param  signature|null  $signature     signature persistent, or null
      * @return array
      */
-    private function get_prepared_editor_signature_data($signature = null)
-    {
-        // if no signature was passed, create a temporary record belonging to this user
+    private function get_prepared_editor_signature_data($signature = null) {
+        // If no signature was passed, create a temporary record belonging to this user.
         $persistent = ! empty($signature) ? $signature : new signature(0, (object) ['user_id' => $this->get_param('user')->id]);
 
-        // convert the signature to a simple object
-        $signature_record = $persistent->to_record();
+        // Convert the signature to a simple object.
+        $signaturerecord = $persistent->to_record();
 
-        // set this user's text editor preference
-        $signature_record->signatureformat = (int) $this->get_param('user')->mailformat;
+        // Set this user's text editor preference.
+        $signaturerecord->signatureformat = (int) $this->get_param('user')->mailformat;
 
-        // prepare the form data to include appropriate editor content
-        $prepared_signature_data = file_prepare_standard_editor(
-            $signature_record, 
-            'signature', 
-            \block_quickmail_config::get_editor_options($this->get_param('context')), 
-            $this->get_param('context'), 
-            \block_quickmail_plugin::$name, 
+        // Prepare the form data to include appropriate editor content.
+        $preparedsignaturedata = file_prepare_standard_editor(
+            $signaturerecord,
             'signature',
-            $signature_record->id
+            \block_quickmail_config::get_editor_options($this->get_param('context')),
+            $this->get_param('context'),
+            \block_quickmail_plugin::$name,
+            'signature',
+            $signaturerecord->id
         );
 
-        return $prepared_signature_data;
+        return $preparedsignaturedata;
     }
 
 }

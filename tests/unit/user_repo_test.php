@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,280 +20,282 @@
  * @copyright  2008 onwards Chad Mazilly, Robert Russo, Jason Peak, Dave Elliott, Adam Zapletal, Philip Cali
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
 use block_quickmail\repos\user_repo;
 
 class block_quickmail_user_repo_testcase extends advanced_testcase {
-    
+
     use has_general_helpers,
         sets_up_courses,
         assigns_mentors;
 
-    public function test_get_course_user_selectable_users()
-    {
+    public function test_get_course_user_selectable_users() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        // manager: 0
-        // coursecreator: 0
-        // editingteacher: 1
-        // teacher: 3
-        // student: 40
-        // guest: 0
-        // user: 0
-        // frontpage: 0
-        $teacher = $enrolled_users['teacher'][0];
+        // Manager: 0.
+        // Coursecreator: 0.
+        // Editingteacher: 1.
+        // Teacher: 3.
+        // Student: 40.
+        // Guest: 0.
+        // User: 0.
+        // Frontpage: 0.
+        $teacher = $enrolledusers['teacher'][0];
 
-        // should have access to all users
-        $editingteacher = $enrolled_users['editingteacher'][0];
-        $student = $enrolled_users['student'][0];
+        // Should have access to all users.
+        $editingteacher = $enrolledusers['editingteacher'][0];
+        $student = $enrolledusers['student'][0];
 
-        $users = user_repo::get_course_user_selectable_users($course, $editingteacher, $course_context);
+        $users = user_repo::get_course_user_selectable_users($course, $editingteacher, $coursecontext);
 
-        $first_user = current($users);
+        $firstuser = current($users);
 
         $this->assertInternalType('array', $users);
         $this->assertCount(44, $users);
         $this->assertArrayHasKey($editingteacher->id, $users);
         $this->assertArrayHasKey($student->id, $users);
-        $this->assertInternalType('object', $first_user);
-        $this->assertObjectHasAttribute('id', $first_user);
-        $this->assertObjectHasAttribute('firstname', $first_user);
-        $this->assertObjectHasAttribute('lastname', $first_user);
+        $this->assertInternalType('object', $firstuser);
+        $this->assertObjectHasAttribute('id', $firstuser);
+        $this->assertObjectHasAttribute('firstname', $firstuser);
+        $this->assertObjectHasAttribute('lastname', $firstuser);
 
-        // should have limited access
-        $users = user_repo::get_course_user_selectable_users($course, $student, $course_context);
+        // Should have limited access.
+        $users = user_repo::get_course_user_selectable_users($course, $student, $coursecontext);
 
         $this->assertInternalType('array', $users);
         $this->assertCount(22, $users);
     }
 
-    public function test_get_course_users()
-    {
+    public function test_get_course_users() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
-        
-        $users = user_repo::get_course_users($course_context);
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
+
+        $users = user_repo::get_course_users($coursecontext);
 
         $this->assertCount(44, $users);
 
-        $first_user = reset($users);
+        $firstuser = reset($users);
 
-        $this->assertObjectHasAttribute('id', $first_user);
-        $this->assertObjectHasAttribute('firstname', $first_user);
-        $this->assertObjectHasAttribute('lastname', $first_user);
+        $this->assertObjectHasAttribute('id', $firstuser);
+        $this->assertObjectHasAttribute('firstname', $firstuser);
+        $this->assertObjectHasAttribute('lastname', $firstuser);
 
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users();
+        // Create course with enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users();
 
-        // get users from course with no users
-        $users = user_repo::get_course_users($course_context);
+        // Get users from course with no users.
+        $users = user_repo::get_course_users($coursecontext);
 
         $this->assertCount(0, $users);
     }
 
-    public function test_get_course_group_users()
-    {
+    public function test_get_course_group_users() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
-        
-        // get red group users
-        $users = user_repo::get_course_group_users($course_context, $groups['red']->id);
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
+
+        // Get red group users.
+        $users = user_repo::get_course_group_users($coursecontext, $groups['red']->id);
         $this->assertCount(11, $users);
 
-        $first_user = reset($users);
+        $firstuser = reset($users);
 
-        $this->assertObjectHasAttribute('id', $first_user);
-        $this->assertObjectHasAttribute('firstname', $first_user);
-        $this->assertObjectHasAttribute('lastname', $first_user);
+        $this->assertObjectHasAttribute('id', $firstuser);
+        $this->assertObjectHasAttribute('firstname', $firstuser);
+        $this->assertObjectHasAttribute('lastname', $firstuser);
 
-        // get yellow group users
-        $users = user_repo::get_course_group_users($course_context, $groups['yellow']->id);
+        // Get yellow group users.
+        $users = user_repo::get_course_group_users($coursecontext, $groups['yellow']->id);
         $this->assertCount(15, $users);
 
-        // get blue group users
-        $users = user_repo::get_course_group_users($course_context, $groups['blue']->id);
+        // Get blue group users.
+        $users = user_repo::get_course_group_users($coursecontext, $groups['blue']->id);
         $this->assertCount(15, $users);
 
-        // create course with enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users();
+        // Create course with enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users();
 
-        // get users from non-existent group
-        $users = user_repo::get_course_group_users($course_context, 123456);
+        // Get users from non-existent group.
+        $users = user_repo::get_course_group_users($coursecontext, 123456);
 
         $this->assertCount(0, $users);
     }
 
-    public function test_get_course_role_users()
-    {
+    public function test_get_course_role_users() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
-        
-        // editingteacher (id: 3)
-        // teacher (id: 4)
-        // student (id: 5)
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        // get editingteacher users
-        $users = user_repo::get_course_role_users($course_context, 3);
+        // Editingteacher (id: 3).
+        // Teacher (id: 4).
+        // Student (id: 5).
+
+        // Get editingteacher users.
+        $users = user_repo::get_course_role_users($coursecontext, 3);
         $this->assertCount(1, $users);
 
-        $first_user = reset($users);
+        $firstuser = reset($users);
 
-        $this->assertObjectHasAttribute('id', $first_user);
-        $this->assertObjectHasAttribute('firstname', $first_user);
-        $this->assertObjectHasAttribute('lastname', $first_user);
+        $this->assertObjectHasAttribute('id', $firstuser);
+        $this->assertObjectHasAttribute('firstname', $firstuser);
+        $this->assertObjectHasAttribute('lastname', $firstuser);
 
-        // get teacher users
-        $users = user_repo::get_course_role_users($course_context, 4);
+        // Get teacher users.
+        $users = user_repo::get_course_role_users($coursecontext, 4);
         $this->assertCount(3, $users);
 
-        // get student users
-        $users = user_repo::get_course_role_users($course_context, 5);
+        // Get student users.
+        $users = user_repo::get_course_role_users($coursecontext, 5);
         $this->assertCount(40, $users);
 
-        // create course with no enrolled users
-        list($course, $course_context, $users) = $this->setup_course_with_users();
+        // Create course with no enrolled users.
+        list($course, $coursecontext, $users) = $this->setup_course_with_users();
 
-        // get editingteacher users
-        $users = user_repo::get_course_role_users($course_context, 3);
+        // Get editingteacher users.
+        $users = user_repo::get_course_role_users($coursecontext, 3);
         $this->assertCount(0, $users);
 
-        // get teacher users
-        $users = user_repo::get_course_role_users($course_context, 3);
+        // Get teacher users.
+        $users = user_repo::get_course_role_users($coursecontext, 3);
         $this->assertCount(0, $users);
 
-        // get student users
-        $users = user_repo::get_course_role_users($course_context, 3);
+        // Get student users.
+        $users = user_repo::get_course_role_users($coursecontext, 3);
         $this->assertCount(0, $users);
     }
 
-    public function test_get_unique_course_user_ids_from_selected_entities_scenario_one()
-    {
+    public function test_get_unique_course_user_ids_from_selected_entities_scenario_one() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        $editingteacher = $enrolled_users['editingteacher'][0];
-        $student = $enrolled_users['student'][0];
+        $editingteacher = $enrolledusers['editingteacher'][0];
+        $student = $enrolledusers['student'][0];
 
-        // get posted includs/excludes
-        list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_one($enrolled_users, $groups);
+        // Get posted includs/excludes.
+        list($includedentityids, $excludedentityids) = $this->get_post_scenario_one($enrolledusers, $groups);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
+        $userids = user_repo::get_unique_course_user_ids_from_selected_entities($course,
+                                                                                $editingteacher,
+                                                                                $includedentityids,
+                                                                                $excludedentityids);
 
-        $this->assertCount(23, $user_ids);
+        $this->assertCount(23, $userids);
     }
 
-    public function test_get_unique_course_user_ids_from_selected_entities_scenario_two()
-    {
+    public function test_get_unique_course_user_ids_from_selected_entities_scenario_two() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        $editingteacher = $enrolled_users['editingteacher'][0];
-        $student = $enrolled_users['student'][0];
+        $editingteacher = $enrolledusers['editingteacher'][0];
+        $student = $enrolledusers['student'][0];
 
-        // get posted includs/excludes
-        list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_two($enrolled_users, $groups);
+        // Get posted includs/excludes.
+        list($includedentityids, $excludedentityids) = $this->get_post_scenario_two($enrolledusers, $groups);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
+        $userids = user_repo::get_unique_course_user_ids_from_selected_entities($course,
+                                                                                $editingteacher,
+                                                                                $includedentityids,
+                                                                                $excludedentityids);
 
-        $this->assertCount(10, $user_ids);
+        $this->assertCount(10, $userids);
     }
 
-    public function test_get_unique_course_user_ids_from_selected_entities_scenario_three()
-    {
+    public function test_get_unique_course_user_ids_from_selected_entities_scenario_three() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        $editingteacher = $enrolled_users['editingteacher'][0];
-        $student = $enrolled_users['student'][0];
+        $editingteacher = $enrolledusers['editingteacher'][0];
+        $student = $enrolledusers['student'][0];
 
-        // get posted includs/excludes
-        list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_three($enrolled_users);
+        // Get posted includs/excludes.
+        list($includedentityids, $excludedentityids) = $this->get_post_scenario_three($enrolledusers);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
+        $userids = user_repo::get_unique_course_user_ids_from_selected_entities($course,
+                                                                                $editingteacher,
+                                                                                $includedentityids,
+                                                                                $excludedentityids);
 
-        $this->assertCount(13, $user_ids);
+        $this->assertCount(13, $userids);
     }
 
-    public function test_get_unique_course_user_ids_from_selected_entities_scenario_four()
-    {
+    public function test_get_unique_course_user_ids_from_selected_entities_scenario_four() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        $editingteacher = $enrolled_users['editingteacher'][0];
-        $student = $enrolled_users['student'][0];
+        $editingteacher = $enrolledusers['editingteacher'][0];
+        $student = $enrolledusers['student'][0];
 
-        // get posted includs/excludes
-        list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_four($enrolled_users);
+        // Get posted includs/excludes.
+        list($includedentityids, $excludedentityids) = $this->get_post_scenario_four($enrolledusers);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
+        $userids = user_repo::get_unique_course_user_ids_from_selected_entities($course,
+                                                                                $editingteacher,
+                                                                                $includedentityids,
+                                                                                $excludedentityids);
 
-        $this->assertCount(15, $user_ids);
+        $this->assertCount(15, $userids);
     }
 
-    public function test_get_unique_course_user_ids_from_selected_entities_scenario_five()
-    {
+    public function test_get_unique_course_user_ids_from_selected_entities_scenario_five() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        $editingteacher = $enrolled_users['editingteacher'][0];
-        $student = $enrolled_users['student'][0];
+        $editingteacher = $enrolledusers['editingteacher'][0];
+        $student = $enrolledusers['student'][0];
 
-        // get posted includs/excludes
-        list($included_entity_ids, $excluded_entity_ids) = $this->get_post_scenario_five($enrolled_users, $groups);
+        // Get posted includs/excludes.
+        list($includedentityids, $excludedentityids) = $this->get_post_scenario_five($enrolledusers, $groups);
 
-        $user_ids = user_repo::get_unique_course_user_ids_from_selected_entities($course, $editingteacher, $included_entity_ids, $excluded_entity_ids);
+        $userids = user_repo::get_unique_course_user_ids_from_selected_entities($course,
+                                                                                $editingteacher,
+                                                                                $includedentityids,
+                                                                                $excludedentityids);
 
-        $this->assertCount(15, $user_ids);
+        $this->assertCount(15, $userids);
     }
 
-    public function test_get_mentors_of_user()
-    {
+    public function test_get_mentors_of_user() {
         $this->resetAfterTest(true);
 
-        list($course, $course_context, $enrolled_users, $groups) = $this->create_course_with_users_and_groups();
-        
-        // pick the first student to be the mentee
-        $mentee_user = reset($enrolled_users['student']);
+        list($course, $coursecontext, $enrolledusers, $groups) = $this->create_course_with_users_and_groups();
 
-        // attempt to fetch all mentors of this mentee (should be none)
-        $mentor_users = user_repo::get_mentors_of_user($mentee_user);
+        // Pick the first student to be the mentee.
+        $menteeuser = reset($enrolledusers['student']);
 
-        $this->assertCount(0, $mentor_users);
+        // Attempt to fetch all mentors of this mentee (should be none).
+        $mentorusers = user_repo::get_mentors_of_user($menteeuser);
 
-        // create mentor for the mentee
-        $mentor_user = $this->create_mentor_for_user($mentee_user);
+        $this->assertCount(0, $mentorusers);
 
-        $mentor_users = user_repo::get_mentors_of_user($mentee_user);
+        // Create mentor for the mentee.
+        $mentoruser = $this->create_mentor_for_user($menteeuser);
 
-        $this->assertCount(1, $mentor_users);
+        $mentorusers = user_repo::get_mentors_of_user($menteeuser);
 
-        $first_mentor = reset($mentor_users);
+        $this->assertCount(1, $mentorusers);
 
-        $this->assertObjectHasAttribute('id', $first_mentor);
-        $this->assertObjectHasAttribute('firstname', $first_mentor);
-        $this->assertObjectHasAttribute('lastname', $first_mentor);
+        $firstmentor = reset($mentorusers);
+
+        $this->assertObjectHasAttribute('id', $firstmentor);
+        $this->assertObjectHasAttribute('firstname', $firstmentor);
+        $this->assertObjectHasAttribute('lastname', $firstmentor);
     }
 
-    ///////////////////////////////////////////////
-    ///
-    /// HELPERS
-    /// 
-    //////////////////////////////////////////////
-
-    // first 4 students from group "red" are in group "yellow" as well
-    // first 4 students from group "yellow" are in group "blue" as well
+    // Helpers.
+    // First 4 students from group "red" are in group "yellow" as well.
+    // First 4 students from group "yellow" are in group "blue" as well.
 
     /**
      * This returns include and excluded "entity ids" (user_, role_, group_)
@@ -308,32 +309,30 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
      * This scenario will return excluded:
      * - none
      */
-    private function get_post_scenario_one($enrolled_users, $groups)
-    {
-        $included_entity_ids = [];
-        $excluded_entity_ids = [];
-        
-        // INCLUDES
+    private function get_post_scenario_one($enrolledusers, $groups) {
+        $includedentityids = [];
+        $excludedentityids = [];
 
-        // include a specified amount of students from each group
+        // Includes.
+        // Include a specified amount of students from each group.
         $offset = 0;
         foreach ([3, 5, 8] as $amount) {
-            // pull amount of students from group
-            $included_students = array_slice($enrolled_users['student'], $offset, $amount);
+            // Pull amount of students from group.
+            $includedstudents = array_slice($enrolledusers['student'], $offset, $amount);
 
-            // push with user_ prefix into included
-            $included_entity_ids = array_merge($included_entity_ids, array_map(function($user) {
+            // Push with user_ prefix into included.
+            $includedentityids = array_merge($includedentityids, array_map(function($user) {
                 return 'user_' . $user->id;
-            }, $included_students));
+            }, $includedstudents));
 
-            // skip to next group
+            // Skip to next group.
             $offset += 10;
         }
 
-        // include yellow group
-        $included_entity_ids = array_merge($included_entity_ids, ['group_' . $groups['yellow']->id]);
+        // Include yellow group.
+        $includedentityids = array_merge($includedentityids, ['group_' . $groups['yellow']->id]);
 
-        return [$included_entity_ids, $excluded_entity_ids];
+        return [$includedentityids, $excludedentityids];
     }
 
     /**
@@ -348,43 +347,40 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
      * This scenario will return excluded:
      * - none
      */
-    private function get_post_scenario_two($enrolled_users, $groups)
-    {
-        $included_entity_ids = [];
-        $excluded_entity_ids = [];
-        
-        // INCLUDES
+    private function get_post_scenario_two($enrolledusers, $groups) {
+        $includedentityids = [];
+        $excludedentityids = [];
 
-        // include a specified amount of students from each group
+        // Includes.
+        // Include a specified amount of students from each group.
         $offset = 0;
         foreach ([9, 1, 3] as $amount) {
-            // pull amount of students from group
-            $included_students = array_slice($enrolled_users['student'], $offset, $amount);
+            // Pull amount of students from group.
+            $includedstudents = array_slice($enrolledusers['student'], $offset, $amount);
 
-            // push with user_ prefix into included
-            $included_entity_ids = array_merge($included_entity_ids, array_map(function($user) {
+            // Push with user_ prefix into included.
+            $includedentityids = array_merge($includedentityids, array_map(function($user) {
                 return 'user_' . $user->id;
-            }, $included_students));
+            }, $includedstudents));
 
-            // skip to next group
+            // Skip to next group.
             $offset += 10;
         }
 
-        // include red group
-        $included_entity_ids = array_merge($included_entity_ids, ['group_' . $groups['red']->id]);
+        // Include red group.
+        $includedentityids = array_merge($includedentityids, ['group_' . $groups['red']->id]);
 
-        // include blue group
-        $included_entity_ids = array_merge($included_entity_ids, ['group_' . $groups['blue']->id]);
+        // Include blue group.
+        $includedentityids = array_merge($includedentityids, ['group_' . $groups['blue']->id]);
 
-        // EXCLUDES
+        // Excludes.
+        // Exclude red group.
+        $excludedentityids = array_merge($excludedentityids, ['group_' . $groups['red']->id]);
 
-        // exclude red group
-        $excluded_entity_ids = array_merge($excluded_entity_ids, ['group_' . $groups['red']->id]);
+        // Exclude yellow group.
+        $excludedentityids = array_merge($excludedentityids, ['group_' . $groups['yellow']->id]);
 
-        // exclude yellow group
-        $excluded_entity_ids = array_merge($excluded_entity_ids, ['group_' . $groups['yellow']->id]);
-
-        return [$included_entity_ids, $excluded_entity_ids];
+        return [$includedentityids, $excludedentityids];
     }
 
     /**
@@ -398,110 +394,102 @@ class block_quickmail_user_repo_testcase extends advanced_testcase {
      * This scenario will return excluded:
      * - none
      */
-    private function get_post_scenario_three($enrolled_users)
-    {
-        $included_entity_ids = [];
-        $excluded_entity_ids = [];
-        
-        // INCLUDES
+    private function get_post_scenario_three($enrolledusers) {
+        $includedentityids = [];
+        $excludedentityids = [];
 
-        // include a specified amount of students from each group
+        // Includes.
+        // Include a specified amount of students from each group.
         $offset = 0;
         foreach ([2, 4, 6] as $amount) {
-            // pull amount of students from group
-            $included_students = array_slice($enrolled_users['student'], $offset, $amount);
+            // Pull amount of students from group.
+            $includedstudents = array_slice($enrolledusers['student'], $offset, $amount);
 
-            // push with user_ prefix into included
-            $included_entity_ids = array_merge($included_entity_ids, array_map(function($user) {
+            // Push with user_ prefix into included.
+            $includedentityids = array_merge($includedentityids, array_map(function($user) {
                 return 'user_' . $user->id;
-            }, $included_students));
+            }, $includedstudents));
 
-            // skip to next group
+            // Skip to next group.
             $offset += 10;
         }
 
-        // include editingteacher role
-        $included_entity_ids = array_merge($included_entity_ids, ['role_3']);
+        // Include editingteacher role.
+        $includedentityids = array_merge($includedentityids, ['role_3']);
 
-        return [$included_entity_ids, $excluded_entity_ids];
+        return [$includedentityids, $excludedentityids];
     }
 
     /**
      * This returns: 15 net included users
      */
-    private function get_post_scenario_four($enrolled_users)
-    {
-        $included_entity_ids = [];
-        $excluded_entity_ids = [];
-        
-        // INCLUDES
+    private function get_post_scenario_four($enrolledusers) {
+        $includedentityids = [];
+        $excludedentityids = [];
 
-        // include a specified amount of students from each group
+        // Includes.
+        // Include a specified amount of students from each group.
         $offset = 0;
         foreach ([2, 4, 6] as $amount) {
-            // pull amount of students from group
-            $included_students = array_slice($enrolled_users['student'], $offset, $amount);
+            // Pull amount of students from group.
+            $includedstudents = array_slice($enrolledusers['student'], $offset, $amount);
 
-            // push with user_ prefix into included
-            $included_entity_ids = array_merge($included_entity_ids, array_map(function($user) {
+            // Push with user_ prefix into included.
+            $includedentityids = array_merge($includedentityids, array_map(function($user) {
                 return 'user_' . $user->id;
-            }, $included_students));
+            }, $includedstudents));
 
-            // skip to next group
+            // Skip to next group.
             $offset += 10;
         }
 
-        // include editingteacher role
-        $included_entity_ids = array_merge($included_entity_ids, ['role_3']);
-        
-        // include teacher role
-        $included_entity_ids = array_merge($included_entity_ids, ['role_4']);
+        // Include editingteacher role.
+        $includedentityids = array_merge($includedentityids, ['role_3']);
 
-        // EXCLUDES
+        // Include teacher role.
+        $includedentityids = array_merge($includedentityids, ['role_4']);
 
-        // exclude editingteacher role
-        $excluded_entity_ids = array_merge($excluded_entity_ids, ['role_3']);
+        // Excludes.
+        // Exclude editingteacher role.
+        $excludedentityids = array_merge($excludedentityids, ['role_3']);
 
-        return [$included_entity_ids, $excluded_entity_ids];
+        return [$includedentityids, $excludedentityids];
     }
 
     /**
      * This returns: 15 net included users
      */
-    private function get_post_scenario_five($enrolled_users, $groups)
-    {
-        $included_entity_ids = [];
-        $excluded_entity_ids = [];
-        
-        // INCLUDES
+    private function get_post_scenario_five($enrolledusers, $groups) {
+        $includedentityids = [];
+        $excludedentityids = [];
 
-        // include a specified amount of students from each group
+        // Includes.
+        // Include a specified amount of students from each group.
         $offset = 0;
         foreach ([3, 10, 3] as $amount) {
-            // pull amount of students from group
-            $included_students = array_slice($enrolled_users['student'], $offset, $amount);
+            // Pull amount of students from group.
+            $includedstudents = array_slice($enrolledusers['student'], $offset, $amount);
 
-            // push with user_ prefix into included
-            $included_entity_ids = array_merge($included_entity_ids, array_map(function($user) {
+            // Push with user_ prefix into included.
+            $includedentityids = array_merge($includedentityids, array_map(function($user) {
                 return 'user_' . $user->id;
-            }, $included_students));
+            }, $includedstudents));
 
-            // skip to next group
+            // Skip to next group.
             $offset += 10;
         }
 
-        // include teacher role
-        $included_entity_ids = array_merge($included_entity_ids, ['role_4']);
+        // Include teacher role.
+        $includedentityids = array_merge($includedentityids, ['role_4']);
 
-        // EXCLUDES
+        // Excludes.
+        // Exclude editingteacher role.
+        $excludedentityids = array_merge($excludedentityids, ['role_3']);
 
-        // exclude editingteacher role
-        $excluded_entity_ids = array_merge($excluded_entity_ids, ['role_3']);
+        // Exclude red group.
+        $excludedentityids = array_merge($excludedentityids, ['group_' . $groups['red']->id]);
 
-        // exclude red group
-        $excluded_entity_ids = array_merge($excluded_entity_ids, ['group_' . $groups['red']->id]);
-
-        return [$included_entity_ids, $excluded_entity_ids];
+        return [$includedentityids, $excludedentityids];
     }
 
 }

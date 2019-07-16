@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\tasks;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core\task\scheduled_task;
 use block_quickmail_string;
 use block_quickmail\migrator\migrator;
@@ -31,26 +32,26 @@ use block_quickmail\migrator\chunk_size_met_exception;
 use core\task\manager as task_manager;
 
 class migrate_legacy_data_task extends scheduled_task {
-    
-    public function get_name()
-    {
+
+    public function get_name() {
         return block_quickmail_string::get('migrate_legacy_data_task');
     }
 
     /*
      * This task migrates historical data from Quickmail v1 schema to v2 schema
      *
-     * The idea is that, if enabled, this task will continue to transfer data from block_quickmail_log and block_quickmail_drafts until completion
+     * The idea is that, if enabled, this task will continue
+     * to transfer data from block_quickmail_log and block_quickmail_drafts until completion
      *
      * Required custom data: none
      */
-    public function execute()
-    {
+    public function execute() {
         try {
             migrator::execute();
         } catch (chunk_size_met_exception $e) {
             return true;
         } catch (\Exception $e) {
+            // TODO: Localize this string.
             return 'something has gone wrong in the migration process: ' . $e->getMessage();
         }
     }

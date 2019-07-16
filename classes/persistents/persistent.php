@@ -18,7 +18,7 @@
  * Duplication of persistent base class (as of core: 2018051700.04)
  *
  * This is necessary for supporting older moodle versions which do not include this class
- * 
+ *
  * Abstract class for objects saved to the DB.
  *
  * @package    core

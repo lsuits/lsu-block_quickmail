@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\repos;
 
+defined('MOODLE_INTERNAL') || die();
+
 use block_quickmail\repos\repo;
 use block_quickmail\repos\interfaces\user_repo_interface;
 use context_course;
@@ -35,11 +36,11 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
 
 class user_repo extends repo implements user_repo_interface {
 
-    public $default_sort = 'id';
+    public $defaultsort = 'id';
 
-    public $default_dir = 'asc';
-    
-    public $sortable_attrs = [
+    public $defaultdir = 'asc';
+
+    public $sortableattrs = [
         'id' => 'id',
     ];
 
@@ -48,95 +49,93 @@ class user_repo extends repo implements user_repo_interface {
      *
      * @param  object  $course
      * @param  object  $user
-     * @param  object  $course_context  optional, if not given, will be resolved
+     * @param  object  $coursecontext  optional, if not given, will be resolved
      * @return array   keyed by user id
      */
-    public static function get_course_user_selectable_users($course, $user, $course_context = null)
-    {
-        // if a context was not passed, pull one now
-        $course_context = $course_context ?: context_course::instance($course->id);
+    public static function get_course_user_selectable_users($course, $user, $coursecontext = null) {
+        // If a context was not passed, pull one now.
+        $coursecontext = $coursecontext ?: context_course::instance($course->id);
 
-        // if user cannot access all groups in the course, and the course is set to be strict
-        if ( ! block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $course_context) && block_quickmail_config::be_ferpa_strict_for_course($course)) {
-            // get all users with non-"group limited role"'s
-            $allaccess_users = get_enrolled_users($course_context, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
+        // If user cannot access all groups in the course, and the course is set to be strict.
+        if (!block_quickmail_plugin::user_has_capability('viewgroupusers', $user, $coursecontext)
+            && block_quickmail_config::be_ferpa_strict_for_course($course)) {
+            // Get all users with non-"group limited role"'s.
+            $allaccessusers = get_enrolled_users($coursecontext, 'moodle/site:accessallgroups', 0, 'u.*', null, 0, 0, true);
 
-            // get the groups that this user is associated with
-            $groups = group_repo::get_course_user_groups($course, $user, $course_context);
+            // Get the groups that this user is associated with.
+            $groups = group_repo::get_course_user_groups($course, $user, $coursecontext);
 
-            $group_ids = array_keys($groups);
+            $groupids = array_keys($groups);
 
-            // get all users within any groups the user belongs to
-            $peer_users = self::get_course_group_users($course_context, $group_ids, true, 'u.*');
+            // Get all users within any groups the user belongs to.
+            $peerusers = self::get_course_group_users($coursecontext, $groupids, true, 'u.*');
 
-            $users = array_merge($allaccess_users, $peer_users);
+            $users = array_merge($allaccessusers, $peerusers);
 
-            // be sure that we have unique users
+            // Be sure that we have unique users.
             $users = array_unique($users, SORT_REGULAR);
         } else {
-            // get all users in course
-            $users = self::get_course_users($course_context);
+            // Get all users in course.
+            $users = self::get_course_users($coursecontext);
         }
-        
+
         return $users;
     }
 
     /**
      * Get all users within a course
-     * 
-     * @param  object  $course_context  must be a course context
-     * @param  boolean $active_only     whether or not to filter by active enrollment, defaults to true
-     * @param  string  $user_fields     comma-separated list of fields to include in results, must be prefixed with "u."
-     * @param  integer $group_id        group id to filter by, should be left as default (0) for pulling all course users
+     *
+     * @param  object  $coursecontext  must be a course context
+     * @param  boolean $activeonly     whether or not to filter by active enrollment, defaults to true
+     * @param  string  $userfields     comma-separated list of fields to include in results, must be prefixed with "u."
+     * @param  integer $groupid        group id to filter by, should be left as default (0) for pulling all course users
      * @return array
      */
-    public static function get_course_users($course_context, $active_only = true, $user_fields = null, $group_id = 0)
-    {
-        // set fields to include
-        $user_fields = ! empty($user_fields) ? $user_fields : 'u.id,u.firstname,u.lastname';
+    public static function get_course_users($coursecontext, $activeonly = true, $userfields = null, $groupid = 0) {
+        // Set fields to include.
+        $userfields = ! empty($userfields) ? $userfields : 'u.id,u.firstname,u.lastname';
 
-        $users = get_enrolled_users($course_context, '', $group_id, $user_fields, null, 0, 0, $active_only);
+        $users = get_enrolled_users($coursecontext, '', $groupid, $userfields, null, 0, 0, $activeonly);
 
         return $users;
     }
 
     /**
      * Get all users within a course group
-     * 
-     * @param  object  $course_context  must be a course context
-     * @param  mixed   $group_id        a group id, or an array of group ids
-     * @param  boolean $active_only     whether or not to filter by active enrollment, defaults to true
-     * @param  string  $user_fields     comma-separated list of fields to include in results, must be prefixed with "u."
+     *
+     * @param  object  $coursecontext  must be a course context
+     * @param  mixed   $groupid        a group id, or an array of group ids
+     * @param  boolean $activeonly     whether or not to filter by active enrollment, defaults to true
+     * @param  string  $userfields     comma-separated list of fields to include in results, must be prefixed with "u."
      * @return array   keyed by user id
      */
-    public static function get_course_group_users($course_context, $group_id, $active_only = true, $user_fields = null)
-    {
-        // if this is a single group, return all users for the group
-        if ( ! is_array($group_id)) {
-            $group_users = self::get_course_users($course_context, $active_only, $user_fields, $group_id);
+    public static function get_course_group_users($coursecontext, $groupid, $activeonly = true, $userfields = null) {
+        // If this is a single group, return all users for the group.
+        if (!is_array($groupid)) {
+            $groupusers = self::get_course_users($coursecontext, $activeonly, $userfields, $groupid);
 
             $users = [];
 
-            // rekey the returned array by user id
-            foreach ($group_users as $group_user) {
-                $users[$group_user->id] = $group_user;
+            // Rekey the returned array by user id.
+            foreach ($groupusers as $groupuser) {
+                $users[$groupuser->id] = $groupuser;
             }
-        
-        // otherwise, get the unique users within the given list of group ids
+
+            // Otherwise, get the unique users within the given list of group ids.
         } else {
             $users = [];
 
-            // for each given group id
-            foreach ($group_id as $gid) {
-                // pull the users within the group
-                $group_users = self::get_course_users($course_context, $active_only, $user_fields, $gid);
+            // For each given group id.
+            foreach ($groupid as $gid) {
+                // Pull the users within the group.
+                $groupusers = self::get_course_users($coursecontext, $activeonly, $userfields, $gid);
 
-                // add each to the container
-                foreach ($group_users as $group_user) {
-                    $users[$group_user->id] = $group_user;
+                // Add each to the container.
+                foreach ($groupusers as $groupuser) {
+                    $users[$groupuser->id] = $groupuser;
                 }
 
-                // be sure we have a unique list of users (still necessary?)
+                // Be sure we have a unique list of users (still necessary?).
                 $users = array_unique($users, SORT_REGULAR);
             }
         }
@@ -146,47 +145,46 @@ class user_repo extends repo implements user_repo_interface {
 
     /**
      * Get all users with a given role (or roles) within a given course
-     * 
-     * @param  object  $course_context  must be a course context
-     * @param  mixed   $role_id         a role id, or an array of role ids
-     * @param  boolean $active_only     whether or not to filter by active enrollment, defaults to true
-     * @param  string  $user_fields     comma-separated list of fields to include in results, must be prefixed with "u."
+     *
+     * @param  object  $coursecontext  must be a course context
+     * @param  mixed   $roleid         a role id, or an array of role ids
+     * @param  boolean $activeonly     whether or not to filter by active enrollment, defaults to true
+     * @param  string  $userfields     comma-separated list of fields to include in results, must be prefixed with "u."
      * @return array   keyed by user id
      */
-    public static function get_course_role_users($course_context, $role_id, $active_only = true, $user_fields = null)
-    {
-        // set fields to include
-        $user_fields = ! empty($user_fields) ? $user_fields : 'u.id,u.firstname,u.lastname';
+    public static function get_course_role_users($coursecontext, $roleid, $activeonly = true, $userfields = null) {
+        // Set fields to include.
+        $userfields = ! empty($userfields) ? $userfields : 'u.id,u.firstname,u.lastname';
 
-        $order_by = 'u.firstname ASC';
+        $orderby = 'u.firstname ASC';
 
-        // if this is a single role, return all users for the role
-        if ( ! is_array($role_id)) {
-            // pull all
-            $role_users = get_role_users($role_id, $course_context, false, $user_fields, $order_by, ! $active_only);
+        // If this is a single role, return all users for the role.
+        if (!is_array($roleid)) {
+            // Pull all.
+            $roleusers = get_role_users($roleid, $coursecontext, false, $userfields, $orderby, ! $activeonly);
 
             $users = [];
 
-            // rekey the returned array by user id
-            foreach ($role_users as $role_user) {
-                $users[$role_user->id] = $role_user;
+            // Rekey the returned array by user id.
+            foreach ($roleusers as $roleuser) {
+                $users[$roleuser->id] = $roleuser;
             }
-        
-        // otherwise, get the unique users within the given list of role ids
+
+            // Otherwise, get the unique users within the given list of role ids.
         } else {
             $users = [];
 
-            // for each given role id
-            foreach ($role_id as $rid) {
-                // pull the users within the role
-                $role_users = get_role_users($rid, $course_context, false, $user_fields, $order_by, ! $active_only);
+            // For each given role id.
+            foreach ($roleid as $rid) {
+                // Pull the users within the role.
+                $roleusers = get_role_users($rid, $coursecontext, false, $userfields, $orderby, ! $activeonly);
 
-                // add each to the container
-                foreach ($role_users as $role_user) {
-                    $users[$role_user->id] = $role_user;
+                // Add each to the container.
+                foreach ($roleusers as $roleuser) {
+                    $users[$roleuser->id] = $roleuser;
                 }
 
-                // be sure we have a unique list of users (still necessary?)
+                // Be sure we have a unique list of users (still necessary?).
                 $users = array_unique($users, SORT_REGULAR);
             }
         }
@@ -196,39 +194,39 @@ class user_repo extends repo implements user_repo_interface {
 
     /**
      * Returns an array of unique user ids, "selectable" by the given user, given arrays of included and excluded "entity ids"
-     * 
+     *
      * @param  object  $course
      * @param  object  $user
-     * @param  array   $included_entity_ids   [role_(role id), group_(group id), user_(user id)]
-     * @param  array   $excluded_entity_ids   [role_(role id), group_(group id), user_(user id)]
+     * @param  array   $includedentityids   [role_(role id), group_(group id), user_(user id)]
+     * @param  array   $excludedentityids   [role_(role id), group_(group id), user_(user id)]
      * @return array
      */
-    public static function get_unique_course_user_ids_from_selected_entities($course, $user, $included_entity_ids = [], $excluded_entity_ids = [])
-    {
-        $result_user_ids = [];
+    public static function get_unique_course_user_ids_from_selected_entities(
+            $course,
+            $user,
+            $includedentityids = [],
+            $excludedentityids = []) {
+        $resultuserids = [];
 
-        // if none included, return no results
-        if (empty($included_entity_ids)) {
-            return $result_user_ids;
+        // If none included, return no results.
+        if (empty($includedentityids)) {
+            return $resultuserids;
         }
 
-        // make sure there are no duplicates in the incoming arrays
-        $included_entity_ids = array_unique($included_entity_ids);
-        $excluded_entity_ids = array_unique($excluded_entity_ids);
+        // Make sure there are no duplicates in the incoming arrays.
+        $includedentityids = array_unique($includedentityids);
+        $excludedentityids = array_unique($excludedentityids);
 
-        // determine whether or not we're sending to all
-        $sending_to_all = in_array('all', $included_entity_ids);
+        // Determine whether or not we're sending to all.
+        $sendingtoall = in_array('all', $includedentityids);
 
-        // ignore "exclude all"
-        if (($key = array_search('all', $excluded_entity_ids)) !== false) {
-            unset($excluded_entity_ids[$key]);
+        // Ignore "exclude all".
+        if (($key = array_search('all', $excludedentityids)) !== false) {
+            unset($excludedentityids[$key]);
         }
 
-        //////////////////////////////////////////////////////////////
-        /// CREATE A CONTAINER FOR INCLUDED/EXCLUDED ROLE/GROUP IDS
-        //////////////////////////////////////////////////////////////
-
-        $filtered_entity_ids = [
+        // Create a container for included/excluded role/group IDs.
+        $filteredentityids = [
             'included' => [
                 'role' => [],
                 'group' => [],
@@ -239,187 +237,170 @@ class user_repo extends repo implements user_repo_interface {
             ]
         ];
 
-        //////////////////////////////////////////////////////////////
-        /// EXTRACT TABLE IDS FOR ROLES/GROUPS, ADDING THEM TO THE CONTAINER
-        //////////////////////////////////////////////////////////////
-
-        // iterate through (included, excluded)
-        foreach ($filtered_entity_ids as $type => $entity) {
-            // if we're sending to all, do not worry about determining included ids
-            if ($sending_to_all && $type == 'included') {
+        // Extrct table IDs for roles/groups, adding them to the container.
+        // Iterate through (included, excluded).
+        foreach ($filteredentityids as $type => $entity) {
+            // If we're sending to all, do not worry about determining included ids.
+            if ($sendingtoall && $type == 'included') {
                 continue;
             }
 
-            // iterate through each entity name within this type (role, group)
+            // Iterate through each entity name within this type (role, group).
             foreach ($entity as $name => $keys) {
-                $type_key = $type . '_entity_ids';
+                $typekey = $type . 'entityids';
 
-                // get entity keys for this included/excluded role/group
-                $entity_keys = array_filter($$type_key, function($key) use ($name) {
+                // Get entity keys for this included/excluded role/group.
+                $entitykeys = array_filter($$typekey, function($key) use ($name) {
                     return strpos($key, $name . '_') === 0;
                 });
 
-                // remove entity name prefix and add to filtered results
-                $filtered_entity_ids[$type][$name] = array_map(function($key) use ($name) {
+                // Remove entity name prefix and add to filtered results.
+                $filteredentityids[$type][$name] = array_map(function($key) use ($name) {
                     return str_replace($name . '_', '', $key);
-                }, $entity_keys);
+                }, $entitykeys);
             }
         }
 
-        //////////////////////////////////////////////////////////////
-        /// REMOVE ANY EXCLUDED ROLE/GROUP IDS FROM EXISTING INCLUDED ROLE/GROUP IDS IN THE CONTAINER
-        //////////////////////////////////////////////////////////////
-
-        // iterate through excluded entity names (role, group)
-        foreach ($filtered_entity_ids['excluded'] as $name => $entity_keys) {
-            // iterate through each value in this excluded role/group
-            foreach ($entity_keys as $key_key => $key_value) {
-                // if this excluded role/group value appears in the included container
-                if (in_array($key_value, $filtered_entity_ids['included'][$name])) {
-                    // get the array key within the included container
-                    $included_key = array_search($key_value, $filtered_entity_ids['included'][$name]);
-                    // remove this value from both the includes and excludes
-                    unset($filtered_entity_ids['included'][$name][$included_key]);
-                    // unset($filtered_entity_ids['excluded'][$name][$key_key]); // <-- this was causing problems, removing for now
+        // Remove any excluded role/group IDs from existing included role/group IDs in the container.
+        // Iterate through excluded entity names (role, group).
+        foreach ($filteredentityids['excluded'] as $name => $entitykeys) {
+            // Iterate through each value in this excluded role/group.
+            foreach ($entitykeys as $keykey => $keyvalue) {
+                // If this excluded role/group value appears in the included container.
+                if (in_array($keyvalue, $filteredentityids['included'][$name])) {
+                    // Get the array key within the included container.
+                    $includedkey = array_search($keyvalue, $filteredentityids['included'][$name]);
+                    // Remove this value from both the includes and excludes.
+                    unset($filteredentityids['included'][$name][$includedkey]);
                 }
             }
         }
 
-        // get course context for use in upcoming queries
-        $course_context = context_course::instance($course->id);
+        // Get course context for use in upcoming queries.
+        $coursecontext = context_course::instance($course->id);
 
-        // create two new containers for final output of included/excluded user ids
-        $included_user_ids = [];
-        $excluded_user_ids = [];
+        // Create two new containers for final output of included/excluded user ids.
+        $includeduserids = [];
+        $excludeduserids = [];
 
-        //////////////////////////////////////////////////////////////
-        /// PULL ALL USERS FOR EACH INCLUDED/EXCLUDED ROLE/GROUP, ADDING THEM TO THE NEW CONTAINERS
-        //////////////////////////////////////////////////////////////
-
-        // if not sending to all, pull all selectable roles for the auth user if we're going to be including roles
-        $selectable_role_ids = ! empty($filtered_entity_ids['included']['role']) && ! $sending_to_all
-            ? array_keys(role_repo::get_course_selectable_roles($course, $course_context))
-            : [];
-        
-        // if not sending to all, pull all selectable groups for the auth user if we're going to be including groups
-        $selectable_group_ids = ! empty($filtered_entity_ids['included']['group']) && ! $sending_to_all
-            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, false, $course_context))
+        // Pull any users for each included/excluded role/groups, adding them to the new containers.
+        // If not sending to all, pull all selectable roles for the auth user if we're going to be including roles.
+        $selectableroleids = ! empty($filteredentityids['included']['role']) && ! $sendingtoall
+            ? array_keys(role_repo::get_course_selectable_roles($course, $coursecontext))
             : [];
 
-        // iterate through initial container of included/excluded role/group
+        // If not sending to all, pull all selectable groups for the auth user if we're going to be including groups.
+        $selectablegroupids = ! empty($filteredentityids['included']['group']) && ! $sendingtoall
+            ? array_keys(group_repo::get_course_user_selectable_groups($course, $user, false, $coursecontext))
+            : [];
+
+        // Iterate through initial container of included/excluded role/group.
         foreach (['included', 'excluded'] as $type) {
-            // if we're sending to all, do not worry about determining included roles/groups
-            if ($sending_to_all && $type == 'included') {
+            // If we're sending to all, do not worry about determining included roles/groups.
+            if ($sendingtoall && $type == 'included') {
                 continue;
             }
 
             foreach (['role', 'group'] as $name) {
-                foreach ($filtered_entity_ids[$type][$name] as $name_id) {
-                    // for inclusions, check that the role or group is selectable by the user
+                foreach ($filteredentityids[$type][$name] as $nameid) {
+                    // For inclusions, check that the role or group is selectable by the user.
                     if ($type == 'included') {
-                        // if this is a role but NOT selectable by this user
-                        if ($name == 'role' && ! in_array($name_id, $selectable_role_ids)) {
+                        // If this is a role but NOT selectable by this user.
+                        if ($name == 'role' && ! in_array($nameid, $selectableroleids)) {
                             continue;
-                        
-                        // otherwise, if this is a group but NOT selectable by this user
-                        } else if ($name == 'group' && ! in_array($name_id, $selectable_group_ids)) {
+
+                            // Otherwise, if this is a group but NOT selectable by this user.
+                        } else if ($name == 'group' && ! in_array($nameid, $selectablegroupids)) {
                             continue;
                         }
                     }
 
-                    // get all user for this included/excluded role/group, scoped to this course
+                    // Get all user for this included/excluded role/group, scoped to this course.
                     $users = $name == 'role'
-                        ? self::get_course_role_users($course_context, $name_id)
-                        : self::get_course_group_users($course_context, $name_id);
+                        ? self::get_course_role_users($coursecontext, $nameid)
+                        : self::get_course_group_users($coursecontext, $nameid);
 
-                    // get appropriate name for the container to place these user ids within
-                    $type_container = $type . '_user_ids';
+                    // Get appropriate name for the container to place these user ids within.
+                    $typecontainer = $type . 'userids';
 
-                    // push these new user ids into the appropriate container
-                    $$type_container = array_merge($$type_container, array_map(function($user) {
+                    // Push these new user ids into the appropriate container.
+                    $$typecontainer = array_merge($$typecontainer, array_map(function($user) {
                         return $user->id;
                     }, $users));
                 }
             }
         }
 
-        // pull all course users for later use
-        $course_users = self::get_course_user_selectable_users($course, $user, $course_context);
+        // Pull all course users for later use.
+        $courseusers = self::get_course_user_selectable_users($course, $user, $coursecontext);
 
-        // convert these users to an array of ids
-        $course_user_ids = array_map(function($user) {
+        // Convert these users to an array of ids.
+        $courseuserids = array_map(function($user) {
             return $user->id;
-        }, $course_users);
+        }, $courseusers);
 
-        // if sending to all, add all course user ids to include user ids
-        if ($sending_to_all) {
-            $included_user_ids = $course_user_ids;
+        // If sending to all, add all course user ids to include user ids.
+        if ($sendingtoall) {
+            $includeduserids = $courseuserids;
         }
 
-        //////////////////////////////////////////////////////////////
-        /// ADD IN EACH EXPLICITLY INCLUDED/EXCLUDED USER TO THE APPROPRIATE CONTAINER
-        //////////////////////////////////////////////////////////////
+        // Add in each explicitly included/excluded user to the appropriate container.
 
         foreach (['included', 'excluded'] as $type) {
-            // if we're sending to all, do not worry about determining included users
-            if ($sending_to_all && $type == 'included') {
+            // If we're sending to all, do not worry about determining included users.
+            if ($sendingtoall && $type == 'included') {
                 continue;
             }
 
-            // get name of appropriate (initial) container
-            $type_key = $type . '_entity_ids';
+            // Get name of appropriate (initial) container.
+            $typekey = $type . 'entityids';
 
-            // extract only the user ids from the container
-            $users = array_filter($$type_key, function($key) {
+            // Extract only the user ids from the container..
+            $users = array_filter($$typekey, function($key) {
                 return strpos($key, 'user_') === 0;
             });
 
-            // filter out any explicitly included users that do not belong to this course
+            // Filter out any explicitly included users that do not belong to this course.
             if ($type == 'included') {
-                $users = array_filter($users, function($user) use ($course_user_ids) {
-                    return in_array(str_replace('user_', '', $user), $course_user_ids);
+                $users = array_filter($users, function($user) use ($courseuserids) {
+                    return in_array(str_replace('user_', '', $user), $courseuserids);
                 });
             }
 
-            // get name of appropriate output container
-            $type_container = $type . '_user_ids';
+            // Get name of appropriate output container.
+            $typecontainer = $type . 'userids';
 
-            // push these user ids into the appropriate container
-            $$type_container = array_merge($$type_container, array_map(function($user) {
+            // Push these user ids into the appropriate container.
+            $$typecontainer = array_merge($$typecontainer, array_map(function($user) {
                 return str_replace('user_', '', $user);
             }, $users));
         }
 
-        //////////////////////////////////////////////////////////////
-        /// REMOVE ANY EXCLUDED USER IDS FROM THE INCLUDED USER IDS, CREATING A NEW CONTAINER
-        //////////////////////////////////////////////////////////////
-
-        $result_user_ids = array_filter($included_user_ids, function($id) use ($excluded_user_ids) {
-            return ! in_array($id, $excluded_user_ids);
+        // Remove any excluded user IDs from the included user IDs, creating a new container.
+        $resultuserids = array_filter($includeduserids, function($id) use ($excludeduserids) {
+            return ! in_array($id, $excludeduserids);
         });
 
-        //////////////////////////////////////////////////////////////
-        /// FINALLY, REMOVE ANY USER IDS THAT THIS USER MAY NOT MESSAGE
-        //////////////////////////////////////////////////////////////
-
+        // Finally, remove any user IDs that this user may not message.
         return array_unique(array_intersect(array_map(function ($user) {
             return $user->id;
-        }, $course_users), $result_user_ids));
+        }, $courseusers), $resultuserids));
     }
 
     /**
      * Returns an array of mentor users that are assigned to the given "mentee" user
-     * 
+     *
      * @param  object  $user
      * @return array  keyed by user ids
      */
-    public static function get_mentors_of_user($user)
-    {
+    public static function get_mentors_of_user($user) {
         global $DB;
+        $sql = 'SELECT ra.userid as mentor_user_id
+                    FROM {context} c JOIN {role_assignments} ra on c.id = ra.contextid
+                WHERE contextlevel = 30 AND instanceid = ?';
+        $result = $DB->get_records_sql($sql, [$user->id]);
 
-        $result = $DB->get_records_sql('SELECT ra.userid as mentor_user_id FROM {context} c JOIN {role_assignments} ra on c.id = ra.contextid WHERE contextlevel = 30 AND instanceid = ?', [$user->id]);
-
-        if ( ! $result) {
+        if (!$result) {
             return [];
         }
 

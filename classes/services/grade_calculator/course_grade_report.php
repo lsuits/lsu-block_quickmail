@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,6 +23,8 @@
 
 namespace block_quickmail\services\grade_calculator;
 
+defined('MOODLE_INTERNAL') || die();
+
 class course_grade_report extends \grade_report {
 
     public $user;
@@ -31,33 +32,35 @@ class course_grade_report extends \grade_report {
     /**
      * show course/category totals if they contain hidden items
      */
-    var $showtotalsifcontainhidden;
+    public $showtotalsifcontainhidden;
 
-    public function __construct($course_id, $course_context, $user_id) {
-        parent::__construct($course_id, null, $course_context);
+    public function __construct($courseid, $coursecontext, $userid) {
+        parent::__construct($courseid, null, $coursecontext);
 
         global $DB, $CFG;
 
-        // get the user to be graded
-        $this->user = $DB->get_record('user', ['id' => $user_id], '*', MUST_EXIST);
+        // Get the user to be graded.
+        $this->user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
 
-        // necessary for parent report
-        $this->showtotalsifcontainhidden[$course_id] = grade_get_setting($course_id, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
+        // Necessary for parent report.
+        $this->showtotalsifcontainhidden[$courseid] = grade_get_setting(
+                                                          $courseid,
+                                                          'report_overview_showtotalsifcontainhidden',
+                                                          $CFG->grade_report_overview_showtotalsifcontainhidden);
     }
 
-    // necessary for implementation of \grade_report abstract
-    function process_action($target, $action) {}
-    
-    // necessary for implementation of \grade_report abstract
-    function process_data($data)
-    {
+    // Necessary for implementation of \grade_report abstract.
+    public function process_action($target, $action) {
+    }
+
+    // Necessary for implementation of \grade_report abstract.
+    public function process_data($data) {
         return $this->screen->process($data);
     }
-    
-    // getter for the \grade_report's method
-    function get_blank_hidden_total_and_adjust_bounds($course_id, $course_total_item, $finalgrade)
-    {
-        return $this->blank_hidden_total_and_adjust_bounds($course_id, $course_total_item, $finalgrade);
+
+    // Getter for the \grade_report's method.
+    public function get_blank_hidden_total_and_adjust_bounds($courseid, $coursetotalitem, $finalgrade) {
+        return $this->blank_hidden_total_and_adjust_bounds($courseid, $coursetotalitem, $finalgrade);
     }
 
 }
