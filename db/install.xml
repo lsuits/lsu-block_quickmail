@@ -202,6 +202,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="notification_id" TYPE="foreign" FIELDS="notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="block_quickmail_schedules" COMMENT="Schedule records for schedulable persistents.">
@@ -239,6 +240,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="schedule_id" TYPE="foreign" FIELDS="schedule_id" REFTABLE="block_quickmail_schedules" REFFIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="block_quickmail_event_recips" COMMENT="The recipient users of a specific event notification">
@@ -250,6 +252,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="event_notification_id" TYPE="foreign" FIELDS="event_notification_id" REFTABLE="block_quickmail_notifs" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
