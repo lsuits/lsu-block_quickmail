@@ -179,7 +179,7 @@ class block_quickmail_broadcast_recipient_filter {
      * @return int
      */
     public function get_result_user_count() {
-        if (is_null($this->result_user_count)) {
+        if (is_null($this->resultusercount)) {
             $this->result_user_count = count($this->result_users);
         }
         return $this->result_user_count;
