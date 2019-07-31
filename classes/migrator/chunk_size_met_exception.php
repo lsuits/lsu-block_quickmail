@@ -21,9 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 namespace block_quickmail\migrator;
+
+defined('MOODLE_INTERNAL') || die();
 
 class chunk_size_met_exception extends \Exception {
 }
