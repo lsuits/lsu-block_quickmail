@@ -88,7 +88,7 @@ class block_quickmail_broadcast_recipient_filter {
         $this->filter_params = $filterparams;
         $this->extra_params = $extraparams;
         $this->draft_message = $draftmessage;
-        $this->ufilter = new user_filtering($this->supported_fields, null, $this->extra_params);
+        $this->ufilter = new user_filtering($this->supportedfields, null, $this->extra_params);
 
         // If there is a valid draft message passed, attempt to set the pre-set the filter but only if none already exist.
         if (!empty($this->draft_message) && ! $this->has_set_filter()) {
