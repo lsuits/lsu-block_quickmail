@@ -25,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/traits/unit_testcase_traits.php');
 
-//use block_quickmail_string;
 use block_quickmail\persistents\message;
 use block_quickmail\persistents\message_draft_recipient;
 use block_quickmail\persistents\message_recipient;
