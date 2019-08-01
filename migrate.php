@@ -24,7 +24,7 @@
 define('NO_OUTPUT_BUFFERING', true);
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/blocks/quickmail/lib.php';
+require_once($CFG->dirroot . '/blocks/quickmail/lib.php');
 
 // Authentication.
 require_login();
