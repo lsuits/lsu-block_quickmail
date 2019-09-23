@@ -141,8 +141,11 @@ class notification_repo extends repo implements notification_repo_interface {
             $sql .= ' AND n.user_id = :user_id';
         }
 
-        $sql .= ' AND n.timedeleted = 0
-                 ORDER BY ' . $sortby . ' ' . $sortdir;
+        $sql .= ' AND n.timedeleted = 0';
+        
+        if (! $as_count) {
+            $sql .= ' ORDER BY ' . $sort_by . ' ' . $sort_dir;
+        }
 
         return $sql;
     }
