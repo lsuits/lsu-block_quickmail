@@ -1,3 +1,5 @@
+Louisiana State University ITS no longer maintains this Project.
+
 # Quickmail (v2)
 
 Quickmail is a Moodle block plugin that provides selective, bulk messaging for Moodle courses and sites. Developed by Louisiana State University :tiger:, Geaux Tigers!!!
